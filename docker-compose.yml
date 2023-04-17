@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgis/postgis
+    # volumes:
+    #   - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "iaes"
+    ports:
+      - "5432:5432"
+  # dev:
+  #   image: "node:14.18.1-buster-slim"
+  #   user: "node"
+  #   working_dir: /home/node/dev
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./:/home/node/dev
