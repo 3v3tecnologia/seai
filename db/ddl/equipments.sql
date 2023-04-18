@@ -35,3 +35,40 @@ CREATE TABLE "MetereologicalEquipment" (
 	PRIMARY KEY("IdEquipment"),
 	UNIQUE("FK_Organ", "IdEquipmentExternal")
 );
+
+
+CREATE TABLE "ReadTime" (
+	"IdTime" INT GENERATED ALWAYS AS IDENTITY,
+	"Time" TIMESTAMP NOT NULL, 
+	PRIMARY KEY("IdTime")
+);
+
+
+CREATE TABLE "ReadPluviometers" (
+	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
+	"Value" REAL NOT NULL,
+	"FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
+	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
+	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
+	PRIMARY KEY("IdRead"),
+	UNIQUE("FK_Organ", "FK_Time", "FK_Equipment")
+);
+
+CREATE TABLE "ReadStations" (
+	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
+	"TotalRadiation" REAL NOT NULL,
+	"RelativeHumidity" REAL NOT NULL,
+	"AtmosphericTemperature" REAL NOT NULL,
+	"WindVelocity" REAL NOT NULL,
+	"FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
+	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
+	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
+	PRIMARY KEY("IdRead"),
+	UNIQUE("FK_Organ", "FK_Time", "FK_Equipment")
+);
+
+CREATE TABLE "Et0" (
+	"Value" REAL NOT NULL,
+	"FK_Station_Read" INT REFERENCES "ReadStations"("IdRead"),	
+	PRIMARY KEY("FK_Station_Read")
+);
