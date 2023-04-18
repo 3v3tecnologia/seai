@@ -1,8 +1,8 @@
 services:
   postgres:
     image: postgis/postgis
-    # volumes:
-    #   - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
+    volumes:
+     - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "iaes"
