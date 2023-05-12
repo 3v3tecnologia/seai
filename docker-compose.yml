@@ -1,6 +1,8 @@
+version: '3'
 services:
   postgres:
     image: postgis/postgis
+    container_name: "seai-database"
     volumes:
       - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
       - ./db/seeds/equipments.sql:/docker-entrypoint-initdb.d/seeds-equipments.sql
