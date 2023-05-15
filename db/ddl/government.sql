@@ -1,8 +1,8 @@
-CREATE DATABASE GOVERNMENT;
+CREATE DATABASE government;
 
-\c GOVERNMENT;
+\c government;
 
-CREATE TYPE user_types ENUM ('admin', 'standart');
+CREATE TYPE user_types AS ENUM ('admin', 'standart');
 
 CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -22,7 +22,7 @@ CREATE TABLE "Module"(
    PRIMARY KEY("Id")
 );
 
-CREATE TYPE permission_types (1,2,3);
+CREATE TYPE permission_types AS ENUM ('1','2','3');
 
 CREATE TABLE "User_Access"(
    "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id"),
@@ -52,6 +52,6 @@ CREATE TABLE "Category"(
 );
 
 CREATE TABLE "FAQ_Category"(
-   "Fk_FAQ" INTEGER NOT NULL REFERENCES "FAQ"("Id"),
-	"Fk_Category" INTEGER NOT NULL REFERENCES "Category"("Id"),
+   "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id"),
+	"Fk_Category" INTEGER REFERENCES "Category"("Id")
 );

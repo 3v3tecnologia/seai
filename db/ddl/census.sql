@@ -1,6 +1,8 @@
-CREATE DATABASE CENSUS;
+CREATE DATABASE census;
 
-\c CENSUS;
+\c census;
+
+CREATE EXTENSION postgis;
 
 CREATE TABLE "Contacts"(
 	"Id" SERIAL PRIMARY KEY,
@@ -24,15 +26,15 @@ CREATE TABLE "Pit_Company"(
 );
 
 CREATE TYPE well_nature_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TYPE revetment_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TYPE finish_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Pit"(
@@ -55,9 +57,9 @@ CREATE TABLE "Pit"(
 CREATE TABLE "Register"(
 	"Id" SERIAL PRIMARY KEY,
 	"Fk_Responsible" INTEGER NOT NULL,
-	"FK_Pit" VARCHAR(100)  REFERENCES "Pit"("Id"),
-	"FK_Location" REFERENCES "Contacts"("Id"),
-	"Register_Number" GEOMETRY,
+	"FK_Pit" INTEGER REFERENCES "Pit"("Id"),
+	"FK_Location" INTEGER REFERENCES "Contacts"("Id"),
+	"Register_Number"  VARCHAR(10),
 	"Name_Register" VARCHAR(100),
 	"Description"  VARCHAR(500)
 );
@@ -85,7 +87,7 @@ CREATE TYPE enterprise_type_enum as ENUM(
 CREATE TABLE "Legal_Entity"(
 	"Id" SERIAL PRIMARY KEY,
 	"Fk_Register" INTEGER NOT NULL REFERENCES "Register"("Id"),
-	"FK_Correspondence" INTEGER,
+	"FK_Correspondence" INTEGER REFERENCES "Contacts"("Id"),
 	"Name" VARCHAR(100),
 	"Fantasy_Name" VARCHAR(100),
 	"CNAE" VARCHAR(100),
@@ -98,7 +100,7 @@ CREATE TABLE "Legal_Entity"(
 CREATE TABLE "Physical_Person"(
 	"Id" SERIAL PRIMARY KEY,
 	"Fk_Register" INTEGER NOT NULL REFERENCES "Register"("Id"),
-	"FK_Correspondence" INTEGER,
+	"FK_Correspondence" INTEGER REFERENCES "Contacts"("Id"),
 	"Name" VARCHAR(100),
 	"RG"  VARCHAR(20),
 	"CPF"  VARCHAR(20),
@@ -171,7 +173,7 @@ CREATE TABLE "Underground"(
 
 CREATE TABLE "Use"(
 	"Id" SERIAL PRIMARY KEY,
-	"Fk_Register" INTEGER NOT NULL REFERENCES "Register"("Id"),
+	"Fk_Register" INTEGER REFERENCES "Register"("Id")
 );
 
 CREATE TYPE creation_type_enum AS ENUM(
@@ -181,8 +183,8 @@ CREATE TYPE creation_type_enum AS ENUM(
 	'Caprines',
 	'Ovines',
 	'Swines',
-	'Others',
-)
+	'Others'
+);
 
 CREATE TABLE "Animals"(
 	"Id" SERIAL PRIMARY KEY,
@@ -195,7 +197,7 @@ CREATE TABLE "Animals"(
 
 CREATE TABLE "Irrigation"(
 	"Id" SERIAL PRIMARY KEY,
-	"Fk_Use" INTEGER NOT NULL REFERENCES "Use"("Id"),
+	"Fk_Use" INTEGER REFERENCES "Use"("Id"),
 	"Blade_Area" REAL,
 	"Use_Reservoir" BOOLEAN DEFAULT NULL,
 	"Depth_Average" REAL,
@@ -236,8 +238,8 @@ CREATE TABLE "Irrigated_Cultures"(
 	"Irrigation_Type" VARCHAR(20)
 );
 
-CREATE TYPE creation_type_enum AS ENUM(
-	'Pending',
+CREATE TYPE creation_aquaculture_type_enum AS ENUM(
+	'Pending'
 );
 
 CREATE TYPE structure_type_enum AS ENUM(
@@ -249,12 +251,12 @@ CREATE TYPE structure_type_enum AS ENUM(
 
 CREATE TYPE local_structure_enum AS ENUM(
 	'Not informed',
-	'Not applicable',
+	'Not applicable'
 );
 
 CREATE TYPE activity_enum AS ENUM(
 	'Not informed',
-	'Not applicable',
+	'Not applicable'
 );
 
 CREATE TABLE "Aquaculture"(
@@ -262,7 +264,7 @@ CREATE TABLE "Aquaculture"(
 	"Fk_Use" INTEGER NOT NULL REFERENCES "Use"("Id"),
 	"Number_Of_Tanks" SMALLINT,
 	"Water_Blade" REAL,
-	"Creation_Type" creation_type_enum,
+	"Creation_Type" creation_aquaculture_type_enum,
 	"Structure_Type" structure_type_enum,
 	"Water_Mirror" REAL,
 	"Depth_Average" REAL,
@@ -279,11 +281,11 @@ CREATE TABLE "Industry"(
 	"Elaborated_Products" VARCHAR(100),
 	"CNAE_Type" VARCHAR(20),
 	"Industrial_Consume" REAL,
-	"Forecast_Losses" REAL,
+	"Forecast_Losses" REAL
 );
 
 CREATE TYPE establishment_type_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Human_Consume"(
@@ -295,11 +297,7 @@ CREATE TABLE "Human_Consume"(
 );
 
 CREATE TYPE proccess_enum AS ENUM(
-	'Pending',
-);
-
-CREATE TYPE proccess_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Mineration"(
@@ -309,7 +307,7 @@ CREATE TABLE "Mineration"(
 	"Prop_Water_Pulp" REAL,
 	"PerCapita_Contribuition" REAL,
 	"CNAE" VARCHAR(20),
-	"Product" VARCHAR(100)
+	"Product" VARCHAR(100),
 	"ProdMax" REAL,
 	"Proccess" proccess_enum
 );
@@ -327,7 +325,7 @@ CREATE TABLE "Environmental_Control"(
 );
 
 CREATE TYPE characteristics_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Affluent_Dilution"(
@@ -358,7 +356,7 @@ CREATE TABLE "Managed_RH"(
 );
 
 CREATE TYPE fuel_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Thermoelectric"(
@@ -382,11 +380,11 @@ CREATE TABLE "Vehicle_Wash"(
 );
 
 CREATE TYPE operation_type_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TYPE installation_type_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Pumps"(
@@ -417,15 +415,15 @@ CREATE TABLE "Test_Flow"(
 );
 
 CREATE TYPE aquifer_penetration_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TYPE aquifer_conditions_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TYPE test_type_enum AS ENUM(
-	'Pending',
+	'Pending'
 );
 
 CREATE TABLE "Test_Pumping"(

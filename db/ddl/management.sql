@@ -1,6 +1,6 @@
-CREATE DATABASE MANAGEMENT;
+CREATE DATABASE management;
 
-\c MANAGEMENT;
+\c management;
 
 CREATE TABLE "Crop"(
     "Id" SERIAL PRIMARY KEY,
@@ -57,7 +57,6 @@ CREATE TABLE "Physics_Characteristics"(
   "Fine_Sand" REAL,
   "Silite" REAL,
   "Clay" REAL,
-  "Natural_Clay" REAL,
   "Apparently_Density" REAL,
   "Relation_Textural" REAL,
   "Equivalent_Humidity" REAL,

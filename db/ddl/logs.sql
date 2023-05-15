@@ -1,6 +1,6 @@
-CREATE DATABASE LOGS;
+CREATE DATABASE logs;
 
-\c LOGS;
+\c logs;
 
 CREATE TYPE log_status AS ENUM ('error', 'info','warning');
 
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "User" (
 
 CREATE TABLE IF NOT EXISTS "Funceme_Data_Miner" (
 	"Id" INTEGER GENERATED ALWAYS AS IDENTITY,
-	"Status" log_status ,
+	"Status" log_status,
 	"Operation" VARCHAR(25) NOT NULL,
 	"Message" VARCHAR(50) NOT NULL,
 	"Time" TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS "Inmet_Data_Miner" (
 	"Status" log_status,
 	"Operation" VARCHAR(25) NOT NULL,
 	"Message" VARCHAR(50) NOT NULL,
-	"Time" TIMESTAMPT NOT NULL DEFAULT NOW(),
+	"Time" TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY("Id")
 );
 
