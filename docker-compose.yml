@@ -11,11 +11,10 @@ services:
       - ./db/ddl/newsletter.sql:/docker-entrypoint-initdb.d/ddl-newsletter.sql
       - ./db/ddl/logs.sql:/docker-entrypoint-initdb.d/ddl-logs.sql
       - ./db/ddl/census.sql:/docker-entrypoint-initdb.d/ddl-census.sql
-    environment:
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "iaes"
     ports:
       - "5432:5432"
+    env_file:
+      - env_file
   # dev:
   #   image: "node:14.18.1-buster-slim"
   #   user: "node"
