@@ -7,6 +7,9 @@ CREATE EXTENSION postgis;
 CREATE TABLE "MetereologicalOrgan" (
 	"IdOrgan" INT GENERATED ALWAYS AS IDENTITY,
 	"Name" VARCHAR(50) NOT NULL,
+	"Host" VARCHAR(50),
+	"User" VARCHAR(50),
+	"Password" VARCHAR(50),
 	PRIMARY KEY("IdOrgan")
 );
 

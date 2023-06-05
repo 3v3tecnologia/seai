@@ -17,6 +17,8 @@ services:
     env_file:
       - env_file
     restart: always
+    networks:
+      - custom
 
   # dev:
   #   image: "node:14.18.1-buster-slim"
@@ -27,3 +29,8 @@ services:
   #     - ./:/home/node/dev
 volumes:
   db-data: {}
+
+networks:
+  custom:
+    name: testonly
+    driver: bridge
