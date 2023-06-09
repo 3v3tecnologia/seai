@@ -8,13 +8,13 @@ CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
    "Name" VARCHAR(30) NOT NULL,
    "Login" VARCHAR(20) UNIQUE NOT NULL,
-   "Password" VARCHAR(60) NOT NULL,
+   "Password_Hash" VARCHAR(200) NOT NULL,
+   "Password_Hash_Algorithm" VARCHAR(20) DEFAULT NULL,
 	"Type" user_types,
 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
    PRIMARY KEY("Id")
 );
-
 
 CREATE TABLE "Module"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -28,6 +28,7 @@ CREATE TABLE "User_Access"(
    "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id"),
    "Fk_Module" INTEGER NOT NULL REFERENCES "Module"("Id"),
    "Permission" permission_types,
+   "Description" VARCHAR(50) NOT NULL,
 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
