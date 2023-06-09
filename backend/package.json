@@ -6,7 +6,7 @@
   "author": "",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "test": "npm run build && jest test",
+    "test": "jest",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
     "build:debug": "npm run clean && npm run build -- --sourceMap",
@@ -14,7 +14,8 @@
     "build:watch": "tsc -w",
     "build:start": "npm run build:clean && npm start",
     "start": "node dist/index.js",
-    "start:debug": "concurrently -s all \"tsc -w\" nodemon dist/index.js\""
+    "start:debug": "concurrently -s all \"tsc -w\" nodemon dist/index.js\"",
+    "start:dev": "nodemon"
   },
   "keywords": [],
   "license": "ISC",
