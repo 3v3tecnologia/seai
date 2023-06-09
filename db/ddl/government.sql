@@ -8,6 +8,7 @@ CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
    "Name" VARCHAR(30) NOT NULL,
    "Login" VARCHAR(20) UNIQUE NOT NULL,
+   "Email" VARCHAR(254) UNIQUE NOT NULL,
    "Password_Hash" VARCHAR(200) NOT NULL,
    "Password_Hash_Algorithm" VARCHAR(20) DEFAULT NULL,
 	"Type" user_types,
