@@ -1,4 +1,4 @@
-import { app } from "./presentation/routes/User/app";
+import { app } from "./app";
 
 const port = 80;
 

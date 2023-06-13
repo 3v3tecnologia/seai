@@ -8,7 +8,7 @@ type Message = {
 export class Email {
   private readonly email: string;
 
-  constructor(email: string) {
+  private constructor(email: string) {
     this.email = email;
     Object.freeze(this);
   }
@@ -25,6 +25,10 @@ export class Email {
       isError: false,
       value: new Email(email),
     };
+  }
+
+  get value(): string {
+    return this.email;
   }
 
   static validate(email: string): boolean {
