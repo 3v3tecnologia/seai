@@ -4,14 +4,13 @@ import { terminate } from "./gracefull-shutdown";
 import env from "./env";
 
 let server;
-async () => {
+(async () => {
   const app = await setupApp();
 
   server = app.listen(env.port, () => {
     console.log(`Server listening in port ${env.port}`);
   });
-};
-
+})();
 const exitHandler = terminate(server, {
   timeout: 1000,
   coredump: false,

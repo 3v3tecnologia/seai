@@ -4,6 +4,6 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 
 const userRouter = Router();
 
-userRouter.get("/test", (req, res) => adaptRoute(makeCreateUserController()));
+userRouter.get("/test", adaptRoute(makeCreateUserController()));
 
 export { userRouter };
