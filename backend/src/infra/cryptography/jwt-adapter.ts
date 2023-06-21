@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
 
 export class JwtAdapter {
-  constructor(private readonly secret: string) {}
+  private readonly secret: string;
+
+  constructor(secret: string) {
+    this.secret = secret;
+  }
 
   async sign(payload: string, expires?: string): Promise<string> {
     return jwt.sign({ id: payload }, this.secret);

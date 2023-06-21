@@ -7,9 +7,12 @@ import { FetchUserAccountByTokenUseCase } from "../../domain/use-cases/user/fetc
 
 export class AuthMiddleware implements Middleware {
   private readonly fetchUserAccountByToken: FetchUserAccountByTokenUseCase;
-  private readonly role: string;
+  private readonly role?: string;
 
-  constructor(fetchUserAccountByToken: any, role: string) {
+  constructor(
+    fetchUserAccountByToken: FetchUserAccountByTokenUseCase,
+    role?: string
+  ) {
     this.fetchUserAccountByToken = fetchUserAccountByToken;
     this.role = role;
   }

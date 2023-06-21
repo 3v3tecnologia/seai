@@ -8,11 +8,14 @@ import {
 export class FetchUserAccountByTokenUseCase
   implements FetchUserAccountByTokenUseCaseProtocol
 {
-  private readonly fetchUserAccountByToken: AccountRepository;
+  private readonly userAccountRepository: AccountRepository;
   private readonly tokenDecrypt: JwtAdapter;
 
-  constructor(fetchUserAccountByToken: any, tokenDecrypt: any) {
-    this.fetchUserAccountByToken = fetchUserAccountByToken;
+  constructor(
+    fetchUserAccountByToken: AccountRepository,
+    tokenDecrypt: JwtAdapter
+  ) {
+    this.userAccountRepository = fetchUserAccountByToken;
     this.tokenDecrypt = tokenDecrypt;
   }
 
@@ -25,6 +28,7 @@ export class FetchUserAccountByTokenUseCase
     try {
       // irá verificar se o token é válido e irá tentar extrair o payload dele
       token = await this.tokenDecrypt.verify(accessToken);
+      console.log("TOKEN = ", token);
     } catch (error) {
       console.error(error);
       // token inválido
@@ -32,7 +36,7 @@ export class FetchUserAccountByTokenUseCase
     }
 
     if (token) {
-      const user = await this.fetchUserAccountByToken.loadByToken(token, role);
+      const user = await this.userAccountRepository.loadByToken(token, role);
 
       if (user) {
         return user;
