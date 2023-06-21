@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { CreateUserController } from "../../../adapters/controllers/user/create.controller";
+import { makeCreateUserController } from "../factories";
+import { adaptRoute } from "../adapters/express-route.adapter";
 
 const userRouter = Router();
 
-userRouter.get("/test", (req, res) => createUserController.handle(req, res));
+userRouter.get("/test", (req, res) => adaptRoute(makeCreateUserController()));
 
 export { userRouter };
