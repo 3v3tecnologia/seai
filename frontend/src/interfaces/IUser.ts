@@ -1,4 +1,4 @@
-export interface LoginUser {
+export default interface IUrl {
   login: string;
   password: string;
 }

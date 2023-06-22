@@ -1,12 +1,13 @@
 <template>
   <div>
-    <!-- <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav> -->
+    <!-- <NavbarTop /> -->
     <router-view />
   </div>
 </template>
+
+<script lang="ts" setup>
+import NavbarTop from "@/components/NavbarTop.vue";
+</script>
 
 <style lang="scss">
 #app {
