@@ -9,7 +9,7 @@ export function setRoutes(app: Express): void {
   router.use("/login", loginRouter(router));
 
   app.get("/_health", (req, res) => {
-    res.status(200).send("ok");
+    res.status(200).json({ status: "good" });
   });
 
   app.use("/api", router);
