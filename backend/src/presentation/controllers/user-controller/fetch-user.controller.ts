@@ -5,16 +5,16 @@ import { Controller } from "../ports/controllers";
 import { ok } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class CreateUserController implements Controller<any> {
-  private createUser: CreateUser;
+export class FetchUserController implements Controller<any> {
+  private fetchUser: FetchUser;
 
-  constructor(createUser: CreateUser) {
-    this.createUser = createUser;
+  constructor(fetchUser: FetchUser) {
+    this.fetchUser = fetchUser;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
-    await this.createUser.execute();
+    await this.fetchUser.execute();
     //Add validation here
     return ok({ message: "kkk" });
   }
