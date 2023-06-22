@@ -119,6 +119,30 @@ export const store = createStore<Estado>({
         toast.error("Credenciais inválidas.");
       }
     },
+    async ["CHANGE_PASSWORD"]({ commit }, { password, token }) {
+      try {
+        console.log({ password, token });
+        // TODO
+        // CONNECT API
+        // const { data: userLogged } = await http.post(`/change-password`, {password, token});
+
+        const userLogged = {
+          login: "user1",
+          id: 1,
+          token: "dlapsdlapsldapsdladlapsdld123123123123",
+        };
+
+        http.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${userLogged.token}`;
+        commit("SET_USER", userLogged);
+
+        toast.success("Senha atualizada com sucesso.");
+        return true;
+      } catch (e) {
+        toast.error("Credenciais inválidas.");
+      }
+    },
     async ["SEND_ACCESS_LOG"](context, urlRegisterId: number) {
       try {
         await http.post(`/url/access`, {

@@ -1,8 +1,6 @@
 <template>
   <div class="d-flex flex-column justify-content-center">
-    <button type="submit" class="btn btn-success px-4 py-2">
-      {{ mainItem.text }}
-    </button>
+    <PrimaryButton :text="mainItem.text" />
     <div class="d-flex align-items-center justify-content-center pt-4">
       <router-link :to="secondaryItem.routeName" class="ml-3 text-dark">
         {{ secondaryItem.text }}
@@ -15,6 +13,7 @@
 </template>
 
 <script lang="ts" setup>
+import PrimaryButton from "./PrimaryButton.vue";
 import { defineProps, ref, watch } from "vue";
 const props = defineProps({
   isLogging: Boolean,
@@ -46,6 +45,7 @@ watch(
   { immediate: true }
 );
 </script>
+
 <style lang="scss" scoped>
 .btn {
   &:hover {

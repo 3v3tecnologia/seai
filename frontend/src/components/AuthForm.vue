@@ -1,6 +1,5 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
-<div class="wrapper-form">
   <FormWrapper @submit="handleSubmit">
     <template v-slot:content>
       <BaseInut label="Login" v-model="form.login" :input-required="isLogging" placeholder="Seu login" />
@@ -16,7 +15,6 @@
       <slot />
     </template>
   </FormWrapper>
-</div>
 </template>
 
 <script lang="ts" setup>

@@ -36,3 +36,9 @@ watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
 </script>
+
+<style lang="scss" scoped>
+label {
+  font-weight: bold;
+}
+</style>

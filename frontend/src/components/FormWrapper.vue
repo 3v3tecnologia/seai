@@ -1,6 +1,8 @@
 <template>
   <div class="wrapper-form">
     <form @submit="handleSubmit" class="text-left p-4 p-lg-5">
+      <h2>{{ props.title }}</h2>
+
       <slot name="content" />
 
       <div class="pt-3">
@@ -11,8 +13,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits } from "vue";
+import { defineEmits, defineProps } from "vue";
 
+const props = defineProps({ title: String });
 const emit = defineEmits(["submit"]);
 
 const handleSubmit = (e) => {

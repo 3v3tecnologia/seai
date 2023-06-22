@@ -3,6 +3,7 @@ import AuthView from "../views/AuthView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
+import ChangePasswordView from "../views/ChangePasswordView.vue";
 import AccessHashUrlView from "../views/AccessHashUrlView.vue";
 
 const routes: Array<RouteRecordRaw> = [
@@ -16,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "login",
     component: AuthView,
+  },
+  {
+    path: "/change-password",
+    name: "change-password",
+    component: ChangePasswordView,
   },
   {
     path: "/retrieve-account",
