@@ -1,0 +1,1 @@
+Embora não seja um caso de uso em si, será usado na aplicação nos casos de uso sign-in e sign-out.Logo, por ser uma funcionalidade que é de interessa da aplicação, sua lógica foi adicionada na camada de casos de uso, tendo em vista que será importante para automatizar as regras de negócios.
