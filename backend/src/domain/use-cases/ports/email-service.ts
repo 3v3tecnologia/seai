@@ -1,10 +1,5 @@
-import { Either } from "../../../shared/Either";
-import { MailServiceError } from "../errors/mail-service-error";
-
 export interface EmailServiceProtocol {
-  send: (
-    options: EmailService.EmailOptions
-  ) => Promise<Either<MailServiceError, EmailService.EmailOptions>>;
+  send: (options: EmailService.EmailOptions) => Promise<void>;
 }
 
 export namespace EmailService {

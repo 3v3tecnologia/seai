@@ -1,5 +1,3 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { MailServiceError } from "../../errors/mail-service-error";
 import { EmailService, EmailServiceProtocol } from "../../ports/email-service";
 
 export class SendEmailToUser {
@@ -18,7 +16,7 @@ export class SendEmailToUser {
       email: string;
     },
     mailerOptions: { html: string; subject: string; text: string }
-  ): Promise<Either<MailServiceError, string>> {
+  ): Promise<void> {
     const options = {
       host: this.emailOptions.host,
       port: this.emailOptions.port,
@@ -32,13 +30,6 @@ export class SendEmailToUser {
       attachments: [],
     };
 
-    const response = await this.emailService.send(options);
-
-    if (response.isLeft()) {
-      console.error("Falha ao enviar email para usuário");
-      return left(response.value);
-    }
-
-    return right(`Sucesso ao enviar email para ${user.email}`);
+    await this.emailService.send(options);
   }
 }

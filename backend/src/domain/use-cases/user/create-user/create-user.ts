@@ -18,7 +18,7 @@ export class CreateUser implements CreateUserProtocol {
   }
   async create(
     user: CreateUserDTO.Params
-  ): Promise<Either<UserAlreadyExistsError | MailServiceError, string>> {
+  ): Promise<Either<UserAlreadyExistsError, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
     const alreadyExists = await this.accountRepository.checkByEmail(user.email);
 
@@ -46,7 +46,7 @@ export class CreateUser implements CreateUserProtocol {
     `;
 
     // TODO criar token e adicionar ao email
-    const response = await this.sendEmailToUser.send(
+    await this.sendEmailToUser.send(
       {
         email: user.email,
       },
@@ -58,6 +58,8 @@ export class CreateUser implements CreateUserProtocol {
     );
 
     console.log("Email enviado para o usuário...");
-    return response;
+    return right(
+      `Sucesso ao criar usuário, email enviado com sucesso para ${user.email}`
+    );
   }
 }
