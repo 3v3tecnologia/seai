@@ -50,7 +50,11 @@ export class CreateUser implements CreateUserProtocol {
       {
         email: user.email,
       },
-      msg
+      {
+        subject: "Bem vindo ao SEAI",
+        text: "Estou muito content de ter você por aqui!",
+        html: msg,
+      }
     );
 
     console.log("Email enviado para o usuário...");

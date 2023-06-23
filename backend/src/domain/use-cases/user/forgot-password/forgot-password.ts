@@ -47,7 +47,11 @@ export class ForgotPassword {
       {
         email: account.email.value,
       },
-      msg
+      {
+        subject: "Bem vindo ao SEAI",
+        text: "Recuperação de senha!",
+        html: msg,
+      }
     );
   }
 }

@@ -26,6 +26,10 @@ export class AccountRepository {
     return true;
   }
 
+  async loadAll(): Promise<Array<User>> {
+    return [];
+  }
+
   async update(data: {
     id: number;
     email: string;

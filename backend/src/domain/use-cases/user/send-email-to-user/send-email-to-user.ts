@@ -17,11 +17,8 @@ export class SendEmailToUser {
     user: {
       email: string;
     },
-    html: string
+    mailerOptions: { html: string; subject: string; text: string }
   ): Promise<Either<MailServiceError, string>> {
-    // const greetings = "E aí <b>" + user.email + "</b>, beleza?";
-    // const customizedHtml = greetings + "<br> <br>" + this.emailOptions.html;
-
     const options = {
       host: this.emailOptions.host,
       port: this.emailOptions.port,
@@ -29,10 +26,10 @@ export class SendEmailToUser {
       password: this.emailOptions.password,
       from: this.emailOptions.from,
       to: "<" + user.email + ">",
-      subject: this.emailOptions.subject,
-      text: this.emailOptions.text,
-      html: html,
-      attachments: this.emailOptions.attachments,
+      subject: mailerOptions.subject,
+      text: mailerOptions.text,
+      html: mailerOptions.html,
+      attachments: [],
     };
 
     const response = await this.emailService.send(options);

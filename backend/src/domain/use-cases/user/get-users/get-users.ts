@@ -1,5 +1,6 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, right } from "../../../../shared/Either";
+import { User } from "../../../entities/user/user";
 
 export class GetUsers {
   private readonly accountRepository: AccountRepository;
@@ -7,7 +8,8 @@ export class GetUsers {
   constructor(accountRepository: AccountRepository) {
     this.accountRepository = accountRepository;
   }
-  async execute(user_id: number): Promise<Either<Error, any>> {
-    return right(true);
+  async execute(): Promise<Either<Error, Array<User>>> {
+    const users = await this.accountRepository.loadAll();
+    return right(users);
   }
 }
