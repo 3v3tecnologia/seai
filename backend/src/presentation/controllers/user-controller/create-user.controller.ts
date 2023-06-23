@@ -14,7 +14,7 @@ export class CreateUserController implements Controller<any> {
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
-    await this.createUser.execute();
+    await this.createUser.create();
     //Add validation here
     return ok({ message: "kkk" });
   }

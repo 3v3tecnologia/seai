@@ -1,12 +1,15 @@
-import { EmailService, EmailOptions } from "../../usecases/ports/email-service";
+import { Either, left, right } from "./../../shared/Either";
 import * as nodemailer from "nodemailer";
-import { Either, left, right } from "../../shared/either";
-import { MailServiceError } from "../../usecases/errors/mail-service-error";
+import { MailServiceError } from "../../domain/use-cases/errors/mail-service-error";
+import {
+  EmailServiceProtocol,
+  EmailService,
+} from "../../domain/use-cases/ports/email-service";
 
-export class NodemailerEmailService implements EmailService {
+export class NodemailerEmailService implements EmailServiceProtocol {
   async send(
-    options: EmailOptions
-  ): Promise<Either<MailServiceError, EmailOptions>> {
+    options: EmailService.EmailOptions
+  ): Promise<Either<MailServiceError, EmailService.EmailOptions>> {
     try {
       const transporter = nodemailer.createTransport({
         host: options.host,
@@ -24,9 +27,11 @@ export class NodemailerEmailService implements EmailService {
         html: options.html,
         attachments: options.attachments,
       });
+
+      return right(options);
     } catch (error) {
-      return left(new MailServiceError());
+      console.error("[Error] ", error);
+      return left(new MailServiceError(error as Error));
     }
-    return right(options);
   }
 }

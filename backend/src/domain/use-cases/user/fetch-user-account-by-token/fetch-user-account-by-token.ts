@@ -3,7 +3,7 @@ import { AccountRepository } from "../../../../infra/database/postgres/repositor
 import {
   FetchUserAccountByTokenUseCaseProtocol,
   FetchUserAccountByToken,
-} from "../../protocols/fetch-user-account-by-token";
+} from "../../ports/fetch-user-account-by-token";
 
 export class FetchUserAccountByTokenUseCase
   implements FetchUserAccountByTokenUseCaseProtocol
