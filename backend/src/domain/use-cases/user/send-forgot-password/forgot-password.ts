@@ -12,7 +12,7 @@ export class ForgotPassword {
   private readonly dateProvider: IDateProvider;
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepository,g
     sendEmailToUser: SendEmailToUser,
     dateProvider: IDateProvider
   ) {
