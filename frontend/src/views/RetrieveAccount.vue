@@ -1,7 +1,10 @@
 <template>
   <div class="home mb-5">
-    <img alt="Vue logo" src="../assets/logo.png" class="my-4" />
-    <h3 class="mb-3">Recuperar conta</h3>
+    <div class="py-4" />
+
+    <LogoProject />
+
+    <h3 class="my-3">Recuperar conta</h3>
 
     <p>Enviaremos os dados por email para a recuperação de sua conta</p>
 
@@ -17,5 +20,6 @@
 
 <script lang="ts" setup>
 import AuthForm from "@/components/AuthForm.vue"; // @ is an alias to /src
+import LogoProject from "@/components/LogoProject.vue"; // @ is an alias to /src
 import ButtonsAuth from "@/components/ButtonsAuth.vue"; // @ is an alias to /src
 </script>

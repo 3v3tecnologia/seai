@@ -1,6 +1,11 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" class="my-4" />
+    <div class="py-4" />
+
+    <LogoProject />
+
+    <div class="py-3"></div>
+
     <AuthForm :is-logging="isLogging">
       <ButtonsAuth :is-logging="isLogging" />
     </AuthForm>
@@ -10,6 +15,7 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import AuthForm from "@/components/AuthForm.vue"; // @ is an alias to /src
+import LogoProject from "@/components/LogoProject.vue"; // @ is an alias to /src
 import ButtonsAuth from "@/components/ButtonsAuth.vue"; // @ is an alias to /src
 import { computed, Ref, ref, watch } from "vue";
 

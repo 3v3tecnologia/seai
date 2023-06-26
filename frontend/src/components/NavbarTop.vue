@@ -1,42 +1,66 @@
 <template>
-  <div class="py-4 d-flex w-100 justify-content-between">
-    <div class="d-flex align-items-center">
-      <router-link
-        v-for="(itemRoute, index) in itemsRoutes"
-        :key="itemRoute.path"
-        :to="itemRoute.path"
-        :class="`${index != itemsRoutes.length - 1 ? 'pr-2 mx-4' : ''}`"
-        class="nav-item"
-      >
-        <div class="h6">{{ itemRoute.name }}</div>
-      </router-link>
-    </div>
-    <div class="nav-item font-weight-bold px-4">
-      <div
-        class="d-flex align-items-center justify-content-center"
-        v-if="auth?.login"
-      >
-        <div class="mr-2 mr-lg-3">
-          {{ auth.login }}
+  <div v-if="auth?.login" class="d-flex flex-column align-items-start mb-5">
+    <div class="p-3 d-flex align-items-center justify-content-between w-100">
+      <LogoProject title-size="md" />
+
+      <div class="font-weight-bold pl-3">
+        <div
+          class="d-flex align-items-center justify-content-center"
+          v-if="auth?.login"
+        >
+          <div class="mr-2 mr-lg-3 text-decoration-none">
+            {{ auth.login }}
+          </div>
+          <div @click="signOut">
+            <router-link to="/login">
+              <font-awesome-icon
+                class="text-danger"
+                icon="fa-solid fa-sign-out"
+              />
+            </router-link>
+          </div>
         </div>
-        <div @click="signOut">
-          <router-link to="/login">
-            <font-awesome-icon
-              class="text-danger"
-              icon="fa-solid fa-sign-out"
-            />
-          </router-link>
+        <router-link to="/login" v-else> Login </router-link>
+      </div>
+    </div>
+
+    <div class="px-3 w-100">
+      <div class="pb-2 d-flex w-100 justify-content-between">
+        <div class="d-flex flex-column flex-lg-row w-100">
+          <div v-for="(routes, i) in slicedRoutes" :key="i" class="w-100">
+            <div
+              class="d-flex px-5 align-items-center justify-content-between w-100"
+            >
+              <router-link
+                v-for="(itemRoute, index) in routes"
+                :key="itemRoute.name"
+                :to="{ name: itemRoute.name }"
+                :class="`${
+                  index != itemsRoutes.length - 1 ? '' : ''
+                } my-2 my-lg-0`"
+                class="nav-item"
+              >
+                <div class="h6 mb-0 p-2 btn chip-route">
+                  {{ itemRoute.title }}
+                </div>
+              </router-link>
+            </div>
+          </div>
         </div>
       </div>
-      <router-link to="/login" v-else> Login </router-link>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import LogoProject from "@/components/LogoProject.vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const currentRouteName = route.name;
 
 const store = useStore();
 
@@ -44,29 +68,89 @@ const auth = computed(() => store.state.auth);
 
 const signOut = () => store.dispatch("SIGN_OUT");
 
-const itemsRoutes = ref([
+const itemsRoutes = [
   {
-    name: "Início",
-    path: "/",
+    title: "Mapa",
+    name: "home",
   },
   {
-    name: "Top 100",
-    path: "/most-accessed",
+    title: "Relatórios",
+    name: "home",
   },
-]);
+  {
+    title: "Gráficos",
+    name: "home",
+  },
+  {
+    title: "Cadastro",
+    name: "home",
+  },
+  {
+    title: "Notícias",
+    name: "home",
+  },
+  // {
+  //   title: "Mapa",
+  //   name: "map",
+  // },
+  // {
+  //   title: "Relatórios",
+  //   name: "users",
+  // },
+  // {
+  //   title: "Gráficos",
+  //   name: "graphics",
+  // },
+  // {
+  //   title: "Cadastro",
+  //   name: "register",
+  // },
+  // {
+  //   title: "Notícias",
+  //   name: "news",
+  // },
+  {
+    title: "Usuários",
+    name: "users",
+  },
+];
+
+const slicedRoutes = [];
+const sliceCount = 3;
+const arrRowsCount = Math.ceil(itemsRoutes.length / 3);
+
+for (let i = 0; i < arrRowsCount; i++) {
+  const slicedItem = [];
+
+  for (let j = 0; j < sliceCount; j++) {
+    const indexToPush = i * sliceCount + j;
+
+    slicedItem[j] = itemsRoutes[indexToPush];
+  }
+
+  slicedRoutes.push(slicedItem);
+}
+
+console.log(slicedRoutes);
 </script>
 
 <style lang="scss" scoped>
 .nav-item {
   &,
   & > * {
-    transition: 0.3 all;
-    color: rgb(22, 95, 22) !important;
+    transition: all 0.3;
+    color: black !important;
   }
 
   &:hover {
-    color: rgb(49, 148, 49) !important;
-    text-decoration: none !important;
+    text-decoration: underline !important;
+  }
+
+  &.router-link-exact-active {
+    .chip-route {
+      background-color: hsl(205deg 83% 20% / 60%);
+      color: white !important;
+    }
   }
 }
 </style>

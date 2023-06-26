@@ -21,7 +21,6 @@
 import BaseInut from "./BaseInput.vue";
 import FormWrapper from "./FormWrapper.vue";
 import { defineProps } from "vue";
-import { IUser } from "@/interfaces/IUser";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
@@ -34,12 +33,12 @@ const props = defineProps({
 
 const store = useStore();
 
-const form: Ref<IUser> = ref({});
+const form: Ref = ref({});
 
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  const action = props.isLogging ? "LOGIN_USER" : "CREATE_USER";
+  const action = props.isLogging ? "LOGIN_USER" : "SEND_EMAIL_CHANGE_PASSWORD";
   store.dispatch(action, form.value).then((r) => {
     if (props.isLogging && !(r instanceof Error) && r) {
       router.push({ path: "/" });

@@ -5,42 +5,47 @@
     <LogoProject />
 
     <div class="py-3"></div>
-
-    <FormWrapper title="Mudar senha" @submit="handleSubmit">
-      <template v-if="!changedPassword" v-slot:content>
-        <div class="mb-3 mt-4">
-          Com objetivo de protejer a sua conta, tenha certeza que sua senha
-          possui:
-        </div>
-
-        <ul>
-          <li>Mais de 6 caracteres</li>
-          <li>Contém letras, números e símbolos</li>
-          <li>Não combina com seu login, nome</li>
-        </ul>
-
+    <FormWrapper title="Registrar conta" @submit="handleSubmit">
+      <template v-if="!savedAccount" v-slot:content>
         <div class="py-2"></div>
         <BaseInput
-          label="Nova senha"
-          v-model="form.password"
-          placeholder="Sua nova senha"
+          label="Nome"
+          v-model="form.name"
+          placeholder="Insira um nome"
           input-required
         />
 
         <BaseInput
-          label="Confirmar nova senha"
-          v-model="form.confirm_password"
-          placeholder="Confirme sua nova senha"
+          label="Login"
+          v-model="form.login"
+          placeholder="Insira um login"
           input-required
+        />
+
+        <div class="py-2" />
+        <BaseInput
+          label="Senha"
+          v-model="form.password"
+          placeholder="Sua senha"
+          input-required
+          input-type="password"
+        />
+
+        <BaseInput
+          label="Confirmar senha"
+          v-model="form.confirm_password"
+          placeholder="Confirme sua senha"
+          input-required
+          input-type="password"
         />
       </template>
       <template v-else v-slot:content>
-        <div class="pt-3 pb-5">Senha trocada com sucesso.</div>
+        <div class="pt-3 pb-5">Conta criada com sucesso.</div>
       </template>
 
       <template v-slot:buttons>
         <PrimaryButton
-          :text="`${changedPassword ? 'Realizar login' : 'Salvar senha'}`"
+          :text="`${savedAccount ? 'Realizar login' : 'Salvar dados'}`"
         />
       </template>
     </FormWrapper>
@@ -63,17 +68,17 @@ const currentRoute = useRoute();
 const store = useStore();
 
 const form: Ref = ref({});
-const changedPassword: Ref = ref(false);
+const savedAccount: Ref = ref(false);
 const token = ref(currentRoute.query.token || "");
 
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  if (changedPassword.value === true) {
+  if (savedAccount.value === true) {
     return router.push({ name: "login" });
   }
 
-  const password = form.value.password;
+  const { name, login, password, confirm_password } = form.value;
 
   store
     .dispatch("CHANGE_PASSWORD", {
@@ -81,7 +86,7 @@ const handleSubmit = (e) => {
       token,
     })
     .then(() => {
-      changedPassword.value = true;
+      savedAccount.value = true;
     });
 };
 </script>

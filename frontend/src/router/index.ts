@@ -3,8 +3,9 @@ import AuthView from "../views/AuthView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
+import UsersView from "../views/UsersView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
-import AccessHashUrlView from "../views/AccessHashUrlView.vue";
+import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -28,8 +29,17 @@ const routes: Array<RouteRecordRaw> = [
     name: "retrieve-account",
     component: RetrieveAccount,
   },
-  { path: "/not-found", component: PageNotFoundView, name: "not-found-page" },
-  { path: "/:catchAll(.*)", component: AccessHashUrlView },
+  {
+    path: "/users",
+    name: "users",
+    component: UsersView,
+  },
+  {
+    path: "/initial-register-infos",
+    name: "initial-register-infos",
+    component: InitialRegisterUserInfos,
+  },
+  { path: "/:catchAll(.*)", component: PageNotFoundView },
 ];
 
 const router = createRouter({
