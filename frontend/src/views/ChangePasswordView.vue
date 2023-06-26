@@ -24,6 +24,7 @@
           label="Nova senha"
           v-model="form.password"
           placeholder="Sua nova senha"
+          input-type="password"
           input-required
         />
 
@@ -31,6 +32,7 @@
           label="Confirmar nova senha"
           v-model="form.confirm_password"
           placeholder="Confirme sua nova senha"
+          input-type="password"
           input-required
         />
       </template>

@@ -5,6 +5,7 @@ import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
 import UsersView from "../views/UsersView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
+import CreateUserView from "../views/CreateUserView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 
 const routes: Array<RouteRecordRaw> = [
@@ -25,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     component: ChangePasswordView,
   },
   {
+    path: "/users/create-user",
+    name: "create-user",
+    component: CreateUserView,
+  },
+  {
     path: "/retrieve-account",
     name: "retrieve-account",
     component: RetrieveAccount,
@@ -33,6 +39,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/users",
     name: "users",
     component: UsersView,
+    children: [],
   },
   {
     path: "/initial-register-infos",

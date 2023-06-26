@@ -2,18 +2,25 @@
   <div>
     <div class="mt-4">
       <div class="p-3 d-flex mb-4 mb-lg-3">
-        <div class="wrapper-mock"></div>
+        <div class="wrapper-mock" />
       </div>
-      <!-- <div class="p-3 rounded-bottom rounded-top">
-        <div v-if="!urls.length" class="p-2 py-5 h5">Lista vazia</div>
-        <UrlsTable v-else :urls="urls" />
-      </div> -->
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const titlePage = "Página inicial";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import { computed } from "vue";
+
+const router = useRouter();
+const store = useStore();
+
+const auth = computed(() => store.state.auth);
+
+if (!auth.value) {
+  router.push({ name: "login" });
+}
 </script>
 
 <style lang="scss" scoped>

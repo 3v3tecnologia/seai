@@ -7,6 +7,7 @@ import http from "@/http";
 
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { previewEmailCensured } from "@/helpers/formatEmail";
 
 interface Estado {
   auth: IAuth | null;
@@ -70,6 +71,19 @@ export const store = createStore<Estado>({
         return true;
       } catch (e) {
         toast.error("Credenciais inválidas.");
+      }
+    },
+    async ["CREATE_ACCOUNT"]({ commit }, form) {
+      try {
+        // TODO
+        // CONNECT API
+        // const { data: userLogged } = await http.post(`/change-password`, {password, token});
+
+        toast.success("Conta criada com sucesso.");
+        toast.success(`Email enviado para ${previewEmailCensured(form.email)}`);
+        return true;
+      } catch (e) {
+        toast.error("Erro ao criar usuário.");
       }
     },
   },

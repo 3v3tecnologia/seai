@@ -71,23 +71,23 @@ const signOut = () => store.dispatch("SIGN_OUT");
 const itemsRoutes = [
   {
     title: "Mapa",
-    name: "home",
+    name: "login",
   },
   {
     title: "Relatórios",
-    name: "home",
+    name: "login",
   },
   {
     title: "Gráficos",
-    name: "home",
+    name: "login",
   },
   {
     title: "Cadastro",
-    name: "home",
+    name: "login",
   },
   {
     title: "Notícias",
-    name: "home",
+    name: "login",
   },
   // {
   //   title: "Mapa",
