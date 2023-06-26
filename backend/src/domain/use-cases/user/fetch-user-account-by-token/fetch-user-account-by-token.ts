@@ -31,7 +31,7 @@ export class FetchUserAccountByTokenUseCase
       token = await this.tokenDecrypt.verify(accessToken);
       console.log("TOKEN = ", token);
     } catch (error) {
-      console.error(error);
+      console.error("[ERROR] - Token inválido :::",error);
       // token inválido
       return null;
     }

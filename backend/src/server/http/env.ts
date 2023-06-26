@@ -6,6 +6,6 @@ export default {
     host: process.env.EMAIL_HOST,
     password: process.env.EMAIL_PASSWORD,
     username: process.env.EMAIL_USERNAME,
-    from: process.env.EMAIL_FROM,
+    from: process.env.EMAIL_FROM
   },
 };

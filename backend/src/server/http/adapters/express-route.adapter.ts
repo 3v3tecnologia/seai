@@ -15,7 +15,10 @@ export const adaptRoute = (controller: Controller) => {
       return response.status(res.statusCode).json(res.body);
     }
 
+    console.error(res)
     //Enviar a mensagem do erro, evitar passar muitas informações detalhadas
-    return response.status(res.statusCode).json(res.body.message);
+    return response.status(res.statusCode).json({
+      error:res.body.message
+    });
   };
 };

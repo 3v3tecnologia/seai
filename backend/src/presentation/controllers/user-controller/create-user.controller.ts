@@ -40,6 +40,7 @@ export class CreateUserController implements Controller {
       //Add validation here
       return created(createdOrError.value);
     } catch (error) {
+      console.error(error)
       return serverError(error as Error);
     }
   }

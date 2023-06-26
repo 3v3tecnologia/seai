@@ -2,7 +2,8 @@ import { CreateUser } from "../../../domain/use-cases/user/create-user/create-us
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
+import { SignIn } from "../../../domain/use-cases/user/sign-in";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class SignInController implements Controller<any> {
@@ -13,16 +14,20 @@ export class SignInController implements Controller<any> {
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
-    console.log("request = > ", request);
-    await this.signIn.execute();
+    try {
+      console.log("request = > ", request);
+    await this.signIn.execute(request);
     //Add validation here
-    return ok({ message: "kkk" });
+    return ok({ message: "login" });
+    } catch (error) {
+      return serverError(error as Error)
+    }
   }
 }
 
 export namespace CreateUserController {
   export type Request = {
-    name: string;
-    sex: string;
+    login: string;
+    password: string;
   };
 }

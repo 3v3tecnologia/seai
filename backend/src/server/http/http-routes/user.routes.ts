@@ -1,11 +1,16 @@
 import { Router } from "express";
-import { makeCreateUserController } from "../factories";
 import { adaptRoute } from "../adapters/express-route.adapter";
+import { makeCreateUserController } from "../factories";
 
 import { adminAuth, authorization } from "../http-middlewares";
 
 export const userRouter = (router: Router): Router => {
+  // criar novo usuário
   router.post("/register", adminAuth, adaptRoute(makeCreateUserController()));
+  
+  // continuar o cadastro de usuário
+  router.post("/register/new-user", adaptRoute(makeCreateUserController()));
+
 
   router.put(
     "/update/:id",

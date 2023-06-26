@@ -1,9 +1,8 @@
-import { Either, left, right } from "./../../../../shared/Either";
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
-import { CreateUserProtocol, CreateUserDTO } from "./ports";
-import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
-import { MailServiceError } from "../../errors/mail-service-error";
+import { Either, left, right } from "./../../../../shared/Either";
+import { UserAlreadyExistsError } from "./errors/user-already-exists";
+import { CreateUserDTO, CreateUserProtocol } from "./ports";
 
 export class CreateUser implements CreateUserProtocol {
   private readonly accountRepository: AccountRepository;
