@@ -5,12 +5,6 @@ import { InvalidPasswordError } from "./errors/invalid-password";
 import { UserLogin } from "./login";
 import { UserName } from "./name";
 import { UserPassword } from "./userPassword";
-
-enum UserTypes {
-  admin = "admin",
-  standart = "standart",
-}
-
 interface UserProps {
   name?: UserName;
   login?: UserLogin;

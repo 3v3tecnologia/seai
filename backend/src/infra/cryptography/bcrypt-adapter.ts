@@ -1,7 +1,12 @@
 import bcrypt from "bcrypt";
+import { Encoder } from "../../domain/use-cases/ports/encoder";
 
-export class BcryptAdapter {
-  constructor(private readonly salt: number) {}
+export class BcryptAdapter implements Encoder {
+  private readonly salt: number;
+
+  constructor(salt?: number) {
+    this.salt = salt || 10;
+  }
 
   async hash(plaintext: string): Promise<string> {
     return bcrypt.hash(plaintext, this.salt);

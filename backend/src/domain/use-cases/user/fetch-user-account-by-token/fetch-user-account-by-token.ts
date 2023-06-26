@@ -3,7 +3,8 @@ import { AccountRepository } from "../../../../infra/database/postgres/repositor
 import {
   FetchUserAccountByTokenUseCaseProtocol,
   FetchUserAccountByToken,
-} from "../../protocols/fetch-user-account-by-token";
+} from "../../ports/fetch-user-account-by-token";
+import { TokenPayload } from "../authentication/ports/token-provider";
 
 export class FetchUserAccountByTokenUseCase
   implements FetchUserAccountByTokenUseCaseProtocol
@@ -23,7 +24,7 @@ export class FetchUserAccountByTokenUseCase
     accessToken: string,
     role?: string | undefined
   ): Promise<FetchUserAccountByToken.Result | null> {
-    let token: string | null;
+    let token: TokenPayload | null;
 
     try {
       // irá verificar se o token é válido e irá tentar extrair o payload dele
@@ -35,13 +36,13 @@ export class FetchUserAccountByTokenUseCase
       return null;
     }
 
-    if (token) {
-      const user = await this.userAccountRepository.loadByToken(token, role);
+    // if (token) {
+    //   const user = await this.userAccountRepository.loadByToken(token, role);
 
-      if (user) {
-        return user;
-      }
-    }
+    //   if (user) {
+    //     return user;
+    //   }
+    // }
 
     return null;
   }

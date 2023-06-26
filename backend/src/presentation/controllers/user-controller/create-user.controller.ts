@@ -2,28 +2,49 @@ import { CreateUser } from "../../../domain/use-cases/user/create-user/create-us
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok } from "../helpers";
+import { badRequest, created, forbidden, ok, serverError } from "../helpers";
+import { CreateUserDTO } from "../../../domain/use-cases/user/create-user/ports";
+import { Validator } from "../../../shared/validation/ports/validator";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class CreateUserController implements Controller<any> {
+export class CreateUserController implements Controller {
   private createUser: CreateUser;
+  private validator: Validator;
 
-  constructor(createUser: CreateUser) {
+  constructor(createUser: CreateUser, validator: Validator) {
     this.createUser = createUser;
+    this.validator = validator;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
-    console.log("request = > ", request);
-    await this.createUser.execute();
-    //Add validation here
-    return ok({ message: "kkk" });
+    try {
+      console.log("request = > ", request);
+
+      const error = this.validator.validate(request);
+
+      if (error.isLeft()) {
+        return badRequest(error.value);
+      }
+
+      const { email, modules, type } = request;
+
+      const createdOrError = await this.createUser.create({
+        email,
+        modules,
+        type,
+      });
+
+      if (createdOrError.isLeft()) {
+        return forbidden(createdOrError.value);
+      }
+      //Add validation here
+      return created(createdOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
   }
 }
 
 export namespace CreateUserController {
-  export type Request = {
-    email: string;
-    type: string;
-    modules: Array<string>;
-  };
+  export type Request = CreateUserDTO.Params;
 }

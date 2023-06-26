@@ -1,9 +1,76 @@
+import { User } from "../../../../domain/entities/user/user";
+
+export namespace AccountRepository {
+  export type system_modules_permissions = {
+    news_manager: {
+      read: boolean;
+      write: boolean;
+    };
+    registers: {
+      read: boolean;
+      write: boolean;
+    };
+    users_manager: {
+      read: boolean;
+      write: boolean;
+    };
+  };
+}
+
 export class AccountRepository {
-  async add(data: any): Promise<any> {}
+  async add(data: {
+    email: string;
+    type: "admin" | "basic";
+    modules: AccountRepository.system_modules_permissions;
+  }): Promise<boolean> {
+    return true;
+  }
 
-  async loadByEmail(email: string): Promise<any> {}
+  async loadAll(): Promise<Array<User>> {
+    return [];
+  }
 
-  async checkByEmail(email: string): Promise<any> {}
+  async update(data: {
+    id: number;
+    email: string;
+    name: string;
+    login: string;
+    password: string;
+  }): Promise<boolean> {
+    return true;
+  }
+
+  async loadByEmail(email: string): Promise<User | null> {
+    const user = User.create({
+      email: "davisp@gmail.com",
+      type: "admin",
+    });
+    return user.value;
+  }
+
+  async loadByLogin(login: string): Promise<User | null> {
+    const user = User.create({
+      email: "davisp@gmail.com",
+      type: "admin",
+    });
+    return user.value;
+  }
+
+  async deleteById(id: number): Promise<boolean> {
+    return true;
+  }
+
+  async loadById(id: number): Promise<User | null> {
+    const user = User.create({
+      email: "davisp@gmail.com",
+      type: "admin",
+    });
+    return user.value;
+  }
+
+  async checkByEmail(email: string): Promise<boolean> {
+    return false;
+  }
 
   async updateAccessToken(id: string, token: string): Promise<void> {}
 
