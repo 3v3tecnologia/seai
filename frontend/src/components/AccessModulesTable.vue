@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="moduleOption in modulesOptions" :key="moduleOption.value">
+          <tr v-for="(moduleOption, index) in modulesOptions" :key="index">
             <th scope="row" colspan="3">{{ moduleOption.title }}</th>
             <td>
               <div class="wrapper-select">
@@ -62,23 +62,23 @@ const baseAccessModules = {
   register: baseValuesAccess,
 };
 
-const modulesOptions = [
+const modulesOptions = ref([
   {
     title: "Notícias",
     value: "reports",
-    access: baseAccessModules,
+    access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
   {
     title: "Cadastro",
     value: "register",
-    access: baseAccessModules,
+    access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
   {
     title: "Usuários",
     value: "users",
-    access: baseAccessModules,
+    access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
-];
+]);
 
 defineProps({
   label: String,
@@ -103,6 +103,39 @@ const emit = defineEmits(["update:modelValue"]);
 watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
+
+// TODO IMPLEMENT LOGIC TO PUT ALL TRUE IF CAN REGISTER AND ALL FALSE IF CANT READ
+// watch(modulesOptions.value, (newVal, oldVal) => {
+//   const positiveOption = optionsSelect.find((opt) => opt.value);
+//   const negativeOption = optionsSelect.find((opt) => !opt.value);
+
+//   newVal.forEach((moduleOpt, index) => {
+//     const oldRegisterValue = oldVal[index].access.register;
+//     const newRegisterValue = newVal[index].access.register;
+
+//     const oldReadValue = oldVal[index].access.read;
+//     const newReadValue = newVal[index].access.read;
+//     console.log(
+//       "bb",
+//       oldRegisterValue,
+//       newRegisterValue,
+//       oldReadValue,
+//       newReadValue
+//     );
+
+//     if (
+//       newRegisterValue == positiveOption?.title &&
+//       oldRegisterValue == negativeOption?.title
+//     ) {
+//       moduleOpt.access.read = positiveOption?.title;
+//     } else if (
+//       oldReadValue == positiveOption?.title &&
+//       newReadValue == negativeOption?.title
+//     ) {
+//       moduleOpt.access.register = negativeOption?.title;
+//     }
+//   });
+// });
 </script>
 
 <style lang="scss" scoped>

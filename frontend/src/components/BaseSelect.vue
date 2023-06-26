@@ -52,7 +52,6 @@ watch(
 const emit = defineEmits(["update:modelValue"]);
 
 watch(inputValue, (val) => {
-  console.log(inputValue);
   emit("update:modelValue", val);
 });
 </script>
