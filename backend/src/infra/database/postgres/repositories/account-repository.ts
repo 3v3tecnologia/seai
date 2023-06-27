@@ -1,4 +1,5 @@
 import { User } from "../../../../domain/entities/user/user";
+import { UserPassword } from "../../../../domain/entities/user/userPassword";
 
 export namespace AccountRepository {
   export type system_modules_permissions = {
@@ -41,10 +42,13 @@ export class AccountRepository {
   }
 
   async loadByEmail(email: string): Promise<User | null> {
-    const user = User.create({
-      email: "davisp@gmail.com",
-      type: "admin",
-    });
+    const user = User.create(
+      {
+        email: "davispenha@gmail.com",
+        type: "admin",
+      },
+      1
+    );
     return user.value;
   }
 
@@ -52,6 +56,7 @@ export class AccountRepository {
     const user = User.create({
       email: "davisp@gmail.com",
       type: "admin",
+      password: "123132",
     });
     return user.value;
   }
@@ -61,10 +66,16 @@ export class AccountRepository {
   }
 
   async loadById(id: number): Promise<User | null> {
-    const user = User.create({
-      email: "davisp@gmail.com",
-      type: "admin",
-    });
+    const user = User.create(
+      {
+        email: "davisp@gmail.com",
+        type: "admin",
+        password: "123132",
+        login: "davi",
+        name: "davi",
+      },
+      1
+    );
     return user.value;
   }
 

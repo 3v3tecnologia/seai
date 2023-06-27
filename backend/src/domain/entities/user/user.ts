@@ -1,26 +1,21 @@
 import { Email } from "./email";
 import { InvalidEmailError } from "./errors/invalid-email";
-import { InvalidLoginError } from "./errors/invalid-login";
-import { InvalidPasswordError } from "./errors/invalid-password";
-import { UserLogin } from "./login";
-import { UserName } from "./name";
-import { UserPassword } from "./userPassword";
 interface UserProps {
-  name?: UserName;
-  login?: UserLogin;
-  email: Email;
-  password?: UserPassword;
-  type: "admin" | "stadart";
+  name?: string;
+  login?: string;
+  email: string;
+  password?: string | null;
+  type: "admin" | "standart";
   created_at?: Date;
   updated_at?: Date;
 }
 
 interface UserParams {
-  name?: UserName;
-  login?: UserLogin;
+  name?: string;
+  login?: string;
   email: string;
-  password?: UserPassword;
-  type: "admin" | "stadart";
+  password?: string;
+  type: "admin" | "standart";
   created_at?: Date;
   updated_at?: Date;
 }
@@ -31,11 +26,11 @@ type Message = {
 };
 
 export class User {
-  public readonly name: UserName | null;
-  public readonly login: UserLogin | null;
-  public readonly email: Email;
-  public readonly password: UserPassword | null;
-  public readonly type: "admin" | "stadart";
+  public readonly name: string | null;
+  public readonly login: string | null;
+  public email: string;
+  public password: string | null;
+  public readonly type: "admin" | "standart";
   public created_at?: Date;
   public updated_at?: Date;
   private readonly _id: number | undefined;
@@ -47,7 +42,7 @@ export class User {
 
     this.name = props.name || null;
     this.login = props.login || null;
-    this.password = null;
+    this.password = props.password || null;
     this.created_at = props.created_at;
     this.updated_at = props.updated_at;
   }
@@ -65,7 +60,7 @@ export class User {
         value: new InvalidEmailError(props.email),
       };
     }
-    const user = new User({ ...props, email: emailOrError.value }, id);
+    const user = new User({ ...props, email: props.email }, id);
 
     return {
       isError: false,

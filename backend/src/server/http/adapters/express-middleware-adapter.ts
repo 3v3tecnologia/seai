@@ -13,14 +13,18 @@ export const adaptMiddleware = (middleware: Middleware) => {
     const req = {
       accessToken: token,
       ...request.headers,
+      id: request.params.id ? request.params.id : request.body.userId,
     };
 
+    console.log(req);
     const result = await middleware.handle(req);
 
     if (result.statusCode === 200) {
       const userInfo = result.body;
 
-      Object.assign(request, userInfo);
+      if (!Reflect.has(request, "accountId")) {
+        Object.assign(request, userInfo);
+      }
 
       return next();
     }

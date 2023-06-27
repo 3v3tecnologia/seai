@@ -14,14 +14,14 @@ export class DeleteUserController implements Controller<any> {
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
-    await this.deleteUser.execute(request.user_id)
+    const result = await this.deleteUser.execute(request.user_id);
     //Add validation here
-    return ok({ message: "kkk" });
+    return ok({ message: result.value });
   }
 }
 
 export namespace DeleteUserController {
   export type Request = {
-    user_id:number
+    user_id: number;
   };
 }

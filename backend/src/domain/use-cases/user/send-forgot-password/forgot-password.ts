@@ -1,6 +1,8 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { IDateProvider } from "../../../../infra/dateprovider/protocols/dateprovider";
+import env from "../../../../server/http/env";
 import { Either, left, right } from "../../../../shared/Either";
+import { TokenProvider } from "../authentication/ports/token-provider";
 import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
 import { AccountEmailNotFound } from "../sign-up/errors/user-email-not-found";
 
@@ -10,19 +12,20 @@ export class ForgotPassword {
   private readonly accountRepository: AccountRepository;
   private readonly sendEmailToUser: SendEmailToUser;
   private readonly dateProvider: IDateProvider;
+  private readonly tokenProvider: TokenProvider;
 
   constructor(
-    accountRepository: AccountRepository,g
+    accountRepository: AccountRepository,
     sendEmailToUser: SendEmailToUser,
-    dateProvider: IDateProvider
+    dateProvider: IDateProvider,
+    tokenProvider: TokenProvider
   ) {
     this.accountRepository = accountRepository;
     this.sendEmailToUser = sendEmailToUser;
     this.dateProvider = dateProvider;
+    this.tokenProvider = tokenProvider;
   }
-  async execute(
-    email: string
-  ): Promise<Either<AccountEmailNotFound , string>> {
+  async execute(email: string): Promise<Either<AccountEmailNotFound, string>> {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.loadByEmail(email);
 
@@ -30,22 +33,25 @@ export class ForgotPassword {
       return left(new AccountEmailNotFound(email));
     }
 
-    const token = uuidV4()
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: account.id as number,
+      },
+      "1d"
+    );
 
-    const exp_date = this.dateProvider.addHours(3)
+    // const exp_date = this.dateProvider.addHours(3);
 
-        await this.usersTokenRepository.create({
-            expires_date: exp_date,
-            refresh_token: token,
-            user_id: user.id,
-        })
+    const port = env.port;
+
+    const link = `http://localhost:${port}/api/login/password/reset?token=${token}`;
 
     const msg = `
       Você está recebendo esta mensagem por que você (ou alguém) solicitou a redefinição de senha da conta ${account.login} (login) do SEAI.<br>
       Por favor, clique no link abaixo ou copie e cole no seu navegador para completar o processo:<br><br>
 
 
-      <a href="http://seai.com/create-user-account?action=verify&token=${token}">http://seai.com/create-user-account?action=verify&token=${token}</a><br><br>
+      <a href="${link}">${link}</a><br><br>
 
       Se houver algum questionamento você pode entrar em contato com suporteseai@email.com <br>
 
@@ -56,9 +62,10 @@ export class ForgotPassword {
 
     `;
 
+    console.log("ENVIANDO = ", account);
     await this.sendEmailToUser.send(
       {
-        email: account.email.value,
+        email: account.email,
       },
       {
         subject: "Bem vindo ao SEAI",
@@ -67,7 +74,8 @@ export class ForgotPassword {
       }
     );
 
-    return right(`Email de recuperação de senha enviado com sucesso para ${account.email.value}`)
-    
+    return right(
+      `Email de recuperação de senha enviado com sucesso para ${account.email}`
+    );
   }
 }

@@ -6,7 +6,6 @@ import {
 
 export class NodemailerEmailService implements EmailServiceProtocol {
   async send(options: EmailService.EmailOptions): Promise<void> {
-    console.info(options)
     const transporter = nodemailer.createTransport({
       host: options.host,
       port: options.port,

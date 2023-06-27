@@ -1,19 +1,15 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 dotenv.config({
-  path:".env"
-})
+  path: ".env",
+});
 import { setupApp } from "./app";
 import { terminate } from "./gracefull-shutdown";
-
 
 import env from "./env";
 
 let server;
 (async () => {
   const app = await setupApp();
-
-  console.log("env ",process.env)
-  console.log("proces.env ",env)
 
   server = app.listen(env.port, () => {
     console.log(`Server listening in port ${env.port}`);

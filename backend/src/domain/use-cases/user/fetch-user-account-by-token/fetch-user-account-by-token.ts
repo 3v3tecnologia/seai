@@ -31,18 +31,21 @@ export class FetchUserAccountByTokenUseCase
       token = await this.tokenDecrypt.verify(accessToken);
       console.log("TOKEN = ", token);
     } catch (error) {
-      console.error("[ERROR] - Token inválido :::",error);
+      console.error("[ERROR] - Token inválido :::", error);
       // token inválido
       return null;
     }
 
-    // if (token) {
-    //   const user = await this.userAccountRepository.loadByToken(token, role);
+    if (token) {
+      const user = await this.userAccountRepository.loadByToken(
+        accessToken,
+        role
+      );
 
-    //   if (user) {
-    //     return user;
-    //   }
-    // }
+      if (user) {
+        return user;
+      }
+    }
 
     return null;
   }

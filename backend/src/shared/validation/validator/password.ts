@@ -24,23 +24,3 @@ export class PasswordValidator implements Validator {
     return right(null);
   }
 }
-
-export class ConfirmPasswordValidator implements Validator {
-  private readonly fieldName: any;
-
-  constructor(field: any) {
-    this.fieldName = field;
-  }
-  validate({
-    plainPassword,
-    plainConfirmPassword,
-  }: {
-    plainPassword: string;
-    plainConfirmPassword: string;
-  }): Either<UnmatchedPasswordError, null> {
-    if (plainPassword !== plainConfirmPassword) {
-      return left(new UnmatchedPasswordError());
-    }
-    return right(null);
-  }
-}

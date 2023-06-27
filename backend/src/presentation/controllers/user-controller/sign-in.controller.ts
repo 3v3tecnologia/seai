@@ -2,7 +2,7 @@ import { CreateUser } from "../../../domain/use-cases/user/create-user/create-us
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok, serverError } from "../helpers";
+import { forbidden, ok, serverError } from "../helpers";
 import { SignIn } from "../../../domain/use-cases/user/sign-in";
 
 // Controllers são classes puras e não devem depender de frameworks
@@ -16,11 +16,15 @@ export class SignInController implements Controller<any> {
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
       console.log("request = > ", request);
-    await this.signIn.execute(request);
-    //Add validation here
-    return ok({ message: "login" });
+      const result = await this.signIn.execute(request);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+      //Add validation here
+      return ok({ message: result.value });
     } catch (error) {
-      return serverError(error as Error)
+      return serverError(error as Error);
     }
   }
 }

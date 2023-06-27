@@ -30,6 +30,7 @@ export class SendEmailToUser {
       attachments: [],
     };
 
+    console.log(options);
     await this.emailService.send(options);
   }
 }

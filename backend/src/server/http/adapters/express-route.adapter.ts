@@ -7,6 +7,7 @@ export const adaptRoute = (controller: Controller) => {
     const req = {
       ...(request.body || {}),
       ...(request.params || {}),
+      ...(request.query || {}),
     };
 
     const res = await controller.handle(req);
@@ -15,10 +16,10 @@ export const adaptRoute = (controller: Controller) => {
       return response.status(res.statusCode).json(res.body);
     }
 
-    console.error(res)
+    console.error(res);
     //Enviar a mensagem do erro, evitar passar muitas informações detalhadas
     return response.status(res.statusCode).json({
-      error:res.body.message
+      error: res.body.message,
     });
   };
 };

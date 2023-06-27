@@ -43,6 +43,7 @@ export class SignUp {
 
     const hashedPassword = await this.encoder.hash(user.password);
 
+    console.log("hash = ", hashedPassword);
     // TODO: deve passar todos os campos do 'account'
     await this.accountRepository.update({
       id: 1,

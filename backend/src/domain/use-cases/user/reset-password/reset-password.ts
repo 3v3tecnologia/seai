@@ -1,55 +1,66 @@
-export class ForgotPassword {
-    private readonly accountRepository: AccountRepository;
-    private readonly sendEmailToUser: SendEmailToUser;
-  
-    constructor(
-      accountRepository: AccountRepository,
-      sendEmailToUser: SendEmailToUser
-    ) {
-      this.accountRepository = accountRepository;
-      this.sendEmailToUser = sendEmailToUser;
-    }
-    async execute(
-      email: string
-    ): Promise<Either<AccountEmailNotFound , string>> {
-      // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
-      const account = await this.accountRepository.loadByEmail(email);
-  
-      if (!account) {
-        return left(new AccountEmailNotFound(email));
-      }
-  
-      const token = "asAxnZsd2d12sas123#@$sdasdz11";
-  
-      const msg = `
-        Você está recebendo esta mensagem por que você (ou alguém) solicitou a redefinição de senha da conta ${account.login} (login) do SEAI.<br>
-        Por favor, clique no link abaixo ou copie e cole no seu navegador para completar o processo:<br><br>
-  
-  
-        <a href="http://seai.com/create-user-account?action=verify&token=${token}">http://seai.com/create-user-account?action=verify&token=${token}</a><br><br>
-  
-        Se houver algum questionamento você pode entrar em contato com suporteseai@email.com <br>
-  
-        Se não reconhece a conta do SEAI  email@email.com, você pode clicar aqui para remover seu endereço de email dessa conta.<br><br>
-  
-        Obrigado<br>
-        Equipe SEAI<br>
-  
-      `;
-  
-      await this.sendEmailToUser.send(
-        {
-          email: account.email.value,
-        },
-        {
-          subject: "Bem vindo ao SEAI",
-          text: "Recuperação de senha!",
-          html: msg,
-        }
-      );
-  
-      return right(`Email de recuperação de senha enviado com sucesso para ${account.email.value}`)
-      
-    }
+import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
+import { Either, left, right } from "../../../../shared/Either";
+import { Encoder } from "../../ports/encoder";
+import {
+  TokenProvider,
+  TokenResponse,
+} from "../authentication/ports/token-provider";
+
+export class ResetPassword {
+  private readonly accountRepository: AccountRepository;
+  // private readonly sendEmailToUser: SendEmailToUser;
+  private readonly tokenProvider: TokenProvider;
+  private readonly encoder: Encoder;
+
+  // sendEmailToUser: SendEmailToUser,
+  constructor(
+    accountRepository: AccountRepository,
+    tokenProvider: TokenProvider,
+    encoder: Encoder
+  ) {
+    this.accountRepository = accountRepository;
+    // this.sendEmailToUser = sendEmailToUser;
+    this.tokenProvider = tokenProvider;
+    this.encoder = encoder;
   }
-  
+  async execute(
+    access_token: string,
+    password: string
+  ): Promise<Either<Error, null>> {
+    if (!access_token) {
+      return left(new Error("Token not informed"));
+    }
+
+    let token: TokenResponse;
+
+    try {
+      token = await this.tokenProvider.verify(access_token);
+    } catch (error) {
+      console.error(error);
+      return left(new Error("Token invalid"));
+    }
+    console.log("token ", token);
+    console.log("RESET PASSWORD = ", token.exp, " ", token.sub);
+
+    const user = await this.accountRepository.loadById(Number(token.sub));
+
+    if (!user) {
+      return left(new Error("User not found"));
+    }
+
+    const newPassword = await this.encoder.hash(password);
+
+    user.password = newPassword;
+
+    await this.accountRepository.update({
+      email: user.email,
+      id: user.id as number,
+      login: user.login as string,
+      name: user.name as string,
+      password: user.password,
+    });
+
+    console.log("Usuário atualizado com sucesso");
+    return right(null);
+  }
+}

@@ -12,7 +12,8 @@ export namespace AuthenticationDTO {
 
 export interface AuthenticationService {
   auth(
-    params: AuthenticationDTO.params
+    params: AuthenticationDTO.params,
+    test?: string
   ): Promise<
     Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
   >;

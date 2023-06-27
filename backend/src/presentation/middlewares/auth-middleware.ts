@@ -1,39 +1,37 @@
 import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
+import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
 import { AccessDeniedError } from "../controllers/errors";
 import { forbidden, ok, serverError } from "../controllers/helpers";
-import { FetchUserAccountByTokenUseCase } from "../../domain/use-cases/user/fetch-user-account-by-token/fetch-user-account-by-token";
 
 export class AuthMiddleware implements Middleware {
-  private readonly fetchUserAccountByToken: FetchUserAccountByTokenUseCase;
-  private readonly role?: string;
+  private readonly tokenManager: TokenProvider;
 
-  constructor(
-    fetchUserAccountByToken: FetchUserAccountByTokenUseCase,
-    role?: string
-  ) {
-    this.fetchUserAccountByToken = fetchUserAccountByToken;
-    this.role = role;
+  constructor(tokenManager: TokenProvider) {
+    this.tokenManager = tokenManager;
   }
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
     try {
       const { accessToken } = request;
 
-      if (accessToken) {
-        const account = await this.fetchUserAccountByToken.load(
-          accessToken,
-          this.role
-        );
+      if (!accessToken) {
+        return forbidden(new Error("Invalid token"));
+      }
 
-        if (account) {
-          return ok({ accountId: account.id });
+      // checar possibilidade de tratar o error lançado pelo o método verify
+      const decodedTokenOrError = await this.tokenManager.verify(accessToken);
+
+      if (decodedTokenOrError) {
+        if (decodedTokenOrError.sub) {
+          return ok({ accountId: decodedTokenOrError.sub });
         }
       }
 
       return forbidden(new AccessDeniedError());
     } catch (error) {
+      console.error("[auth-middleware] ", error);
       return serverError(error as Error);
     }
   }
@@ -41,6 +39,7 @@ export class AuthMiddleware implements Middleware {
 
 export namespace AuthMiddleware {
   export type Request = {
-    accessToken?: string;
+    accessToken: string;
+    id?: number;
   };
 }

@@ -35,9 +35,11 @@ export class UserAuthentication implements AuthenticationService {
       return left(new AccountNotFoundError(login));
     }
 
+    console.log("account ", account);
+
     const isMatch = await this.encoder.compare(
       password,
-      account.password?.value() as string
+      account.password as string
     );
 
     if (isMatch === false) {
@@ -46,9 +48,12 @@ export class UserAuthentication implements AuthenticationService {
 
     const userId = account.id as number;
 
-    const token = await this.tokenProvider.sign({
-      accountId: userId,
-    });
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: userId,
+      },
+      "3d"
+    );
 
     return right({
       accessToken: token,
