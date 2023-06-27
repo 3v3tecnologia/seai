@@ -14,16 +14,18 @@ export class AdminMiddleware implements Middleware {
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
     try {
-      const { id } = request;
+      const { accountId } = request;
 
-      if (!id) {
+      console.log("request::: ", request);
+
+      if (!accountId) {
         return forbidden(new Error("Invalid id."));
       }
 
-      const account = await this.accountRepository.loadById(id);
+      const account = await this.accountRepository.loadById(accountId);
 
       if (account?.type === "admin") {
-        return ok({ accountId: id });
+        return ok({ accountId });
       }
 
       return forbidden(new AccessDeniedError());
@@ -35,6 +37,6 @@ export class AdminMiddleware implements Middleware {
 
 export namespace AuthMiddleware {
   export type Request = {
-    id: number;
+    accountId: number;
   };
 }

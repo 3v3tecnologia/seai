@@ -11,9 +11,11 @@ export const adaptMiddleware = (middleware: Middleware) => {
     const token = splittedHeader?.[1];
 
     const req = {
+      accountId: request.accountId,
       accessToken: token,
       ...request.headers,
-      id: request.params.id ? request.params.id : request.body.userId,
+      ...(request.query || {}),
+      ...(request.params || {}),
     };
 
     console.log(req);

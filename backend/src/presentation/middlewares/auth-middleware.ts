@@ -25,7 +25,8 @@ export class AuthMiddleware implements Middleware {
 
       if (decodedTokenOrError) {
         if (decodedTokenOrError.sub) {
-          return ok({ accountId: decodedTokenOrError.sub });
+          console.log("auth middleware ==== ", decodedTokenOrError);
+          return ok({ accountId: decodedTokenOrError.accountId });
         }
       }
 

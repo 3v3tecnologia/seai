@@ -6,6 +6,7 @@ export type TokenResponse = {
   sub: string;
   exp?: number;
   iat?: number;
+  accountId?: number;
 };
 export interface TokenProvider {
   sign(payload: TokenPayload, expires?: string): Promise<string>;

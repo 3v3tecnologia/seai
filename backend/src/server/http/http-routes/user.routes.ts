@@ -33,7 +33,12 @@ export const userRouter = (router: Router): Router => {
 
   router.get("/get/:id", authorization, adaptRoute(makeCreateUserController()));
 
-  router.get("/list", adminAuth, adaptRoute(makeGetUsersController()));
+  router.get(
+    "/list",
+    authorization,
+    adminAuth,
+    adaptRoute(makeGetUsersController())
+  );
 
   return router;
 };

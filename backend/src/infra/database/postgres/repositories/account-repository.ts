@@ -28,7 +28,13 @@ export class AccountRepository {
   }
 
   async loadAll(): Promise<Array<User>> {
-    return [];
+    return [
+      User.create({
+        email: "davisp@gmail.com",
+        type: "admin",
+        password: "123132",
+      }).value,
+    ];
   }
 
   async update(data: {
