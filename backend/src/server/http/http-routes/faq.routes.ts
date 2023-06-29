@@ -7,6 +7,11 @@ import {
   registerManagerWriteAccessAuth,
 } from "../http-middlewares";
 
+import {
+  makeFetchFaqCategoriesController,
+  makeFetchFaqByCategoryController,
+} from "../factories/controllers/faq";
+
 export const faqRouter = (): Router => {
   const router = Router();
   router.post(
@@ -33,8 +38,15 @@ export const faqRouter = (): Router => {
       return res.status(200).json({ message: "ok" });
     }
   );
-  router.get("/list", (req, res) => {
-    return res.status(200).json({ message: "ok" });
-  });
+  router.get(
+    "/categories/list",
+    authorization,
+    adaptRoute(makeFetchFaqCategoriesController())
+  );
+  router.get(
+    "/list",
+    authorization,
+    adaptRoute(makeFetchFaqByCategoryController())
+  );
   return router;
 };
