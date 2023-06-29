@@ -13,7 +13,9 @@ export const adaptRoute = (controller: Controller) => {
     const res = await controller.handle(req);
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      return response.status(res.statusCode).json(res.body);
+      return response.status(res.statusCode).json({
+        data: res.body,
+      });
     }
 
     console.error(res);
