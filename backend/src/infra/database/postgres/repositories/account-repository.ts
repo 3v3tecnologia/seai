@@ -12,17 +12,24 @@ export interface UserResponse {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface ModulesResponse {
+  id: number;
+  name: string;
+}
 export namespace AccountRepository {
   export type system_modules_permissions = {
     news_manager: {
+      id?: number;
       read: boolean;
       write: boolean;
     };
     registers: {
+      id?: number;
       read: boolean;
       write: boolean;
     };
     users_manager: {
+      id?: number;
       read: boolean;
       write: boolean;
     };
@@ -43,16 +50,84 @@ export class AccountRepository {
       .into("User");
 
     console.log("id ", id);
+    // preciso do ID do usuário
+    // previso do ID do módulo
 
-    // await connection
-    //   .insert({
-    //     Fk_User: id,
-    //     Fk_Module: "",
-    //     Permission: "",
-    //     Description: "",
-    //   })
-    //   .into("User_Access");
+    const user_id = id[0];
+
+    await connection
+      .insert({
+        Fk_User: user_id,
+        Fk_Module: data.modules.news_manager.id,
+        Read: data.modules.news_manager.read,
+        Write: data.modules.news_manager.write,
+      })
+      .into("User_Access");
+
+    await connection
+      .insert({
+        Fk_User: user_id,
+        Fk_Module: data.modules.registers.id,
+        Read: data.modules.registers.read,
+        Write: data.modules.registers.write,
+      })
+      .into("User_Access");
+
+    await connection
+      .insert({
+        Fk_User: user_id,
+        Fk_Module: data.modules.users_manager.id,
+        Read: data.modules.users_manager.read,
+        Write: data.modules.users_manager.write,
+      })
+      .into("User_Access");
+
     return true;
+  }
+
+  async loadModules(): Promise<Array<ModulesResponse> | null> {
+    const modules = await connection.select("*").from("Module");
+
+    console.log("loadAllModules = ", modules);
+
+    if (!modules) {
+      return null;
+    }
+    return modules.map((module) => {
+      return {
+        id: module.Id,
+        name: module.Name,
+      };
+    });
+  }
+  async loadUserModules(
+    id_user: number
+  ): Promise<AccountRepository.system_modules_permissions | null> {
+    const modules = await connection
+      .select("*")
+      .where({ Fk_User: id_user })
+      .from("User_Access")
+      .innerJoin("Module", "Module.Id", "User_Access.Fk_Module");
+
+    console.log("loadAllModules = ", modules);
+
+    if (!modules) {
+      return null;
+    }
+
+    const mods = {} as AccountRepository.system_modules_permissions;
+
+    modules.forEach((module) => {
+      Object.assign(mods, {
+        [module.Name]: {
+          id: module.Id,
+          read: module.Read,
+          write: module.Write,
+        },
+      });
+    });
+
+    return mods;
   }
 
   async loadAll(): Promise<Array<UserResponse> | null> {

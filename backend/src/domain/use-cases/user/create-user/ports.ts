@@ -11,14 +11,17 @@ export interface CreateUserProtocol {
 export namespace CreateUserDTO {
   type system_modules_permissions = {
     news_manager: {
+      id?: number;
       read: boolean;
       write: boolean;
     };
     registers: {
+      id?: number;
       read: boolean;
       write: boolean;
     };
     users_manager: {
+      id?: number;
       read: boolean;
       write: boolean;
     };

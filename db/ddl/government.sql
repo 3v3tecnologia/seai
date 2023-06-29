@@ -22,13 +22,22 @@ CREATE TABLE "Module"(
    PRIMARY KEY("Id")
 );
 
-CREATE TYPE permission_types AS ENUM ('1','2','3');
+-- CREATE TYPE permission_types AS ENUM ('1','2','3');
 
+-- CREATE TABLE "User_Access"(
+--    "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id") ON DELETE CASCADE,
+--    "Fk_Module" INTEGER NOT NULL REFERENCES "Module"("Id"),
+--    "Permission" permission_types,
+--    "Description" VARCHAR(50) NOT NULL,
+-- 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+-- 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+-- );
 CREATE TABLE "User_Access"(
    "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id") ON DELETE CASCADE,
    "Fk_Module" INTEGER NOT NULL REFERENCES "Module"("Id"),
-   "Permission" permission_types,
-   "Description" VARCHAR(50) NOT NULL,
+   "Read" BOOLEAN DEFAULT NULL,
+   "Write" BOOLEAN DEFAULT NULL,
+   "Description" VARCHAR(50) DEFAULT NULL,
 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );

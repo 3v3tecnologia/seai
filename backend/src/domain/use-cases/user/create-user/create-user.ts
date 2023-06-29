@@ -26,13 +26,34 @@ export class CreateUser implements CreateUserProtocol {
   }
   async create(
     user: CreateUserDTO.Params
-  ): Promise<Either<UserAlreadyExistsError, string>> {
+  ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
     const alreadyExists = await this.accountRepository.checkByEmail(user.email);
 
     if (alreadyExists) {
       return left(new UserAlreadyExistsError());
     }
+
+    // validar se os módulos existem mesmo
+    const modules = await this.accountRepository.loadModules();
+
+    if (!modules) {
+      return left(new Error("Modules not found"));
+    }
+
+    const userModulesAccess = [
+      user.modules.news_manager.id,
+      user.modules.registers.id,
+      user.modules.users_manager.id,
+    ];
+
+    userModulesAccess.forEach((module) => {
+      if (
+        modules.some((module_access) => module_access.id === module) === false
+      ) {
+        return left(new Error("User module access not exists"));
+      }
+    });
 
     await this.accountRepository.add(user);
 
