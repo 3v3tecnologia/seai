@@ -5,3 +5,5 @@ export * from "./content-type";
 export * from "./cors";
 export * from "./user-manager-read";
 export * from "./user-manager-write";
+export * from "./register-manager-read";
+export * from "./register-manager-write";

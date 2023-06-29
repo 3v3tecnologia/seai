@@ -11,7 +11,8 @@ import { makeGetUsersController } from "../factories/controllers/fetch-user.cont
 import { makeDeleteUserController } from "../factories/controllers/delete-user-by-id.controller-factory";
 import { makeGetUserAccessModulesController } from "../factories/controllers/load-users-access-modules-factory";
 
-export const userRouter = (router: Router): Router => {
+export const userRouter = (): Router => {
+  const router = Router();
   // criar novo usuário
   router.post(
     "/register",

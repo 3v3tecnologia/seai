@@ -5,7 +5,8 @@ import { makeSignInController } from "../factories/controllers/sign-in.controlle
 import { makeSignUpController } from "../factories/controllers/sign-up.controller-factory";
 import { makeResetUserController } from "../factories/controllers/reset-user-password.controller-factory";
 
-export const loginRouter = (router: Router): Router => {
+export const loginRouter = (): Router => {
+  const router = Router();
   router.post("/password/reset", adaptRoute(makeResetUserController()));
   router.post("/password/forgot", adaptRoute(makeForgotPasswordController()));
   router.post("/sign-up", adaptRoute(makeSignUpController()));

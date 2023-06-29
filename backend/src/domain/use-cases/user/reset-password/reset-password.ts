@@ -39,8 +39,6 @@ export class ResetPassword {
       console.error(error);
       return left(new Error("Token invalid"));
     }
-    console.log("token ", token);
-    console.log("RESET PASSWORD = ", token.exp, " ", token.sub);
 
     const user = await this.accountRepository.loadById(Number(token.sub));
 
