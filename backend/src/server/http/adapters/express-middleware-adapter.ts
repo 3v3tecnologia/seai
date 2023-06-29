@@ -18,7 +18,6 @@ export const adaptMiddleware = (middleware: Middleware) => {
       ...(request.params || {}),
     };
 
-    console.log(req);
     const result = await middleware.handle(req);
 
     if (result.statusCode === 200) {

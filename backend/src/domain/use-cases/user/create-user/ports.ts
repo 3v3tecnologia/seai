@@ -26,7 +26,7 @@ export namespace CreateUserDTO {
 
   export type Params = {
     email: string;
-    type: "admin" | "basic";
+    type: "admin" | "standart";
     modules: system_modules_permissions;
   };
 

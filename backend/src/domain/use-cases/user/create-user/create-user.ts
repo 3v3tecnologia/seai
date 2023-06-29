@@ -7,8 +7,6 @@ import { Either, left, right } from "./../../../../shared/Either";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { CreateUserDTO, CreateUserProtocol } from "./ports";
 
-import { v4 as uuidV4 } from "uuid";
-
 export class CreateUser implements CreateUserProtocol {
   private readonly accountRepository: AccountRepository;
   private readonly sendEmailToUser: SendEmailToUser;

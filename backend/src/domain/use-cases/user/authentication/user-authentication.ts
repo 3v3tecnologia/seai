@@ -52,7 +52,7 @@ export class UserAuthentication implements AuthenticationService {
       {
         accountId: userId,
       },
-      "3d"
+      "7d"
     );
 
     return right({
