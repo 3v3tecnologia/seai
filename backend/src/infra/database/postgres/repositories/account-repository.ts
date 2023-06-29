@@ -1,5 +1,3 @@
-import { User } from "../../../../domain/entities/user/user";
-
 import connection from "../connection/knexfile";
 
 export interface UserResponse {
@@ -47,13 +45,10 @@ export class AccountRepository {
         Email: data.email,
         Type: data.type,
       })
+      .returning("Id")
       .into("User");
 
-    console.log("id ", id);
-    // preciso do ID do usuário
-    // previso do ID do módulo
-
-    const user_id = id[0];
+    const user_id = id.length && id[0].Id;
 
     await connection
       .insert({
@@ -109,8 +104,6 @@ export class AccountRepository {
       .from("User_Access")
       .innerJoin("Module", "Module.Id", "User_Access.Fk_Module");
 
-    console.log("loadAllModules = ", modules);
-
     if (!modules) {
       return null;
     }
@@ -129,11 +122,33 @@ export class AccountRepository {
 
     return mods;
   }
+  async loadUserModulesByName(
+    id_user: number,
+    name: string
+  ): Promise<{
+    id?: number;
+    read: boolean;
+    write: boolean;
+  } | null> {
+    const module = await connection
+      .select("*")
+      .where({ Fk_User: id_user })
+      .andWhere({ Name: name })
+      .from("User_Access")
+      .innerJoin("Module", "Module.Id", "User_Access.Fk_Module")
+      .first();
+
+    if (!module) {
+      return null;
+    }
+
+    const mods = { id: module.Id, read: module.Read, write: module.Write };
+
+    return mods;
+  }
 
   async loadAll(): Promise<Array<UserResponse> | null> {
     const users = await connection.select("*").from("User");
-
-    console.log("loadAll = ", users);
 
     if (!users) {
       return null;
@@ -144,7 +159,6 @@ export class AccountRepository {
         name: user.Name,
         login: user.Login,
         email: user.Email,
-        password: user.Password,
         type: user.Type,
         createdAt: user.CreatedAt,
         updatedAt: user.UpdatedAt,
@@ -159,15 +173,12 @@ export class AccountRepository {
     login: string;
     password: string;
   }): Promise<boolean> {
-    console.log("UPDATE ", data);
     const rows = await connection("User").where({ Id: data.id }).update({
       Email: data.email,
       Name: data.name,
       Login: data.login,
       Password: data.password,
     });
-
-    console.log("rows ", rows);
 
     return rows > 0;
   }
@@ -178,8 +189,6 @@ export class AccountRepository {
       .from("User")
       .where("Email", email)
       .first();
-
-    console.log("loadByEmail = ", user);
 
     if (!user) {
       return null;
@@ -204,8 +213,6 @@ export class AccountRepository {
       .where("Login", login)
       .first();
 
-    console.log("loadByLogin = ", user);
-
     if (!user) {
       return null;
     }
@@ -223,8 +230,7 @@ export class AccountRepository {
   }
 
   async deleteById(id: number): Promise<boolean> {
-    const rows = await connection("User").where("Id", id).del();
-    console.log("DELETED ", rows);
+    await connection("User").where("Id", id).del();
     return true;
   }
 
@@ -232,10 +238,8 @@ export class AccountRepository {
     const user = await connection
       .select("*")
       .from("User")
-      .where("Id", id)
+      .where({ Id: id })
       .first();
-
-    console.log("loadById = ", user);
 
     if (!user) {
       return null;

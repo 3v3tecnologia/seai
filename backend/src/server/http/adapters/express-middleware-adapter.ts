@@ -30,6 +30,6 @@ export const adaptMiddleware = (middleware: Middleware) => {
       return next();
     }
 
-    response.status(result.statusCode).json(result.body.message);
+    response.status(result.statusCode).json({ error: result.body.message });
   };
 };

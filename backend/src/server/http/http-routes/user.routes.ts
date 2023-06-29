@@ -2,7 +2,11 @@ import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 import { makeCreateUserController } from "../factories";
 
-import { adminAuth, authorization } from "../http-middlewares";
+import {
+  userWriteAccessAuth,
+  userReadAccessAuth,
+  authorization,
+} from "../http-middlewares";
 import { makeGetUsersController } from "../factories/controllers/fetch-user.controller-factory";
 import { makeDeleteUserController } from "../factories/controllers/delete-user-by-id.controller-factory";
 import { makeGetUserAccessModulesController } from "../factories/controllers/load-users-access-modules-factory";
@@ -12,7 +16,7 @@ export const userRouter = (router: Router): Router => {
   router.post(
     "/register",
     authorization,
-    adminAuth,
+    userWriteAccessAuth,
     adaptRoute(makeCreateUserController())
   );
 
@@ -22,29 +26,35 @@ export const userRouter = (router: Router): Router => {
   router.put(
     "/update/:id",
     authorization,
+    userWriteAccessAuth,
     adaptRoute(makeDeleteUserController())
   );
 
   router.delete(
-    "/delete",
+    "/delete/:id",
     authorization,
-    adminAuth,
-    adaptRoute(makeCreateUserController())
+    userWriteAccessAuth,
+    adaptRoute(makeDeleteUserController())
   );
 
-  router.get("/get/:id", authorization, adaptRoute(makeCreateUserController()));
+  router.get(
+    "/get/:id",
+    authorization,
+    userReadAccessAuth,
+    adaptRoute(makeCreateUserController())
+  );
 
   router.get(
     "/list",
     authorization,
-    adminAuth,
+    userReadAccessAuth,
     adaptRoute(makeGetUsersController())
   );
 
   router.get(
     "/list-user-access/:id",
     authorization,
-    adminAuth,
+    userWriteAccessAuth,
     adaptRoute(makeGetUserAccessModulesController())
   );
 

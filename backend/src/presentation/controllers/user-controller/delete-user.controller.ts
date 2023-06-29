@@ -14,7 +14,7 @@ export class DeleteUserController implements Controller<any> {
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
-    const result = await this.deleteUser.execute(request.user_id);
+    const result = await this.deleteUser.execute(request.id);
     //Add validation here
     return ok({ message: result.value });
   }
@@ -22,6 +22,6 @@ export class DeleteUserController implements Controller<any> {
 
 export namespace DeleteUserController {
   export type Request = {
-    user_id: number;
+    id: number;
   };
 }
