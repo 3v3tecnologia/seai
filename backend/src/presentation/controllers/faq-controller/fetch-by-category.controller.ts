@@ -12,7 +12,9 @@ export class FetchFaqByCategoryController implements Controller {
     this.FetchFaq = FetchFaq;
   }
 
-  async handle(request: FetchFaqController.Request): Promise<HttpResponse> {
+  async handle(
+    request: FetchFaqByCategoryController.Request
+  ): Promise<HttpResponse> {
     try {
       const result = await this.FetchFaq.fetch(request);
 
@@ -28,7 +30,7 @@ export class FetchFaqByCategoryController implements Controller {
   }
 }
 
-export namespace FetchFaqController {
+export namespace FetchFaqByCategoryController {
   export type Request = {
     id_category: number;
   };

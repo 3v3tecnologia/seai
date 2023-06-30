@@ -7,9 +7,9 @@ export interface FaqCategoriesData {
 }
 export interface FaqWithCategoriesData {
   id: number;
-  question: number;
+  question: string;
   answer: string;
-  order: string;
+  order: number;
   created_at?: string;
   updated_at?: string;
   categories: Array<FaqCategoriesData>;

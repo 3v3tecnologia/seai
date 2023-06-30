@@ -1,2 +1,2 @@
-export * from "./fetch-faq-by-category";
-export * from "./fetch-faq-categories.controller";
+export * from "./fetch-faq-by-category-controller-factory";
+export * from "./fetch-faq-categories-controller-factory";

@@ -1,20 +1,20 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchFaqCategoriesProtocol } from "../../../domain/use-cases/faq/fetch-faq-categories/ports/fetch-faq-categories";
-import { created, forbidden, serverError, ok } from "../helpers";
+import { CreateFaqProtocol } from "../../../domain/use-cases/faq/create-faq/ports/create-faq";
+import { forbidden, ok, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class FetchFaqCategoriesController implements Controller {
-  private FetchFaq: FetchFaqCategoriesProtocol;
+export class CreateFaqController implements Controller {
+  private CreateFaq: CreateFaqProtocol;
 
-  constructor(FetchFaq: FetchFaqCategoriesProtocol) {
-    this.FetchFaq = FetchFaq;
+  constructor(CreateFaq: CreateFaqProtocol) {
+    this.CreateFaq = CreateFaq;
   }
 
   async handle(): Promise<HttpResponse> {
     try {
-      const result = await this.FetchFaq.fetch();
+      const result = await this.CreateFaq.create({});
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -28,6 +28,6 @@ export class FetchFaqCategoriesController implements Controller {
   }
 }
 
-export namespace FetchFaqController {
+export namespace CreateFaqController {
   export type Request = {};
 }

@@ -3,7 +3,7 @@ import { Either, right } from "../../../../shared/Either";
 
 import { UpdateFaqDTO, UpdateFaqProtocol } from "./ports/update-faq";
 
-export class UpdateFaqCategory implements UpdateFaqProtocol {
+export class UpdateFaq implements UpdateFaqProtocol {
   private readonly faqRepository: FaqRepository;
 
   constructor(faqRepository: FaqRepository) {

@@ -55,7 +55,26 @@ export class FaqRepository implements FaqRepository {
   async loadByCategory(
     id_category: number
   ): Promise<Array<FaqWithCategoriesData> | null> {
-    return null;
+    const result = [
+      {
+        id: 1,
+        question: "test",
+        answer: "test",
+        order: 1,
+        created_at: "d",
+        updated_at: "y",
+        categories: [
+          {
+            id: 1,
+            title: "games",
+            description: "games",
+            created_at: "d",
+            updated_at: "y",
+          },
+        ],
+      },
+    ];
+    return result;
   }
 
   async loadCategories(): Promise<Array<FaqCategoriesData> | null> {

@@ -19,8 +19,6 @@ let server;
     timeout: 1000,
     coredump: false,
   });
-  console.log(server);
-
   // programmer errors = let this program crash!
   process.on("uncaughtException", exitHandler(1, "Unexpected Error"));
 
