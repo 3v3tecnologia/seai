@@ -1,4 +1,4 @@
-import { Either, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/Either";
 import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 import {
   DeleteFaqCategoryDTO,
@@ -14,7 +14,16 @@ export class DeleteFaqCategory implements DeleteFaqCategoryProtocol {
   async delete(
     request: DeleteFaqCategoryDTO.params
   ): Promise<Either<Error, string | null>> {
+    const exists = await this.faqRepository.loadCategoryById(
+      request.id_category
+    );
+
+    if (!exists) {
+      return left(new Error("Category not exists"));
+    }
+
     await this.faqRepository.deleteCategoryById(request.id_category);
+
     return right("Categoria deletada com sucesso");
   }
 }

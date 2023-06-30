@@ -1,8 +1,8 @@
 import { CreateFaqCategory } from "../../../../../domain/use-cases/faq/create-category/create-faq-category";
 import { CreateFaqCategoryProtocol } from "../../../../../domain/use-cases/faq/create-category/ports/create-faq-category";
-import { FaqRepository } from "../../../../../infra/database/postgres/repositories/faq-repository";
+import { PostgreSQLFaqRepository } from "../../../../../infra/database/postgres/repositories/faq-repository";
 
 export const makeCreateFaqCategory = (): CreateFaqCategoryProtocol => {
-  const repository = new FaqRepository();
+  const repository = new PostgreSQLFaqRepository();
   return new CreateFaqCategory(repository);
 };

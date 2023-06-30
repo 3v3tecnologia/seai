@@ -5,7 +5,7 @@ export namespace CreateFaqDTO {
     question: string;
     answer: string;
     order: string;
-    category_id: number;
+    categories: Array<number>;
   };
 
   export type result = string;

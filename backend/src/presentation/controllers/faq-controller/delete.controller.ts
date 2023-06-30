@@ -12,15 +12,15 @@ export class DeleteFaqController implements Controller {
     this.DeleteFaq = DeleteFaq;
   }
 
-  async handle(): Promise<HttpResponse> {
+  async handle(request: DeleteFaqController.Request): Promise<HttpResponse> {
     try {
-      const result = await this.DeleteFaq.delete();
+      const result = await this.DeleteFaq.delete(request);
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
       //Add validation here
-      return ok(result.value);
+      return ok(`Faq deletado com sucesso`);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -29,5 +29,7 @@ export class DeleteFaqController implements Controller {
 }
 
 export namespace DeleteFaqController {
-  export type Request = {};
+  export type Request = {
+    id: number;
+  };
 }

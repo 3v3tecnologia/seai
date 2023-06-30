@@ -1,4 +1,4 @@
-import { Either, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/Either";
 import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 import { DeleteFaqDTO, DeleteFaqProtocol } from "./ports/delete-faq";
 
@@ -11,7 +11,14 @@ export class DeleteFaq implements DeleteFaqProtocol {
   async delete(
     request: DeleteFaqDTO.params
   ): Promise<Either<Error, DeleteFaqDTO.result>> {
-    // await this.faqRepository.add(request);
+    const exists = await this.faqRepository.loadById(request.id);
+
+    if (!exists) {
+      return left(new Error("Faq not exists"));
+    }
+
+    await this.faqRepository.deleteById(request.id);
+
     return right("Faq deletado com sucesso");
   }
 }

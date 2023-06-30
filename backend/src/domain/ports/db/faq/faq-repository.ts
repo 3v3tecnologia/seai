@@ -27,7 +27,7 @@ export interface FaqRepository {
   loadByCategory(
     id_category: number
   ): Promise<Array<FaqWithCategoriesData> | null>;
-  loadById(id: number): Promise<Array<FaqWithCategoriesData> | null>;
+  loadById(id: number): Promise<FaqWithCategoriesData | null>;
   update(data: {
     id: number;
     question: string;
@@ -35,6 +35,7 @@ export interface FaqRepository {
     order: string;
     categories: Array<number>;
   }): Promise<boolean>;
+  checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
   updateCategory(
     id_categoy: number,
     title: string,
@@ -43,4 +44,5 @@ export interface FaqRepository {
   deleteById(id: number): Promise<boolean>;
   deleteCategoryById(id_category: number): Promise<boolean>;
   loadCategories(): Promise<Array<FaqCategoriesData> | null>;
+  loadCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
 }

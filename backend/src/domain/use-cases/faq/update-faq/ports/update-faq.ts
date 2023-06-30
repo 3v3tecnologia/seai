@@ -1,9 +1,15 @@
 import { Either } from "../../../../../shared/Either";
 
 export namespace UpdateFaqDTO {
-  export type params = any;
+  export type params = {
+    id: number;
+    question: string;
+    answer: string;
+    order: string;
+    categories: Array<number>;
+  };
 
-  export type result = any;
+  export type result = boolean;
 }
 
 export interface UpdateFaqProtocol {
