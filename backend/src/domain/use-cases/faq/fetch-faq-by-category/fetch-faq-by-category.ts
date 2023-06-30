@@ -1,4 +1,4 @@
-import { FaqRepository } from "../ports/faq-repository";
+import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 import { Either, right } from "../../../../shared/Either";
 import {
   FetchFaqByCategoryDTO,

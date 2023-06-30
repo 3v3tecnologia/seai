@@ -1,7 +1,7 @@
 import {
   ITokenRepository,
   IUserToken,
-} from "../../../../domain/use-cases/ports/user-token-repository";
+} from "../../../../domain/ports/user-token-repository";
 
 export class UserTokenRepository implements ITokenRepository {
   private repository: any;

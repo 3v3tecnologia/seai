@@ -1,6 +1,7 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../ports/encoder";
+import { Encoder } from "../../../ports/encoder";
+
 import {
   TokenProvider,
   TokenResponse,
