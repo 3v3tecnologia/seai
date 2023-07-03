@@ -10,6 +10,13 @@ export class RequiredFieldValidator implements Validator {
   }
 
   validate(value: any): Either<Error, null> {
+    console.log(
+      "VALIDATOR ===== ",
+      value + ":::",
+      this.fieldName,
+      " ",
+      Reflect.has(value, this.fieldName)
+    );
     if (!Reflect.has(value, this.fieldName)) {
       return left(new MissingParamsError(this.fieldName));
     }

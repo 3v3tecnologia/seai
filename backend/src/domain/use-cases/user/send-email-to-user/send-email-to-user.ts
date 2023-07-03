@@ -1,5 +1,7 @@
-import { EmailService, EmailServiceProtocol } from "../../ports/email-service";
-
+import {
+  EmailServiceProtocol,
+  EmailService,
+} from "./../../../ports/email-service";
 export class SendEmailToUser {
   private readonly emailService: EmailServiceProtocol;
   private readonly emailOptions: EmailService.EmailOptions;
@@ -30,6 +32,7 @@ export class SendEmailToUser {
       attachments: [],
     };
 
+    console.log(options);
     await this.emailService.send(options);
   }
 }

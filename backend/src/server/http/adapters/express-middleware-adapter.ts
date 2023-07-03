@@ -11,8 +11,11 @@ export const adaptMiddleware = (middleware: Middleware) => {
     const token = splittedHeader?.[1];
 
     const req = {
+      accountId: request.accountId,
       accessToken: token,
       ...request.headers,
+      ...(request.query || {}),
+      ...(request.params || {}),
     };
 
     const result = await middleware.handle(req);
@@ -20,11 +23,13 @@ export const adaptMiddleware = (middleware: Middleware) => {
     if (result.statusCode === 200) {
       const userInfo = result.body;
 
-      Object.assign(request, userInfo);
+      if (!Reflect.has(request, "accountId")) {
+        Object.assign(request, userInfo);
+      }
 
       return next();
     }
 
-    response.status(result.statusCode).json(result.body.message);
+    response.status(result.statusCode).json({ error: result.body.message });
   };
 };

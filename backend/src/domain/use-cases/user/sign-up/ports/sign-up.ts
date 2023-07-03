@@ -6,6 +6,7 @@ export namespace SignUpDTO {
     name: string;
     login: string;
     password: string;
+    confirmPassword: string;
   };
   export type result = {};
 }

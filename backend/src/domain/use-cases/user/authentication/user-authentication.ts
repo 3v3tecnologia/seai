@@ -1,6 +1,6 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../ports/encoder";
+import { Encoder } from "../../../ports/encoder";
 import { AccountNotFoundError, WrongPasswordError } from "./errors";
 import {
   AuthenticationDTO,
@@ -35,9 +35,11 @@ export class UserAuthentication implements AuthenticationService {
       return left(new AccountNotFoundError(login));
     }
 
+    console.log("account ", account);
+
     const isMatch = await this.encoder.compare(
       password,
-      account.password?.value() as string
+      account.password as string
     );
 
     if (isMatch === false) {
@@ -46,9 +48,12 @@ export class UserAuthentication implements AuthenticationService {
 
     const userId = account.id as number;
 
-    const token = await this.tokenProvider.sign({
-      accountId: userId,
-    });
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: userId,
+      },
+      "7d"
+    );
 
     return right({
       accessToken: token,

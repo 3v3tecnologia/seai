@@ -1,7 +1,7 @@
-import { CreateUser } from "../../../domain/use-cases/user/create-user/create-user";
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
+import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-user";
 import { ok } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
@@ -12,17 +12,16 @@ export class DeleteUserController implements Controller<any> {
     this.deleteUser = deleteUser;
   }
 
-  async handle(request: CreateUserController.Request): Promise<HttpResponse> {
+  async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
-    await this.deleteUser.execute();
+    const result = await this.deleteUser.execute(request.id);
     //Add validation here
-    return ok({ message: "kkk" });
+    return ok({ message: result.value });
   }
 }
 
-export namespace CreateUserController {
+export namespace DeleteUserController {
   export type Request = {
-    name: string;
-    sex: string;
+    id: number;
   };
 }

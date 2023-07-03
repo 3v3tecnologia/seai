@@ -6,11 +6,10 @@ CREATE TYPE user_types AS ENUM ('admin', 'standart');
 
 CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
-   "Name" VARCHAR(30) NOT NULL,
-   "Login" VARCHAR(20) UNIQUE NOT NULL,
+   "Name" VARCHAR(30) DEFAULT NULL,
+   "Login" VARCHAR(20) UNIQUE DEFAULT NULL,
    "Email" VARCHAR(254) UNIQUE NOT NULL,
-   "Password_Hash" VARCHAR(200) NOT NULL,
-   "Password_Hash_Algorithm" VARCHAR(20) DEFAULT NULL,
+   "Password" VARCHAR(254) DEFAULT NULL,
 	"Type" user_types,
 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -23,13 +22,22 @@ CREATE TABLE "Module"(
    PRIMARY KEY("Id")
 );
 
-CREATE TYPE permission_types AS ENUM ('1','2','3');
+-- CREATE TYPE permission_types AS ENUM ('1','2','3');
 
+-- CREATE TABLE "User_Access"(
+--    "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id") ON DELETE CASCADE,
+--    "Fk_Module" INTEGER NOT NULL REFERENCES "Module"("Id"),
+--    "Permission" permission_types,
+--    "Description" VARCHAR(50) NOT NULL,
+-- 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+-- 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+-- );
 CREATE TABLE "User_Access"(
-   "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id"),
+   "Fk_User" INTEGER NOT NULL REFERENCES "User"("Id") ON DELETE CASCADE,
    "Fk_Module" INTEGER NOT NULL REFERENCES "Module"("Id"),
-   "Permission" permission_types,
-   "Description" VARCHAR(50) NOT NULL,
+   "Read" BOOLEAN DEFAULT NULL,
+   "Write" BOOLEAN DEFAULT NULL,
+   "Description" VARCHAR(50) DEFAULT NULL,
 	"CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
 	"UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -54,6 +62,6 @@ CREATE TABLE "Category"(
 );
 
 CREATE TABLE "FAQ_Category"(
-   "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id"),
-	"Fk_Category" INTEGER REFERENCES "Category"("Id")
+   "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id")  ON DELETE CASCADE,
+	"Fk_Category" INTEGER REFERENCES "Category"("Id")  ON DELETE CASCADE
 );

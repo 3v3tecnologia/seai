@@ -4,7 +4,8 @@ import { Validator } from "../ports/validator";
 import { Either, left, right } from "../../Either";
 
 export class EmailValidator implements Validator {
-  validate(email: string): Either<InvalidEmailError, null> {
+  validate(input: any): Either<InvalidEmailError, null> {
+    const email = input["email"] as string
     var tester =
       /^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
     if (!email) {

@@ -1,28 +1,48 @@
-import { CreateUser } from "../../../domain/use-cases/user/create-user/create-user";
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok } from "../helpers";
+import { SignUp } from "../../../domain/use-cases/user/sign-up";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { Validator } from "../../../shared/validation/ports/validator";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class SignUpController implements Controller<any> {
   private signUp: SignUp;
+  private validator: Validator;
 
-  constructor(signUp: SignUp) {
+  constructor(signUp: SignUp, validator: Validator) {
     this.signUp = signUp;
+    this.validator = validator;
   }
 
-  async handle(request: CreateUserController.Request): Promise<HttpResponse> {
-    console.log("request = > ", request);
-    await this.signUp.execute();
-    //Add validation here
-    return ok({ message: "kkk" });
+  async handle(request: SignUpController.Request): Promise<HttpResponse> {
+    try {
+      console.log("request = > ", request);
+      const error = this.validator.validate(request);
+
+      if (error.isLeft()) {
+        return badRequest(error.value);
+      }
+
+      const result = await this.signUp.create(request);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+      //Add validation here
+      return ok({ message: result.value });
+    } catch (error) {
+      return serverError(error as Error);
+    }
   }
 }
 
-export namespace CreateUserController {
+export namespace SignUpController {
   export type Request = {
+    email: string;
     name: string;
-    sex: string;
+    login: string;
+    password: string;
+    confirmPassword: string;
   };
 }

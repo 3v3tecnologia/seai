@@ -1,6 +1,6 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../ports/encoder";
+import { Encoder } from "../../../ports/encoder";
 import {
   AccountNotFoundError,
   WrongPasswordError,
@@ -43,9 +43,10 @@ export class SignUp {
 
     const hashedPassword = await this.encoder.hash(user.password);
 
+    console.log("hash = ", hashedPassword);
     // TODO: deve passar todos os campos do 'account'
     await this.accountRepository.update({
-      id: 1,
+      id: account.id as number,
       email: user.email,
       login: user.login,
       name: user.name,
