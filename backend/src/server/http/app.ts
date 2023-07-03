@@ -10,7 +10,7 @@ export const setupApp = async (): Promise<Express> => {
 
   setMiddleware(app);
   setRoutes(app);
-  // setApiDocs(app);
+  setApiDocs(app);
 
   return app;
 };
