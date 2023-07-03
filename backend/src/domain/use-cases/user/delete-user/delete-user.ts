@@ -12,6 +12,7 @@ export class DeleteUser {
   async execute(
     user_id: number
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, any>> {
+    console.log("Buscando usuário por id ", user_id);
     const account = await this.accountRepository.loadById(user_id);
 
     if (account === null) {

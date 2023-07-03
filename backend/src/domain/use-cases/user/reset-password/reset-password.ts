@@ -1,6 +1,7 @@
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../ports/encoder";
+import { Encoder } from "../../../ports/encoder";
+
 import {
   TokenProvider,
   TokenResponse,
@@ -39,8 +40,6 @@ export class ResetPassword {
       console.error(error);
       return left(new Error("Token invalid"));
     }
-    console.log("token ", token);
-    console.log("RESET PASSWORD = ", token.exp, " ", token.sub);
 
     const user = await this.accountRepository.loadById(Number(token.sub));
 

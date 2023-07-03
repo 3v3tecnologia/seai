@@ -62,6 +62,6 @@ CREATE TABLE "Category"(
 );
 
 CREATE TABLE "FAQ_Category"(
-   "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id"),
-	"Fk_Category" INTEGER REFERENCES "Category"("Id")
+   "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id")  ON DELETE CASCADE,
+	"Fk_Category" INTEGER REFERENCES "Category"("Id")  ON DELETE CASCADE
 );

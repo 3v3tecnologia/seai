@@ -1,9 +1,10 @@
 import { JwtAdapter } from "../../../../infra/cryptography/jwt-adapter";
 import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import {
-  FetchUserAccountByTokenUseCaseProtocol,
   FetchUserAccountByToken,
-} from "../../ports/fetch-user-account-by-token";
+  FetchUserAccountByTokenUseCaseProtocol,
+} from "../../../ports/usecases/fetch0user-account-by-token";
+
 import { TokenPayload } from "../authentication/ports/token-provider";
 
 export class FetchUserAccountByTokenUseCase

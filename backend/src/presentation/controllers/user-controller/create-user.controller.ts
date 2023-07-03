@@ -18,7 +18,7 @@ export class CreateUserController implements Controller {
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      console.log("request = > ", request);
+      console.log("CreateUserController = request ::: ", request);
 
       const error = this.validator.validate(request);
 
@@ -40,7 +40,7 @@ export class CreateUserController implements Controller {
       //Add validation here
       return created(createdOrError.value);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return serverError(error as Error);
     }
   }
