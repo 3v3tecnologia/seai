@@ -1,21 +1,54 @@
 <template>
   <div>
     <div>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <BaseInput
+          v-model="search"
+          placeholder="Busque por email, nome ..."
+          input-type="text"
+        />
+        <BaseSelect
+          inline-label
+          remove-margin
+          v-model="userType"
+          :options="usersOptions"
+          label="Filtrar por"
+        />
+        <BaseInput
+          v-model="search"
+          placeholder="Busque por email, nome etc"
+          input-type="text"
+        />
+        <BaseInput
+          v-model="search"
+          placeholder="Busque por email, nome etc"
+          input-type="text"
+        />
+      </div>
+
       <div class="wrapper-table">
         <div ref="table" />
       </div>
+
+      <div class="py-4 py-lg-5" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, watch, reactive, onMounted } from "vue";
+import { usersOptions } from "@/constants";
+import BaseSelect from "@/components/BaseSelect.vue";
+import BaseInput from "@/components/BaseInput.vue";
 import { useStore } from "vuex";
 
-import { TabulatorFull as Tabulator } from "tabulator-tables"; //import Tabulator library
+import { TabulatorFull as Tabulator } from "tabulator-tables";
 
-const table = ref(null); //reference to your table element
-const tabulator = ref(null); //variable to hold your table
+const cleanUserType = usersOptions[0].title;
+const table = ref(null);
+const tabulator = ref(null);
+const userType = ref(cleanUserType);
+const search = ref("");
 
 const columns = [
   {
@@ -78,9 +111,25 @@ const filtersUsers = ref({
 
 const emit = defineEmits(["update:modelValue"]);
 
-watch(filtersUsers, (val) => {
-  emit("update:modelValue", val);
+watch(search, (val) => {
+  if (!val) {
+    tabulator.value?.setFilter("name", "not in", []);
+  } else {
+    tabulator.value?.setFilter("name", "like", val);
+  }
 });
+
+watch(userType, (val) => {
+  if (val === cleanUserType) {
+    tabulator.value?.setFilter("role", "not in", []);
+  } else {
+    tabulator.value?.setFilter("role", "=", val);
+  }
+});
+
+// watch(filtersUsers, (val) => {
+//   emit("update:modelValue", val);
+// });
 </script>
 
 <style lang="scss" scoped>

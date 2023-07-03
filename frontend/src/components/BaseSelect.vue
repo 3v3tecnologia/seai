@@ -1,5 +1,11 @@
 <template>
-  <div class="form-group" :class="`${removeMargin ? 'mb-0' : ''}`">
+  <div
+    class="wrapper-select form-group"
+    :class="{
+      'mb-0': removeMargin,
+      'inline-label': inlineLabel,
+    }"
+  >
     <label v-if="label">{{ label }}</label>
 
     <select
@@ -24,6 +30,10 @@ const props = defineProps({
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  inlineLabel: {
+    type: Boolean,
+    default: false,
   },
   multiple: {
     type: Boolean,
@@ -57,7 +67,24 @@ watch(inputValue, (val) => {
 </script>
 
 <style lang="scss" scoped>
-label {
-  font-weight: bold;
+.wrapper-select {
+  label {
+    font-weight: bold;
+  }
+
+  &.inline-label {
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 1.3rem;
+      margin-bottom: 0 !important;
+      text-wrap: nowrap;
+    }
+
+    select {
+      max-width: 200px;
+    }
+  }
 }
 </style>
