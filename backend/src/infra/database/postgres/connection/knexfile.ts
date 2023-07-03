@@ -1,12 +1,5 @@
+import env from "../../../../server/http/env";
 import knex from "knex";
+import { db_config } from "./config";
 
-export default knex({
-  client: "pg",
-  connection: {
-    host: "127.0.0.1",
-    port: 5432,
-    user: "root",
-    password: "iaes",
-    database: "government",
-  },
-});
+export default knex(db_config[env.environment]);
