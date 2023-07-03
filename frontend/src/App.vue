@@ -18,6 +18,11 @@ import NavbarTop from "@/components/NavbarTop.vue";
   color: #2c3e50;
 }
 
+.border-base {
+  border: 1px solid #00000078;
+  border-radius: 5px;
+}
+
 nav {
   padding: 30px;
 

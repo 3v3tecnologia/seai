@@ -1,5 +1,5 @@
 <template>
-  <div v-if="auth?.login" class="d-flex flex-column align-items-start mb-5">
+  <div class="d-flex flex-column align-items-start mb-5">
     <div class="p-3 d-flex align-items-center justify-content-between w-100">
       <LogoProject title-size="md" />
 

@@ -110,7 +110,7 @@ export const store = createStore<Estado>({
           {
             name: "user1",
             email: "etc1@gmail.com",
-            created_at: "2022-08-03 09:15:54.000",
+            created_at: "2022-08-02 09:15:54.000",
             role: "admin",
             status: 1,
             id: 1,
@@ -123,6 +123,14 @@ export const store = createStore<Estado>({
             status: 0,
             id: 2,
           },
+          {
+            name: "user3",
+            email: "etc3@gmail.com",
+            created_at: "2022-08-01 09:15:54.000",
+            role: "usuário",
+            status: 1,
+            id: 3,
+          },
         ].map((user) => {
           user.created_at = moment(user.created_at).format("DD/MM/YYYY");
 
@@ -133,6 +141,10 @@ export const store = createStore<Estado>({
           data: mockedUsers,
           totalItems: mockedUsers.length,
           totalPages: Math.ceil(mockedUsers.length / limitReponse),
+          totalAdmins: 23,
+          totalBasics: 20,
+          totalActives: 43,
+          totalInactives: 3,
         };
 
         commit("SET_USERS", usersDTO);
