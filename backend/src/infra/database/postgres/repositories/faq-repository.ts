@@ -12,6 +12,26 @@ export class PostgreSQLFaqRepository implements FaqRepository {
     order: string;
     categories: Array<number>;
   }): Promise<boolean> {
+    const {question,answer,order,categories} = data
+
+    const faq = await connection.insert({
+      Question:question,
+      Answer:answer,
+      order:order
+    })
+    .returning("Id")
+    .into("FAQ");
+
+    const faq_id = faq[0].Id
+
+    for(const category_id of categories){
+      await connection.insert({
+        Fk_FAQ:faq_id,
+        Fk_Category:category_id
+      })
+      .into("FAQ_Category")
+    }
+
     return true;
   }
 
@@ -98,11 +118,20 @@ export class PostgreSQLFaqRepository implements FaqRepository {
   }
 
   async checkIfQuestionAlreadyExists(question: string): Promise<boolean> {
+    const exists = await connection
+      .select("*")
+      .from("FAQ")
     return false;
   }
   async loadByCategory(
     id_category: number
   ): Promise<Array<FaqWithCategoriesData> | null> {
+    const data = await connection
+    .select("*")
+    .from("FAQ")
+
+    console.log("FAQ = ",data)
+
     const result = [
       {
         id: 1,
@@ -122,30 +151,46 @@ export class PostgreSQLFaqRepository implements FaqRepository {
         ],
       },
     ];
+
     return result;
   }
 
   async loadCategories(): Promise<Array<FaqCategoriesData> | null> {
-    return [
-      {
-        id: 1,
-        title: "test",
-        description: "test",
-        created_at: "sads",
-        updated_at: "asdasd",
-      },
-    ];
+    const categories = await connection
+      .select("*")
+      .from("Category")
+    
+    if(categories.length){
+      return categories.map((category)=>({
+        id:category.Id,
+        title:category.Title,
+        description: category.Description,
+        created_at: category.CreatedAt,
+        updated_at: category.UpdatedAt
+      }))  
+    }
+
+    return null
   }
 
   async loadCategoryById(
     id_category: number
   ): Promise<FaqCategoriesData | null> {
-    return {
-      id: 1,
-      title: "test",
-      description: "test",
-      created_at: "sads",
-      updated_at: "asdasd",
-    };
+    const category = await connection
+      .select("*")
+      .where({Id:id_category})
+      .from("Category")
+      .first()
+
+    if(category){
+      return {
+        id: category.Id,
+        title: category.Title,
+        description:category.Description,
+        created_at: category.CreatedAt,
+        updated_at: category.UpdatedAt,
+      };
+    }
+    return null
   }
 }

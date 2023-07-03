@@ -34,9 +34,6 @@ export class UserAuthentication implements AuthenticationService {
     if (!account) {
       return left(new AccountNotFoundError(login));
     }
-
-    console.log("account ", account);
-
     const isMatch = await this.encoder.compare(
       password,
       account.password as string

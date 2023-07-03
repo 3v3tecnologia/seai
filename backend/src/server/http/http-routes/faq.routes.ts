@@ -54,6 +54,11 @@ export const faqRouter = (): Router => {
     adaptRoute(makeFetchFaqCategoriesController())
   );
   router.get(
+    "/list-by-categories",
+    authorization,
+    adaptRoute(makeFetchFaqByCategoryController())
+  );
+  router.get(
     "/list",
     authorization,
     adaptRoute(makeFetchFaqByCategoryController())
