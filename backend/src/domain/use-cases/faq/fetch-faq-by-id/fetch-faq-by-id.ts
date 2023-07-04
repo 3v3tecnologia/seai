@@ -10,7 +10,7 @@ export class FetchFaqById implements FetchFaqByIdProtocol {
   }
   async fetch(
     request: FetchFaqByIdDTO.params
-  ): Promise<Either<Error, FetchFaqByIdDTO.result>> {
+  ): Promise<Either<Error, FetchFaqByIdDTO.result | null>> {
     const faq = await this.faqRepository.loadById(request.id_faq);
     return right(faq);
   }

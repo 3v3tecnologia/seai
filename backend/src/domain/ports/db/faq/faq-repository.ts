@@ -12,7 +12,7 @@ export interface FaqWithCategoriesData {
   order: number;
   created_at?: string;
   updated_at?: string;
-  categories: Array<FaqCategoriesData>;
+  categories: Array<FaqCategoriesData> | Array<void>;
 }
 
 export interface FaqRepository {
@@ -22,7 +22,7 @@ export interface FaqRepository {
     order: string;
     categories: Array<number>;
   }): Promise<boolean>;
-  addCategory(title: string, description: string): Promise<boolean>;
+  addCategory(title: string, description: string): Promise<void>;
   loadAll(): Promise<Array<FaqWithCategoriesData> | null>;
   loadByCategory(
     id_category: number
@@ -36,6 +36,7 @@ export interface FaqRepository {
     categories: Array<number>;
   }): Promise<boolean>;
   checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
+  checkIfFaqAlreadyExists(id: number): Promise<boolean>;
   updateCategory(
     id_categoy: number,
     title: string,

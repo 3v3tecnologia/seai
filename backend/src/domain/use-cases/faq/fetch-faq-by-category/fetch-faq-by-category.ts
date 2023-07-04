@@ -10,7 +10,7 @@ export class FetchFaqByCategory implements FetchFaqByCategory {
   }
   async fetch(
     request: FetchFaqByCategoryDTO.params
-  ): Promise<Either<Error, Array<any> | null>> {
+  ): Promise<Either<Error, FetchFaqByCategoryDTO.result>> {
     const faqs = await this.faqRepository.loadByCategory(request.id_category);
     return right(faqs);
   }

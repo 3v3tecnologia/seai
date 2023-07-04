@@ -9,7 +9,7 @@ export namespace UpdateFaqDTO {
     categories: Array<number>;
   };
 
-  export type result = boolean;
+  export type result = string;
 }
 
 export interface UpdateFaqProtocol {

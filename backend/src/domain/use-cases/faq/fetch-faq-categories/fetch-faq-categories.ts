@@ -1,5 +1,3 @@
-import { PostgreSQLFaqRepository } from "../../../../infra/database/postgres/repositories/faq-repository";
-
 import { Either, right } from "../../../../shared/Either";
 import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 

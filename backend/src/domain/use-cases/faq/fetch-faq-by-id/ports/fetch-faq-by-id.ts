@@ -18,7 +18,7 @@ export namespace FetchFaqByIdDTO {
     order: number;
     created_at?: string;
     updated_at?: string;
-    categories: Array<FaqCategoriesData>;
+    categories: Array<FaqCategoriesData> | Array<void>;
   } | null;
 }
 

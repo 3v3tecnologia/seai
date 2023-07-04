@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { DeleteFaqCategoryProtocol } from "../../../domain/use-cases/faq/delete-faq-category/ports/delete-faq-category";
-import { forbidden, noContent, serverError, ok } from "../helpers";
+import { forbidden, noContent, serverError, ok, badRequest } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class DeleteFaqCategoryController implements Controller {
@@ -16,6 +16,9 @@ export class DeleteFaqCategoryController implements Controller {
     request: DeleteFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
+      if (!request.id) {
+        return badRequest(new Error("É necessário informar o ID da categoria"));
+      }
       const result = await this.DeleteFaqCategory.delete({
         id_category: request.id,
       });

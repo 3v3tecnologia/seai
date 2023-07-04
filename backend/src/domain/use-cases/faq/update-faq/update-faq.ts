@@ -13,14 +13,14 @@ export class UpdateFaq implements UpdateFaqProtocol {
   async update(
     request: UpdateFaqDTO.params
   ): Promise<Either<Error, UpdateFaqDTO.result>> {
-    const exists = await this.faqRepository.loadById(request.id);
+    const exists = await this.faqRepository.checkIfFaqAlreadyExists(request.id);
 
-    if (!exists) {
+    if (exists === false) {
       return left(new FaqNotExistsError());
     }
 
-    const result = await this.faqRepository.update(request);
+    await this.faqRepository.update(request);
 
-    return right(result);
+    return right("FAQ atualizado com sucesso");
   }
 }

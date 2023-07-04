@@ -16,7 +16,8 @@ export class FetchFaqByCategoryController implements Controller {
     request: FetchFaqByCategoryController.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.FetchFaq.fetch(request);
+      const id_category = request.id;
+      const result = await this.FetchFaq.fetch({ id_category });
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -32,6 +33,6 @@ export class FetchFaqByCategoryController implements Controller {
 
 export namespace FetchFaqByCategoryController {
   export type Request = {
-    id_category: number;
+    id: number;
   };
 }

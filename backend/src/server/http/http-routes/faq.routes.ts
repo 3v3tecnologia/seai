@@ -12,9 +12,12 @@ import {
 } from "../factories/controllers/faq";
 import { makeCreateFaqCategoryController } from "../factories/controllers/faq/create-category-controller-factory";
 import { makeCreateFaqController } from "../factories/controllers/faq/create-faq-controller-factory";
-import { makeUpdateFaqController } from "../factories/controllers/faq/update-faq-controller-factory";
-import { makeDeleteFaqController } from "../factories/controllers/faq/delete-faq-controller-factory";
 import { makeDeleteFaqCategoryController } from "../factories/controllers/faq/delete-faq-category-controller-factory";
+import { makeDeleteFaqController } from "../factories/controllers/faq/delete-faq-controller-factory";
+import { makeFetchFaqByIdController } from "../factories/controllers/faq/fetch-faq-by-id-controller-factory";
+import { makeFetchFaqsWithCategoryController } from "../factories/controllers/faq/fetch-faq-with-category-controller-factory";
+import { makeUpdateFaqCategoryController } from "../factories/controllers/faq/update-faq-category-controller-factory";
+import { makeUpdateFaqController } from "../factories/controllers/faq/update-faq-controller-factory";
 
 export const faqRouter = (): Router => {
   const router = Router();
@@ -24,6 +27,12 @@ export const faqRouter = (): Router => {
     registerManagerWriteAccessAuth,
     adaptRoute(makeCreateFaqController())
   );
+  router.put(
+    "/category/update",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeUpdateFaqCategoryController())
+  );
   router.post(
     "/category/create",
     authorization,
@@ -31,7 +40,7 @@ export const faqRouter = (): Router => {
     adaptRoute(makeCreateFaqCategoryController())
   );
   router.delete(
-    "/category/delete",
+    "/category/delete/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(makeDeleteFaqCategoryController())
@@ -43,7 +52,7 @@ export const faqRouter = (): Router => {
     adaptRoute(makeUpdateFaqController())
   );
   router.delete(
-    "/delete",
+    "/delete/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(makeDeleteFaqController())
@@ -59,9 +68,19 @@ export const faqRouter = (): Router => {
     adaptRoute(makeFetchFaqByCategoryController())
   );
   router.get(
-    "/list",
+    "/list-by-category/:id",
     authorization,
     adaptRoute(makeFetchFaqByCategoryController())
+  );
+  router.get(
+    "/list",
+    authorization,
+    adaptRoute(makeFetchFaqsWithCategoryController())
+  );
+  router.get(
+    "/get/:id",
+    authorization,
+    adaptRoute(makeFetchFaqByIdController())
   );
   return router;
 };
