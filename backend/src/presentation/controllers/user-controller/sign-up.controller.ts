@@ -30,7 +30,7 @@ export class SignUpController implements Controller<any> {
         return forbidden(result.value);
       }
       //Add validation here
-      return ok({ message: result.value });
+      return ok(result.value);
     } catch (error) {
       return serverError(error as Error);
     }

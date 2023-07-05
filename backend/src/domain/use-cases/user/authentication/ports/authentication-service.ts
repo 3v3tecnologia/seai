@@ -6,7 +6,7 @@ export namespace AuthenticationDTO {
 
   export type result = {
     accessToken: string;
-    accountId: number;
+    // accountId: number;
   };
 }
 

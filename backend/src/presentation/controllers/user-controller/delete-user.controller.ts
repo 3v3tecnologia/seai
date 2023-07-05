@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-user";
-import { ok } from "../helpers";
+import { forbidden, ok } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class DeleteUserController implements Controller<any> {
@@ -15,8 +15,12 @@ export class DeleteUserController implements Controller<any> {
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
     console.log("request = > ", request);
     const result = await this.deleteUser.execute(request.id);
+
+    if (result.isLeft()) {
+      return forbidden(result.value);
+    }
     //Add validation here
-    return ok({ message: result.value });
+    return ok(result.value);
   }
 }
 

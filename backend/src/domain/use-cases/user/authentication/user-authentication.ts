@@ -54,7 +54,7 @@ export class UserAuthentication implements AuthenticationService {
 
     return right({
       accessToken: token,
-      accountId: userId,
+      // accountId: userId,
     });
   }
 }

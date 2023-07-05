@@ -395,7 +395,7 @@
                   }
                 },
                 "example": {
-                  "id":1,
+                  "id": 1,
                   "title": "categoria 1",
                   "description": "descrição da categoria 1"
                 }
@@ -515,21 +515,25 @@
                   "answer": {
                     "type": "string"
                   },
-                  "order":{
-                    "type":"number"
+                  "order": {
+                    "type": "number"
                   },
-                  "categories":{
-                    "type":"array",
-                    "items":{
-                      "type":"number"
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
                     }
                   }
                 },
                 "example": {
-                  "question":"O que é TDD?",
-                  "answer":"Test-Driven Development",
-                  "order":1,
-                  "categories":[2,3,4]
+                  "question": "O que é TDD?",
+                  "answer": "Test-Driven Development",
+                  "order": 1,
+                  "categories": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               }
             }
@@ -641,8 +645,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id":{
-                    "type":"number"
+                  "id": {
+                    "type": "number"
                   },
                   "question": {
                     "type": "string"
@@ -650,21 +654,25 @@
                   "answer": {
                     "type": "string"
                   },
-                  "order":{
-                    "type":"number"
+                  "order": {
+                    "type": "number"
                   },
-                  "categories":{
-                    "type":"array",
-                    "items":{
-                      "type":"number"
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
                     }
                   }
                 },
                 "example": {
-                  "question":"O que é TDD?",
-                  "answer":"Test-Driven Development",
-                  "order":1,
-                  "categories":[2,3,4]
+                  "question": "O que é TDD?",
+                  "answer": "Test-Driven Development",
+                  "order": 1,
+                  "categories": [
+                    2,
+                    3,
+                    4
+                  ]
                 }
               }
             }
@@ -794,55 +802,55 @@
                       "data": {
                         "type": "object",
                         "properties": {
-                            "id": "number",
-                            "question": "string",
-                            "answer": "string",
-                            "order": "number",
-                            "description": "string",
-                            "created_at": "string",
-                            "updated_at": "string",
-                            "categories": {
-                              "type":"array",
-                              "items":{
-                                "type":"object",
-                                "properties":{
-                                  "id": "number",
-                                  "title": "string",
-                                  "description": "string",
-                                  "created_at": "string",
-                                  "updated_at": "string"
-                                }
+                          "id": "number",
+                          "question": "string",
+                          "answer": "string",
+                          "order": "number",
+                          "description": "string",
+                          "created_at": "string",
+                          "updated_at": "string",
+                          "categories": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": "number",
+                                "title": "string",
+                                "description": "string",
+                                "created_at": "string",
+                                "updated_at": "string"
                               }
                             }
                           }
+                        }
                       }
                     }
                   },
                   "example": {
                     "data": {
-                        "id": 1,
-                        "question": "O que é TDD",
-                        "answer": "Desenvolvimento orientado a testes",
-                        "order": 1,
-                        "created_at": "2023-07-04T11:39:50.085Z",
-                        "updated_at": "2023-07-04T11:39:50.085Z",
-                        "categories": [
-                          {
-                            "id": 2,
-                            "title": "Práticas",
-                            "description": "teste",
-                            "created_at": "2023-07-04T11:40:26.459Z",
-                            "updated_at": "2023-07-04T11:40:26.459Z"
-                          },
-                          {
-                            "id": 3,
-                            "title": "Geral",
-                            "description": "teste",
-                            "created_at": "2023-07-04T11:40:26.462Z",
-                            "updated_at": "2023-07-04T11:40:26.462Z"
-                          }
-                        ]
-                      }
+                      "id": 1,
+                      "question": "O que é TDD",
+                      "answer": "Desenvolvimento orientado a testes",
+                      "order": 1,
+                      "created_at": "2023-07-04T11:39:50.085Z",
+                      "updated_at": "2023-07-04T11:39:50.085Z",
+                      "categories": [
+                        {
+                          "id": 2,
+                          "title": "Práticas",
+                          "description": "teste",
+                          "created_at": "2023-07-04T11:40:26.459Z",
+                          "updated_at": "2023-07-04T11:40:26.459Z"
+                        },
+                        {
+                          "id": 3,
+                          "title": "Geral",
+                          "description": "teste",
+                          "created_at": "2023-07-04T11:40:26.462Z",
+                          "updated_at": "2023-07-04T11:40:26.462Z"
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -949,10 +957,10 @@
                             "created_at": "string",
                             "updated_at": "string",
                             "categories": {
-                              "type":"array",
-                              "items":{
-                                "type":"object",
-                                "properties":{
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
                                   "id": "number",
                                   "title": "string",
                                   "description": "string",
@@ -1110,10 +1118,10 @@
                             "created_at": "string",
                             "updated_at": "string",
                             "categories": {
-                              "type":"array",
-                              "items":{
-                                "type":"object",
-                                "properties":{
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
                                   "id": "number",
                                   "title": "string",
                                   "description": "string",
@@ -1248,7 +1256,7 @@
             }
           }
         ],
-       "responses": {
+        "responses": {
           "200": {
             "description": "Category created successfully",
             "content": {
@@ -1265,6 +1273,1221 @@
                   },
                   "example": {
                     "data": "Faq deletado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/register": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create user account by admin",
+        "description": "In case of creating a new user account, should send email to user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "modules": {
+                    "type": "object",
+                    "properties": {
+                      "news_manager": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "register": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "user_manager": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "email": "test@gmail.com",
+                  "type": "standard",
+                  "modules": {
+                    "news_manager": {
+                      "id": 1,
+                      "read": true,
+                      "write": true
+                    },
+                    "registers": {
+                      "id": 2,
+                      "read": true,
+                      "write": true
+                    },
+                    "users_manager": {
+                      "id": 3,
+                      "read": true,
+                      "write": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao criar usuário, email enviado com sucesso para test@gmail.com"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login/sign-in": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "summary": "User login",
+        "description": "User login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "login": "test",
+                  "password": "12345"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accessToken": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "accessToken": "token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login/sign-up": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Complete register account",
+        "description": "Complete register account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email": "test@gmail.com",
+                  "name": "test",
+                  "login": "test",
+                  "password": "123",
+                  "confirmPassword": "123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Register account successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accessToken": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "accessToken": "token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login/password/forgot": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Sendo forgot password email",
+        "description": "Send forgot password email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email": "test@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Email sended successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Email de recuperação de senha enviado com sucesso para test@gmail.com"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login/password/reset": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Change user password",
+        "description": "Change user password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "password": "12345",
+                  "token": "12345"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Senha resetada com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/list": {
+      "get": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get users",
+        "description": "Get users",
+        "responses": {
+          "200": {
+            "description": "Get users successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "login": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "id": 1,
+                        "name": "test",
+                        "login": "test",
+                        "email": "test2@gmail.com",
+                        "type": "standard",
+                        "createdAt": "2023-06-29T21:06:44.887Z",
+                        "updatedAt": "2023-06-29T21:06:44.887Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/list-user-access/{id}": {
+      "get": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get access from user by user id",
+        "description": "Get access from user by user id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user access successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties":{
+                          "news":{
+                            "type":"object",
+                            "properties":{
+                              "id":{
+                                "type":"number"
+                              },
+                              "read":{
+                                "type":"boolean"
+                              },
+                              "write":{
+                                "type":"boolean"
+                              }
+                            }
+                          },
+                          "register":{
+                            "type":"object",
+                            "properties":{
+                              "id":{
+                                "type":"number"
+                              },
+                              "read":{
+                                "type":"boolean"
+                              },
+                              "write":{
+                                "type":"boolean"
+                              }
+                            }
+                          },
+                          "user":{
+                            "type":"object",
+                            "properties":{
+                              "id":{
+                                "type":"number"
+                              },
+                              "read":{
+                                "type":"boolean"
+                              },
+                              "write":{
+                                "type":"boolean"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "news": {
+                        "id": 1,
+                        "read": true,
+                        "write": true
+                      },
+                      "register": {
+                        "id": 3,
+                        "read": true,
+                        "write": true
+                      },
+                      "user": {
+                        "id": 2,
+                        "read": true,
+                        "write": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/update": {
+      "put": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update user [In progress]",
+        "description": "[In progress]",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Faq Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "TODO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/delete/{id}": {
+      "delete": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete user account by  id",
+        "description": "Delete user account by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Usuário deletado com sucesso"
                   }
                 }
               }

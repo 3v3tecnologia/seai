@@ -1,6 +1,6 @@
 export class FailToDeleteUserError extends Error {
   constructor() {
-    super("Fail to delete user");
+    super("Falha ao deletar usuário");
     this.name = "FailToDeleteUserError";
   }
 }

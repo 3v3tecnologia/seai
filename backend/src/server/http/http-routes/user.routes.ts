@@ -21,9 +21,6 @@ export const userRouter = (): Router => {
     adaptRoute(makeCreateUserController())
   );
 
-  // continuar o cadastro de usuário
-  router.post("/register/new-user", adaptRoute(makeCreateUserController()));
-
   router.put(
     "/update/:id",
     authorization,

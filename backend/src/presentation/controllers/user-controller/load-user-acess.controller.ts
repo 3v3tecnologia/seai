@@ -3,7 +3,7 @@ import { Controller } from "../ports/controllers";
 
 import { LoaUserModules } from "../../../domain/use-cases/user/load_user_access/load_user_access";
 import { Validator } from "../../../shared/validation/ports/validator";
-import { badRequest, created, forbidden, serverError } from "../helpers";
+import { badRequest, ok, forbidden, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class LoadUserAccessController implements Controller {
@@ -32,7 +32,7 @@ export class LoadUserAccessController implements Controller {
         return forbidden(result.value);
       }
       //Add validation here
-      return created(result.value);
+      return ok(result.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

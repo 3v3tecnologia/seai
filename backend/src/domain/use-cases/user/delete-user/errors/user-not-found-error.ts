@@ -1,6 +1,6 @@
 export class UserNotFoundError extends Error {
   constructor() {
-    super("User not found");
+    super("Falha ao buscar usuário");
     this.name = "UserNotFoundError";
   }
 }

@@ -2,7 +2,7 @@ CREATE DATABASE government;
 
 \c government;
 
-CREATE TYPE user_types AS ENUM ('admin', 'standart');
+CREATE TYPE user_types AS ENUM ('admin', 'standard');
 
 CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,

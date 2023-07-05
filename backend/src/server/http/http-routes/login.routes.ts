@@ -4,6 +4,7 @@ import { makeForgotPasswordController } from "../factories/controllers/forgot-pa
 import { makeSignInController } from "../factories/controllers/sign-in.controller-factory";
 import { makeSignUpController } from "../factories/controllers/sign-up.controller-factory";
 import { makeResetUserController } from "../factories/controllers/reset-user-password.controller-factory";
+import { authorization } from "../http-middlewares";
 
 export const loginRouter = (): Router => {
   const router = Router();
