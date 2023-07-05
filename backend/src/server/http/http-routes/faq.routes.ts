@@ -28,24 +28,6 @@ export const faqRouter = (): Router => {
     adaptRoute(makeCreateFaqController())
   );
   router.put(
-    "/category/update",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(makeUpdateFaqCategoryController())
-  );
-  router.post(
-    "/category/create",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(makeCreateFaqCategoryController())
-  );
-  router.delete(
-    "/category/delete/:id",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(makeDeleteFaqCategoryController())
-  );
-  router.put(
     "/update",
     authorization,
     registerManagerWriteAccessAuth,
@@ -57,11 +39,7 @@ export const faqRouter = (): Router => {
     registerManagerWriteAccessAuth,
     adaptRoute(makeDeleteFaqController())
   );
-  router.get(
-    "/categories/list",
-    authorization,
-    adaptRoute(makeFetchFaqCategoriesController())
-  );
+
   router.get(
     "/list-by-categories",
     authorization,
@@ -82,5 +60,29 @@ export const faqRouter = (): Router => {
     authorization,
     adaptRoute(makeFetchFaqByIdController())
   );
+  router.get(
+    "/category/list",
+    authorization,
+    adaptRoute(makeFetchFaqCategoriesController())
+  );
+  router.put(
+    "/category/update",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeUpdateFaqCategoryController())
+  );
+  router.post(
+    "/category/create",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeCreateFaqCategoryController())
+  );
+  router.delete(
+    "/category/delete/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeDeleteFaqCategoryController())
+  );
+
   return router;
 };

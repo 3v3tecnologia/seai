@@ -211,6 +211,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
 
     return exists ? true : false;
   }
+
   async loadByCategory(
     id_category: number
   ): Promise<Array<FaqWithCategoriesData> | null> {
@@ -290,6 +291,24 @@ export class PostgreSQLFaqRepository implements FaqRepository {
     const category = await connection
       .select("*")
       .where({ Id: id_category })
+      .from("Category")
+      .first();
+
+    if (category) {
+      return {
+        id: category.Id,
+        title: category.Title,
+        description: category.Description,
+        created_at: category.CreatedAt,
+        updated_at: category.UpdatedAt,
+      };
+    }
+    return null;
+  }
+  async loadCategoryByTitle(title: string): Promise<FaqCategoriesData | null> {
+    const category = await connection
+      .select("*")
+      .where({ Title: title })
       .from("Category")
       .first();
 

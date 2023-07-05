@@ -3,7 +3,13 @@ import { Middleware } from "./ports/middleware";
 
 import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
 import { AccessDeniedError } from "../controllers/errors";
-import { forbidden, ok, serverError } from "../controllers/helpers";
+import {
+  forbidden,
+  ok,
+  serverError,
+  unauthenticated,
+  unauthorized,
+} from "../controllers/helpers";
 
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
@@ -17,7 +23,7 @@ export class AuthMiddleware implements Middleware {
       const { accessToken } = request;
 
       if (!accessToken) {
-        return forbidden(new Error("Invalid token"));
+        return forbidden(new Error("Token não providenciado"));
       }
 
       // checar possibilidade de tratar o error lançado pelo o método verify
@@ -29,10 +35,10 @@ export class AuthMiddleware implements Middleware {
         }
       }
 
-      return forbidden(new AccessDeniedError());
+      return unauthenticated();
     } catch (error) {
       console.error("[auth-middleware] ", error);
-      return serverError(error as Error);
+      return forbidden(error as Error);
     }
   }
 }

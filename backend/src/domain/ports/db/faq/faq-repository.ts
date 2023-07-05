@@ -46,4 +46,5 @@ export interface FaqRepository {
   deleteCategoryById(id_category: number): Promise<boolean>;
   loadCategories(): Promise<Array<FaqCategoriesData> | null>;
   loadCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
+  loadCategoryByTitle(title: string): Promise<FaqCategoriesData | null>;
 }

@@ -5,7 +5,7 @@ export const contentType = (
   response: Response,
   next: NextFunction
 ) => {
-  response.type("json");
+  // response.type("json");
 
   next();
 };

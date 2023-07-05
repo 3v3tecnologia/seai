@@ -1,6 +1,7 @@
 import { HttpResponse } from "../ports/http-response";
 import { ServerError } from "../errors/server-error";
 import { UnauthorizedError } from "../errors/unauthorized-error";
+import { AccessDeniedError } from "../errors";
 
 export const ok = (data: any): HttpResponse => ({
   statusCode: 200,
@@ -18,6 +19,11 @@ export const forbidden = (error: Error): HttpResponse => ({
 });
 
 export const unauthorized = (): HttpResponse => ({
+  statusCode: 401,
+  body: new AccessDeniedError(),
+});
+
+export const unauthenticated = (): HttpResponse => ({
   statusCode: 401,
   body: new UnauthorizedError(),
 });

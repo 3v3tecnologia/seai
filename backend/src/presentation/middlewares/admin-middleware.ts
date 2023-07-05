@@ -3,8 +3,12 @@ import { Middleware } from "./ports/middleware";
 
 import { AccountRepository } from "../../infra/database/postgres/repositories/account-repository";
 import { AccessDeniedError } from "../controllers/errors";
-import { forbidden, ok, serverError } from "../controllers/helpers";
-import { deepEqual } from "../../shared/deepEqual";
+import {
+  forbidden,
+  ok,
+  serverError,
+  unauthorized,
+} from "../controllers/helpers";
 
 function hasAnyKey(obj: any, matcher: any): boolean {
   const ob1 = Object.entries(obj);
@@ -50,7 +54,7 @@ export class AdminMiddleware implements Middleware {
       console.log("request::: ", request);
 
       if (!accountId) {
-        return forbidden(new Error("Invalid id."));
+        return forbidden(new Error("Identificador do usuário inválido"));
       }
 
       const module = await this.accountRepository.loadUserModulesByName(
@@ -64,8 +68,9 @@ export class AdminMiddleware implements Middleware {
         }
       }
 
-      return forbidden(new AccessDeniedError());
+      return unauthorized();
     } catch (error) {
+      console.error("[admin-middleware] ", error);
       return serverError(error as Error);
     }
   }
