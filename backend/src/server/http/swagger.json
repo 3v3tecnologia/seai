@@ -10,8 +10,8 @@
       "email": "davispenha@gmail.com"
     },
     "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      "name": "MIT",
+      "url": "https://www.mit.edu/~amini/LICENSE.md"
     },
     "version": "1.0.0"
   },
@@ -156,7 +156,7 @@
             "description": "Category Id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -496,17 +496,422 @@
         "tags": [
           "FAQ"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create a FAQ question",
-        "description": "Create FAQ with question, answer"
+        "description": "Create FAQ with question and answer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string"
+                  },
+                  "order":{
+                    "type":"number"
+                  },
+                  "categories":{
+                    "type":"array",
+                    "items":{
+                      "type":"number"
+                    }
+                  }
+                },
+                "example": {
+                  "question":"O que é TDD?",
+                  "answer":"Test-Driven Development",
+                  "order":1,
+                  "categories":[2,3,4]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "FAQ created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Faq criado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/faq/update": {
-      "update": {
+      "put": {
         "tags": [
           "FAQ"
         ],
-        "summary": "Create a FAQ question",
-        "description": "Create FAQ with question, answer"
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update a FAQ question",
+        "description": "Update FAQ with question, answer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id":{
+                    "type":"number"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string"
+                  },
+                  "order":{
+                    "type":"number"
+                  },
+                  "categories":{
+                    "type":"array",
+                    "items":{
+                      "type":"number"
+                    }
+                  }
+                },
+                "example": {
+                  "question":"O que é TDD?",
+                  "answer":"Test-Driven Development",
+                  "order":1,
+                  "categories":[2,3,4]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "FAQ created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Faq atualizado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/faq/get/{id}": {
+      "get": {
+        "tags": [
+          "FAQ"
+        ],
+        "summary": "Get FAQ by id",
+        "description": "Get FAQ by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Faq Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get FAQ by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                            "id": "number",
+                            "question": "string",
+                            "answer": "string",
+                            "order": "number",
+                            "description": "string",
+                            "created_at": "string",
+                            "updated_at": "string",
+                            "categories": {
+                              "type":"array",
+                              "items":{
+                                "type":"object",
+                                "properties":{
+                                  "id": "number",
+                                  "title": "string",
+                                  "description": "string",
+                                  "created_at": "string",
+                                  "updated_at": "string"
+                                }
+                              }
+                            }
+                          }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                        "id": 1,
+                        "question": "O que é TDD",
+                        "answer": "Desenvolvimento orientado a testes",
+                        "order": 1,
+                        "created_at": "2023-07-04T11:39:50.085Z",
+                        "updated_at": "2023-07-04T11:39:50.085Z",
+                        "categories": [
+                          {
+                            "id": 2,
+                            "title": "Práticas",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.459Z",
+                            "updated_at": "2023-07-04T11:40:26.459Z"
+                          },
+                          {
+                            "id": 3,
+                            "title": "Geral",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.462Z",
+                            "updated_at": "2023-07-04T11:40:26.462Z"
+                          }
+                        ]
+                      }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/faq/list": {
@@ -514,35 +919,421 @@
         "tags": [
           "FAQ"
         ],
-        "summary": "Create a FAQ question",
-        "description": "Create FAQ with question, answer"
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get FAQs with categories",
+        "description": "Get FAQs with categories",
+        "responses": {
+          "200": {
+            "description": "Get all FAQs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": "number",
+                            "question": "string",
+                            "answer": "string",
+                            "order": "number",
+                            "description": "string",
+                            "created_at": "string",
+                            "updated_at": "string",
+                            "categories": {
+                              "type":"array",
+                              "items":{
+                                "type":"object",
+                                "properties":{
+                                  "id": "number",
+                                  "title": "string",
+                                  "description": "string",
+                                  "created_at": "string",
+                                  "updated_at": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "id": 1,
+                        "question": "O que é TDD",
+                        "answer": "Desenvolvimento orientado a testes",
+                        "order": 1,
+                        "created_at": "2023-07-04T11:39:50.085Z",
+                        "updated_at": "2023-07-04T11:39:50.085Z",
+                        "categories": [
+                          {
+                            "id": 2,
+                            "title": "Práticas",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.459Z",
+                            "updated_at": "2023-07-04T11:40:26.459Z"
+                          },
+                          {
+                            "id": 3,
+                            "title": "Geral",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.462Z",
+                            "updated_at": "2023-07-04T11:40:26.462Z"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/faq/get": {
+    "/api/faq/list-by-category/{id}": {
       "get": {
         "tags": [
           "FAQ"
         ],
-        "summary": "Get faq by id",
-        "description": "Get faq by id, returning data with categories in response"
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all FAQs by category id",
+        "description": "Get all FAQs by category id, returning data with categories in response",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Category Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all FAQs by category id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": "number",
+                            "question": "string",
+                            "answer": "string",
+                            "order": "number",
+                            "description": "string",
+                            "created_at": "string",
+                            "updated_at": "string",
+                            "categories": {
+                              "type":"array",
+                              "items":{
+                                "type":"object",
+                                "properties":{
+                                  "id": "number",
+                                  "title": "string",
+                                  "description": "string",
+                                  "created_at": "string",
+                                  "updated_at": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "id": 1,
+                        "question": "O que é TDD",
+                        "answer": "Desenvolvimento orientado a testes",
+                        "order": 1,
+                        "created_at": "2023-07-04T11:39:50.085Z",
+                        "updated_at": "2023-07-04T11:39:50.085Z",
+                        "categories": [
+                          {
+                            "id": 2,
+                            "title": "Práticas",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.459Z",
+                            "updated_at": "2023-07-04T11:40:26.459Z"
+                          },
+                          {
+                            "id": 3,
+                            "title": "Geral",
+                            "description": "teste",
+                            "created_at": "2023-07-04T11:40:26.462Z",
+                            "updated_at": "2023-07-04T11:40:26.462Z"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/faq/list-by-categories": {
-      "get": {
+    "/api/faq/delete/{id}": {
+      "delete": {
         "tags": [
           "FAQ"
         ],
-        "summary": "Get faq by id",
-        "description": "Get faq by id, returning data with categories in response"
-      }
-    },
-    "/api/faq/list-by-category": {
-      "get": {
-        "tags": [
-          "FAQ"
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
-        "summary": "Get faq by category id",
-        "description": "Get faq by category ID"
+        "summary": "Delete faq by  id",
+        "description": "Delete faq by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Faq Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+       "responses": {
+          "200": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Faq deletado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

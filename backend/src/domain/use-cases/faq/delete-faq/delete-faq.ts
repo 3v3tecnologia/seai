@@ -14,7 +14,7 @@ export class DeleteFaq implements DeleteFaqProtocol {
     const exists = await this.faqRepository.loadById(request.id);
 
     if (!exists) {
-      return left(new Error("Faq not exists"));
+      return left(new Error("Faq não encontrado"));
     }
 
     await this.faqRepository.deleteById(request.id);
