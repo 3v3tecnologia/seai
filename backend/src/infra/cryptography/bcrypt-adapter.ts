@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Encoder } from "../../domain/use-cases/_data/cryptography/encoder";
+import { Encoder } from "../../domain/use-cases/_ports/cryptography/encoder";
 
 export class BcryptAdapter implements Encoder {
   private readonly salt: number;

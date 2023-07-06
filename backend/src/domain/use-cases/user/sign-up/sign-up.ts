@@ -1,6 +1,6 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../_data/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
+import { Encoder } from "../../_ports/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import {
   AccountNotFoundError,
   WrongPasswordError,

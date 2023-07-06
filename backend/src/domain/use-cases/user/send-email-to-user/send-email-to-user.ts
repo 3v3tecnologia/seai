@@ -1,7 +1,7 @@
 import {
   EmailService,
   EmailServiceProtocol,
-} from "../../_data/services/mail-service";
+} from "../../_ports/services/mail-service";
 
 export class SendEmailToUser {
   private readonly emailService: EmailServiceProtocol;

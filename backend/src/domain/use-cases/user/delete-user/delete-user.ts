@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { FailToDeleteUserError } from "./errors/fail-to-delete-user-error";
 import { UserNotFoundError } from "./errors/user-not-found-error";
 

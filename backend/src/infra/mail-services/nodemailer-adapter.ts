@@ -2,7 +2,7 @@ import * as nodemailer from "nodemailer";
 import {
   EmailService,
   EmailServiceProtocol,
-} from "../../domain/use-cases/_data/services/mail-service";
+} from "../../domain/use-cases/_ports/services/mail-service";
 
 export class NodemailerEmailService implements EmailServiceProtocol {
   async send(options: EmailService.EmailOptions): Promise<void> {

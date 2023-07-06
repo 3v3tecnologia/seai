@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
+import { FaqRepositoryProtocol } from "../../_ports/repositories/faq-repository";
 import { DeleteFaqDTO, DeleteFaqProtocol } from "./ports/delete-faq";
 
 export class DeleteFaq implements DeleteFaqProtocol {

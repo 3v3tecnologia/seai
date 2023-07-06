@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
+import { FaqRepositoryProtocol } from "../../_ports/repositories/faq-repository";
 
 import { FaqNotExistsError } from "./errors/faq-not-exists";
 import { UpdateFaqDTO, UpdateFaqProtocol } from "./ports/update-faq";

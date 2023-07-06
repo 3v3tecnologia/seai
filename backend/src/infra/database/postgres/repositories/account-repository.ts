@@ -1,7 +1,7 @@
 import {
   AccountRepository,
   AccountRepositoryProtocol,
-} from "../../../../domain/use-cases/_data/repositories/account-repository";
+} from "../../../../domain/use-cases/_ports/repositories/account-repository";
 import connection from "../connection/knexfile";
 
 export class KnexAccountRepository implements AccountRepositoryProtocol {

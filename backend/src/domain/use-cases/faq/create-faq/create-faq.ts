@@ -1,4 +1,4 @@
-import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
+import { FaqRepositoryProtocol } from "../../_ports/repositories/faq-repository";
 import { Either, left, right } from "../../../../shared/Either";
 import { CreateFaqDTO, CreateFaqProtocol } from "./ports/create-faq";
 import { QuestionAlreadyExistsError } from "./errors/question-exists";

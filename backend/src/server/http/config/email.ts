@@ -1,4 +1,4 @@
-import { EmailService } from "../../../domain/use-cases/_data/services/mail-service";
+import { EmailService } from "../../../domain/use-cases/_ports/services/mail-service";
 import env from "../env";
 
 export function getEmailOptions(): EmailService.EmailOptions {

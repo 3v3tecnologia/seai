@@ -2,7 +2,7 @@ import { Either, right } from "../../../../shared/Either";
 import {
   AccountRepository,
   AccountRepositoryProtocol,
-} from "../../_data/repositories/account-repository";
+} from "../../_ports/repositories/account-repository";
 
 export class LoaUserModules {
   private readonly accountRepository: AccountRepositoryProtocol;

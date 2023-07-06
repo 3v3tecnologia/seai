@@ -1,6 +1,6 @@
 import env from "../../../../server/http/env";
-import { IDateProvider } from "../../_data/date-provider/date-provider";
-import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
+import { IDateProvider } from "../../_ports/date-provider/date-provider";
+import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
 import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
 import { Either, left, right } from "./../../../../shared/Either";

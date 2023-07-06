@@ -1,5 +1,5 @@
 import { Either, right } from "../../../../shared/Either";
-import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
+import { FaqRepositoryProtocol } from "../../_ports/repositories/faq-repository";
 import { FetchFaqByCategoryDTO } from "./ports/fetch-faq-by-category";
 
 export class FetchFaqByCategory implements FetchFaqByCategory {

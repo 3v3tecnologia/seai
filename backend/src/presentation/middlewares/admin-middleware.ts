@@ -8,7 +8,7 @@ import {
   serverError,
   unauthorized,
 } from "../controllers/helpers";
-import { AccountRepositoryProtocol } from "../../domain/use-cases/_data/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/account-repository";
 
 function hasAnyKey(obj: any, matcher: any): boolean {
   const ob1 = Object.entries(obj);

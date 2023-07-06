@@ -1,5 +1,5 @@
 import { Either, right } from "../../../../shared/Either";
-import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 
 export class GetUsers {
   private readonly accountRepository: AccountRepositoryProtocol;

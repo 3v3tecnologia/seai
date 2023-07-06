@@ -2,7 +2,7 @@ import {
   CategoryRepository,
   FaqRepository,
   FaqRepositoryProtocol,
-} from "../../../../domain/use-cases/_data/repositories/faq-repository";
+} from "../../../../domain/use-cases/_ports/repositories/faq-repository";
 import connection from "../connection/knexfile";
 
 export class KnexFaqRepository implements FaqRepositoryProtocol {
