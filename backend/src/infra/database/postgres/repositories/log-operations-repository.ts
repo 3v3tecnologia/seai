@@ -1,16 +1,9 @@
-export interface LogRepository {
-  logError: (stack: string) => Promise<void>;
-  logInfo(user_id: number, actions: Array<Actions>): Promise<void>;
-  logWarning(message: string): Promise<void>;
-}
+import {
+  Actions,
+  LogRepositoryProtocol,
+} from "../../../../domain/use-cases/_ports/repositories/log-repository";
 
-type Actions = {
-  action: string;
-  table: string;
-  description?: string;
-};
-
-export class LogOperationsRepository implements LogRepository {
+export class LogOperationsRepository implements LogRepositoryProtocol {
   async logError(message: string): Promise<void> {
     // insert log in database
   }
