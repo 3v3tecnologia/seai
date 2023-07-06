@@ -1,11 +1,11 @@
 import {
-  FaqCategoriesData,
-  FaqWithCategoriesData,
+  CategoryRepository,
   FaqRepository,
-} from "../../../../domain/ports/db/faq/faq-repository";
+  FaqRepositoryProtocol,
+} from "../../../../domain/use-cases/_data/repositories/faq-repository";
 import connection from "../connection/knexfile";
 
-export class PostgreSQLFaqRepository implements FaqRepository {
+export class KnexFaqRepository implements FaqRepositoryProtocol {
   async add(data: {
     question: string;
     answer: string;
@@ -54,7 +54,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
       })
       .returning("Id")
       .where("Id", id_category);
-    console.log(`Categoria com id ${result[0].Id} atualizada com sucesso`);
+
     return true;
   }
 
@@ -66,19 +66,17 @@ export class PostgreSQLFaqRepository implements FaqRepository {
       })
       .returning("Id")
       .into("Category");
-
-    console.log(`Categoria com id ${faqId[0].Id} criado com sucesso`);
   }
 
-  async loadAll(): Promise<Array<FaqWithCategoriesData> | null> {
+  async loadAll(): Promise<Array<FaqRepository.FaqWithCategoriesData> | null> {
     const faqsDbResult = await connection.select("*").from("FAQ");
 
     if (!faqsDbResult) {
       return null;
     }
 
-    const faqsToDomain: Array<FaqWithCategoriesData> = faqsDbResult.map(
-      (faqDbResult) => ({
+    const faqsToDomain: Array<FaqRepository.FaqWithCategoriesData> =
+      faqsDbResult.map((faqDbResult) => ({
         id: faqDbResult.Id,
         question: faqDbResult.Question,
         answer: faqDbResult.Answer,
@@ -86,8 +84,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
         created_at: faqDbResult.CreatedAt,
         updated_at: faqDbResult.UpdatedAt,
         categories: [],
-      })
-    );
+      }));
 
     await Promise.allSettled(
       faqsToDomain.map(async (faq) => {
@@ -97,7 +94,6 @@ export class PostgreSQLFaqRepository implements FaqRepository {
       })
     );
 
-    console.log("FAQS WITH CATEGORIES = ", faqsToDomain);
     return faqsToDomain;
   }
 
@@ -122,8 +118,6 @@ export class PostgreSQLFaqRepository implements FaqRepository {
         )
         .where({ Id: id });
 
-      console.log(`FAQ com id ${id} atualizado com sucesso`);
-
       await trx("FAQ_Category").where("Fk_FAQ", id).del();
 
       for (const category_id of categories) {
@@ -133,8 +127,6 @@ export class PostgreSQLFaqRepository implements FaqRepository {
             Fk_Category: category_id,
           })
           .into("FAQ_Category");
-
-        console.log(`Categoria ${category_id} criado com sucesso`);
       }
     });
     return true;
@@ -155,7 +147,9 @@ export class PostgreSQLFaqRepository implements FaqRepository {
     return true;
   }
 
-  async loadById(id_faq: number): Promise<FaqWithCategoriesData | null> {
+  async loadById(
+    id_faq: number
+  ): Promise<FaqRepository.FaqWithCategoriesData | null> {
     const faqDbResult = await connection
       .select("*")
       .where({ Id: id_faq })
@@ -214,7 +208,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
 
   async loadByCategory(
     id_category: number
-  ): Promise<Array<FaqWithCategoriesData> | null> {
+  ): Promise<Array<FaqRepository.FaqWithCategoriesData> | null> {
     const filteredFAQsByCategoryDbResult = await connection
       .select("*")
       .from("FAQ")
@@ -225,9 +219,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
           .where({ Fk_Category: id_category })
       );
 
-    console.log("FAQ = ", filteredFAQsByCategoryDbResult);
-
-    const faqsToDomain: Array<FaqWithCategoriesData> =
+    const faqsToDomain: Array<FaqRepository.FaqWithCategoriesData> =
       filteredFAQsByCategoryDbResult.map((faqDbResult) => ({
         id: faqDbResult.Id,
         question: faqDbResult.Question,
@@ -250,7 +242,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
 
   async loadCategoriesByFaqId(
     id_faq: number
-  ): Promise<Array<FaqCategoriesData> | null> {
+  ): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
     const categories = await connection
       .select("*")
       .from("FAQ_Category")
@@ -269,7 +261,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
 
     return null;
   }
-  async loadCategories(): Promise<Array<FaqCategoriesData> | null> {
+  async loadCategories(): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
     const categories = await connection.select("*").from("Category");
 
     if (categories.length) {
@@ -287,7 +279,7 @@ export class PostgreSQLFaqRepository implements FaqRepository {
 
   async loadCategoryById(
     id_category: number
-  ): Promise<FaqCategoriesData | null> {
+  ): Promise<CategoryRepository.FaqCategoriesData | null> {
     const category = await connection
       .select("*")
       .where({ Id: id_category })
@@ -305,7 +297,9 @@ export class PostgreSQLFaqRepository implements FaqRepository {
     }
     return null;
   }
-  async loadCategoryByTitle(title: string): Promise<FaqCategoriesData | null> {
+  async loadCategoryByTitle(
+    title: string
+  ): Promise<CategoryRepository.FaqCategoriesData | null> {
     const category = await connection
       .select("*")
       .where({ Title: title })

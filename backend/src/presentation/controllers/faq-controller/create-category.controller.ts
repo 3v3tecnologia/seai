@@ -1,15 +1,14 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { CreateFaqCategoryProtocol } from "../../../domain/use-cases/faq/create-category/ports/create-faq-category";
-import { badRequest, created, forbidden, ok, serverError } from "../helpers";
+import { CreateFaqCategoryProtocol } from "../../../domain/use-cases/faq/create-category/protocol";
 import { Validator } from "../../../shared/validation/ports/validator";
+import { badRequest, created, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class CreateFaqCategoryController implements Controller {
   private CreateFaqCategory: CreateFaqCategoryProtocol;
   private validator: Validator;
-
   constructor(
     CreateFaqCategory: CreateFaqCategoryProtocol,
     validator: Validator

@@ -1,11 +1,11 @@
 import { Either, right } from "../../../../shared/Either";
-import { FaqRepository } from "../../../ports/db/faq/faq-repository";
+import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
 import { FetchFaqByCategoryDTO } from "./ports/fetch-faq-by-category";
 
 export class FetchFaqByCategory implements FetchFaqByCategory {
-  private readonly faqRepository: FaqRepository;
+  private readonly faqRepository: FaqRepositoryProtocol;
 
-  constructor(faqRepository: FaqRepository) {
+  constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
   async fetch(

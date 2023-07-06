@@ -1,43 +1,13 @@
+import {
+  AccountRepository,
+  AccountRepositoryProtocol,
+} from "../../../../domain/use-cases/_data/repositories/account-repository";
 import connection from "../connection/knexfile";
 
-export interface UserResponse {
-  id?: number;
-  name?: string;
-  login?: string;
-  email: string;
-  password?: string;
-  type: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-export interface ModulesResponse {
-  id: number;
-  name: string;
-}
-export namespace AccountRepository {
-  export type system_modules_permissions = {
-    news_manager: {
-      id?: number;
-      read: boolean;
-      write: boolean;
-    };
-    registers: {
-      id?: number;
-      read: boolean;
-      write: boolean;
-    };
-    users_manager: {
-      id?: number;
-      read: boolean;
-      write: boolean;
-    };
-  };
-}
-
-export class AccountRepository {
+export class KnexAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
-    type: "admin" | "standart";
+    type: "admin" | "standard";
     modules: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
     const id = await connection
@@ -80,10 +50,8 @@ export class AccountRepository {
     return true;
   }
 
-  async loadModules(): Promise<Array<ModulesResponse> | null> {
+  async getModules(): Promise<Array<AccountRepository.AccountModulesData> | null> {
     const modules = await connection.select("*").from("Module");
-
-    console.log("loadAllModules = ", modules);
 
     if (!modules) {
       return null;
@@ -95,7 +63,7 @@ export class AccountRepository {
       };
     });
   }
-  async loadUserModules(
+  async getUserModulesPermissions(
     id_user: number
   ): Promise<AccountRepository.system_modules_permissions | null> {
     const modules = await connection
@@ -122,7 +90,7 @@ export class AccountRepository {
 
     return mods;
   }
-  async loadUserModulesByName(
+  async getUserModulesByName(
     id_user: number,
     name: string
   ): Promise<{
@@ -147,7 +115,7 @@ export class AccountRepository {
     return mods;
   }
 
-  async loadAll(): Promise<Array<UserResponse> | null> {
+  async list(): Promise<Array<AccountRepository.UserData> | null> {
     const users = await connection.select("*").from("User");
 
     if (!users) {
@@ -183,7 +151,7 @@ export class AccountRepository {
     return rows > 0;
   }
 
-  async loadByEmail(email: string): Promise<UserResponse | null> {
+  async getByEmail(email: string): Promise<AccountRepository.UserData | null> {
     const user = await connection
       .select("*")
       .from("User")
@@ -206,7 +174,7 @@ export class AccountRepository {
     };
   }
 
-  async loadByLogin(login: string): Promise<UserResponse | null> {
+  async getByLogin(login: string): Promise<AccountRepository.UserData | null> {
     const user = await connection
       .select("*")
       .from("User")
@@ -229,16 +197,16 @@ export class AccountRepository {
     };
   }
 
-  async deleteById(id: number): Promise<boolean> {
-    await connection("User").where("Id", id).del();
+  async deleteById(id_user: number): Promise<boolean> {
+    await connection("User").where("Id", id_user).del();
     return true;
   }
 
-  async loadById(id: number): Promise<UserResponse | null> {
+  async getById(id_user: number): Promise<AccountRepository.UserData | null> {
     const user = await connection
       .select("*")
       .from("User")
-      .where({ Id: id })
+      .where({ Id: id_user })
       .first();
 
     if (!user) {
@@ -257,7 +225,7 @@ export class AccountRepository {
     };
   }
 
-  async checkByEmail(email: string): Promise<boolean> {
+  async checkIfEmailAlreadyExists(email: string): Promise<boolean> {
     const user = await connection
       .select("*")
       .from("User")

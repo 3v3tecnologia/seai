@@ -1,15 +1,17 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
-import { makeCreateUserController } from "../factories";
+import {
+  makeCreateUserController,
+  makeDeleteUserController,
+  makeGetUserAccessModulesController,
+  makeGetUsersController,
+} from "../factories/controllers/user";
 
 import {
   userWriteAccessAuth,
   userReadAccessAuth,
   authorization,
 } from "../http-middlewares";
-import { makeGetUsersController } from "../factories/controllers/fetch-user.controller-factory";
-import { makeDeleteUserController } from "../factories/controllers/delete-user-by-id.controller-factory";
-import { makeGetUserAccessModulesController } from "../factories/controllers/load-users-access-modules-factory";
 
 export const userRouter = (): Router => {
   const router = Router();

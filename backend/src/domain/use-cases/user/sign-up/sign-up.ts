@@ -1,6 +1,6 @@
-import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../../ports/encoder";
+import { Encoder } from "../../_data/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 import {
   AccountNotFoundError,
   WrongPasswordError,
@@ -13,12 +13,12 @@ import { AccountEmailNotFound } from "./errors/user-email-not-found";
 import { SignUpDTO } from "./ports/sign-up";
 
 export class SignUp {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly authentication: AuthenticationService;
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     authentication: AuthenticationService,
     encoder: Encoder
   ) {
@@ -35,7 +35,7 @@ export class SignUp {
     >
   > {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
-    const account = await this.accountRepository.loadByEmail(user.email);
+    const account = await this.accountRepository.getByEmail(user.email);
 
     if (!account) {
       return left(new AccountEmailNotFound(user.email));

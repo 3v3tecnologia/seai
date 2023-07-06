@@ -1,17 +1,16 @@
-import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import {
-  CreateFaqCategoryDTO,
-  CreateFaqCategoryProtocol,
-} from "./ports/create-faq-category";
-import { CreateFaqCategoryErrors } from "./create-faq-category-errors";
+import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
+import { CreateFaqCategoryDTO } from "./dto";
+import { CreateFaqCategoryErrors } from "./errors";
+import { CreateFaqCategoryProtocol } from "./protocol";
 
 export class CreateFaqCategory implements CreateFaqCategoryProtocol {
-  private readonly faqRepository: FaqRepository;
+  private readonly faqRepository: FaqRepositoryProtocol;
 
-  constructor(faqRepository: FaqRepository) {
+  constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
+
   async create(
     request: CreateFaqCategoryDTO.params
   ): Promise<Either<Error, CreateFaqCategoryDTO.result>> {
@@ -22,7 +21,15 @@ export class CreateFaqCategory implements CreateFaqCategoryProtocol {
     if (alreadyExists) {
       return left(new CreateFaqCategoryErrors.CategoryAlreadyExists());
     }
+
     await this.faqRepository.addCategory(request.title, request.description);
+
+    // this.addLog({
+    //   action: "create",
+    //   table: "FAQ_Category",
+    //   description: `Categoria ${request.title} criada com sucesso`,
+    // });
+
     return right("Categoria criada com sucesso");
   }
 }

@@ -1,6 +1,6 @@
-import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../../ports/encoder";
+import { Encoder } from "../../_data/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 import { AccountNotFoundError, WrongPasswordError } from "./errors";
 import {
   AuthenticationDTO,
@@ -9,12 +9,12 @@ import {
 import { TokenProvider } from "./ports/token-provider";
 
 export class UserAuthentication implements AuthenticationService {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     encoder: Encoder,
     tokenProvider: TokenProvider
   ) {
@@ -29,7 +29,7 @@ export class UserAuthentication implements AuthenticationService {
   }: AuthenticationDTO.params): Promise<
     Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
   > {
-    const account = await this.accountRepository.loadByLogin(login);
+    const account = await this.accountRepository.getByLogin(login);
 
     if (!account) {
       return left(new AccountNotFoundError(login));

@@ -1,6 +1,6 @@
-import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
-import { IDateProvider } from "../../../../infra/dateprovider/protocols/dateprovider";
 import env from "../../../../server/http/env";
+import { IDateProvider } from "../../_data/date-provider/date-provider";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
 import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
 import { Either, left, right } from "./../../../../shared/Either";
@@ -8,13 +8,13 @@ import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { CreateUserDTO, CreateUserProtocol } from "./ports";
 
 export class CreateUser implements CreateUserProtocol {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   private readonly sendEmailToUser: SendEmailToUser;
   private readonly dateProvider: IDateProvider;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     sendEmailToUser: SendEmailToUser,
     dateProvider: IDateProvider,
     tokenProvider: TokenProvider
@@ -28,14 +28,15 @@ export class CreateUser implements CreateUserProtocol {
     user: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const alreadyExists = await this.accountRepository.checkByEmail(user.email);
+    const alreadyExists =
+      await this.accountRepository.checkIfEmailAlreadyExists(user.email);
 
     if (alreadyExists) {
       return left(new UserAlreadyExistsError());
     }
 
     // validar se os módulos existem mesmo
-    const modules = await this.accountRepository.loadModules();
+    const modules = await this.accountRepository.getModules();
 
     if (!modules) {
       return left(new Error("Modules not found"));
@@ -57,7 +58,7 @@ export class CreateUser implements CreateUserProtocol {
 
     await this.accountRepository.add(user);
 
-    const account = await this.accountRepository.loadByEmail(user.email);
+    const account = await this.accountRepository.getByEmail(user.email);
 
     if (account) {
       const token = await this.tokenProvider.sign(

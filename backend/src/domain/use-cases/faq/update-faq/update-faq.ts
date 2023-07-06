@@ -1,13 +1,13 @@
-import { FaqRepository } from "../../../ports/db/faq/faq-repository";
 import { Either, left, right } from "../../../../shared/Either";
+import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
 
-import { UpdateFaqDTO, UpdateFaqProtocol } from "./ports/update-faq";
 import { FaqNotExistsError } from "./errors/faq-not-exists";
+import { UpdateFaqDTO, UpdateFaqProtocol } from "./ports/update-faq";
 
 export class UpdateFaq implements UpdateFaqProtocol {
-  private readonly faqRepository: FaqRepository;
+  private readonly faqRepository: FaqRepositoryProtocol;
 
-  constructor(faqRepository: FaqRepository) {
+  constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
   async update(

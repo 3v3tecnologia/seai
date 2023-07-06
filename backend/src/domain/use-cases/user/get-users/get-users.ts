@@ -1,18 +1,14 @@
-import {
-  AccountRepository,
-  UserResponse,
-} from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, right } from "../../../../shared/Either";
-import { User } from "../../../entities/user/user";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 
 export class GetUsers {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
 
-  constructor(accountRepository: AccountRepository) {
+  constructor(accountRepository: AccountRepositoryProtocol) {
     this.accountRepository = accountRepository;
   }
-  async execute(): Promise<Either<Error, Array<UserResponse> | null>> {
-    const users = await this.accountRepository.loadAll();
+  async execute(): Promise<Either<Error, Array<any> | null>> {
+    const users = await this.accountRepository.list();
     return right(users);
   }
 }

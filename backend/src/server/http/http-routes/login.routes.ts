@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
-import { makeForgotPasswordController } from "../factories/controllers/forgot-password.controller-factory";
-import { makeSignInController } from "../factories/controllers/sign-in.controller-factory";
-import { makeSignUpController } from "../factories/controllers/sign-up.controller-factory";
-import { makeResetUserController } from "../factories/controllers/reset-user-password.controller-factory";
+import {
+  makeForgotPasswordController,
+  makeResetUserController,
+  makeSignInController,
+  makeSignUpController,
+} from "../factories/controllers/user";
 
 export const loginRouter = (): Router => {
   const router = Router();

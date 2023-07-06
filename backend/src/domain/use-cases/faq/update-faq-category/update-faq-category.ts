@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { FaqRepository } from "../../../ports/db/faq/faq-repository";
+import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
 import {
   UpdateFaqCategoryDTO,
   UpdateFaqCategoryProtocol,
@@ -7,9 +7,9 @@ import {
 import { UpdateFaqCategoryErrors } from "./update-faq-category-errors";
 
 export class UpdateFaqCategory implements UpdateFaqCategoryProtocol {
-  private readonly faqRepository: FaqRepository;
+  private readonly faqRepository: FaqRepositoryProtocol;
 
-  constructor(faqRepository: FaqRepository) {
+  constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
   async update(

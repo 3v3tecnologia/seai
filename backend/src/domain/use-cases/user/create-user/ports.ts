@@ -29,7 +29,7 @@ export namespace CreateUserDTO {
 
   export type Params = {
     email: string;
-    type: "admin" | "standart";
+    type: "admin" | "standard";
     modules: system_modules_permissions;
   };
 

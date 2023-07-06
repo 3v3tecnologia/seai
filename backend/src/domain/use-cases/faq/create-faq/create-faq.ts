@@ -1,12 +1,12 @@
-import { FaqRepository } from "../../../ports/db/faq/faq-repository";
+import { FaqRepositoryProtocol } from "../../_data/repositories/faq-repository";
 import { Either, left, right } from "../../../../shared/Either";
 import { CreateFaqDTO, CreateFaqProtocol } from "./ports/create-faq";
 import { QuestionAlreadyExistsError } from "./errors/question-exists";
 
 export class CreateFaq implements CreateFaqProtocol {
-  private readonly faqRepository: FaqRepository;
+  private readonly faqRepository: FaqRepositoryProtocol;
 
-  constructor(faqRepository: FaqRepository) {
+  constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
   async create(

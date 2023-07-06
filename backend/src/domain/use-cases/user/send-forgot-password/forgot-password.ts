@@ -1,21 +1,19 @@
-import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
-import { IDateProvider } from "../../../../infra/dateprovider/protocols/dateprovider";
 import env from "../../../../server/http/env";
 import { Either, left, right } from "../../../../shared/Either";
+import { IDateProvider } from "../../_data/date-provider/date-provider";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
 import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
 import { AccountEmailNotFound } from "../sign-up/errors/user-email-not-found";
 
-import { v4 as uuidV4 } from "uuid";
-
 export class ForgotPassword {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   private readonly sendEmailToUser: SendEmailToUser;
   private readonly dateProvider: IDateProvider;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     sendEmailToUser: SendEmailToUser,
     dateProvider: IDateProvider,
     tokenProvider: TokenProvider
@@ -27,7 +25,7 @@ export class ForgotPassword {
   }
   async execute(email: string): Promise<Either<AccountEmailNotFound, string>> {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
-    const account = await this.accountRepository.loadByEmail(email);
+    const account = await this.accountRepository.getByEmail(email);
 
     if (!account) {
       return left(new AccountEmailNotFound(email));

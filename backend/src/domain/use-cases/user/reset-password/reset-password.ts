@@ -1,6 +1,6 @@
-import { AccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../../ports/encoder";
+import { Encoder } from "../../_data/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../../_data/repositories/account-repository";
 
 import {
   TokenProvider,
@@ -8,14 +8,14 @@ import {
 } from "../authentication/ports/token-provider";
 
 export class ResetPassword {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   // private readonly sendEmailToUser: SendEmailToUser;
   private readonly tokenProvider: TokenProvider;
   private readonly encoder: Encoder;
 
   // sendEmailToUser: SendEmailToUser,
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     tokenProvider: TokenProvider,
     encoder: Encoder
   ) {
@@ -41,7 +41,7 @@ export class ResetPassword {
       return left(new Error("Token invalid"));
     }
 
-    const user = await this.accountRepository.loadById(Number(token.sub));
+    const user = await this.accountRepository.getById(Number(token.sub));
 
     if (!user) {
       return left(new Error("User not found"));

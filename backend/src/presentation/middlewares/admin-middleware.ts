@@ -1,7 +1,6 @@
 import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
-import { AccountRepository } from "../../infra/database/postgres/repositories/account-repository";
 import { AccessDeniedError } from "../controllers/errors";
 import {
   forbidden,
@@ -9,6 +8,7 @@ import {
   serverError,
   unauthorized,
 } from "../controllers/helpers";
+import { AccountRepositoryProtocol } from "../../domain/use-cases/_data/repositories/account-repository";
 
 function hasAnyKey(obj: any, matcher: any): boolean {
   const ob1 = Object.entries(obj);
@@ -29,14 +29,14 @@ function hasAnyKey(obj: any, matcher: any): boolean {
 }
 
 export class AdminMiddleware implements Middleware {
-  private readonly accountRepository: AccountRepository;
+  private readonly accountRepository: AccountRepositoryProtocol;
   private readonly module: string;
   private readonly access: {
     [key: string]: boolean;
   };
 
   constructor(
-    accountRepository: AccountRepository,
+    accountRepository: AccountRepositoryProtocol,
     module: string,
     access: {
       [key: string]: boolean;
@@ -51,13 +51,11 @@ export class AdminMiddleware implements Middleware {
     try {
       const { accountId } = request;
 
-      console.log("request::: ", request);
-
       if (!accountId) {
         return forbidden(new Error("Identificador do usuário inválido"));
       }
 
-      const module = await this.accountRepository.loadUserModulesByName(
+      const module = await this.accountRepository.getUserModulesByName(
         accountId,
         this.module
       );
