@@ -5,7 +5,9 @@ import { FetchFaqByIdProtocol } from "../../../domain/use-cases/faq/fetch-faq-by
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class FetchFaqByIdController implements Controller {
+export class FetchFaqByIdController
+  implements Controller<FetchFaqByIdController.Request, HttpResponse>
+{
   private FetchFaq: FetchFaqByIdProtocol;
 
   constructor(FetchFaq: FetchFaqByIdProtocol) {

@@ -1,32 +1,31 @@
 import { CreateUser } from "../../../domain/use-cases/user/create-user/create-user";
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
-import { badRequest, created, forbidden, ok, serverError } from "../helpers";
-import { CreateUserDTO } from "../../../domain/use-cases/user/create-user/ports";
-import { Validator } from "../../../shared/validation/ports/validator";
 import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { Validator } from "../../../shared/validation/ports/validator";
+import { badRequest, created, forbidden, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class CreateUserController implements Controller {
+export class CreateUserController extends CommandController<
+  CreateUserController.Request,
+  HttpResponse
+> {
   private createUser: CreateUser;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     createUser: CreateUser,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.createUser = createUser;
     this.validator = validator;
-    this.userLogs = userLogs;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      console.log("CreateUserController = request ::: ", request);
-
       const error = this.validator.validate(request);
 
       if (error.isLeft()) {

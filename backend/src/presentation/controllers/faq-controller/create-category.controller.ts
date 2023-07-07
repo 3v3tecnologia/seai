@@ -1,24 +1,26 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
 import { CreateFaqCategory } from "../../../domain/use-cases/faq/create-category";
 import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class CreateFaqCategoryController implements Controller {
+export class CreateFaqCategoryController extends CommandController<
+  CreateFaqCategoryController.Request,
+  HttpResponse
+> {
   private CreateFaqCategory: CreateFaqCategory;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     CreateFaqCategory: CreateFaqCategory,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.CreateFaqCategory = CreateFaqCategory;
-    this.userLogs = userLogs;
     this.validator = validator;
   }
 

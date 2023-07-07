@@ -1,26 +1,27 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
-import { CreateFaqProtocol } from "../../../domain/use-cases/faq/create-faq/ports/create-faq";
-import { badRequest, created, forbidden, ok, serverError } from "../helpers";
-import { Validator } from "../../../shared/validation/ports/validator";
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { CreateFaq } from "../../../domain/use-cases/faq/create-faq/create-faq";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { Validator } from "../../../shared/validation/ports/validator";
+import { badRequest, created, forbidden, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class CreateFaqController implements Controller {
+export class CreateFaqController extends CommandController<
+  CreateFaqController.Request,
+  HttpResponse
+> {
   private CreateFaq: CreateFaq;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     CreateFaq: CreateFaq,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.CreateFaq = CreateFaq;
     this.validator = validator;
-    this.userLogs = userLogs;
   }
 
   async handle(request: CreateFaqController.Request): Promise<HttpResponse> {

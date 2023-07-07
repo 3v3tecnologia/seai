@@ -6,7 +6,9 @@ import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, ok, forbidden, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class LoadUserAccessController implements Controller {
+export class LoadUserAccessController
+  implements Controller<LoadUserAccessController.Request, HttpResponse>
+{
   private loadUser: LoaUserModules;
   private validator: Validator;
 
@@ -19,8 +21,6 @@ export class LoadUserAccessController implements Controller {
     request: LoadUserAccessController.Request
   ): Promise<HttpResponse> {
     try {
-      console.log("request = > ", request);
-
       const error = this.validator.validate(request);
 
       if (error.isLeft()) {

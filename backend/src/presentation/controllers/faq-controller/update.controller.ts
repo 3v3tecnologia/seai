@@ -1,26 +1,27 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
-import { UpdateFaqProtocol } from "../../../domain/use-cases/faq/update-faq/ports/update-faq";
-import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { Validator } from "../../../shared/validation/ports/validator";
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { UpdateFaq } from "../../../domain/use-cases/faq/update-faq/update-faq";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { Validator } from "../../../shared/validation/ports/validator";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class UpdateFaqController implements Controller {
+export class UpdateFaqController extends CommandController<
+  UpdateFaqController.Request,
+  HttpResponse
+> {
   private UpdateFaq: UpdateFaq;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     UpdateFaq: UpdateFaq,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.UpdateFaq = UpdateFaq;
     this.validator = validator;
-    this.userLogs = userLogs;
   }
 
   async handle(request: UpdateFaqController.Request): Promise<HttpResponse> {

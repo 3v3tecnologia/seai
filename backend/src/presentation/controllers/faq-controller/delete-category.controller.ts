@@ -1,22 +1,23 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
-import { DeleteFaqCategoryProtocol } from "../../../domain/use-cases/faq/delete-faq-category/ports/delete-faq-category";
-import { forbidden, noContent, serverError, ok, badRequest } from "../helpers";
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category/delete-faq-category";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class DeleteFaqCategoryController implements Controller {
+export class DeleteFaqCategoryController extends CommandController<
+  DeleteFaqCategoryController.Request,
+  HttpResponse
+> {
   private DeleteFaqCategory: DeleteFaqCategory;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     DeleteFaqCategory: DeleteFaqCategory,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.DeleteFaqCategory = DeleteFaqCategory;
-    this.userLogs = userLogs;
   }
 
   async handle(

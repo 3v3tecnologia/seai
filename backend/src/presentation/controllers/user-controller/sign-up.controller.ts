@@ -1,30 +1,31 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
-import { SignUp } from "../../../domain/use-cases/user/sign-up";
-import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { Validator } from "../../../shared/validation/ports/validator";
 import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { SignUp } from "../../../domain/use-cases/user/sign-up";
+import { Validator } from "../../../shared/validation/ports/validator";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class SignUpController implements Controller<any> {
+export class SignUpController extends CommandController<
+  SignUpController.Request,
+  HttpResponse
+> {
   private signUp: SignUp;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
 
   constructor(
     signUp: SignUp,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.signUp = signUp;
     this.validator = validator;
-    this.userLogs = userLogs;
   }
 
   async handle(request: SignUpController.Request): Promise<HttpResponse> {
     try {
-      console.log("request = > ", request);
       const error = this.validator.validate(request);
 
       if (error.isLeft()) {

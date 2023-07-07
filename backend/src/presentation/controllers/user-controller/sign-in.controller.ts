@@ -6,7 +6,9 @@ import { badRequest, forbidden, ok, serverError } from "../helpers";
 import { SignIn } from "../../../domain/use-cases/user/sign-in";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class SignInController implements Controller<any> {
+export class SignInController
+  implements Controller<CreateUserController.Request, HttpResponse>
+{
   private signIn: SignIn;
 
   constructor(signIn: SignIn) {

@@ -5,7 +5,9 @@ import { GetUsers } from "../../../domain/use-cases/user/get-users/get-users";
 import { ok } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class FetchUserController implements Controller<any> {
+export class FetchUserController
+  implements Controller<CreateUserController.Request, HttpResponse>
+{
   private fetchUser: GetUsers;
 
   constructor(fetchUser: GetUsers) {
@@ -13,7 +15,6 @@ export class FetchUserController implements Controller<any> {
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
-    console.log("request = > ", request);
     const result = await this.fetchUser.execute();
     //Add validation here
     return ok(result.value);

@@ -32,7 +32,7 @@ export class DeleteFaqCategory
     this.addLog({
       action: "delete",
       table: "FAQ_Category",
-      description: `Categoria ${exists.title} deletada com sucesso`,
+      description: `Categoria "${exists.title}" deletada com sucesso`,
     });
 
     return right("Categoria deletada com sucesso");

@@ -3,28 +3,29 @@ import { ResetPassword } from "../../../domain/use-cases/user/reset-password/res
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, forbidden, serverError } from "../helpers";
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
+import { CommandController } from "../ports/command-controller";
 
-export class ResetPasswordController implements Controller {
+export class ResetPasswordController extends CommandController<
+  ResetPasswordController.Request,
+  HttpResponse
+> {
   private resetPassword: ResetPassword;
   private validator: Validator;
-  private userLogs: RegisterUserLogs;
+
   constructor(
     resetPassword: ResetPassword,
     validator: Validator,
     userLogs: RegisterUserLogs
   ) {
+    super(userLogs);
     this.resetPassword = resetPassword;
     this.validator = validator;
-    this.userLogs = userLogs;
   }
 
   async handle(
     request: ResetPasswordController.Request
   ): Promise<HttpResponse> {
     try {
-      console.log("request = > ", request);
-
       const error = this.validator.validate(request);
 
       if (error.isLeft()) {

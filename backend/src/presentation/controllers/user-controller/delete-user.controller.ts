@@ -1,22 +1,23 @@
 import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
 
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-user";
 import { forbidden, ok } from "../helpers";
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { CommandController } from "../ports/command-controller";
 
 // Controllers são classes puras e não devem depender de frameworks
-export class DeleteUserController implements Controller<any> {
+export class DeleteUserController extends CommandController<
+  DeleteUserController.Request,
+  HttpResponse
+> {
   private deleteUser: DeleteUser;
-  private userLogs: RegisterUserLogs;
 
   constructor(deleteUser: DeleteUser, userLogs: RegisterUserLogs) {
+    super(userLogs);
     this.deleteUser = deleteUser;
-    this.userLogs = userLogs;
   }
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
-    console.log("request = > ", request);
     const result = await this.deleteUser.execute(request.id);
 
     if (result.isLeft()) {
