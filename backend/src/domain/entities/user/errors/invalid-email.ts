@@ -2,7 +2,7 @@ import { DomainError } from "./errors";
 
 export class InvalidEmailError extends Error implements DomainError {
   constructor(email: string) {
-    super(`The email ${email} is invalid.`);
+    super(`O email ${email} é inválido.`);
     this.name = "InvalidEmailError";
   }
 }

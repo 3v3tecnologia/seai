@@ -1,9 +1,5 @@
+import { Either, left, right } from "../../../shared/Either";
 import { InvalidEmailError } from "./errors/invalid-email";
-
-type Message = {
-  isError: boolean;
-  value: any;
-};
 
 export class Email {
   private readonly email: string;
@@ -13,18 +9,12 @@ export class Email {
     Object.freeze(this);
   }
 
-  static create(email: string): Message {
+  static create(email: string): Either<InvalidEmailError, Email> {
     if (!Email.validate(email)) {
-      return {
-        isError: true,
-        value: new InvalidEmailError(email),
-      };
+      return left(new InvalidEmailError(email));
     }
 
-    return {
-      isError: false,
-      value: new Email(email),
-    };
+    return right(new Email(email));
   }
 
   get value(): string {

@@ -1,70 +1,75 @@
+import { Either, left, right } from "../../../shared/Either";
 import { Email } from "./email";
-import { InvalidEmailError } from "./errors/invalid-email";
+import {
+  UserModulesAccess,
+  UserModulesAccessProps,
+} from "./user-modules-access";
+
+type UserType = "admin" | "standard";
 interface UserProps {
   name?: string;
   login?: string;
-  email: string;
+  email: Email;
   password?: string | null;
-  type: "admin" | "standart";
-  created_at?: Date;
-  updated_at?: Date;
+  modulesAccess: UserModulesAccess;
+  type: UserType;
 }
-
-interface UserParams {
-  name?: string;
-  login?: string;
-  email: string;
-  password?: string;
-  type: "admin" | "standart";
-  created_at?: Date;
-  updated_at?: Date;
-}
-
-type Message = {
-  isError: boolean;
-  value?: any;
-};
 
 export class User {
+  private readonly _id: number | null;
   public readonly name: string | null;
   public readonly login: string | null;
-  public email: string;
+  public email: Email;
   public password: string | null;
-  public readonly type: "admin" | "standart";
-  public created_at?: Date;
-  public updated_at?: Date;
-  private readonly _id: number | undefined;
+  public readonly type: UserType;
+  public readonly modulesAccess: UserModulesAccess;
 
   private constructor(props: UserProps, id?: number) {
-    this._id = id;
+    this._id = id || null;
     this.email = props.email;
     this.type = props.type;
+    this.modulesAccess = props.modulesAccess;
 
     this.name = props.name || null;
     this.login = props.login || null;
     this.password = props.password || null;
-    this.created_at = props.created_at;
-    this.updated_at = props.updated_at;
   }
 
-  get id(): number | undefined {
+  get id(): number | null {
     return this._id;
   }
 
-  static create(props: UserParams, id?: number): Message {
+  static create(
+    props: {
+      email: string;
+      type: UserType;
+      modulesAccess: UserModulesAccessProps;
+    },
+    id?: number
+  ): Either<Error, User> {
+    const modulesOrError = UserModulesAccess.create(props.modulesAccess);
+
+    if (modulesOrError.isLeft()) {
+      return left(modulesOrError.value);
+    }
+
     const emailOrError = Email.create(props.email);
 
-    if (emailOrError.isError) {
-      return {
-        isError: true,
-        value: new InvalidEmailError(props.email),
-      };
+    if (emailOrError.isLeft()) {
+      return left(emailOrError.value);
     }
-    const user = new User({ ...props, email: props.email }, id);
 
-    return {
-      isError: false,
-      value: user,
-    };
+    return right(
+      new User(
+        {
+          email: emailOrError.value as Email,
+          modulesAccess: modulesOrError.value as UserModulesAccess,
+          type: props.type,
+        },
+        id
+      )
+    );
   }
+
+  static updateAccount(props: any): any {}
 }
