@@ -10,42 +10,44 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     type: "admin" | "standard";
     modules: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
-    const id = await connection
-      .insert({
-        Email: data.email,
-        Type: data.type,
-      })
-      .returning("Id")
-      .into("User");
+    await connection.transaction(async (trx) => {
+      const id = await trx
+        .insert({
+          Email: data.email,
+          Type: data.type,
+        })
+        .returning("Id")
+        .into("User");
 
-    const user_id = id.length && id[0].Id;
+      const user_id = id.length && id[0].Id;
 
-    await connection
-      .insert({
-        Fk_User: user_id,
-        Fk_Module: data.modules.news_manager.id,
-        Read: data.modules.news_manager.read,
-        Write: data.modules.news_manager.write,
-      })
-      .into("User_Access");
+      await trx
+        .insert({
+          Fk_User: user_id,
+          Fk_Module: data.modules.news_manager.id,
+          Read: data.modules.news_manager.read,
+          Write: data.modules.news_manager.write,
+        })
+        .into("User_Access");
 
-    await connection
-      .insert({
-        Fk_User: user_id,
-        Fk_Module: data.modules.registers.id,
-        Read: data.modules.registers.read,
-        Write: data.modules.registers.write,
-      })
-      .into("User_Access");
+      await trx
+        .insert({
+          Fk_User: user_id,
+          Fk_Module: data.modules.registers.id,
+          Read: data.modules.registers.read,
+          Write: data.modules.registers.write,
+        })
+        .into("User_Access");
 
-    await connection
-      .insert({
-        Fk_User: user_id,
-        Fk_Module: data.modules.users_manager.id,
-        Read: data.modules.users_manager.read,
-        Write: data.modules.users_manager.write,
-      })
-      .into("User_Access");
+      await trx
+        .insert({
+          Fk_User: user_id,
+          Fk_Module: data.modules.users_manager.id,
+          Read: data.modules.users_manager.read,
+          Write: data.modules.users_manager.write,
+        })
+        .into("User_Access");
+    });
 
     return true;
   }

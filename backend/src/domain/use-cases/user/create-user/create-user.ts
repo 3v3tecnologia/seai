@@ -1,4 +1,5 @@
 import env from "../../../../server/http/env";
+import { Command } from "../../_ports/core/command";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
@@ -7,7 +8,7 @@ import { Either, left, right } from "./../../../../shared/Either";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { CreateUserDTO, CreateUserProtocol } from "./ports";
 
-export class CreateUser implements CreateUserProtocol {
+export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly sendEmailToUser: SendEmailToUser;
   private readonly dateProvider: IDateProvider;
@@ -19,6 +20,7 @@ export class CreateUser implements CreateUserProtocol {
     dateProvider: IDateProvider,
     tokenProvider: TokenProvider
   ) {
+    super();
     this.accountRepository = accountRepository;
     this.sendEmailToUser = sendEmailToUser;
     this.dateProvider = dateProvider;
@@ -102,9 +104,14 @@ export class CreateUser implements CreateUserProtocol {
           html: msg,
         }
       );
-
-      console.log("Email enviado para o usuário...");
     }
+
+    this.addLog({
+      action: "create",
+      table: "User",
+      description: `Usuário criado com sucessso, aguardando confirmação do cadastro`,
+    });
+
     return right(
       `Sucesso ao criar usuário, email enviado com sucesso para ${user.email}`
     );

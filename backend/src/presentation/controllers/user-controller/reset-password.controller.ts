@@ -1,3 +1,4 @@
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { ResetPassword } from "../../../domain/use-cases/user/reset-password/reset-password";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, forbidden, serverError } from "../helpers";
@@ -7,10 +8,15 @@ import { Controller } from "../ports/controllers";
 export class ResetPasswordController implements Controller {
   private resetPassword: ResetPassword;
   private validator: Validator;
-
-  constructor(resetPassword: ResetPassword, validator: Validator) {
+  private userLogs: RegisterUserLogs;
+  constructor(
+    resetPassword: ResetPassword,
+    validator: Validator,
+    userLogs: RegisterUserLogs
+  ) {
     this.resetPassword = resetPassword;
     this.validator = validator;
+    this.userLogs = userLogs;
   }
 
   async handle(
@@ -33,6 +39,10 @@ export class ResetPasswordController implements Controller {
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
+      await this.userLogs.log(
+        request.accountId,
+        this.resetPassword.useCaseLogs()
+      );
       //Add validation here
       return created("Senha resetada com sucesso");
     } catch (error) {
@@ -44,6 +54,7 @@ export class ResetPasswordController implements Controller {
 
 export namespace ResetPasswordController {
   export type Request = {
+    accountId: number;
     password: string;
     token: string;
   };

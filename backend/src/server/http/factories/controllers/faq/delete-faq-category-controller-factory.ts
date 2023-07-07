@@ -2,9 +2,13 @@ import { DeleteFaqCategoryController } from "../../../../../presentation/control
 import { Controller } from "../../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../../decorators";
 import { makeDeleteFaqCategory } from "../../use-cases/faq/delete-faq-category";
+import { makeRegisterUserLogs } from "../../use-cases/logs";
 
 export const makeDeleteFaqCategoryController = (): Controller => {
   return makeLogControllerDecorator(
-    new DeleteFaqCategoryController(makeDeleteFaqCategory())
+    new DeleteFaqCategoryController(
+      makeDeleteFaqCategory(),
+      makeRegisterUserLogs()
+    )
   );
 };

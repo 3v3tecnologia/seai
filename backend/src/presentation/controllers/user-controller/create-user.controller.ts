@@ -5,15 +5,22 @@ import { Controller } from "../ports/controllers";
 import { badRequest, created, forbidden, ok, serverError } from "../helpers";
 import { CreateUserDTO } from "../../../domain/use-cases/user/create-user/ports";
 import { Validator } from "../../../shared/validation/ports/validator";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class CreateUserController implements Controller {
   private createUser: CreateUser;
   private validator: Validator;
+  private userLogs: RegisterUserLogs;
 
-  constructor(createUser: CreateUser, validator: Validator) {
+  constructor(
+    createUser: CreateUser,
+    validator: Validator,
+    userLogs: RegisterUserLogs
+  ) {
     this.createUser = createUser;
     this.validator = validator;
+    this.userLogs = userLogs;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
@@ -37,6 +44,7 @@ export class CreateUserController implements Controller {
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
+      await this.userLogs.log(request.accountId, this.createUser.useCaseLogs());
       //Add validation here
       return created(createdOrError.value);
     } catch (error) {
@@ -47,5 +55,23 @@ export class CreateUserController implements Controller {
 }
 
 export namespace CreateUserController {
-  export type Request = CreateUserDTO.Params;
+  export type Request = {
+    accountId: number;
+    email: string;
+    type: "admin" | "standard";
+    modules: {
+      news_manager: {
+        read: boolean;
+        write: boolean;
+      };
+      registers: {
+        read: boolean;
+        write: boolean;
+      };
+      users_manager: {
+        read: boolean;
+        write: boolean;
+      };
+    };
+  };
 }

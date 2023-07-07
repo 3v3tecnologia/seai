@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 
@@ -6,8 +7,9 @@ import {
   TokenProvider,
   TokenResponse,
 } from "../authentication/ports/token-provider";
+import { ResetPasswordProtocol } from "./protocol";
 
-export class ResetPassword {
+export class ResetPassword extends Command implements ResetPasswordProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
   // private readonly sendEmailToUser: SendEmailToUser;
   private readonly tokenProvider: TokenProvider;
@@ -19,6 +21,7 @@ export class ResetPassword {
     tokenProvider: TokenProvider,
     encoder: Encoder
   ) {
+    super();
     this.accountRepository = accountRepository;
     // this.sendEmailToUser = sendEmailToUser;
     this.tokenProvider = tokenProvider;
@@ -59,7 +62,11 @@ export class ResetPassword {
       password: user.password,
     });
 
-    console.log("Usuário atualizado com sucesso");
+    this.addLog({
+      action: "update",
+      table: "User",
+      description: `Senha do usuário ${user.login} resetada com sucesso`,
+    });
     return right(null);
   }
 }

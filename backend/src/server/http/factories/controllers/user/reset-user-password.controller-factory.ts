@@ -4,6 +4,7 @@ import { Validator } from "../../../../../shared/validation/ports/validator";
 import { RequiredFieldValidator } from "../../../../../shared/validation/validator/required-field";
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
+import { makeRegisterUserLogs } from "../../use-cases/logs";
 import { makeResetUserPassword } from "../../use-cases/user/reset-user-password-factory";
 
 export const makeResetUserController = (): Controller => {
@@ -15,6 +16,10 @@ export const makeResetUserController = (): Controller => {
 
   const validationComposite = new ValidatorComposite(validations);
   return makeLogControllerDecorator(
-    new ResetPasswordController(makeResetUserPassword(), validationComposite)
+    new ResetPasswordController(
+      makeResetUserPassword(),
+      validationComposite,
+      makeRegisterUserLogs()
+    )
   );
 };

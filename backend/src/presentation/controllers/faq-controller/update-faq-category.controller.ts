@@ -4,18 +4,23 @@ import { Controller } from "../ports/controllers";
 import { UpdateFaqCategoryProtocol } from "../../../domain/use-cases/faq/update-faq-category/ports/update-faq-category";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category/update-faq-category";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class UpdateFaqCategoryController implements Controller {
-  private UpdateFaqCategory: UpdateFaqCategoryProtocol;
+  private UpdateFaqCategory: UpdateFaqCategory;
   private validator: Validator;
+  private userLogs: RegisterUserLogs;
 
   constructor(
-    UpdateFaqCategory: UpdateFaqCategoryProtocol,
-    validator: Validator
+    UpdateFaqCategory: UpdateFaqCategory,
+    validator: Validator,
+    userLogs: RegisterUserLogs
   ) {
     this.UpdateFaqCategory = UpdateFaqCategory;
     this.validator = validator;
+    this.userLogs = userLogs;
   }
 
   async handle(
@@ -44,6 +49,11 @@ export class UpdateFaqCategoryController implements Controller {
       if (result.isLeft()) {
         return forbidden(result.value);
       }
+
+      await this.userLogs.log(
+        request.accountId,
+        this.UpdateFaqCategory.useCaseLogs()
+      );
       //Add validation here
       return ok(result.value);
     } catch (error) {
@@ -55,6 +65,7 @@ export class UpdateFaqCategoryController implements Controller {
 
 export namespace UpdateFaqCategoryController {
   export type Request = {
+    accountId: number;
     id: number;
     title: string;
     description: string;

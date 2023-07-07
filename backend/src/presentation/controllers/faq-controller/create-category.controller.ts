@@ -1,19 +1,24 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { CreateFaqCategoryProtocol } from "../../../domain/use-cases/faq/create-category/protocol";
+import { CreateFaqCategory } from "../../../domain/use-cases/faq/create-category";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, serverError } from "../helpers";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class CreateFaqCategoryController implements Controller {
-  private CreateFaqCategory: CreateFaqCategoryProtocol;
+  private CreateFaqCategory: CreateFaqCategory;
   private validator: Validator;
+  private userLogs: RegisterUserLogs;
+
   constructor(
-    CreateFaqCategory: CreateFaqCategoryProtocol,
-    validator: Validator
+    CreateFaqCategory: CreateFaqCategory,
+    validator: Validator,
+    userLogs: RegisterUserLogs
   ) {
     this.CreateFaqCategory = CreateFaqCategory;
+    this.userLogs = userLogs;
     this.validator = validator;
   }
 
@@ -39,6 +44,10 @@ export class CreateFaqCategoryController implements Controller {
       if (result.isLeft()) {
         return badRequest(result.value);
       }
+      await this.userLogs.log(
+        request.accountId,
+        this.CreateFaqCategory.useCaseLogs()
+      );
       //Add validation here
       return created(result.value);
     } catch (error) {
@@ -50,6 +59,7 @@ export class CreateFaqCategoryController implements Controller {
 
 export namespace CreateFaqCategoryController {
   export type Request = {
+    accountId: number;
     title: string;
     description: string;
   };

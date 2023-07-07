@@ -4,15 +4,23 @@ import { Controller } from "../ports/controllers";
 import { UpdateFaqProtocol } from "../../../domain/use-cases/faq/update-faq/ports/update-faq";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 import { Validator } from "../../../shared/validation/ports/validator";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { UpdateFaq } from "../../../domain/use-cases/faq/update-faq/update-faq";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class UpdateFaqController implements Controller {
-  private UpdateFaq: UpdateFaqProtocol;
+  private UpdateFaq: UpdateFaq;
   private validator: Validator;
+  private userLogs: RegisterUserLogs;
 
-  constructor(UpdateFaq: UpdateFaqProtocol, validator: Validator) {
+  constructor(
+    UpdateFaq: UpdateFaq,
+    validator: Validator,
+    userLogs: RegisterUserLogs
+  ) {
     this.UpdateFaq = UpdateFaq;
     this.validator = validator;
+    this.userLogs = userLogs;
   }
 
   async handle(request: UpdateFaqController.Request): Promise<HttpResponse> {
@@ -51,6 +59,7 @@ export class UpdateFaqController implements Controller {
       if (result.isLeft()) {
         return forbidden(result.value);
       }
+      await this.userLogs.log(request.accountId, this.UpdateFaq.useCaseLogs());
       //Add validation here
       return ok(result.value);
     } catch (error) {
@@ -62,6 +71,7 @@ export class UpdateFaqController implements Controller {
 
 export namespace UpdateFaqController {
   export type Request = {
+    accountId: number;
     id: number;
     question: string;
     answer: string;

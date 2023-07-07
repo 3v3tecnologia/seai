@@ -2,11 +2,13 @@ import { FaqRepositoryProtocol } from "../../_ports/repositories/faq-repository"
 import { Either, left, right } from "../../../../shared/Either";
 import { CreateFaqDTO, CreateFaqProtocol } from "./ports/create-faq";
 import { QuestionAlreadyExistsError } from "./errors/question-exists";
+import { Command } from "../../_ports/core/command";
 
-export class CreateFaq implements CreateFaqProtocol {
+export class CreateFaq extends Command implements CreateFaqProtocol {
   private readonly faqRepository: FaqRepositoryProtocol;
 
   constructor(faqRepository: FaqRepositoryProtocol) {
+    super();
     this.faqRepository = faqRepository;
   }
   async create(
@@ -21,6 +23,12 @@ export class CreateFaq implements CreateFaqProtocol {
     }
 
     await this.faqRepository.add(request);
+
+    this.addLog({
+      action: "create",
+      table: "FAQ",
+      description: `FAQ criado com sucesso`,
+    });
 
     return right("Faq criado com sucesso");
   }

@@ -4,15 +4,23 @@ import { Controller } from "../ports/controllers";
 import { CreateFaqProtocol } from "../../../domain/use-cases/faq/create-faq/ports/create-faq";
 import { badRequest, created, forbidden, ok, serverError } from "../helpers";
 import { Validator } from "../../../shared/validation/ports/validator";
+import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { CreateFaq } from "../../../domain/use-cases/faq/create-faq/create-faq";
 
 // Controllers são classes puras e não devem depender de frameworks
 export class CreateFaqController implements Controller {
-  private CreateFaq: CreateFaqProtocol;
+  private CreateFaq: CreateFaq;
   private validator: Validator;
+  private userLogs: RegisterUserLogs;
 
-  constructor(CreateFaq: CreateFaqProtocol, validator: Validator) {
+  constructor(
+    CreateFaq: CreateFaq,
+    validator: Validator,
+    userLogs: RegisterUserLogs
+  ) {
     this.CreateFaq = CreateFaq;
     this.validator = validator;
+    this.userLogs = userLogs;
   }
 
   async handle(request: CreateFaqController.Request): Promise<HttpResponse> {
@@ -53,6 +61,8 @@ export class CreateFaqController implements Controller {
       if (result.isLeft()) {
         return forbidden(result.value);
       }
+
+      await this.userLogs.log(request.accountId, this.CreateFaq.useCaseLogs());
       //Add validation here
       return created(result.value);
     } catch (error) {
@@ -64,6 +74,7 @@ export class CreateFaqController implements Controller {
 
 export namespace CreateFaqController {
   export type Request = {
+    accountId: number;
     question: string;
     answer: string;
     order: string;

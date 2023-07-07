@@ -9,6 +9,7 @@ import { EmailValidator } from "../../../../../shared/validation/validator/email
 import { RequiredFieldValidator } from "../../../../../shared/validation/validator/required-field";
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
+import { makeRegisterUserLogs } from "../../use-cases/logs";
 import { makeUserAuthentication } from "../../use-cases/user/authentication-factory";
 
 export const makeSignUpController = (): Controller => {
@@ -29,6 +30,6 @@ export const makeSignUpController = (): Controller => {
   const signUp = new SignUp(accountRepository, authentication, encoder);
 
   return makeLogControllerDecorator(
-    new SignUpController(signUp, validationComposite)
+    new SignUpController(signUp, validationComposite, makeRegisterUserLogs())
   );
 };

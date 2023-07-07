@@ -7,11 +7,11 @@ export class LogOperationsRepository implements LogRepositoryProtocol {
   async logError(message: string): Promise<void> {
     // insert log in database
   }
-  async logInfo(user_id: number, actions: Array<Actions>): Promise<void> {
+  async saveUserActions(
+    user_id: number,
+    actions: Array<Actions>
+  ): Promise<void> {
     console.log("[LOG OPERATION] ::: ", user_id, " ", actions);
-    // insert log in database
-  }
-  async logWarning(message: string): Promise<void> {
     // insert log in database
   }
 }
