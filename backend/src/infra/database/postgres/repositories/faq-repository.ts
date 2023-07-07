@@ -3,7 +3,7 @@ import {
   FaqRepository,
   FaqRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/faq-repository";
-import connection from "../connection/knexfile";
+import { governmentDb } from "../connection/knexfile";
 
 export class KnexFaqRepository implements FaqRepositoryProtocol {
   async add(data: {
@@ -14,7 +14,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }): Promise<boolean> {
     const { question, answer, order, categories } = data;
 
-    await connection.transaction(async function (trx) {
+    await governmentDb.transaction(async function (trx) {
       const faq = await trx
         .insert({
           Question: question,
@@ -47,7 +47,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
     title: string,
     description: string
   ): Promise<boolean> {
-    const result = await connection("Category")
+    const result = await governmentDb("Category")
       .update({
         Title: title,
         Description: description,
@@ -59,7 +59,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
 
   async addCategory(title: string, description: string): Promise<void> {
-    const faqId = await connection
+    const faqId = await governmentDb
       .insert({
         Title: title,
         Description: description,
@@ -69,7 +69,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
 
   async loadAll(): Promise<Array<FaqRepository.FaqWithCategoriesData> | null> {
-    const faqsDbResult = await connection.select("*").from("FAQ");
+    const faqsDbResult = await governmentDb.select("*").from("FAQ");
 
     if (!faqsDbResult) {
       return null;
@@ -106,7 +106,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }): Promise<boolean> {
     const { id, question, answer, order, categories } = data;
 
-    await connection.transaction(async function (trx) {
+    await governmentDb.transaction(async function (trx) {
       await trx("FAQ")
         .update(
           {
@@ -133,14 +133,14 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
 
   async deleteById(id_faq: number): Promise<boolean> {
-    await connection.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       await trx("FAQ_Category").where("Fk_FAQ", id_faq).del();
       await trx("FAQ").where("Id", id_faq).del();
     });
     return true;
   }
   async deleteCategoryById(id_category: number): Promise<boolean> {
-    await connection.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       await trx("FAQ_Category").where("Fk_Category", id_category).del();
       await trx("Category").where("Id", id_category).del();
     });
@@ -150,7 +150,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async loadById(
     id_faq: number
   ): Promise<FaqRepository.FaqWithCategoriesData | null> {
-    const faqDbResult = await connection
+    const faqDbResult = await governmentDb
       .select("*")
       .where({ Id: id_faq })
       .from("FAQ")
@@ -160,7 +160,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
       return null;
     }
 
-    const categoriesDbResult = await connection
+    const categoriesDbResult = await governmentDb
       .select("*")
       .from("FAQ_Category")
       .innerJoin("Category", "Category.Id", "FAQ_Category.Fk_Category")
@@ -188,7 +188,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
 
   async checkIfQuestionAlreadyExists(question: string): Promise<boolean> {
-    const exists = await connection
+    const exists = await governmentDb
       .select("*")
       .from("FAQ")
       .where({ Question: question })
@@ -197,7 +197,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
     return exists ? true : false;
   }
   async checkIfFaqAlreadyExists(id: number): Promise<boolean> {
-    const exists = await connection
+    const exists = await governmentDb
       .select("*")
       .from("FAQ")
       .where({ Id: id })
@@ -209,12 +209,12 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async loadByCategory(
     id_category: number
   ): Promise<Array<FaqRepository.FaqWithCategoriesData> | null> {
-    const filteredFAQsByCategoryDbResult = await connection
+    const filteredFAQsByCategoryDbResult = await governmentDb
       .select("*")
       .from("FAQ")
       .whereIn(
         "Id",
-        connection("FAQ_Category")
+        governmentDb("FAQ_Category")
           .select("Fk_FAQ")
           .where({ Fk_Category: id_category })
       );
@@ -243,7 +243,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async loadCategoriesByFaqId(
     id_faq: number
   ): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
-    const categories = await connection
+    const categories = await governmentDb
       .select("*")
       .from("FAQ_Category")
       .innerJoin("Category", "Category.Id", "FAQ_Category.Fk_Category")
@@ -262,7 +262,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
     return null;
   }
   async loadCategories(): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
-    const categories = await connection.select("*").from("Category");
+    const categories = await governmentDb.select("*").from("Category");
 
     if (categories.length) {
       return categories.map((category) => ({
@@ -280,7 +280,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async loadCategoryById(
     id_category: number
   ): Promise<CategoryRepository.FaqCategoriesData | null> {
-    const category = await connection
+    const category = await governmentDb
       .select("*")
       .where({ Id: id_category })
       .from("Category")
@@ -300,7 +300,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async loadCategoryByTitle(
     title: string
   ): Promise<CategoryRepository.FaqCategoriesData | null> {
-    const category = await connection
+    const category = await governmentDb
       .select("*")
       .where({ Title: title })
       .from("Category")

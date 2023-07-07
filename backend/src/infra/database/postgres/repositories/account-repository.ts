@@ -2,7 +2,7 @@ import {
   AccountRepository,
   AccountRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/account-repository";
-import connection from "../connection/knexfile";
+import { governmentDb } from "../connection/knexfile";
 
 export class KnexAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
@@ -10,7 +10,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     type: "admin" | "standard";
     modules: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
-    await connection.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       const id = await trx
         .insert({
           Email: data.email,
@@ -53,7 +53,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async getModules(): Promise<Array<AccountRepository.AccountModulesData> | null> {
-    const modules = await connection.select("*").from("Module");
+    const modules = await governmentDb.select("*").from("Module");
 
     if (!modules) {
       return null;
@@ -68,7 +68,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   async getUserModulesPermissions(
     id_user: number
   ): Promise<AccountRepository.system_modules_permissions | null> {
-    const modules = await connection
+    const modules = await governmentDb
       .select("*")
       .where({ Fk_User: id_user })
       .from("User_Access")
@@ -100,7 +100,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     read: boolean;
     write: boolean;
   } | null> {
-    const module = await connection
+    const module = await governmentDb
       .select("*")
       .where({ Fk_User: id_user })
       .andWhere({ Name: name })
@@ -118,7 +118,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async list(): Promise<Array<AccountRepository.UserData> | null> {
-    const users = await connection.select("*").from("User");
+    const users = await governmentDb.select("*").from("User");
 
     if (!users) {
       return null;
@@ -143,7 +143,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     login: string;
     password: string;
   }): Promise<boolean> {
-    const rows = await connection("User").where({ Id: data.id }).update({
+    const rows = await governmentDb("User").where({ Id: data.id }).update({
       Email: data.email,
       Name: data.name,
       Login: data.login,
@@ -154,7 +154,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async getByEmail(email: string): Promise<AccountRepository.UserData | null> {
-    const user = await connection
+    const user = await governmentDb
       .select("*")
       .from("User")
       .where("Email", email)
@@ -177,7 +177,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async getByLogin(login: string): Promise<AccountRepository.UserData | null> {
-    const user = await connection
+    const user = await governmentDb
       .select("*")
       .from("User")
       .where("Login", login)
@@ -200,12 +200,12 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async deleteById(id_user: number): Promise<boolean> {
-    await connection("User").where("Id", id_user).del();
+    await governmentDb("User").where("Id", id_user).del();
     return true;
   }
 
   async getById(id_user: number): Promise<AccountRepository.UserData | null> {
-    const user = await connection
+    const user = await governmentDb
       .select("*")
       .from("User")
       .where({ Id: id_user })
@@ -228,7 +228,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
 
   async checkIfEmailAlreadyExists(email: string): Promise<boolean> {
-    const user = await connection
+    const user = await governmentDb
       .select("*")
       .from("User")
       .where("Email", email)
