@@ -10,11 +10,12 @@ import IUsersWrapper from "@/interfaces/IUsersWrapper";
 import http from "@/http";
 
 import { previewEmailCensured } from "@/helpers/formatEmail";
+import INewUser from "@/interfaces/INewUser";
 
-const limitReponse = 5;
 interface Estado {
   auth: IAuth | null;
-  users: IUsersWrapper | null;
+  users: IUsersWrapper;
+  currentUser: INewUser | null;
 }
 
 export const key: InjectionKey<Store<Estado>> = Symbol();
@@ -22,7 +23,14 @@ export const key: InjectionKey<Store<Estado>> = Symbol();
 export const store = createStore<Estado>({
   state: {
     auth: null,
-    users: null,
+    users: {
+      data: [],
+      totalAdmins: 0,
+      totalBasics: 0,
+      totalActives: 0,
+      totalInactives: 0,
+    },
+    currentUser: null,
   },
   mutations: {
     ["SET_USER"](state, user: IAuth) {
@@ -30,6 +38,11 @@ export const store = createStore<Estado>({
     },
     ["SET_USERS"](state, users: IUsersWrapper) {
       state.users = users;
+    },
+    ["SET_CURRENT_USER"](state, id: number) {
+      // const user = state.users.data.find((usr) => usr.id == id);
+      const user = state.users.data.find((usr) => usr.id);
+      state.currentUser = user || null;
     },
   },
   actions: {
@@ -69,6 +82,32 @@ export const store = createStore<Estado>({
         toast.error("Credenciais inválidas.");
       }
     },
+    async ["CREATE_USER"]({ commit, state }, user: INewUser) {
+      try {
+        const createdUser = Object.assign({}, user);
+        // TODO
+        // CONNECT API
+        // const { data: userLogged } = await http.post(`/auth`, user);
+        const newId = Math.floor(Math.random() * (10000 - 1) + 1);
+        createdUser.id = newId;
+        createdUser.created_at = moment(new Date()).format("YYYY/MM/DD");
+
+        toast.success("Usuário criado com sucesso.");
+        toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
+        return true;
+      } catch (e) {
+        toast.error("Falha ao criar usuário.");
+      }
+    },
+    async ["UPDATE_USER"](context, user: INewUser) {
+      try {
+        // TODO
+        // CONNECT API
+        toast.success("Dados do usuário atualizados com sucesso.");
+      } catch (e) {
+        toast.error("Falha ao atualizar dados do usuário.");
+      }
+    },
     async ["CHANGE_PASSWORD"]({ commit }, { password, token }) {
       try {
         // TODO
@@ -81,70 +120,64 @@ export const store = createStore<Estado>({
         toast.error("Credenciais inválidas.");
       }
     },
-    async ["CREATE_ACCOUNT"]({ commit }, form) {
-      try {
-        // TODO
-        // CONNECT API
-        // const { data: userLogged } = await http.post(`/change-password`, {password, token});
+    // async ["CREATE_USER"]({ commit }, form) {
+    //   try {
+    //     // TODO
+    //     // CONNECT API
+    //     // const { data: userLogged } = await http.post(`/change-password`, {password, token});
 
-        toast.success("Conta criada com sucesso.");
-        toast.success(`Email enviado para ${previewEmailCensured(form.email)}`);
-        return true;
-      } catch (e) {
-        toast.error("Erro ao criar usuário.");
-      }
+    //     toast.success("Conta criada com sucesso.");
+    //     toast.success(`Email enviado para ${previewEmailCensured(form.email)}`);
+    //     return true;
+    //   } catch (e) {
+    //     toast.error("Erro ao criar usuário.");
+    //   }
+    // },
+    async ["GET_CURRENT_USER"]({ commit }, id: number) {
+      commit("SET_CURRENT_USER", id);
     },
-    async ["GET_USERS"]({ commit }, { search, usersType, page }) {
+    async ["GET_USERS"]({ commit }) {
       try {
-        const tempSearch = search ? search : null;
-        const tempUsersType = usersType ? usersType : null;
-        const tempOffset = limitReponse * page - limitReponse;
-
-        console.log("users get", tempSearch, tempUsersType, page);
-
         // TODO
         // CONNECT API
-        // const { data: users } = await http.get(`/users?search=${tempSearch}&limit=${limit}&offset=${tempOffset}`, {password, token});
+        // const { data: users } = await http.get(`/users);
 
-        const mockedUsers = [
-          {
-            name: "user1",
-            email: "etc1@gmail.com",
-            created_at: "2022-08-02 09:15:54.000",
-            role: "Administradores",
-            status: 1,
-            id: 1,
-          },
-          {
-            name: "user2",
-            email: "etc2@gmail.com",
-            created_at: "2022-08-03 09:15:54.000",
-            role: "Básico",
-            status: 0,
-            id: 2,
-          },
-          {
-            name: "user3",
-            email: "etc3@gmail.com",
-            created_at: "2022-08-01 09:15:54.000",
-            role: "Básico",
-            status: 1,
-            id: 3,
-          },
-        ].map((user) => {
-          user.created_at = moment(user.created_at).format("DD/MM/YYYY");
+        const generateRandomInt = (max: number, min: number) =>
+          Math.floor(Math.random() * (max - min) + min);
 
-          return user;
-        });
+        const arrayLength = generateRandomInt(130, 50);
+
+        const mockedUsers = Array.from(Array(arrayLength).keys()).map(
+          (index) => {
+            const myRandomNumber = generateRandomInt(1000, 0);
+            const role = index % 2 ? "Administradores" : "Básico";
+
+            return {
+              name: `user${myRandomNumber}`,
+              email: `etc${myRandomNumber}@gmail.com`,
+              created_at: "2022-08-02 09:15:54.000",
+              role,
+              status: (index + myRandomNumber) % 2,
+              id: myRandomNumber,
+            };
+          }
+        );
+
+        const totalAdmins = mockedUsers.filter(
+          (usr) => usr.role === "Básico"
+        ).length;
+        const totalBasics = mockedUsers.filter(
+          (usr) => usr.role === "Administradores"
+        ).length;
+        const totalActives = mockedUsers.filter((usr) => usr.status).length;
+        const totalInactives = mockedUsers.filter((usr) => !usr.status).length;
 
         const usersDTO = {
           data: mockedUsers,
-          totalItems: mockedUsers.length,
-          totalPages: Math.ceil(mockedUsers.length / limitReponse),
-          totalAdmins: 23,
-          totalBasics: 20,
-          totalActives: 43,
-          totalInactives: 3,
+          totalAdmins,
+          totalBasics,
+          totalActives,
+          totalInactives,
         };
 
         commit("SET_USERS", usersDTO);

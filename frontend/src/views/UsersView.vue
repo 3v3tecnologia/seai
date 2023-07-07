@@ -17,15 +17,11 @@
       </div>
     </div>
 
-    <div class="mb-3 d-flex justify-content-end">
-      <div class="btn btn-base">
-        <router-link :to="{ name: 'create-user' }">
-          Adicionar novo usuário
-        </router-link>
-      </div>
-    </div>
-
-    <UsersTable :users="users.data" v-model="filtersUsers" />
+    <UsersTable
+      :get-users="getUsers"
+      :users="users.data"
+      v-model="filtersUsers"
+    />
   </div>
 </template>
 
@@ -37,13 +33,9 @@ import { computed, ref, watch } from "vue";
 const store = useStore();
 const filtersUsers = ref({});
 
-watch(
-  filtersUsers,
-  (val) => {
-    store.dispatch("GET_USERS", val);
-  },
-  { immediate: true }
-);
+const getUsers = () => store.dispatch("GET_USERS");
+
+getUsers();
 
 const users = computed(() => store.state.users);
 
@@ -68,15 +60,6 @@ const usersCount = [
 </script>
 
 <style lang="scss" scoped>
-.btn-base {
-  background-color: hsl(205deg 83% 20% / 60%);
-  color: white !important;
-
-  * {
-    color: inherit !important;
-  }
-}
-
 .users-count {
   background: rgba(203, 197, 197, 0.529);
   border-radius: 5px;

@@ -15,10 +15,11 @@ import {
   faPen,
   faTrash,
   faSignOut,
+  faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* add icons to the library */
-library.add(faUserSecret, faPlus, faPen, faTrash, faSignOut);
+library.add(faUserSecret, faPlus, faRefresh, faPen, faTrash, faSignOut);
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)

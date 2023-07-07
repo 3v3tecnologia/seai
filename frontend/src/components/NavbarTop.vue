@@ -32,15 +32,12 @@
               class="d-flex px-5 align-items-center justify-content-between w-100"
             >
               <router-link
-                v-for="(itemRoute, index) in routes"
+                v-for="itemRoute in routes"
                 :key="itemRoute.name"
                 :to="{ name: itemRoute.name }"
-                :class="`${
-                  index != itemsRoutes.length - 1 ? '' : ''
-                } my-2 my-lg-0`"
-                class="nav-item"
+                class="my-2 my-lg-0 btn btn-base modif-outline"
               >
-                <div class="h6 mb-0 p-2 btn chip-route">
+                <div class="mb-0">
                   {{ itemRoute.title }}
                 </div>
               </router-link>
@@ -130,8 +127,6 @@ for (let i = 0; i < arrRowsCount; i++) {
 
   slicedRoutes.push(slicedItem);
 }
-
-console.log(slicedRoutes);
 </script>
 
 <style lang="scss" scoped>

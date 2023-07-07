@@ -1,7 +1,12 @@
 <template>
-  <div class="form-group">
+  <div
+    class="form-group"
+    :class="{
+      'mb-0': removeMargin,
+    }"
+  >
     <slot />
-    <label>{{ label }}</label>
+    <label v-if="label">{{ label }}</label>
     <input
       v-model="inputValue"
       :type="inputType"
@@ -14,13 +19,17 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, Ref, watch } from "vue";
 
-defineProps({
+const props = defineProps({
   label: String,
   placeholder: String,
   modelValue: String,
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  removeMargin: {
+    type: Boolean,
+    default: false,
   },
   inputType: {
     type: String,
@@ -35,6 +44,14 @@ const emit = defineEmits(["update:modelValue"]);
 watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    inputValue.value = val || "";
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

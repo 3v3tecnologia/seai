@@ -35,4 +35,42 @@ nav {
     }
   }
 }
+
+.btn {
+  & *:hover,
+  &:hover {
+    text-decoration: none !important;
+    cursor: pointer !important;
+  }
+}
+
+.btn-base {
+  &.modif-outline:not(.router-link-active) {
+    border: 2px solid hsl(205deg 83% 20%) !important;
+    &:not(:hover) {
+      color: hsl(205deg 83% 20%) !important;
+    }
+  }
+
+  &:not(.modif-outline),
+  &.router-link-active {
+    background-color: hsl(205deg 83% 20% / 60%) !important;
+    color: white !important;
+  }
+
+  * {
+    color: inherit !important;
+  }
+
+  &:hover {
+    color: white !important;
+    background-color: hsla(205, 87%, 19%, 0.71);
+    cursor: pointer !important;
+  }
+
+  & *:hover,
+  &:hover {
+    text-decoration: none !important;
+  }
+}
 </style>

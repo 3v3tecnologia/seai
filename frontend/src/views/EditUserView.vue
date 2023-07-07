@@ -4,10 +4,20 @@
 
     <LogoProject />
 
-    <div class="py-3"></div>
-    <FormWrapper title="Criar novo usuário" @submit="handleSubmit">
+    <div class="py-3" />
+
+    <FormWrapper title="Editar usuário" @submit="handleSubmit">
       <template v-if="!savedAccount" v-slot:content>
-        <div class="py-2"></div>
+        <div class="py-2" />
+        <BaseInput
+          label="Nome"
+          v-model="form.name"
+          placeholder="Insira um nome"
+          input-required
+          input-type="nome"
+        />
+        <div class="py-2" />
+
         <BaseInput
           label="Email"
           v-model="form.email"
@@ -33,13 +43,8 @@
       </template>
       <template v-else v-slot:content>
         <div class="pt-3 pb-5">
-          <div class="mb-2">Conta criada com sucesso.</div>
-          <div>
-            Email de login enviado para
-            <span class="font-weight-bold mr-1">{{
-              previewEmailCensured(form.email)
-            }}</span
-            >.
+          <div class="mb-2">
+            Dados do usuário {{ form.name }} atualizados com sucesso.
           </div>
         </div>
       </template>
@@ -47,7 +52,9 @@
       <template v-slot:buttons>
         <PrimaryButton
           :text="`${
-            savedAccount ? 'Voltar ao listamento de usuários' : 'Salvar usuário'
+            savedAccount
+              ? 'Voltar ao listamento de usuários'
+              : 'Salvar mudanças'
           }`"
         />
       </template>
@@ -63,7 +70,7 @@ import BaseSelect from "@/components/BaseSelect.vue";
 import PrimaryButton from "@/components/PrimaryButton.vue";
 import FormWrapper from "@/components/FormWrapper.vue";
 import { previewEmailCensured } from "@/helpers/formatEmail";
-import { defineProps } from "vue";
+import { computed, defineProps, onMounted, watch } from "vue";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
@@ -92,7 +99,30 @@ const form: Ref = ref({
   role: optionsUser[0].title,
 });
 const savedAccount: Ref = ref(false);
-const token = ref(currentRoute.query.token || "");
+const userId = ref(currentRoute.params.id || "");
+
+watch(
+  () => userId.value,
+  (val) => {
+    if (val) {
+      store.dispatch("GET_CURRENT_USER", val);
+    }
+  },
+  { immediate: true }
+);
+
+const currentUser = computed(() => store.state.currentUser);
+
+watch(
+  () => currentUser.value,
+  (val) => {
+    if (val) {
+      console.log("val", val);
+      form.value = val;
+    }
+  },
+  { immediate: true }
+);
 
 const handleSubmit = (e) => {
   e.preventDefault();
@@ -108,7 +138,7 @@ const handleSubmit = (e) => {
     return router.push({ name: "users" });
   }
 
-  store.dispatch("CREATE_USER", form.value).then(() => {
+  store.dispatch("UPDATE_USER", form.value).then(() => {
     savedAccount.value = true;
   });
 };

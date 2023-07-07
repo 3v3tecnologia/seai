@@ -1,7 +1,7 @@
+import INewUser from "./INewUser";
+
 export default interface IUsersWrapper {
-  data: [];
-  totalItems: number;
-  totalPages: number;
+  data: INewUser[];
   totalAdmins: number;
   totalBasics: number;
   totalActives: number;

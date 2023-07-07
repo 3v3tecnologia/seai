@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import AuthView from "../views/AuthView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
+import EditUserView from "../views/EditUserView.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
 import UsersView from "../views/UsersView.vue";
@@ -29,6 +30,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/users/create-user",
     name: "create-user",
     component: CreateUserView,
+  },
+  {
+    path: "/user/edit/:id",
+    name: "edit-user",
+    component: EditUserView,
   },
   {
     path: "/retrieve-account",
