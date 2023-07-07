@@ -1,7 +1,7 @@
 import { CreateUser } from "../../../domain/use-cases/user/create-user/create-user";
 import { HttpResponse } from "../ports";
 
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";

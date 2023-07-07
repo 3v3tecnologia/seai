@@ -1,4 +1,4 @@
-import { RegisterUserLogs } from "../../../../../domain/use-cases/logs/register-user-logs";
+import { RegisterUserLogs } from "../../../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { LogOperationsRepository } from "../../../../../infra/database/postgres/repositories/log-operations-repository";
 
 export const makeRegisterUserLogs = (): RegisterUserLogs => {

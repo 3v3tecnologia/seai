@@ -1,4 +1,4 @@
-import { RegisterUserLogs } from "../../../domain/use-cases/logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { ResetPassword } from "../../../domain/use-cases/user/reset-password/reset-password";
 import { Validator } from "../../../shared/validation/ports/validator";
 import { badRequest, created, forbidden, serverError } from "../helpers";
