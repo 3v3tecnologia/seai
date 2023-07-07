@@ -1,7 +1,7 @@
 import { Controller } from "../../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../../decorators";
 import { makeDeleteFaq } from "../../use-cases/faq/delete-faq-factory";
-import { makeRegisterUserLogs } from "../../use-cases/logs";
+import { makeRegisterUserLogs } from "../../use-cases/use_case_logs";
 import { DeleteFaqController } from "./../../../../../presentation/controllers/faq-controller/delete.controller";
 
 export const makeDeleteFaqController = (): Controller => {

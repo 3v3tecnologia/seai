@@ -6,7 +6,7 @@ import { RequiredFieldValidator } from "../../../../../shared/validation/validat
 import { makeCreateUser } from "../../use-cases/user/create-user-usecase-factory";
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
-import { makeRegisterUserLogs } from "../../use-cases/logs";
+import { makeRegisterUserLogs } from "../../use-cases/use_case_logs";
 
 export const makeCreateUserController = (): Controller => {
   let validations: Array<Validator> = [];

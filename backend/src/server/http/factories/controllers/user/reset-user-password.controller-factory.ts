@@ -4,7 +4,7 @@ import { Validator } from "../../../../../shared/validation/ports/validator";
 import { RequiredFieldValidator } from "../../../../../shared/validation/validator/required-field";
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
-import { makeRegisterUserLogs } from "../../use-cases/logs";
+import { makeRegisterUserLogs } from "../../use-cases/use_case_logs";
 import { makeResetUserPassword } from "../../use-cases/user/reset-user-password-factory";
 
 export const makeResetUserController = (): Controller => {

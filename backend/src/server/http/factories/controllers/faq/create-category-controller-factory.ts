@@ -5,7 +5,7 @@ import { RequiredFieldValidator } from "../../../../../shared/validation/validat
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
 import { makeCreateFaqCategory } from "../../use-cases/faq/create-faq-category-factory";
-import { makeRegisterUserLogs } from "../../use-cases/logs";
+import { makeRegisterUserLogs } from "../../use-cases/use_case_logs";
 
 export const makeCreateFaqCategoryController = (): Controller => {
   let validations: Array<Validator> = [];

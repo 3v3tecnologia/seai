@@ -9,7 +9,7 @@ import { EmailValidator } from "../../../../../shared/validation/validator/email
 import { RequiredFieldValidator } from "../../../../../shared/validation/validator/required-field";
 import { ValidatorComposite } from "../../../../../shared/validation/validator/validator-composite";
 import { makeLogControllerDecorator } from "../../decorators";
-import { makeRegisterUserLogs } from "../../use-cases/logs";
+import { makeRegisterUserLogs } from "../../use-cases/use_case_logs";
 import { makeUserAuthentication } from "../../use-cases/user/authentication-factory";
 
 export const makeSignUpController = (): Controller => {
