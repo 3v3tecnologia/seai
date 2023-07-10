@@ -72,7 +72,7 @@ const itemsRoutes = [
   },
   {
     title: "Relatórios",
-    name: "login",
+    name: "reports",
   },
   {
     title: "Gráficos",

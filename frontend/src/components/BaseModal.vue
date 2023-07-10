@@ -32,15 +32,23 @@
           </button>
         </div>
         <div class="modal-body">
-          <div v-if="props.users.length === 1">Será deletado 1 usuário.</div>
-          <div v-else>Serão deletados {{ props.users.length }} usuários.</div>
+          <div v-if="props.users.length === 1">
+            Será deletado <span class="font-weight-bold">1</span> usuário
+            selecionado.
+          </div>
+          <div v-else>
+            Serão deletados
+            <span class="font-weight-bold">{{ props.users.length }}</span>
+            usuários selecionados.
+          </div>
+          <div>Este processo não poderá ser desfeito.</div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Cancelar
           </button>
-          <button type="button" class="btn btn-primary">Confirmar</button>
+          <button type="button" class="btn btn-danger">Confirmar</button>
         </div>
       </div>
     </div>
