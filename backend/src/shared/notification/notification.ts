@@ -1,19 +1,26 @@
 import {
-  NotificationProps,
+  NotificationErrorProps,
   NotificationProtocol,
 } from "./protocol/notification-protocol";
 
 export class Notification implements NotificationProtocol {
-  addError(error: NotificationProps): void {
-    throw new Error("Method not implemented.");
+  private readonly errors: Array<NotificationErrorProps> = [];
+  addError(error: NotificationErrorProps): void {
+    this.errors.push(error);
   }
   hasErrors(): boolean {
-    throw new Error("Method not implemented.");
+    return this.errors.length > 0;
   }
-  getErrors(): NotificationProps[] {
-    throw new Error("Method not implemented.");
+  getErrors(): NotificationErrorProps[] {
+    return this.errors;
   }
   messages(context?: string | undefined): string {
-    throw new Error("Method not implemented.");
+    let message = "";
+
+    this.errors.forEach((error) => {
+      message += error.message + "\n";
+    });
+
+    return message;
   }
 }

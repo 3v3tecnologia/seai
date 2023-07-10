@@ -1,75 +1,145 @@
 import { Either, left, right } from "../../../shared/Either";
-import { Email } from "./email";
 import {
-  UserModulesAccess,
-  UserModulesAccessProps,
-} from "./user-modules-access";
+  againstNullOrUndefinedBulk,
+  concatenateMessages,
+} from "../../../shared/Guard";
+import { Email } from "./email";
+import { InvalidEmailError } from "./errors/invalid-email";
+import { PasswordErrors } from "./errors/invalid-password";
+import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
+import { UserLogin } from "./login";
+import { UserName } from "./name";
 
-type UserType = "admin" | "standard";
+import { SystemModules } from "./user-modules-access";
+import { UserPassword } from "./userPassword";
+
+export type UserType = "admin" | "standard";
 interface UserProps {
-  name?: string;
-  login?: string;
+  name?: UserName;
+  login?: UserLogin;
   email: Email;
-  password?: string | null;
-  modulesAccess: UserModulesAccess;
+  password?: UserPassword | null;
+  modulesAccess?: SystemModules;
   type: UserType;
 }
 
 export class User {
   private readonly _id: number | null;
-  public readonly name: string | null;
-  public readonly login: string | null;
-  public email: Email;
-  public password: string | null;
-  public readonly type: UserType;
-  public readonly modulesAccess: UserModulesAccess;
+  private _name: UserName | null;
+  private _login: UserLogin | null;
+  private _email: Email;
+  private _password: UserPassword | null;
+  public type: UserType;
+  public readonly modulesAccess: SystemModules | null;
 
   private constructor(props: UserProps, id?: number) {
     this._id = id || null;
-    this.email = props.email;
+    this._email = props.email;
     this.type = props.type;
-    this.modulesAccess = props.modulesAccess;
-
-    this.name = props.name || null;
-    this.login = props.login || null;
-    this.password = props.password || null;
+    this.modulesAccess = props.modulesAccess || null;
+    this._name = props.name || null;
+    this._login = props.login || null;
+    this._password = props.password || null;
   }
 
   get id(): number | null {
     return this._id;
   }
 
-  static create(
+  get login(): UserLogin | null {
+    return this._login;
+  }
+  get name(): UserName | null {
+    return this._name;
+  }
+
+  get email(): Email | null {
+    return this._email;
+  }
+
+  get password(): UserPassword | null {
+    return this._password;
+  }
+
+  public setEmail(email: Email) {
+    this._email = email;
+  }
+  public setName(name: UserName) {
+    this._name = name;
+  }
+  public setLogin(login: UserLogin) {
+    this._login = login;
+  }
+  public setPassword(password: UserPassword) {
+    this._password = password;
+  }
+
+  private static hasAdminPermission(module: any) {
+    return module.read === true && module.write === true;
+  }
+
+  static createStartAccount(
     props: {
-      email: string;
+      email: Email;
       type: UserType;
-      modulesAccess: UserModulesAccessProps;
+      modulesAccess: SystemModules;
     },
     id?: number
   ): Either<Error, User> {
-    const modulesOrError = UserModulesAccess.create(props.modulesAccess);
+    const result = againstNullOrUndefinedBulk([
+      { argument: props.email, argumentName: "Email" },
+      { argument: props.type, argumentName: "Tipo" },
+      { argument: props.modulesAccess, argumentName: "Módulos" },
+    ]);
 
-    if (modulesOrError.isLeft()) {
-      return left(modulesOrError.value);
+    if (result.isLeft()) {
+      return left(new Error(concatenateMessages(result.value)));
     }
 
-    const emailOrError = Email.create(props.email);
+    if (props.type === "admin") {
+      const hasAdminPermissions = [
+        User.hasAdminPermission(props.modulesAccess.value.news_manager),
+        User.hasAdminPermission(props.modulesAccess.value.registers),
+        User.hasAdminPermission(props.modulesAccess.value.users_manager),
+      ].every((permission) => permission === true);
 
-    if (emailOrError.isLeft()) {
-      return left(emailOrError.value);
+      if (hasAdminPermissions === false) {
+        return left(
+          new UserModuleAccessErrors.InvalidUserAdminPermissionsError()
+        );
+      }
     }
 
-    return right(
-      new User(
-        {
-          email: emailOrError.value as Email,
-          modulesAccess: modulesOrError.value as UserModulesAccess,
-          type: props.type,
-        },
-        id
-      )
-    );
+    if (props.type === "standard") {
+      const hasUserManageAccess =
+        props.modulesAccess.value.users_manager.read ||
+        props.modulesAccess.value.users_manager.write;
+
+      if (hasUserManageAccess) {
+        return left(
+          new UserModuleAccessErrors.InvalidBasicUserPermissionsError()
+        );
+      }
+    }
+
+    return right(new User(props, id));
   }
 
-  static updateAccount(props: any): any {}
+  static createEndAccount(props: {
+    email: Email;
+    name: UserName;
+    login: UserLogin;
+    password: UserPassword;
+  }) {
+    const result = againstNullOrUndefinedBulk([
+      { argument: props.email, argumentName: "Email" },
+      { argument: props.name, argumentName: "Nome" },
+      { argument: props.login, argumentName: "Login" },
+      { argument: props.password, argumentName: "Senha" },
+    ]);
+
+    if (result.isLeft()) {
+      return left(new Error(concatenateMessages(result.value)));
+    }
+  }
 }

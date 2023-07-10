@@ -50,6 +50,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
       user.modules.users_manager.id,
     ];
 
+    // evitar ter que salvar usuário com módulos que não existem
     userModulesAccess.forEach((module) => {
       if (
         modules.some((module_access) => module_access.id === module) === false
@@ -58,6 +59,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
       }
     });
 
+    // poderia já pegar o ID ao adicionar ao invés de fazer uma requisição ao banco a mais
     await this.accountRepository.add(user);
 
     const account = await this.accountRepository.getByEmail(user.email);

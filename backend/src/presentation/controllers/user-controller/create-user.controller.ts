@@ -12,25 +12,19 @@ export class CreateUserController extends CommandController<
   HttpResponse
 > {
   private createUser: CreateUser;
-  private validator: Validator;
 
-  constructor(
-    createUser: CreateUser,
-    validator: Validator,
-    userLogs: RegisterUserLogs
-  ) {
+  constructor(createUser: CreateUser, userLogs: RegisterUserLogs) {
     super(userLogs);
     this.createUser = createUser;
-    this.validator = validator;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      const error = this.validator.validate(request);
+      // const error = this.validator.validate(request);
 
-      if (error.isLeft()) {
-        return badRequest(error.value);
-      }
+      // if (error.isLeft()) {
+      //   return badRequest(error.value);
+      // }
 
       const { email, modules, type } = request;
 

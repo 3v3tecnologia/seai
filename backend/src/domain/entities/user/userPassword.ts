@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import { InvalidPasswordError } from "./errors/invalid-password";
+import { Either, left, right } from "../../../shared/Either";
+import { PasswordErrors } from "./errors/invalid-password";
 
 interface IUserPasswordProps {
   value: string;
@@ -18,37 +18,12 @@ export class UserPassword {
     this.isHashed = props.isHashed || false;
   }
 
-  public value(): string {
+  get value(): string {
     return this._value;
-  }
-
-  public static isAppropriedLength(password: string): boolean {
-    return password.length >= UserPassword.minLength;
   }
 
   public isAlreadyHashed(): boolean {
     return this.isHashed;
-  }
-
-  private async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(UserPassword.saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
-  }
-
-  public async getHashedPassword(): Promise<string> {
-    if (this.isAlreadyHashed()) {
-      return this._value;
-    }
-
-    return await this.hashPassword(this._value);
-  }
-
-  public async compareHashedPassword(
-    plaintextPassword: string,
-    hashedPassword: string
-  ): Promise<boolean> {
-    return await bcrypt.compare(plaintextPassword, hashedPassword);
   }
 
   public async comparePlainPassword(
@@ -57,29 +32,42 @@ export class UserPassword {
     return this._value === plaintextPassword;
   }
 
-  public static create(props: IUserPasswordProps) {
+  public static create(
+    props: IUserPasswordProps
+  ): Either<
+    | PasswordErrors.EmptyPasswordError
+    | PasswordErrors.PasswordLengthError
+    | PasswordErrors.PasswordWithoutNumbersError,
+    UserPassword
+  > {
     if (!props.value || props.value.length === 0) {
-      return {
-        isError: true,
-        value: new InvalidPasswordError(),
-      };
+      return left(new PasswordErrors.EmptyPasswordError());
     }
     // Estiver criando um usuário com senha não encriptografada
     if (!props.isHashed) {
-      if (!UserPassword.isAppropriedLength(props.value)) {
-        return {
-          isError: true,
-          value: new InvalidPasswordError(),
-        };
+      if (tooShort(props.value)) {
+        return left(
+          new PasswordErrors.PasswordLengthError(UserPassword.minLength)
+        );
+      }
+      if (noNumberIn(props.value)) {
+        return left(new PasswordErrors.PasswordWithoutNumbersError());
       }
     }
 
-    return {
-      isError: false,
-      value: new UserPassword({
+    return right(
+      new UserPassword({
         value: props.value,
         isHashed: !!props.isHashed === true,
-      }),
-    };
+      })
+    );
   }
+}
+
+function tooShort(password: string): boolean {
+  return password.length < UserPassword.minLength;
+}
+
+function noNumberIn(password: string) {
+  return !/\d/.test(password);
 }

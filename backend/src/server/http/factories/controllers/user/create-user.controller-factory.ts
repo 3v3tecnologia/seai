@@ -20,10 +20,6 @@ export const makeCreateUserController = (): Controller => {
   const validationComposite = new ValidatorComposite(validations);
 
   return makeLogControllerDecorator(
-    new CreateUserController(
-      makeCreateUser(),
-      validationComposite,
-      makeRegisterUserLogs()
-    )
+    new CreateUserController(makeCreateUser(), makeRegisterUserLogs())
   );
 };
