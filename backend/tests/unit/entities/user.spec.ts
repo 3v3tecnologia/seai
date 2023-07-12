@@ -30,7 +30,7 @@ describe("#User entity", () => {
 
       const result = userOrError.value as Error;
 
-      expect(result.message.trim()).toEqual(`O email ${email} é inválido.`);
+      expect(result.message).toEqual(`O email ${email} é inválido.`);
     });
 
     test("should not create a basic user with user manager permission", () => {
@@ -58,7 +58,7 @@ describe("#User entity", () => {
 
       const result = userOrError.value as Error;
 
-      expect(result.message.trim()).toEqual(
+      expect(result.message).toEqual(
         "Para usuário básico, não deve haver permissão para gerenciar usuários."
       );
     });
@@ -88,7 +88,7 @@ describe("#User entity", () => {
 
       const result = userOrError.value as Error;
 
-      expect(result.message.trim()).toEqual(
+      expect(result.message).toEqual(
         "Para usuário administrador, é necessário definir todas as permissões."
       );
     });
@@ -155,7 +155,7 @@ describe("#User entity", () => {
 
       const result = userOrError.value as Error;
 
-      expect(result.message.trim()).toEqual("Nome não deve ser vazio ou nulo");
+      expect(result.message).toEqual("Nome não deve ser vazio ou nulo");
     });
   });
 });
