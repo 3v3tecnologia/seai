@@ -15,12 +15,12 @@ export class Notification implements NotificationProtocol {
     return this.errors;
   }
   messages(context?: string | undefined): string {
-    let message = "";
+    let messages: Array<string> = [];
 
     this.errors.forEach((error) => {
-      message += error.message + "\n";
+      messages.push(error.message);
     });
 
-    return message;
+    return messages.join("; ");
   }
 }

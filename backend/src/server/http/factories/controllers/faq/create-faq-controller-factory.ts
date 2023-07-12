@@ -15,9 +15,9 @@ export const makeCreateFaqController = (): Controller => {
     (field) => new RequiredFieldValidator(field)
   );
 
-  validations.push(new AgainstEmptyArrayList("categories"));
+  // validations.push(new AgainstEmptyArrayList("categories"));
 
-  const validationComposite = new ValidatorComposite(validations);
+  const validationComposite = new ValidatorComposite([]);
 
   return makeLogControllerDecorator(
     new CreateFaqController(

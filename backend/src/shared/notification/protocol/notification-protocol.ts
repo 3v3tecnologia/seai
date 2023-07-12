@@ -1,7 +1,8 @@
 export type NotificationErrorProps = {
   message: string;
-  context: string;
+  context?: string;
   stack?: string;
+  name?: string;
 };
 
 export interface NotificationProtocol {

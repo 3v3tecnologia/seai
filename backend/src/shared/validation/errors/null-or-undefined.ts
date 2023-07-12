@@ -1,6 +1,11 @@
-export class NullOrUndefinedError extends Error {
+import { NotificationErrorProps } from "../../notification/protocol/notification-protocol";
+
+export class NullOrUndefinedError
+  extends Error
+  implements NotificationErrorProps
+{
   constructor(field: string) {
-    super(`The ${field} is null or undefined`);
+    super(`The ${field} é nulo ou indefinido.`);
     this.name = "NullOrUndefinedError";
   }
 }

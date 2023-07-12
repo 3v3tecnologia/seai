@@ -1,4 +1,3 @@
-import { error } from "console";
 import { Either, left, right } from "./Either";
 
 type GuardResponse = string;
@@ -8,7 +7,7 @@ interface IGuardArgument {
   argumentName: string;
 }
 
-type GuardArgumentCollection = IGuardArgument[];
+export type GuardArgumentCollection = IGuardArgument[];
 
 export function combine(results: any[]) {}
 

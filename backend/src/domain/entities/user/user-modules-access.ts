@@ -24,6 +24,7 @@ export type SystemModulesProps = {
   };
 };
 
+type PermissionType = "admin" | "standard";
 export class SystemModules {
   private modules: SystemModulesProps;
 
@@ -35,7 +36,14 @@ export class SystemModules {
     return this.modules;
   }
 
-  static validate(modules: Required<SystemModulesProps>): Either<string, void> {
+  private static hasAdminPermission(module: any) {
+    return module.read === true && module.write === true;
+  }
+
+  static validate(
+    modules: Required<SystemModulesProps>,
+    permission_type: PermissionType
+  ): Either<string, void> {
     const isNullOrUndefinedArgs = againstNullOrUndefinedBulk([
       { argument: modules.news_manager, argumentName: "news_manager" },
       { argument: modules.registers, argumentName: "registers" },
@@ -98,13 +106,39 @@ export class SystemModules {
       return left(concatenateMessages(isSatisfiedTypes.value));
     }
 
+    if (permission_type === "admin") {
+      const hasAdminPermissions = [
+        SystemModules.hasAdminPermission(modules.news_manager),
+        SystemModules.hasAdminPermission(modules.registers),
+        SystemModules.hasAdminPermission(modules.users_manager),
+      ].every((permission) => permission === true);
+
+      if (hasAdminPermissions === false) {
+        return left(
+          "Para usuário administrador, é necessário definir todas as permissões."
+        );
+      }
+    }
+
+    if (permission_type === "standard") {
+      const hasUserManageAccess =
+        modules.users_manager.read || modules.users_manager.write;
+
+      if (hasUserManageAccess) {
+        return left(
+          "Para usuário básico, não deve haver permissão para gerenciar usuários."
+        );
+      }
+    }
+
     return right();
   }
 
   static create(
-    modules: Required<SystemModulesProps>
+    modules: Required<SystemModulesProps>,
+    permission_type: PermissionType
   ): Either<Error, SystemModules> {
-    const isValidOrError = SystemModules.validate(modules);
+    const isValidOrError = SystemModules.validate(modules, permission_type);
 
     if (isValidOrError.isLeft()) {
       return left(

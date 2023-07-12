@@ -1,22 +1,17 @@
 import { Either, left, right } from "../../../shared/Either";
-import {
-  againstNullOrUndefinedBulk,
-  concatenateMessages,
-} from "../../../shared/Guard";
+import { concatenateMessages } from "../../../shared/Guard";
+import { Notification } from "../../../shared/notification/notification";
 import { Email } from "./email";
-import { InvalidEmailError } from "./errors/invalid-email";
-import { PasswordErrors } from "./errors/invalid-password";
-import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserLogin } from "./login";
 import { UserName } from "./name";
 
-import { SystemModules } from "./user-modules-access";
+import { SystemModules, SystemModulesProps } from "./user-modules-access";
 import { UserPassword } from "./userPassword";
 
 export type UserType = "admin" | "standard";
 interface UserProps {
-  name?: UserName;
-  login?: UserLogin;
+  name?: UserName | null;
+  login?: UserLogin | null;
   email: Email;
   password?: UserPassword | null;
   modulesAccess?: SystemModules;
@@ -74,72 +69,91 @@ export class User {
     this._password = password;
   }
 
-  private static hasAdminPermission(module: any) {
-    return module.read === true && module.write === true;
-  }
+  public setUserPermission() {}
 
-  static createStartAccount(
+  static create(
     props: {
-      email: Email;
+      email: string;
       type: UserType;
-      modulesAccess: SystemModules;
+      name?: string;
+      login?: string;
+      password?: string;
+      modulesAccess: SystemModulesProps;
     },
     id?: number
   ): Either<Error, User> {
-    const result = againstNullOrUndefinedBulk([
-      { argument: props.email, argumentName: "Email" },
-      { argument: props.type, argumentName: "Tipo" },
-      { argument: props.modulesAccess, argumentName: "Módulos" },
-    ]);
+    const errors = new Notification();
 
-    if (result.isLeft()) {
-      return left(new Error(concatenateMessages(result.value)));
+    const emailOrError = Email.create(props.email);
+
+    if (emailOrError.isLeft()) {
+      errors.addError(emailOrError.value);
     }
 
-    if (props.type === "admin") {
-      const hasAdminPermissions = [
-        User.hasAdminPermission(props.modulesAccess.value.news_manager),
-        User.hasAdminPermission(props.modulesAccess.value.registers),
-        User.hasAdminPermission(props.modulesAccess.value.users_manager),
-      ].every((permission) => permission === true);
+    if (!props.type || (props.type !== "admin" && props.type !== "standard")) {
+      errors.addError(
+        new Error(
+          'Tipo do usuário não pode ser nulo e tem que ser "admin" ou "standard"'
+        )
+      );
+    }
+    const accessOrError = SystemModules.create(props.modulesAccess, props.type);
 
-      if (hasAdminPermissions === false) {
-        return left(
-          new UserModuleAccessErrors.InvalidUserAdminPermissionsError()
-        );
-      }
+    if (accessOrError.isLeft()) {
+      errors.addError(accessOrError.value);
     }
 
-    if (props.type === "standard") {
-      const hasUserManageAccess =
-        props.modulesAccess.value.users_manager.read ||
-        props.modulesAccess.value.users_manager.write;
+    const nameOrError = Reflect.has(props, "name")
+      ? UserName.create(props.name as string)
+      : null;
 
-      if (hasUserManageAccess) {
-        return left(
-          new UserModuleAccessErrors.InvalidBasicUserPermissionsError()
-        );
-      }
+    if (nameOrError !== null && nameOrError.isLeft()) {
+      errors.addError(nameOrError.value);
     }
 
-    return right(new User(props, id));
-  }
+    const passwordOrError = Reflect.has(props, "password")
+      ? UserPassword.create({
+          value: props.password as string,
+        })
+      : null;
 
-  static createEndAccount(props: {
-    email: Email;
-    name: UserName;
-    login: UserLogin;
-    password: UserPassword;
-  }) {
-    const result = againstNullOrUndefinedBulk([
-      { argument: props.email, argumentName: "Email" },
-      { argument: props.name, argumentName: "Nome" },
-      { argument: props.login, argumentName: "Login" },
-      { argument: props.password, argumentName: "Senha" },
-    ]);
-
-    if (result.isLeft()) {
-      return left(new Error(concatenateMessages(result.value)));
+    if (passwordOrError !== null && passwordOrError.isLeft()) {
+      errors.addError(passwordOrError.value);
     }
+
+    const loginOrError = Reflect.has(props, "login")
+      ? UserLogin.create(props.login as string)
+      : null;
+
+    if (loginOrError !== null && loginOrError.isLeft()) {
+      errors.addError(loginOrError.value);
+    }
+
+    if (errors.hasErrors()) {
+      return left(new Error(errors.messages()));
+    }
+
+    const password =
+      passwordOrError === null
+        ? null
+        : (passwordOrError?.value as UserPassword);
+
+    const login =
+      loginOrError === null ? null : (loginOrError.value as UserLogin);
+
+    const name = nameOrError === null ? null : (nameOrError?.value as UserName);
+
+    return right(
+      new User(
+        {
+          email: emailOrError.value as Email,
+          type: props.type,
+          login,
+          password,
+          name,
+        },
+        id
+      )
+    );
   }
 }

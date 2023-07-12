@@ -3,6 +3,7 @@ import { PasswordErrors } from "./errors/invalid-password";
 
 interface IUserPasswordProps {
   value: string;
+  confirm?: string;
   isHashed?: boolean;
 }
 
@@ -62,6 +63,10 @@ export class UserPassword {
       })
     );
   }
+}
+
+function isMatchPassword(password: string, confirm: string): boolean {
+  return password.length < UserPassword.minLength;
 }
 
 function tooShort(password: string): boolean {

@@ -1,113 +1,161 @@
-import { UserModuleAccessErrors } from "./../../../src/domain/entities/user/errors/invalid-user-permissions";
-import { InvalidEmailError } from "../../../src/domain/entities/user/errors/invalid-email";
-
-import { Email } from "../../../src/domain/entities/user/email";
 import { User } from "../../../src/domain/entities/user/user";
-import { SystemModules } from "../../../src/domain/entities/user/user-modules-access";
 
 // npx jest user.spec.ts
 describe("#User entity", () => {
   describe("Register a new user", () => {
     test("should not create a user with invalid e-mail", () => {
-      const emailOrError = Email.create("test#gmail.com");
+      const email = "test#gmail";
 
-      if (emailOrError.isLeft()) {
-        expect(emailOrError.value.message).toBe(
-          "O email test#gmail.com é inválido."
-        );
-      }
+      const userOrError = User.create({
+        email,
+        type: "standard",
+        modulesAccess: {
+          news_manager: {
+            id: 1,
+            read: true,
+            write: false,
+          },
+          registers: {
+            id: 2,
+            read: true,
+            write: false,
+          },
+          users_manager: {
+            id: 3,
+            read: false,
+            write: false,
+          },
+        },
+      });
+
+      const result = userOrError.value as Error;
+
+      expect(result.message.trim()).toEqual(`O email ${email} é inválido.`);
     });
 
     test("should not create a basic user with user manager permission", () => {
-      const modulesOrError = SystemModules.create({
-        news_manager: {
-          id: 1,
-          read: true,
-          write: false,
-        },
-        registers: {
-          id: 2,
-          read: true,
-          write: false,
-        },
-        users_manager: {
-          id: 3,
-          read: true,
-          write: false,
-        },
-      });
-
-      const emailOrError = Email.create("test@gmail.com");
-
-      const email = emailOrError.value as Email;
-
-      const modules = modulesOrError.value as SystemModules;
-
       const userOrError = User.create({
-        email: email,
+        email: "test@gmail.com",
         type: "standard",
-        modulesAccess: modules,
+        modulesAccess: {
+          news_manager: {
+            id: 1,
+            read: true,
+            write: false,
+          },
+          registers: {
+            id: 2,
+            read: true,
+            write: false,
+          },
+          users_manager: {
+            id: 3,
+            read: true,
+            write: false,
+          },
+        },
       });
 
-      const error =
-        userOrError.value as UserModuleAccessErrors.InvalidBasicUserPermissionsError;
+      const result = userOrError.value as Error;
 
-      expect(error.message).toBe(
+      expect(result.message.trim()).toEqual(
         "Para usuário básico, não deve haver permissão para gerenciar usuários."
       );
-      expect(error).toBeInstanceOf(
-        UserModuleAccessErrors.InvalidBasicUserPermissionsError
-      );
     });
+
     test("should not create a admin user without all permissions equal true", () => {
-      const modulesOrError = SystemModules.create({
-        news_manager: {
-          id: 1,
-          read: true,
-          write: false,
-        },
-        registers: {
-          id: 2,
-          read: true,
-          write: false,
-        },
-        users_manager: {
-          id: 3,
-          read: true,
-          write: false,
-        },
-      });
-
-      const emailOrError = Email.create("test@gmail.com");
-
-      const email = emailOrError.value as Email;
-
-      const modules = modulesOrError.value as SystemModules;
-
       const userOrError = User.create({
-        email: email,
+        email: "test@gmail.com",
         type: "admin",
-        modulesAccess: modules,
+        modulesAccess: {
+          news_manager: {
+            id: 1,
+            read: true,
+            write: false,
+          },
+          registers: {
+            id: 2,
+            read: true,
+            write: false,
+          },
+          users_manager: {
+            id: 3,
+            read: true,
+            write: false,
+          },
+        },
       });
 
-      const error =
-        userOrError.value as UserModuleAccessErrors.InvalidUserAdminPermissionsError;
+      const result = userOrError.value as Error;
 
-      expect(error.message).toBe(
+      expect(result.message.trim()).toEqual(
         "Para usuário administrador, é necessário definir todas as permissões."
-      );
-      expect(error).toBeInstanceOf(
-        UserModuleAccessErrors.InvalidUserAdminPermissionsError
       );
     });
   });
 
   describe("Create user profile", () => {
-    test.todo("should not create a user with invalid e-mail");
-    test.todo(
-      "should not create a user with password not matching with confirmed password"
-    );
-    test.todo("should not create a user with invalid login");
-    test.todo("should not create a user with invalid name");
+    // test.todo(
+    //   "should not create a user with password not matching with confirmed password"
+    // );
+    test("should not create a user with invalid login", () => {
+      const userOrError = User.create({
+        email: "test@gmail.com",
+        type: "standard",
+        login:
+          "testasdasdsagdashdgdfahsgdafhgfsdhgafsghdfshdfhgsasdasddasdasdassd",
+        modulesAccess: {
+          news_manager: {
+            id: 1,
+            read: true,
+            write: false,
+          },
+          registers: {
+            id: 2,
+            read: true,
+            write: false,
+          },
+          users_manager: {
+            id: 3,
+            read: false,
+            write: false,
+          },
+        },
+      });
+
+      const result = userOrError.value as Error;
+
+      expect(result.message).toEqual(
+        "Login inválido, não deve ser vazio ou nulo e não deve ser maior do que a quantidade de caracteres permitido."
+      );
+    });
+    test("should not create a user with invalid name", () => {
+      const userOrError = User.create({
+        email: "test@gmail.com",
+        name: "",
+        type: "standard",
+        modulesAccess: {
+          news_manager: {
+            id: 1,
+            read: true,
+            write: false,
+          },
+          registers: {
+            id: 2,
+            read: true,
+            write: false,
+          },
+          users_manager: {
+            id: 3,
+            read: false,
+            write: false,
+          },
+        },
+      });
+
+      const result = userOrError.value as Error;
+
+      expect(result.message.trim()).toEqual("Nome não deve ser vazio ou nulo");
+    });
   });
 });
