@@ -11,6 +11,7 @@ export const db_config: { [index: string]: any } = {
         password: env.database.password,
         database: "government",
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -26,6 +27,7 @@ export const db_config: { [index: string]: any } = {
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -43,6 +45,7 @@ export const db_config: { [index: string]: any } = {
         password: env.database.password,
         database: "logs",
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -58,6 +61,7 @@ export const db_config: { [index: string]: any } = {
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,

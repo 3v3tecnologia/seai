@@ -9,12 +9,14 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     email: string;
     type: "admin" | "standard";
     modules: AccountRepository.system_modules_permissions;
-  }): Promise<boolean> {
+  }): Promise<number | null> {
+    let id_user = null;
     await governmentDb.transaction(async (trx) => {
       const id = await trx
         .insert({
           Email: data.email,
           Type: data.type,
+          CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")
         .into("User");
@@ -47,9 +49,11 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
           Write: data.modules.users_manager.write,
         })
         .into("User_Access");
+
+      id_user = user_id;
     });
 
-    return true;
+    return id_user;
   }
 
   async getModules(): Promise<Array<AccountRepository.AccountModulesData> | null> {
@@ -148,6 +152,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
       Name: data.name,
       Login: data.login,
       Password: data.password,
+      UpdatedAt: governmentDb.fn.now(),
     });
 
     return rows > 0;

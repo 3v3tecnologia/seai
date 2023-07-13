@@ -12,13 +12,13 @@ interface Props {
 }
 
 export class Category {
-  private _id: number;
+  private _id?: number;
   private _title?: string;
   private _description?: string;
   private _created_at?: string;
   private _updated_at?: string;
 
-  private constructor(id: number, props?: Props) {
+  private constructor(id?: number, props?: Props) {
     this._id = id;
 
     if (props) {
@@ -29,8 +29,8 @@ export class Category {
     }
   }
 
-  get id(): number {
-    return this._id;
+  get id(): number | null {
+    return this._id || null;
   }
 
   get title(): string | null {
@@ -49,33 +49,35 @@ export class Category {
     return this._updated_at || null;
   }
 
-  static create(id: number, props?: Props): Either<Error, Category> {
+  static create(data: { id?: number; props?: Props }): Either<Error, Category> {
     const errors = new Notification();
 
-    const nullOrUndefined = AgainstNullOrUndefined(id, "identificador");
+    if (data.id) {
+      const nullOrUndefined = AgainstNullOrUndefined(data.id, "identificador");
 
-    if (nullOrUndefined.isLeft()) {
-      errors.addError(nullOrUndefined.value);
+      if (nullOrUndefined.isLeft()) {
+        errors.addError(nullOrUndefined.value);
+      }
     }
 
-    if (props) {
-      const titleOrError = CategoryTitle.create(props.title as string);
+    if (data.props) {
+      const titleOrError = CategoryTitle.create(data.props.title as string);
 
       if (titleOrError.isLeft()) {
         errors.addError(titleOrError.value);
       }
 
       const descriptionOrError = CategoryDescription.create(
-        props.description as string
+        data.props.description as string
       );
 
       if (descriptionOrError.isLeft()) {
         errors.addError(descriptionOrError.value);
       }
 
-      if (Reflect.has(props, "created_at")) {
+      if (Reflect.has(data.props, "created_at")) {
         const createdNullOrUndefined = AgainstNullOrUndefined(
-          props.created_at,
+          data.props.created_at,
           "data de criação"
         );
 
@@ -84,9 +86,9 @@ export class Category {
         }
       }
 
-      if (Reflect.has(props, "updated_at")) {
+      if (Reflect.has(data.props, "updated_at")) {
         const updatedNullOrUndefined = AgainstNullOrUndefined(
-          props.updated_at,
+          data.props.updated_at,
           "data de atualização"
         );
 
@@ -100,6 +102,6 @@ export class Category {
       return left(new Error(errors.messages()));
     }
 
-    return right(new Category(id, props));
+    return right(new Category(data.id, data.props));
   }
 }

@@ -31,6 +31,7 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
     access_token: string,
     password: string
   ): Promise<Either<Error, null>> {
+    this.resetLog();
     if (!access_token) {
       return left(new Error("Token not informed"));
     }

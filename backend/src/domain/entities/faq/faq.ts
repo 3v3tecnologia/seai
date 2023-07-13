@@ -33,6 +33,9 @@ export class Faq {
     this._categories = props.categories;
   }
 
+  get id() {
+    return this._id;
+  }
   get answer() {
     return this._answer;
   }

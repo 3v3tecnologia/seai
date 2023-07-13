@@ -4,9 +4,12 @@ import { CategoryTitle } from "../../../src/domain/entities/faq/category-title";
 
 describe("#FAQ Categories", () => {
   test("should not create a category with invalid title", () => {
-    const category = Category.create(1, {
-      title: "",
-      description: "Manejo de irrigação",
+    const category = Category.create({
+      id: 1,
+      props: {
+        title: "",
+        description: "Manejo de irrigação",
+      },
     });
 
     const result = category.value as Error;
@@ -16,9 +19,12 @@ describe("#FAQ Categories", () => {
   });
 
   test("should not create a category with invalid description", () => {
-    const category = Category.create(1, {
-      title: "Manejo",
-      description: "",
+    const category = Category.create({
+      id: 1,
+      props: {
+        title: "Manejo",
+        description: "",
+      },
     });
 
     const result = category.value as Error;
@@ -29,10 +35,13 @@ describe("#FAQ Categories", () => {
   });
 
   test("should not create a category with title too long", () => {
-    const category = Category.create(1, {
-      title:
-        "Manejo ..............................................................................",
-      description: "Manejo de irrigação",
+    const category = Category.create({
+      id: 1,
+      props: {
+        title:
+          "Manejo ..............................................................................",
+        description: "Manejo de irrigação",
+      },
     });
 
     const result = category.value as Error;
@@ -43,10 +52,13 @@ describe("#FAQ Categories", () => {
   });
 
   test("should not create a category with description too long", () => {
-    const category = Category.create(1, {
-      title: "Manejo",
-      description:
-        "Manejo de irrigação ..............................................................................",
+    const category = Category.create({
+      id: 1,
+      props: {
+        title: "Manejo",
+        description:
+          "Manejo de irrigação ..............................................................................",
+      },
     });
 
     const result = category.value as Error;

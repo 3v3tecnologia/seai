@@ -5,7 +5,9 @@ import { Faq } from "../../../src/domain/entities/faq/faq";
 let categories: Categories | null = null;
 describe("#FAQ", () => {
   beforeAll(() => {
-    const result = Category.create(1);
+    const result = Category.create({
+      id: 1,
+    });
     const category = result.value as Category;
     categories = Categories.create([category]);
   });

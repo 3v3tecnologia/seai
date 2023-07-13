@@ -69,7 +69,7 @@ export class AdminMiddleware implements Middleware {
       return unauthorized();
     } catch (error) {
       console.error("[admin-middleware] ", error);
-      return serverError(error as Error);
+      return serverError(new Error("Error ao verificar autorização."));
     }
   }
 }

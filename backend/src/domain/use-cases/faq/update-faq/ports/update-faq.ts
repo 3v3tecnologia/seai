@@ -5,7 +5,7 @@ export namespace UpdateFaqDTO {
     id: number;
     question: string;
     answer: string;
-    order: string;
+    order: number;
     categories: Array<number>;
   };
 

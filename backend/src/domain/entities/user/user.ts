@@ -14,7 +14,7 @@ interface UserProps {
   login?: UserLogin | null;
   email: Email;
   password?: UserPassword | null;
-  modulesAccess?: SystemModules;
+  modulesAccess: SystemModules;
   type: UserType;
 }
 
@@ -25,13 +25,13 @@ export class User {
   private _email: Email;
   private _password: UserPassword | null;
   public type: UserType;
-  public readonly modulesAccess: SystemModules | null;
+  public readonly _modulesAccess: SystemModules;
 
   private constructor(props: UserProps, id?: number) {
     this._id = id || null;
     this._email = props.email;
     this.type = props.type;
-    this.modulesAccess = props.modulesAccess || null;
+    this._modulesAccess = props.modulesAccess;
     this._name = props.name || null;
     this._login = props.login || null;
     this._password = props.password || null;
@@ -54,6 +54,10 @@ export class User {
 
   get password(): UserPassword | null {
     return this._password;
+  }
+
+  get access(): SystemModules {
+    return this._modulesAccess;
   }
 
   public setEmail(email: Email) {
@@ -143,6 +147,8 @@ export class User {
 
     const name = nameOrError === null ? null : (nameOrError?.value as UserName);
 
+    const modulesAccess = accessOrError.value as SystemModules;
+
     return right(
       new User(
         {
@@ -151,6 +157,7 @@ export class User {
           login,
           password,
           name,
+          modulesAccess,
         },
         id
       )

@@ -2,11 +2,9 @@ import { CreateUser } from "../../../domain/use-cases/user/create-user/create-us
 import { HttpResponse } from "../ports";
 
 import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
-import { Validator } from "../../../shared/validation/ports/validator";
-import { badRequest, created, forbidden, serverError } from "../helpers";
+import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 
-// Controllers são classes puras e não devem depender de frameworks
 export class CreateUserController extends CommandController<
   CreateUserController.Request,
   HttpResponse
@@ -20,25 +18,20 @@ export class CreateUserController extends CommandController<
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      // const error = this.validator.validate(request);
-
-      // if (error.isLeft()) {
-      //   return badRequest(error.value);
-      // }
-
       const { email, modules, type } = request;
 
-      const createdOrError = await this.createUser.create({
+      const dto = {
         email,
         modules,
         type,
-      });
+      };
+
+      const createdOrError = await this.createUser.create(dto);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
       await this.userLogs.log(request.accountId, this.createUser.useCaseLogs());
-      //Add validation here
       return created(createdOrError.value);
     } catch (error) {
       console.error(error);

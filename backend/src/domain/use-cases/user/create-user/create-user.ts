@@ -1,4 +1,7 @@
 import env from "../../../../server/http/env";
+import { Email } from "../../../entities/user/email";
+import { User } from "../../../entities/user/user";
+import { SystemModules } from "../../../entities/user/user-modules-access";
 import { Command } from "../../_ports/core/command";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
@@ -27,11 +30,12 @@ export class CreateUser extends Command implements CreateUserProtocol {
     this.tokenProvider = tokenProvider;
   }
   async create(
-    user: CreateUserDTO.Params
+    request: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
+    this.resetLog();
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
     const alreadyExists =
-      await this.accountRepository.checkIfEmailAlreadyExists(user.email);
+      await this.accountRepository.checkIfEmailAlreadyExists(request.email);
 
     if (alreadyExists) {
       return left(new UserAlreadyExistsError());
@@ -41,13 +45,13 @@ export class CreateUser extends Command implements CreateUserProtocol {
     const modules = await this.accountRepository.getModules();
 
     if (!modules) {
-      return left(new Error("Modules not found"));
+      return left(new Error("Não há módulos de acesso cadastrado"));
     }
 
     const userModulesAccess = [
-      user.modules.news_manager.id,
-      user.modules.registers.id,
-      user.modules.users_manager.id,
+      request.modules.news_manager.id,
+      request.modules.registers.id,
+      request.modules.users_manager.id,
     ];
 
     // evitar ter que salvar usuário com módulos que não existem
@@ -55,19 +59,32 @@ export class CreateUser extends Command implements CreateUserProtocol {
       if (
         modules.some((module_access) => module_access.id === module) === false
       ) {
-        return left(new Error("User module access not exists"));
+        return left(new Error("Módulos de acesso do usuário não existe"));
       }
     });
 
-    // poderia já pegar o ID ao adicionar ao invés de fazer uma requisição ao banco a mais
-    await this.accountRepository.add(user);
+    const userOrError = User.create({
+      email: request.email,
+      type: request.type,
+      modulesAccess: request.modules,
+    });
 
-    const account = await this.accountRepository.getByEmail(user.email);
+    if (userOrError.isLeft()) {
+      return left(userOrError.value);
+    }
 
-    if (account) {
+    const user = userOrError.value as User;
+
+    const user_id = await this.accountRepository.add({
+      email: user.email?.value as string,
+      type: user.type,
+      modules: user.access.value,
+    });
+
+    if (user_id) {
       const token = await this.tokenProvider.sign(
         {
-          accountId: account.id as number,
+          accountId: user_id as number,
         },
         "1d"
       );
@@ -89,7 +106,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
 
       Se houver algum questionamento você pode entrar em contato com <b>suporteseai@email.com</b> <br><br>
 
-      Se não reconhece a conta do SEAI <a href="mailto:${user.email}">${user.email}</a> , você pode <a href="https://www.google.com/">clicar aqui</a> para remover seu endereço de email dessa conta.<br><br>
+      Se não reconhece a conta do SEAI <a href="mailto:${user.email?.value}">${user.email?.value}</a> , você pode <a href="https://www.google.com/">clicar aqui</a> para remover seu endereço de email dessa conta.<br><br>
 
       Obrigado <br>
       Equipe SEAI
@@ -98,7 +115,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
       // TODO criar token e adicionar ao email
       await this.sendEmailToUser.send(
         {
-          email: user.email,
+          email: user.email?.value as string,
         },
         {
           subject: "Bem vindo ao SEAI",
@@ -115,7 +132,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
     });
 
     return right(
-      `Sucesso ao criar usuário, email enviado com sucesso para ${user.email}`
+      `Sucesso ao criar usuário, email enviado com sucesso para ${user.email?.value}`
     );
   }
 }

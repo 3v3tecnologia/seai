@@ -4,7 +4,6 @@ import { Controller } from "../ports/controllers";
 import { FetchFaqByIdProtocol } from "../../../domain/use-cases/faq/fetch-faq-by-id/ports/fetch-faq-by-id";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 
-// Controllers são classes puras e não devem depender de frameworks
 export class FetchFaqByIdController
   implements Controller<FetchFaqByIdController.Request, HttpResponse>
 {
@@ -25,7 +24,7 @@ export class FetchFaqByIdController
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      //Add validation here
+
       return ok(result.value);
     } catch (error) {
       console.error(error);
