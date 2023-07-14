@@ -32,7 +32,6 @@ export class CreateUser extends Command implements CreateUserProtocol {
   async create(
     request: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
-    this.resetLog();
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
     const alreadyExists =
       await this.accountRepository.checkIfEmailAlreadyExists(request.email);

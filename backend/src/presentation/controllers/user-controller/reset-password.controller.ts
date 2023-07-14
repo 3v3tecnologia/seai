@@ -27,10 +27,8 @@ export class ResetPasswordController extends CommandController<
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
-      await this.userLogs.log(
-        request.accountId,
-        this.resetPassword.useCaseLogs()
-      );
+      await this.userLogs.log(request.accountId, this.resetPassword);
+
       return created("Senha resetada com sucesso");
     } catch (error) {
       console.error(error);

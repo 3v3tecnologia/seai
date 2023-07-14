@@ -24,7 +24,7 @@ export class CreateFaqController extends CommandController<
         return forbidden(result.value);
       }
 
-      await this.userLogs.log(request.accountId, this.CreateFaq.useCaseLogs());
+      await this.userLogs.log(request.accountId, this.CreateFaq);
 
       return created(result.value);
     } catch (error) {

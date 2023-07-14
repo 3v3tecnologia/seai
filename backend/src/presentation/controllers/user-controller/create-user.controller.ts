@@ -31,7 +31,9 @@ export class CreateUserController extends CommandController<
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
-      await this.userLogs.log(request.accountId, this.createUser.useCaseLogs());
+
+      await this.userLogs.log(request.accountId, this.createUser);
+
       return created(createdOrError.value);
     } catch (error) {
       console.error(error);

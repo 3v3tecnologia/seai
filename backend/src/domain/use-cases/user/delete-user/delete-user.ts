@@ -15,7 +15,6 @@ export class DeleteUser extends Command implements DeleteUserProtocol {
   async execute(
     user_id: number
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
-    this.resetLog();
     const account = await this.accountRepository.getById(user_id);
 
     if (account === null) {

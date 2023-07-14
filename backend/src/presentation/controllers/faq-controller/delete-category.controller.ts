@@ -33,10 +33,7 @@ export class DeleteFaqCategoryController extends CommandController<
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(
-        request.accountId,
-        this.DeleteFaqCategory.useCaseLogs()
-      );
+      await this.userLogs.log(request.accountId, this.DeleteFaqCategory);
 
       return ok(`Categoria ${request.id} deletada com sucesso`);
     } catch (error) {

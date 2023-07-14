@@ -26,7 +26,7 @@ export class DeleteFaqController extends CommandController<
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.DeleteFaq.useCaseLogs());
+      await this.userLogs.log(request.accountId, this.DeleteFaq);
 
       return ok(`Faq deletado com sucesso`);
     } catch (error) {

@@ -22,7 +22,7 @@ export class DeleteUserController extends CommandController<
     if (result.isLeft()) {
       return forbidden(result.value);
     }
-    await this.userLogs.log(request.accountId, this.deleteUser.useCaseLogs());
+    await this.userLogs.log(request.accountId, this.deleteUser);
     return ok(result.value);
   }
 }

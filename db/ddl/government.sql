@@ -1,8 +1,13 @@
 CREATE DATABASE government;
 
+alter database government
+set TIMEZONE to 'America/Sao_Paulo'
+
 \c government;
 
 CREATE TYPE user_types AS ENUM ('admin', 'standard');
+
+
 
 CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,

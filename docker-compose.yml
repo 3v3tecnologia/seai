@@ -6,6 +6,7 @@ services:
     volumes:
       - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
       - ./db/seeds/equipments.sql:/docker-entrypoint-initdb.d/seeds-equipments.sql
+      - ./db/seeds/government.sql:/docker-entrypoint-initdb.d/seeds-government.sql
       - ./db/ddl/government.sql:/docker-entrypoint-initdb.d/ddl-government.sql
       - ./db/ddl/management.sql:/docker-entrypoint-initdb.d/ddl-management.sql
       - ./db/ddl/newsletter.sql:/docker-entrypoint-initdb.d/ddl-newsletter.sql

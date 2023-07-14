@@ -33,10 +33,7 @@ export class CreateFaqCategoryController extends CommandController<
       if (result.isLeft()) {
         return badRequest(result.value);
       }
-      await this.userLogs.log(
-        request.accountId,
-        this.CreateFaqCategory.useCaseLogs()
-      );
+      await this.userLogs.log(request.accountId, this.CreateFaqCategory);
 
       return created(result.value);
     } catch (error) {

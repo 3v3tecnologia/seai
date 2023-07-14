@@ -31,7 +31,7 @@ export class UpdateFaqController extends CommandController<
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.UpdateFaq.useCaseLogs());
+      await this.userLogs.log(request.accountId, this.UpdateFaq);
 
       return ok(result.value);
     } catch (error) {

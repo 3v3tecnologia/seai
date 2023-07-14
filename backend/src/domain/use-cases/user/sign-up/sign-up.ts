@@ -46,7 +46,6 @@ export class SignUp extends Command {
       AuthenticationDTO.result
     >
   > {
-    this.resetLog();
     const loginAlreadyExists = await this.accountRepository.getByLogin(
       user.login
     );

@@ -34,10 +34,7 @@ export class UpdateFaqCategoryController extends CommandController<
         return forbidden(result.value);
       }
 
-      await this.userLogs.log(
-        request.accountId,
-        this.UpdateFaqCategory.useCaseLogs()
-      );
+      await this.userLogs.log(request.accountId, this.UpdateFaqCategory);
 
       return ok(result.value);
     } catch (error) {
