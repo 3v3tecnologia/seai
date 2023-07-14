@@ -1,5 +1,5 @@
 <template>
-  <div class="px-lg-5 mx-lg-5">
+  <BasicContentWrapper>
     <div
       class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-5"
     >
@@ -22,12 +22,13 @@
       :users="users.data"
       v-model="filtersUsers"
     />
-  </div>
+  </BasicContentWrapper>
 </template>
 
 <script lang="ts" setup>
 import { useStore } from "vuex";
 import UsersTable from "@/components/UsersTable.vue";
+import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, watch } from "vue";
 
 const store = useStore();

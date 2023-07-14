@@ -13,6 +13,7 @@
       v-model="inputValue"
       class="form-control"
       :required="inputRequired"
+      :disabled="disabled"
     >
       <option v-for="option in options" :key="option.value">
         {{ option.title }}
@@ -26,10 +27,14 @@ import { defineProps, defineEmits, ref, Ref, watch } from "vue";
 
 const props = defineProps({
   label: String,
-  modelValue: String || Number,
+  modelValue: Object,
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
   inlineLabel: {
     type: Boolean,
@@ -54,15 +59,28 @@ const inputValue: Ref<number | string> = ref(2);
 watch(
   () => props.modelValue,
   (val) => {
-    inputValue.value = val || 0;
+    console.log("mudou valor do modelval", val, val?.title);
+    inputValue.value = val?.title || 0;
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 const emit = defineEmits(["update:modelValue"]);
 
+watch(
+  () => props.disabled,
+  (val) => {
+    if (val) {
+      emit("update:modelValue", props.options[0]);
+    }
+  }
+);
+
 watch(inputValue, (val) => {
-  emit("update:modelValue", val);
+  emit(
+    "update:modelValue",
+    props.options.find((opt) => opt.title == val)
+  );
 });
 </script>
 
@@ -83,6 +101,8 @@ watch(inputValue, (val) => {
     }
 
     select {
+      min-width: 200px;
+      width: 100%;
       max-width: 200px;
     }
   }

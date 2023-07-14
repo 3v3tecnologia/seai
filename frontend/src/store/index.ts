@@ -7,6 +7,8 @@ import { InjectionKey } from "vue";
 import IAuth from "@/interfaces/IAuth";
 import IUser from "@/interfaces/IUser";
 import IUsersWrapper from "@/interfaces/IUsersWrapper";
+import ICityOption from "@/interfaces/ICityOption";
+import IHydrographicBasinOption from "@/interfaces/IHydrographicBasinOption";
 import http from "@/http";
 
 import { previewEmailCensured } from "@/helpers/formatEmail";
@@ -16,6 +18,8 @@ interface Estado {
   auth: IAuth | null;
   users: IUsersWrapper;
   currentUser: INewUser | null;
+  cityOptions: ICityOption[];
+  hydrographicBasinOptions: IHydrographicBasinOption[];
 }
 
 export const key: InjectionKey<Store<Estado>> = Symbol();
@@ -23,6 +27,26 @@ export const key: InjectionKey<Store<Estado>> = Symbol();
 export const store = createStore<Estado>({
   state: {
     auth: null,
+    hydrographicBasinOptions: [
+      {
+        title: "Alto Jaguaribe",
+        value: 1,
+      },
+      {
+        title: "Baixo Jaguaribe",
+        value: 2,
+      },
+    ],
+    cityOptions: [
+      {
+        title: "Fortaleza",
+        value: 1,
+      },
+      {
+        title: "Crato",
+        value: 2,
+      },
+    ],
     users: {
       data: [],
       totalAdmins: 0,

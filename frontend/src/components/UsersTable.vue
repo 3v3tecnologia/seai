@@ -92,12 +92,11 @@ import moment from "moment";
 
 const router = useRouter();
 
-const cleanUserType = usersOptions[0].title;
 const table = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
 const tabulator = ref(null);
-const userType = ref(cleanUserType);
+const userType = ref(usersOptions[0]);
 const search = ref("");
 
 const setSelectedUsers = () => {
@@ -195,9 +194,9 @@ onMounted(() => {
 });
 
 defineEmits(["update:modelValue"]);
+
 const filtersTable = computed(() => {
-  const userTypeVal =
-    userType.value === usersOptions[0].title ? "" : userType.value;
+  const userTypeVal = userType.value.value ? userType.value?.title : "";
   const searchVal = search.value;
 
   return [
@@ -224,6 +223,7 @@ const filtersTable = computed(() => {
 watch(
   () => filtersTable.value,
   (val) => {
+    console.log("val dos filters", val);
     tabulator.value?.setFilter(val);
   },
   { immediate: true }

@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import "./registerServiceWorker";
+import VueApexCharts from "vue3-apexcharts";
 import router from "./router";
 import { store } from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -20,8 +21,10 @@ import {
 
 /* add icons to the library */
 library.add(faUserSecret, faPlus, faRefresh, faPen, faTrash, faSignOut);
+
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)
   .use(router)
+  .use(VueApexCharts)
   .mount("#app");
