@@ -19,8 +19,9 @@ ADD . .
 ARG PORT=80
 ENV PORT $PORT
 EXPOSE $PORT
-# HEALTHCHECK --interval=30s \
-#     CMD node healthcheck.js
+
+HEALTHCHECK --interval=30s --timeout=12s --start-period=30s \
+  CMD node healthcheck.js
 # RUN npm run build
 
 # CMD [ "node","/usr/src/app/src/server.js" ]
