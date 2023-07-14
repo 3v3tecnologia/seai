@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM node:lts-buster-slim  AS development
+FROM node:18-bullseye-slim  AS development
 
 ARG NODE_ENV=development
 ENV NODE_ENV $NODE_ENV
@@ -21,8 +21,8 @@ ENV PORT $PORT
 EXPOSE $PORT
 # HEALTHCHECK --interval=30s \
 #     CMD node healthcheck.js
-RUN npm run build
+# RUN npm run build
 
 # CMD [ "node","/usr/src/app/src/server.js" ]
-CMD [ "npm","start" ]
+CMD [ "npm","dev:watch" ]
 

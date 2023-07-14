@@ -13,7 +13,7 @@
     "build:clean": "npm run clean && npm run build",
     "build:watch": "tsc -w",
     "build:start": "npm run build:clean && npm start",
-    "dev:watch": "concurrently -s all \"tsc -w\" nodemon dist/index.js\"",
+    "dev:watch": "concurrently -s all \"tsc -w\" nodemon dist/src/index.js",
     "start:dev": "cross-env NODE_ENV=development nodemon",
     "start:prod": "cross-env NODE_ENV=production node dist/src/index.js"
   },

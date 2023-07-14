@@ -20,22 +20,22 @@ services:
     restart: always
     networks:
       - custom
+      - private
 
-  # backend:
-  #   build: ./backend
-  #   container_name: "seai-server"
-  #   environment:
-  #     - NODE_ENV: ${NODE_ENV:-development}
-  #   command: npm run dev:watch
-  #   ports:
-  #     -"80:80"
-  #   volumes:
-  #     - ./backend:/usr/src/app
-  #     - backend_node_modules:/usr/src/app/node_modules
-  #   depends_on:
-  #     - database
-  #   networks:
-  #     - private
+  backend:
+    build: ./backend
+    container_name: "seai-server"
+    restart: always
+    command: npm run dev:watch
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/usr/src/app
+      - backend_node_modules:/usr/src/app/node_modules
+    depends_on:
+      - database
+    networks:
+      - private
 
 volumes:
   db-data: {}

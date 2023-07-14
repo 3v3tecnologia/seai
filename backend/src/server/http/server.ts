@@ -9,7 +9,6 @@ import env from "./env";
 
 let server;
 (async () => {
-
   const app = await setupApp();
 
   server = app.listen(env.port, () => {

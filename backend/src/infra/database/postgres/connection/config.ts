@@ -5,8 +5,8 @@ export const db_config: { [index: string]: any } = {
     development: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         user: env.database.user,
         password: env.database.password,
         database: "government",
@@ -21,8 +21,8 @@ export const db_config: { [index: string]: any } = {
     production: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         database: "government",
         user: env.database.user,
         password: env.database.password,
@@ -39,8 +39,8 @@ export const db_config: { [index: string]: any } = {
     development: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         user: env.database.user,
         password: env.database.password,
         database: "logs",
@@ -55,8 +55,8 @@ export const db_config: { [index: string]: any } = {
     production: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         database: "logs",
         user: env.database.user,
         password: env.database.password,
