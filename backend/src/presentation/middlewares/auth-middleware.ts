@@ -2,14 +2,7 @@ import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
 import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
-import { AccessDeniedError } from "../controllers/errors";
-import {
-  forbidden,
-  ok,
-  serverError,
-  unauthenticated,
-  unauthorized,
-} from "../controllers/helpers";
+import { forbidden, ok, unauthenticated } from "../controllers/helpers";
 
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
