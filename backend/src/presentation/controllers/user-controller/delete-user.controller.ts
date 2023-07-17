@@ -5,7 +5,6 @@ import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-us
 import { forbidden, ok } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 
-// Controllers são classes puras e não devem depender de frameworks
 export class DeleteUserController extends CommandController<
   DeleteUserController.Request,
   HttpResponse
@@ -23,8 +22,7 @@ export class DeleteUserController extends CommandController<
     if (result.isLeft()) {
       return forbidden(result.value);
     }
-    await this.userLogs.log(request.accountId, this.deleteUser.useCaseLogs());
-    //Add validation here
+    await this.userLogs.log(request.accountId, this.deleteUser);
     return ok(result.value);
   }
 }

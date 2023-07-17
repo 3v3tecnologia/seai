@@ -5,12 +5,13 @@ export const db_config: { [index: string]: any } = {
     development: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         user: env.database.user,
         password: env.database.password,
         database: "government",
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -20,12 +21,13 @@ export const db_config: { [index: string]: any } = {
     production: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         database: "government",
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -37,12 +39,13 @@ export const db_config: { [index: string]: any } = {
     development: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         user: env.database.user,
         password: env.database.password,
         database: "logs",
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,
@@ -52,12 +55,13 @@ export const db_config: { [index: string]: any } = {
     production: {
       client: "pg",
       connection: {
-        host: "127.0.0.1",
-        port: 5432,
+        host: env.database.host,
+        port: env.database.port,
         database: "logs",
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
+        timezone: "Brazil/East",
       },
       pool: {
         min: 2,

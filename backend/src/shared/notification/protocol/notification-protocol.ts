@@ -1,11 +1,13 @@
-export type NotificationProps = {
+export type NotificationErrorProps = {
   message: string;
-  context: string;
+  context?: string;
+  stack?: string;
+  name?: string;
 };
 
 export interface NotificationProtocol {
-  addError(error: NotificationProps): void;
+  addError(error: NotificationErrorProps): void;
   hasErrors(): boolean;
-  getErrors(): Array<NotificationProps>;
+  getErrors(): Array<NotificationErrorProps>;
   messages(context?: string): string;
 }

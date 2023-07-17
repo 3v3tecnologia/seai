@@ -2,7 +2,9 @@ import { DomainError } from "./errors";
 
 export class InvalidLoginError extends Error implements DomainError {
   constructor() {
-    super(`The login is invalid.`);
+    super(
+      `Login inválido, não deve ser vazio ou nulo e não deve ser maior do que a quantidade de caracteres permitido.`
+    );
     this.name = "InvalidLoginError";
   }
 }
