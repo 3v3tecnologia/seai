@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { UserPassword } from "../../../entities/user/userPassword";
 import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
@@ -32,7 +33,7 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
     password: string
   ): Promise<Either<Error, null>> {
     if (!access_token) {
-      return left(new Error("Token not informed"));
+      return left(new Error("Token não informado"));
     }
 
     let token: TokenResponse;
@@ -41,13 +42,22 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
       token = await this.tokenProvider.verify(access_token);
     } catch (error) {
       console.error(error);
-      return left(new Error("Token invalid"));
+      return left(new Error("Token inválido"));
     }
 
     const user = await this.accountRepository.getById(Number(token.sub));
 
     if (!user) {
-      return left(new Error("User not found"));
+      return left(new Error("Usuário não encontado"));
+    }
+
+    const passwordOrError = UserPassword.create({
+      value: password,
+      isHashed: false,
+    });
+
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value);
     }
 
     const newPassword = await this.encoder.hash(password);
