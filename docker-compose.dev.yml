@@ -13,6 +13,8 @@ services:
         - ./db/ddl/logs.sql:/docker-entrypoint-initdb.d/ddl-logs.sql
         - ./db/ddl/census.sql:/docker-entrypoint-initdb.d/ddl-census.sql
         - db-data:/var/lib/postgresql/data
+        - ./db/csv/Bacias.csv:/var/lib/postgres/data/Bacias.csv
+        - ./db/csv/Municipios.csv:/var/lib/postgres/data/Municipios.csv
         - ./db/csv/Contatos.csv:/var/lib/postgres/data/Contatos.csv
         - ./db/csv/EmpresasPocos.csv:/var/lib/postgres/data/EmpresasPocos.csv
         - ./db/csv/Pocos.csv:/var/lib/postgres/data/Pocos.csv

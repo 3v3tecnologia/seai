@@ -5,96 +5,28 @@ CREATE DATABASE census;
 CREATE EXTENSION postgis;
 
 
-CREATE TYPE cidade_enum AS ENUM(
-	'Acopiara',
-	'Aiuaba',
-	'Altaneira',
-	'Antonina do Norte',
-	'Araripe',
-	'Arneiroz',
-	'Assaré',
-	'Campos Sales',
-	'Cariús',
-	'Catarina',
-	'Farias Brito',
-	'Icó',
-	'Iguatu',
-	'Jucás',
-	'Nova Olinda',
-	'Orós',
-	'Parambu',
-	'Potengi',
-	'Quixelô',
-	'Saboeiro',
-	'Salitre',
-	'Santana do Cariri',
-	'Tarrafas',
-	'Tauá',
-	'Alto Santo',
-	'Deputado Irapuan Pinheiro',
-	'Ererê',
-	'Iracema',
-	'Jaguaretama',
-	'Jaguaribara',
-	'Jaguaribe',
-	'Milhã',
-	'Pereiro',
-	'Potiretama',
-	'São João do Jaguaribe',
-	'Solonópoles',
-	'Tabuleiro do Norte',
-	'Aracati',
-	'Fortim',
-	'Icapuí',
-	'Itaiçaba',
-	'Jaguaruana',
-	'Limoeiro do Norte',
-	'Palhano',
-	'Quixeré',
-	'Russas',
-	'Banabuiú',
-	'Boa Viagem',
-	'Ibicuitinga',
-	'Madalena',
-	'Mombaça',
-	'Monsenhor Tabosa',
-	'Morada Nova',
-	'Pedra Branca',
-	'Piquet Carneiro',
-	'Quixadá',
-	'Quixeramobim',
-	'Senador Pompeu',
-	'Itatira',
-	'Abaiara',
-	'Aurora',
-	'Baixio',
-	'Barbalha',
-	'Barro',
-	'Brejo Santo',
-	'Caririaçu',
-	'Cedro',
-	'Crato',
-	'Granjeiro',
-	'Ipaumirim',
-	'Jardim',
-	'Jati',
-	'Juazeiro do Norte',
-	'Lavras da Mangabeira',
-	'Mauriti',
-	'Milagres',
-	'Missão Velha',
-	'Penaforte',
-	'Porteiras',
-	'Umari',
-	'Várzea Alegre'
+CREATE TABLE "Bacias" (
+	"Id" SERIAL PRIMARY KEY,
+	"Bacia" VARCHAR(50)
 );
+COPY "Bacias"("Bacia")
+FROM '/var/lib/postgres/data/Bacias.csv' DELIMITER ';' CSV HEADER;
+
+CREATE TABLE "Municipios" (
+	"Id" SERIAL PRIMARY KEY,
+	"Bacia_Id" INTEGER REFERENCES "Bacias"("Id"),
+	"Municipio" VARCHAR(50)
+);
+COPY "Municipios"("Bacia_Id",
+	"Municipio")
+FROM '/var/lib/postgres/data/Municipios.csv' DELIMITER ';' CSV HEADER;
 
 CREATE TABLE "Contatos" (
 	"Id" SERIAL PRIMARY KEY,
 	"Endereço" VARCHAR(100),
 	"Complemento" VARCHAR(100),
 	"Email" VARCHAR(50),
-	"Municipio"  cidade_enum,
+	"Municipio_Id" INTEGER REFERENCES "Municipios"("Id"),
 	"Numero" VARCHAR(20),
 	"Bairro" VARCHAR(50),
 	-- "CEP" VARCHAR(12),
@@ -104,7 +36,7 @@ CREATE TABLE "Contatos" (
 COPY "Contatos"("Endereço", --B0004
 	"Complemento", --B0005
 	"Email", --B0006
-	"Municipio", --B0007
+	"Municipio_Id", --B0007
 	"Numero", --B0008
 	"Bairro", --B0009
 	"Telefone") --B0010
@@ -273,7 +205,7 @@ CREATE TABLE "PessoaFisica" (
 	"Nome" VARCHAR(100),
 	"RG"  VARCHAR(20),
 	"CPF"  VARCHAR(20),
-	"Municipio"  cidade_enum,
+	"Municipio_Id"  INTEGER REFERENCES "Municipios"("Id"),
 	"Cargo" VARCHAR(30),
 	"NumTrabalhadores" SMALLINT
 );
@@ -283,7 +215,7 @@ COPY "PessoaFisica"("Cad_Id", --FK
 	"Nome", --C0000
 	"RG", --C0005
 	"CPF", --C0004
-	"Municipio",--C0007
+	"Municipio_Id",--C0007
 	"Cargo", --C0002
 	"NumTrabalhadores") --x0001
 FROM '/var/lib/postgres/data/PessoaFisica.csv' DELIMITER ';' CSV HEADER;
@@ -324,19 +256,24 @@ CREATE TABLE "RecursoHidrico" (
 	"Id" SERIAL PRIMARY KEY,
 	"Cad_Id" INTEGER NOT NULL REFERENCES "Cadastro"("Id"),
 	"Nome" VARCHAR(100),
-	"Municipio"  cidade_enum,
+	"Municipio_Id" INTEGER REFERENCES "Municipios"("Id"),
 	"Outorga" VARCHAR(100),
 	"NumOutorga" VARCHAR(100),
-	"Coordenadas" GEOMETRY
+	"Latitude" REAL,
+	"Longitude" REAL
 );
 
 COPY "RecursoHidrico"("Cad_Id", --FK
 	"Nome", --D0000
-	"Municipio", --D0001
+	"Municipio_Id", --D0001
 	"Outorga", --D0002
-	"NumOutorga") --D0003
-	--"Coordenadas")
+	"NumOutorga", --D0003
+	"Latitude", --D100
+	"Longitude") --D101
 FROM '/var/lib/postgres/data/RecursoHidrico.csv' DELIMITER ';' CSV HEADER;
+
+ALTER TABLE "RecursoHidrico" ADD COLUMN "Geom" geometry(POINT, 4326);
+UPDATE "RecursoHidrico" SET "Geom" = ST_SetSRID(ST_MakePoint("Longitude", "Latitude") ,4326);
 
 CREATE TABLE "Superficial" (
 	"Rh_Id" INTEGER REFERENCES "RecursoHidrico"("Id"),
@@ -443,7 +380,7 @@ CREATE TABLE "Saneamento" (
 	"Usos_Id" INTEGER NOT NULL REFERENCES "Usos"("Id"),
 	"Entidade" VARCHAR(200),
 	"Distrito" VARCHAR(200),
-	"Municipio" cidade_enum,
+	"Municipio_Id" INTEGER REFERENCES "Municipios"("Id"),
 	"VazaoPerCapita" REAL,
 	"PopulacaoAtendida" INTEGER,
 	"HorizonteProjeto" INTEGER,
@@ -456,7 +393,7 @@ CREATE TABLE "Saneamento" (
 COPY "Saneamento"("Usos_Id", --FK
 	"Entidade", --H0100
 	"Distrito", --H0101
-	"Municipio", --H0102
+	"Municipio_Id", --H0102
 	"VazaoPerCapita", --H0104
 	"PopulacaoAtendida",--H0105
 	"HorizonteProjeto", --H0106

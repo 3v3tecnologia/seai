@@ -8,10 +8,10 @@ CREATE TYPE user_actions AS ENUM ('create', 'delete','update');
 
 CREATE TABLE IF NOT EXISTS "User" (
 	"Id" INTEGER GENERATED ALWAYS AS IDENTITY,
-	"User" INTEGER NOT NULL,
+	"User" INTEGER DEFAULT NULL,
 	"Action" user_actions,
-	"Table" VARCHAR(25) NOT NULL,
-	"Description" VARCHAR(50) NOT NULL,
+	"Table" text NOT NULL,
+	"Description" text NOT NULL,
 	"Time" TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY("Id")
 );
