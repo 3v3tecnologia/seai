@@ -13,3 +13,13 @@ VALUES('user');
 INSERT INTO public."Module"
 ("Name")
 VALUES('register');
+
+INSERT INTO public."User_Access"
+("Fk_User", "Fk_Module", "Read", "Write", "Description", "CreatedAt", "UpdatedAt")
+VALUES(1, 1, true, true, NULL, '2023-08-02 09:14:46.077', '2023-08-02 09:14:46.077');
+INSERT INTO public."User_Access"
+("Fk_User", "Fk_Module", "Read", "Write", "Description", "CreatedAt", "UpdatedAt")
+VALUES(1, 2, true, true, NULL, '2023-08-02 09:14:46.081', '2023-08-02 09:14:46.081');
+INSERT INTO public."User_Access"
+("Fk_User", "Fk_Module", "Read", "Write", "Description", "CreatedAt", "UpdatedAt")
+VALUES(1, 3, true, true, NULL, '2023-08-02 09:14:46.084', '2023-08-02 09:14:46.084');

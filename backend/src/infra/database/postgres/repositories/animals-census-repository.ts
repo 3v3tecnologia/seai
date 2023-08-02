@@ -1,0 +1,133 @@
+import {
+  AnimalsByBasinData,
+  AnimalsByCityData,
+  AnimalsConsumptionData,
+  AnimalsCensusRepositoryProtocol,
+} from "../../../../domain/use-cases/_ports/repositories/animal-census-repository";
+import { censusDb } from "../connection/knexfile";
+
+export class KnexAnimalsCensusRepository
+  implements AnimalsCensusRepositoryProtocol
+{
+  async getConsumption(): Promise<Array<AnimalsConsumptionData> | null> {
+    const consumptions = await censusDb.raw(`select
+          "TipoCriacao" as "TipoCriacao",
+          round(cast(avg("ConsumoPerCapita") as numeric),
+          2) as "Consumo"
+        from
+          "Animais" a
+        where
+          "ConsumoPerCapita" > 0
+        group by
+          "TipoCriacao"
+        order by
+          "Consumo"
+        desc;`);
+
+    if (!consumptions) {
+      return null;
+    }
+
+    const toDomain = consumptions.rows.map((consumption: any) => {
+      return {
+        CreationType: consumption.TipoCriacao,
+        Consumption: Number(consumption.Consumo),
+      };
+    });
+
+    return toDomain;
+  }
+  async getByBasin(): Promise<Array<AnimalsByBasinData> | null> {
+    const data = await censusDb.raw(`
+        select
+          b."Bacia",
+          a."TipoCriacao",
+          sum(a."NumCabecasAno") as "Qtd"
+        from
+          "Bacias" b
+        inner join
+        "Municipios" m
+        on
+          b."Id" = m."Bacia_Id"
+        inner join
+        "RecursoHidrico" rh
+        on
+          m."Id" = rh."Municipio_Id"
+        inner join
+        "Cadastro" c
+        on
+          c."Id" = rh."Cad_Id"
+        inner join
+        "Usos" u
+        on
+          u."Cad_Id" = c."Id"
+        inner join
+        "Animais" a
+        on
+          u."Id" = a."Usos_Id"
+        group by
+          b."Bacia",
+          a."TipoCriacao"
+        order by
+          "TipoCriacao",
+          "Bacia";
+  `);
+
+    if (!data.rowCount) {
+      return null;
+    }
+
+    const toDomain = data.rows.map((data: any) => ({
+      Basin: data.Bacia,
+      CreationType: data.TipoCriacao,
+      Quantity: Number(data.Qtd),
+    }));
+
+    return toDomain;
+  }
+
+  async getByCity(): Promise<Array<AnimalsByCityData> | null> {
+    const data = await censusDb.raw(`
+      select
+        m."Municipio",
+        a."TipoCriacao",
+        sum(a."NumCabecasAno") as "Qtd"
+      from
+        "Municipios" m
+      inner join
+      "RecursoHidrico" rh
+      on
+        m."Id" = rh."Municipio_Id"
+      inner join
+      "Cadastro" c
+      on
+        c."Id" = rh."Cad_Id"
+      inner join
+      "Usos" u
+      on
+        u."Cad_Id" = c."Id"
+      inner join
+      "Animais" a
+      on
+        u."Id" = a."Usos_Id"
+      group by
+        m."Municipio",
+        a."TipoCriacao"
+      order by
+        "TipoCriacao",
+        "Municipio";
+    `);
+
+    if (!data.rowCount) {
+      return null;
+    }
+
+    const toDomain = data.rows.map((row: any) => ({
+      County: row.Municipio,
+      CreationType: row.TipoCriacao,
+      Quantity: Number(row.Qtd),
+    }));
+
+    return toDomain;
+  }
+}
