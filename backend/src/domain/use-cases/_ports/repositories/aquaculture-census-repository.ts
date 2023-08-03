@@ -1,0 +1,14 @@
+export interface AquacultureByCountyData {
+  County: string;
+  Tanks: number;
+}
+
+export interface AquacultureByBasinData {
+  Basin: string;
+  Tanks: number;
+}
+
+export interface AquacultureCensusRepositoryProtocol {
+  getByCounty(): Promise<Array<AquacultureByCountyData> | null>;
+  getByBasin(): Promise<Array<AquacultureByBasinData> | null>;
+}
