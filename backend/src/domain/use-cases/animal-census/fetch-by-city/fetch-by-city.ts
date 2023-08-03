@@ -10,7 +10,7 @@ export class FetchAnimalsCensusByCity {
   constructor(animalRepository: AnimalsCensusRepositoryProtocol) {
     this.animalRepository = animalRepository;
   }
-  async execute(): Promise<Either<Error, Array<AnimalsByCityData> | null>> {
+  async execute(): Promise<Either<Error, AnimalsByCityData | null>> {
     const data = await this.animalRepository.getByCity();
     return right(data);
   }

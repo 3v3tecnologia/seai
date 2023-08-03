@@ -3,6 +3,7 @@ import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
 import { authorization } from "../http-middlewares";
+
 import {
   makeFetchAnimalsCensusByBasinController,
   makeFetchAnimalsCensusByCityController,
@@ -19,6 +20,7 @@ import {
   makeFetchWaterSecurityCensusByBasinController,
   makeFetchWaterSecurityCensusByCountyController,
 } from "../factories/controllers";
+
 import { makeFetchEconomicSecurityCensusByCountyController } from "../factories/controllers/indicators-census/fetch-economic-security-by-county-controller.factory";
 
 export const censusRouter = (): Router => {

@@ -37,7 +37,7 @@ export class KnexAnimalsCensusRepository
 
     return toDomain;
   }
-  async getByBasin(): Promise<Array<AnimalsByBasinData> | null> {
+  async getByBasin(): Promise<AnimalsByBasinData | null> {
     const data = await censusDb.raw(`
         select
           b."Bacia",
@@ -77,16 +77,38 @@ export class KnexAnimalsCensusRepository
       return null;
     }
 
-    const toDomain = data.rows.map((data: any) => ({
+    const mappedData = data.rows.map((data: any) => ({
       Basin: data.Bacia,
       CreationType: data.TipoCriacao,
       Quantity: Number(data.Qtd),
     }));
 
+    const toDomain = {};
+
+    mappedData.forEach(
+      (item: { Basin: string; CreationType: string; Quantity: number }) => {
+        if (Reflect.has(toDomain, item.Basin)) {
+          Reflect.get(toDomain, item.Basin).push({
+            CreationType: item.CreationType,
+            Quantity: item.Quantity,
+          });
+        } else {
+          Reflect.set(toDomain, item.Basin, [
+            {
+              ...{
+                CreationType: item.CreationType,
+                Quantity: item.Quantity,
+              },
+            },
+          ]);
+        }
+      }
+    );
+
     return toDomain;
   }
 
-  async getByCity(): Promise<Array<AnimalsByCityData> | null> {
+  async getByCity(): Promise<AnimalsByCityData | null> {
     const data = await censusDb.raw(`
       select
         m."Municipio",
@@ -122,11 +144,33 @@ export class KnexAnimalsCensusRepository
       return null;
     }
 
-    const toDomain = data.rows.map((row: any) => ({
-      County: row.Municipio,
-      CreationType: row.TipoCriacao,
-      Quantity: Number(row.Qtd),
+    const mappedData = data.rows.map((data: any) => ({
+      County: data.Municipio,
+      CreationType: data.TipoCriacao,
+      Quantity: Number(data.Qtd),
     }));
+
+    const toDomain = {};
+
+    mappedData.forEach(
+      (item: { County: string; CreationType: string; Quantity: number }) => {
+        if (Reflect.has(toDomain, item.County)) {
+          Reflect.get(toDomain, item.County).push({
+            ...{
+              CreationType: item.CreationType,
+              Quantity: item.Quantity,
+            },
+          });
+        } else {
+          Reflect.set(toDomain, item.County, [
+            {
+              CreationType: item.CreationType,
+              Quantity: item.Quantity,
+            },
+          ]);
+        }
+      }
+    );
 
     return toDomain;
   }
