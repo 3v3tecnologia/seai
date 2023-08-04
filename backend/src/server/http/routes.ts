@@ -19,5 +19,5 @@ export function setRoutes(app: Express): void {
     res.status(200).json({ status: "good" });
   });
 
-  app.use("/api", router);
+  app.use("/api/v1", router);
 }
