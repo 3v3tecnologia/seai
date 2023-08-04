@@ -20,13 +20,17 @@ import {
   makeFetchWaterSecurityCensusByBasinController,
   makeFetchWaterSecurityCensusByCountyController,
 } from "../factories/controllers";
-import { makeFetchEconomicSecurityCensusByCountyController } from "../factories/controllers/indicators-census/fetch-economic-security-by-county-controller.factory";
 import {
   makeFetchCaptationCensusByBasinController,
   makeFetchCaptationCensusByCountyController,
   makeFetchCaptationTankCensusByBasinController,
   makeFetchCaptationTankCensusByCountyController,
 } from "../factories/controllers/captation-census";
+import { makeFetchEconomicSecurityCensusByCountyController } from "../factories/controllers/indicators-census/fetch-economic-security-by-county-controller.factory";
+import {
+  makeFetchWorkersCensusByBasinController,
+  makeFetchWorkersCensusByCountyController,
+} from "../factories/controllers/workers-census";
 
 export const censusRouter = (): Router => {
   const router = Router();
@@ -143,6 +147,18 @@ export const censusRouter = (): Router => {
     "/captation/tank/county",
     authorization,
     adaptRoute(makeFetchCaptationTankCensusByCountyController())
+  );
+
+  router.get(
+    "/workers/basin",
+    authorization,
+    adaptRoute(makeFetchWorkersCensusByBasinController())
+  );
+
+  router.get(
+    "/workers/county",
+    authorization,
+    adaptRoute(makeFetchWorkersCensusByCountyController())
   );
 
   return router;
