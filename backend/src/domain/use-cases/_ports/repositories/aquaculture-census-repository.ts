@@ -9,6 +9,8 @@ export interface AquacultureByBasinData {
 }
 
 export interface AquacultureCensusRepositoryProtocol {
+  getMonthlyVolumePerTanksByCounty(): Promise<Array<any> | null>;
+  getMonthlyVolumePerTanksByBasin(): Promise<Array<any> | null>;
   getByCounty(): Promise<Array<AquacultureByCountyData> | null>;
   getByBasin(): Promise<Array<AquacultureByBasinData> | null>;
 }

@@ -24,6 +24,8 @@ import { makeFetchEconomicSecurityCensusByCountyController } from "../factories/
 import {
   makeFetchCaptationCensusByBasinController,
   makeFetchCaptationCensusByCountyController,
+  makeFetchCaptationTankCensusByBasinController,
+  makeFetchCaptationTankCensusByCountyController,
 } from "../factories/controllers/captation-census";
 
 export const censusRouter = (): Router => {
@@ -129,6 +131,18 @@ export const censusRouter = (): Router => {
     "/captation/county",
     authorization,
     adaptRoute(makeFetchCaptationCensusByCountyController())
+  );
+
+  router.get(
+    "/captation/tank/basin",
+    authorization,
+    adaptRoute(makeFetchCaptationTankCensusByBasinController())
+  );
+
+  router.get(
+    "/captation/tank/county",
+    authorization,
+    adaptRoute(makeFetchCaptationTankCensusByCountyController())
   );
 
   return router;

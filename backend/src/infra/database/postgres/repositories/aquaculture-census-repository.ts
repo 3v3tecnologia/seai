@@ -8,7 +8,7 @@ import { censusDb } from "../connection/knexfile";
 export class KnexAquacultureCensusRepository
   implements AquacultureCensusRepositoryProtocol
 {
-  async getMonthlyVolumePerTanksByCounty(): Promise<Array<AquacultureByBasinData> | null> {
+  async getMonthlyVolumePerTanksByCounty(): Promise<Array<any> | null> {
     const data = await censusDb.raw(`
       select
         m."Municipio",
@@ -80,7 +80,7 @@ export class KnexAquacultureCensusRepository
       "Volume/tanque": Number(row["Volume/tanque (m³)"]),
     }));
   }
-  async getMonthlyVolumePerTanksByBasin(): Promise<Array<AquacultureByBasinData> | null> {
+  async getMonthlyVolumePerTanksByBasin(): Promise<Array<any> | null> {
     const data = await censusDb.raw(`
       select
         b."Bacia",
