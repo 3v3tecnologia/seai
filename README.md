@@ -37,8 +37,8 @@ Clone o repositório
    ```
 Criar o arquivo ***env_file*** na pasta raiz do projeto:
 ```shell
-    POSTGRES_USER=""
-    POSTGRES_PASSWORD=""
+POSTGRES_USER=""
+POSTGRES_PASSWORD=""
 ``` 
 
 Criar o arquivo de variáveis ambiente **.env** na pasta `/backend` 
