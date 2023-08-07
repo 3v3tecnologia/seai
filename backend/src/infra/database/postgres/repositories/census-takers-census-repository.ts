@@ -36,8 +36,8 @@ export class KnexCensusTakersRepository
     }
 
     return data.rows.map((row: any) => ({
-      Basin: row.Bacia,
-      Quantity: Number(row.Qtd),
+      Bacia: row.Bacia,
+      Quantidade: Number(row.Qtd),
     }));
   }
   async getByCounty(): Promise<Array<CensusTakersByCountyData> | null> {
@@ -63,8 +63,8 @@ export class KnexCensusTakersRepository
     }
 
     return data.rows.map((row: any) => ({
-      County: row.Municipio,
-      Quantity: Number(row.Qtd),
+      Municipio: row.Municipio,
+      Quantidade: Number(row.Qtd),
     }));
   }
 }

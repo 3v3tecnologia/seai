@@ -1,53 +1,53 @@
 export interface EconomicSecurityByCountyData {
-  County: string;
-  IrrigatedArea: number;
-  Profitability: number;
+  Municipio: string;
+  AreaIrrigada: number;
+  Rentabilidade: number;
   "R$/ha": number;
 }
 
 export interface EconomicSecurityByBasinData {
-  Basin: string;
-  IrrigatedArea: number;
-  Profitability: number;
+  Bacia: string;
+  AreaIrrigada: number;
+  Rentabilidade: number;
   "R$/ha": number;
 }
 
 export interface SocialSecurityByBasinData {
-  Basin: string;
-  IrrigatedArea: number;
-  LegalPersonJobs: number;
-  PhysicalPerson: number;
-  JobsPerHectare: number;
+  Bacia: string;
+  AreaIrrigada: number;
+  EmpregosPJ: number;
+  EmpregosPF: number;
+  ["Empregos/ha"]: number;
 }
 
 export interface SocialSecurityByCountyData {
-  County: string;
-  IrrigatedArea: number;
-  LegalPersonJobs: number;
-  PhysicalPerson: number;
-  JobsPerHectare: number;
+  Municipio: string;
+  AreaIrrigada: number;
+  EmpregosPJ: number;
+  EmpregosPF: number;
+  ["Empregos/ha"]: number;
 }
 
 export interface WaterSecurityByBasinData {
-  Basin: string;
-  TotalConsumption: number;
-  IrrigatedArea: number;
+  Bacia: string;
+  ConsumoTotal: number;
+  AreaIrrigada: number;
   "m³/ha": number;
 }
 
 export interface WaterSecurityByCountyData {
-  County: string;
-  TotalConsumption: number;
-  IrrigatedArea: number;
+  Municipio: string;
+  ConsumoTotal: number;
+  AreaIrrigada: number;
   "m³/ha": number;
 }
 
 export interface ProductivitySecurityByBasinData {
-  Basin: string;
+  Bacia: string;
 }
 
 export interface ProductivitySecurityByCountyData {
-  County: string;
+  Municipio: string;
 }
 
 export interface IndicatorsRepositoryProtocol {

@@ -1,11 +1,11 @@
 export interface CensusTakersByCountyData {
-  County: string;
-  Quantity: number;
+  Municipio: string;
+  Quantidade: number;
 }
 
 export interface CensusTakersByBasinData {
-  Basin: string;
-  Quantity: number;
+  Bacia: string;
+  Quantidade: number;
 }
 
 export interface CensusTakersRepositoryProtocol {

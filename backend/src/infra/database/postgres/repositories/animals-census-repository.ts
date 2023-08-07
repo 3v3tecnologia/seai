@@ -30,8 +30,8 @@ export class KnexAnimalsCensusRepository
 
     const toDomain = consumptions.rows.map((consumption: any) => {
       return {
-        CreationType: consumption.TipoCriacao,
-        Consumption: Number(consumption.Consumo),
+        TipoCriacao: consumption.TipoCriacao,
+        Consumo: Number(consumption.Consumo),
       };
     });
 
@@ -78,26 +78,26 @@ export class KnexAnimalsCensusRepository
     }
 
     const mappedData = data.rows.map((data: any) => ({
-      Basin: data.Bacia,
-      CreationType: data.TipoCriacao,
-      Quantity: Number(data.Qtd),
+      Bacia: data.Bacia,
+      TipoCriacao: data.TipoCriacao,
+      Quantidade: Number(data.Qtd),
     }));
 
     const toDomain = {};
 
     mappedData.forEach(
-      (item: { Basin: string; CreationType: string; Quantity: number }) => {
-        if (Reflect.has(toDomain, item.Basin)) {
-          Reflect.get(toDomain, item.Basin).push({
-            CreationType: item.CreationType,
-            Quantity: item.Quantity,
+      (item: { Bacia: string; TipoCriacao: string; Quantidade: number }) => {
+        if (Reflect.has(toDomain, item.Bacia)) {
+          Reflect.get(toDomain, item.Bacia).push({
+            TipoCriacao: item.TipoCriacao,
+            Quantidade: item.Quantidade,
           });
         } else {
-          Reflect.set(toDomain, item.Basin, [
+          Reflect.set(toDomain, item.Bacia, [
             {
               ...{
-                CreationType: item.CreationType,
-                Quantity: item.Quantity,
+                TipoCriacao: item.TipoCriacao,
+                Quantidade: item.Quantidade,
               },
             },
           ]);
@@ -145,27 +145,27 @@ export class KnexAnimalsCensusRepository
     }
 
     const mappedData = data.rows.map((data: any) => ({
-      County: data.Municipio,
-      CreationType: data.TipoCriacao,
-      Quantity: Number(data.Qtd),
+      Municipio: data.Municipio,
+      TipoCriacao: data.TipoCriacao,
+      Quantidade: Number(data.Qtd),
     }));
 
     const toDomain = {};
 
     mappedData.forEach(
-      (item: { County: string; CreationType: string; Quantity: number }) => {
-        if (Reflect.has(toDomain, item.County)) {
-          Reflect.get(toDomain, item.County).push({
+      (item: { Municipio: string; TipoCriacao: string; Quantidade: number }) => {
+        if (Reflect.has(toDomain, item.Municipio)) {
+          Reflect.get(toDomain, item.Municipio).push({
             ...{
-              CreationType: item.CreationType,
-              Quantity: item.Quantity,
+              TipoCriacao: item.TipoCriacao,
+              Quantidade: item.Quantidade,
             },
           });
         } else {
-          Reflect.set(toDomain, item.County, [
+          Reflect.set(toDomain, item.Municipio, [
             {
-              CreationType: item.CreationType,
-              Quantity: item.Quantity,
+              TipoCriacao: item.TipoCriacao,
+              Quantidade: item.Quantidade,
             },
           ]);
         }

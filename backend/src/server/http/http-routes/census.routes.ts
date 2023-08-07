@@ -113,6 +113,7 @@ export const censusRouter = (): Router => {
     adaptRoute(makeFetchEconomicSecurityCensusByCountyController())
   );
 
+  // daqui em diante
   router.get(
     "/indicator/security/productive/basin",
     authorization,

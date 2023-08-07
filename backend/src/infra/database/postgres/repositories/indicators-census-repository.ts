@@ -63,9 +63,9 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     const toDomain: Array<EconomicSecurityByBasinData> = data.rows.map(
       (row: any) => ({
-        Basin: row.Bacia,
-        IrrigatedArea: Number(row.AreaIrrigada),
-        Profitability: Number(row.Rentabilidade),
+        Bacia: row.Bacia,
+        AreaIrrigada: Number(row.AreaIrrigada),
+        Rentabilidade: Number(row.Rentabilidade),
         ["R$/ha"]: Number(row["R$/ha"]),
       })
     );
@@ -121,9 +121,9 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      County: row.Municipio,
-      IrrigatedArea: Number(row.AreaIrrigada),
-      Profitability: Number(row.Rentabilidade),
+      Municipio: row.Municipio,
+      AreaIrrigada: Number(row.AreaIrrigada),
+      Rentabilidade: Number(row.Rentabilidade),
       ["R$/ha"]: Number(row["R$/ha"]),
     }));
   }
@@ -186,11 +186,11 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Basin: row.Bacia,
-      IrrigatedArea: Number(row.AreaIrrigada),
-      LegalPersonJobs: Number(row.EmpregosPJ),
-      PhysicalPerson: Number(row.EmpregosPF),
-      JobsPerHectare: Number(row["Empregos/ha"]),
+      Bacia: row.Bacia,
+      AreaIrrigada: Number(row.AreaIrrigada),
+      EmpregosPJ: Number(row.EmpregosPJ),
+      EmpregosPF: Number(row.EmpregosPF),
+      ["Empregos/ha"]: Number(row["Empregos/ha"]),
     }));
   }
 
@@ -248,11 +248,11 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      County: row.Municipio,
-      IrrigatedArea: Number(row.AreaIrrigada),
-      LegalPersonJobs: Number(row.EmpregosPJ),
-      PhysicalPerson: Number(row.EmpregosPF),
-      JobsPerHectare: Number(row["Empregos/ha"]),
+      Municipio: row.Municipio,
+      AreaIrrigada: Number(row.AreaIrrigada),
+      EmpregosPJ: Number(row.EmpregosPJ),
+      EmpregosPF: Number(row.EmpregosPF),
+      ["Empregos/ha"]: Number(row["Empregos/ha"]),
     }));
   }
 
@@ -339,9 +339,9 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Basin: row.Bacia,
-      TotalConsumption: Number(row.ConsumoTotal),
-      IrrigatedArea: Number(row.AreaIrrigadaTotal),
+      Bacia: row.Bacia,
+      ConsumoTotal: Number(row.ConsumoTotal),
+      AreaIrrigadaTotal: Number(row.AreaIrrigadaTotal),
       ["m³/ha"]: Number(row["m³/ha"]),
     }));
   }
@@ -425,9 +425,9 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      County: row.Municipio,
-      TotalConsumption: Number(row.ConsumoTotal),
-      IrrigatedArea: Number(row.AreaIrrigadaTotal),
+      Municipio: row.Municipio,
+      ConsumoTotal: Number(row.ConsumoTotal),
+      AreaIrrigadaTotal: Number(row.AreaIrrigadaTotal),
       ["m³/ha"]: Number(row["m³/ha"]),
     }));
   }

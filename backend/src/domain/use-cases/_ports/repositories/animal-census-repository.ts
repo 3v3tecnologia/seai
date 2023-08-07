@@ -1,19 +1,19 @@
 export interface AnimalsConsumptionData {
-  CreationType: string;
-  Consumption: number;
+  TipoCriacao: string;
+  Consumo: number;
 }
 
 export interface AnimalsByBasinData {
   [creationType: string]: Array<{
-    CreationType: string;
-    Quantity: number;
+    TipoCriacao: string;
+    Quantidade: number;
   }>;
 }
 
 export interface AnimalsByCityData {
   [county: string]: Array<{
-    CreationType: string;
-    Quantity: number;
+    TipoCriacao: string;
+    Quantidade: number;
   }>;
 }
 

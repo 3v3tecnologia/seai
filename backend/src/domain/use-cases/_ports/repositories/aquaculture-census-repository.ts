@@ -1,11 +1,11 @@
 export interface AquacultureByCountyData {
-  County: string;
-  Tanks: number;
+  Municipio: string;
+  Tanques: number;
 }
 
 export interface AquacultureByBasinData {
-  Basin: string;
-  Tanks: number;
+  Bacia: string;
+  Tanques: number;
 }
 
 export interface AquacultureCensusRepositoryProtocol {

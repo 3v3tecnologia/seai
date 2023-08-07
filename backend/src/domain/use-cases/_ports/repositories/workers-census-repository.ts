@@ -1,11 +1,11 @@
 export interface WorkersCensusByCountyData {
-  County: string;
-  Quantity: number;
+  Municipio: string;
+  Quantidade: number;
 }
 
 export interface WorkersCensusByBasinData {
-  Basin: string;
-  Quantity: number;
+  Bacia: string;
+  Quantidade: number;
 }
 
 export interface WorkersCensusRepositoryProtocol {

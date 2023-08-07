@@ -64,7 +64,7 @@ export class KnexCaptationCensusRepository
     return data.rows.map((row: any) => ({
       Bacia: row.Bacia,
       Mes: row.Mes,
-      ["Captação"]: Number(row["Captação"]),
+      ["Captação"]: row["Captação"],
       ["Vazão média"]: Number(row["Vazão média (m³/h)"]),
       ["Volume médio"]: Number(row["Volume médio (m³)"]),
     }));
@@ -125,7 +125,7 @@ export class KnexCaptationCensusRepository
     return data.rows.map((row: any) => ({
       Municipio: row.Municipio,
       Mes: row.Mes,
-      ["Captação"]: Number(row["Captação"]),
+      ["Captação"]: row["Captação"],
       ["Vazão média"]: Number(row["Vazão média (m³/h)"]),
       ["Volume médio"]: Number(row["Volume médio (m³)"]),
     }));

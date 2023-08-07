@@ -75,7 +75,7 @@ export class KnexAquacultureCensusRepository
     return data.rows.map((row: any) => ({
       Bacia: row.Bacia,
       Mes: row.Mes,
-      ["Captação"]: Number(row["Captação"]),
+      ["Captação"]: row["Captação"],
       Tanques: Number(row.Tanques),
       "Volume/tanque": Number(row["Volume/tanque (m³)"]),
     }));
@@ -152,7 +152,7 @@ export class KnexAquacultureCensusRepository
     return data.rows.map((row: any) => ({
       Bacia: row.Bacia,
       Mes: row.Mes,
-      ["Captação"]: Number(row["Captação"]),
+      ["Captação"]: row["Captação"],
       Tanques: Number(row.Tanques),
       "Volume/tanque": Number(row["Volume/tanque (m³)"]),
     }));
@@ -198,8 +198,8 @@ export class KnexAquacultureCensusRepository
     }
 
     return data.rows.map((row: any) => ({
-      Basin: row.Bacia,
-      Tanks: Number(row.Tanques),
+      Bacia: row.Bacia,
+      Tanques: Number(row.Tanques),
     }));
   }
 
@@ -240,8 +240,8 @@ export class KnexAquacultureCensusRepository
     }
 
     return data.rows.map((row: any) => ({
-      County: row.Municipio,
-      Tanks: Number(row.Tanques),
+      Municipio: row.Municipio,
+      Tanques: Number(row.Tanques),
     }));
   }
 }
