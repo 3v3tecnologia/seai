@@ -18,14 +18,12 @@
     </p>
 </div>
 
-## About The Project
-## Built With
-* [![Vue][Vue.js]][Vue-url]
+## Sobre
+## Feito com
+- Node.js
+- Vue.js
+- Typescript
   
-## Getting Started
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Pré requisitos
 * Node sendo recomendável versão superior a v16 para caso for necessário rodar o servidor na máquina host
  * Docker e Docker Compose
@@ -105,20 +103,20 @@ npm run start:dev
 ```shell
 docker container exec -it seai-database psql
 ```
-## Usage
+## Usos
 ### Documentação da API
 Se o servidor estiver rodando, para acessar a documentação da API do projeto, basta abrir no browser o seguinte link
 ```sh
 http://localhost:${PORTA}/api-docs/
 ```
 Sendo que a PORTA será variável dependendo do modo de desenvolvimento.
-## License
+## Licença
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Contact
+## Contatos
 
 Your Name - email@example.com
 
@@ -128,3 +126,5 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
+[Node.js]: https://img.shields.io/badge/Node.js?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Node-url]: https://nodejs.org/pt-br
