@@ -76,7 +76,7 @@ const itemsRoutes = [
   },
   {
     title: "Gráficos",
-    name: "login",
+    name: "charts",
   },
   {
     title: "Cadastro",

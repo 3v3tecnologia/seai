@@ -80,8 +80,6 @@ const seriesData = props.data.map((vals) =>
   vals.map((val) => Number(val.toFixed(2)))
 );
 
-console.log({ seriesData });
-
 // const series = [{ name: props.seriesName, data: seriesData }];
 const series = props.labels.map((label, i) => {
   return {

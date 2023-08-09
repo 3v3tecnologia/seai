@@ -93,9 +93,9 @@ import moment from "moment";
 const router = useRouter();
 
 const table = ref(null);
+const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
-const tabulator = ref(null);
 const userType = ref(usersOptions[0]);
 const search = ref("");
 
@@ -223,7 +223,6 @@ const filtersTable = computed(() => {
 watch(
   () => filtersTable.value,
   (val) => {
-    console.log("val dos filters", val);
     tabulator.value?.setFilter(val);
   },
   { immediate: true }
