@@ -5,7 +5,6 @@ import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/regis
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 
-// Controllers são classes puras e não devem depender de frameworks
 export class DeleteFaqCategoryController extends CommandController<
   DeleteFaqCategoryController.Request,
   HttpResponse
@@ -34,11 +33,8 @@ export class DeleteFaqCategoryController extends CommandController<
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(
-        request.accountId,
-        this.DeleteFaqCategory.useCaseLogs()
-      );
-      //Add validation here
+      await this.userLogs.log(request.accountId, this.DeleteFaqCategory);
+
       return ok(`Categoria ${request.id} deletada com sucesso`);
     } catch (error) {
       console.error(error);

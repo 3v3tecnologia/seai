@@ -1,4 +1,4 @@
-import { InvalidLoginError } from "./errors/invalid-login";
+import { Either, left, right } from "../../../shared/Either";
 
 export class UserName {
   public static maxLength: number = 20;
@@ -14,16 +14,10 @@ export class UserName {
     return this.name;
   }
 
-  static create(name: string) {
+  static create(name: string): Either<Error, UserName> {
     if (name.length === 0 || name.length > UserName.maxLength) {
-      return {
-        isError: true,
-        value: new InvalidLoginError(),
-      };
+      return left(new Error("Nome não deve ser vazio ou nulo"));
     }
-    return {
-      isError: false,
-      value: new UserName(name),
-    };
+    return right(new UserName(name));
   }
 }

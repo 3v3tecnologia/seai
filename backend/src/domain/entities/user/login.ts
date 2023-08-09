@@ -1,3 +1,4 @@
+import { Either, left, right } from "../../../shared/Either";
 import { InvalidLoginError } from "./errors/invalid-login";
 
 export class UserLogin {
@@ -13,16 +14,10 @@ export class UserLogin {
     return this.login;
   }
 
-  static create(login: string) {
+  static create(login: string): Either<InvalidLoginError, UserLogin> {
     if (login.length === 0 || login.length > UserLogin.maxLength) {
-      return {
-        isError: true,
-        value: new InvalidLoginError(),
-      };
+      return left(new InvalidLoginError());
     }
-    return {
-      isError: false,
-      value: new UserLogin(login),
-    };
+    return right(new UserLogin(login));
   }
 }

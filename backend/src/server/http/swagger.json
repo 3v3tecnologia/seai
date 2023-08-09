@@ -2201,46 +2201,46 @@
                     "properties": {
                       "data": {
                         "type": "object",
-                        "properties":{
-                          "news":{
-                            "type":"object",
-                            "properties":{
-                              "id":{
-                                "type":"number"
+                        "properties": {
+                          "news": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
                               },
-                              "read":{
-                                "type":"boolean"
+                              "read": {
+                                "type": "boolean"
                               },
-                              "write":{
-                                "type":"boolean"
+                              "write": {
+                                "type": "boolean"
                               }
                             }
                           },
-                          "register":{
-                            "type":"object",
-                            "properties":{
-                              "id":{
-                                "type":"number"
+                          "register": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
                               },
-                              "read":{
-                                "type":"boolean"
+                              "read": {
+                                "type": "boolean"
                               },
-                              "write":{
-                                "type":"boolean"
+                              "write": {
+                                "type": "boolean"
                               }
                             }
                           },
-                          "user":{
-                            "type":"object",
-                            "properties":{
-                              "id":{
-                                "type":"number"
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
                               },
-                              "read":{
-                                "type":"boolean"
+                              "read": {
+                                "type": "boolean"
                               },
-                              "write":{
-                                "type":"boolean"
+                              "write": {
+                                "type": "boolean"
                               }
                             }
                           }
@@ -2488,6 +2488,3402 @@
                   },
                   "example": {
                     "data": "Usuário deletado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/animals/consumption": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get animal consumption census by basin",
+        "description": "Get animal consumption census by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all animals consumption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "TipoCriacao": "string",
+                            "Consumo": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "TipoCriacao": "Bovinos",
+                        "Consumo": 50
+                      },
+                      {
+                        "TipoCriacao": "Equinos",
+                        "Consumo": 39.97
+                      },
+                      {
+                        "TipoCriacao": "Suínos",
+                        "Consumo": 15.1
+                      },
+                      {
+                        "TipoCriacao": "Caprinos",
+                        "Consumo": 10.04
+                      },
+                      {
+                        "TipoCriacao": "Ovinos",
+                        "Consumo": 9.96
+                      },
+                      {
+                        "TipoCriacao": "Aves",
+                        "Consumo": 1.83
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/animals/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get animal consumption census",
+        "description": "Get animal consumption census",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all animals consumption",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "BasinName":{
+                              "type":"object",
+                              "items":{
+                                "type":"array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "TipoCriacao": "string",
+                                    "Quantidade": "number"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "Alto Jaguaribe": [
+                        {
+                          "TipoCriacao": "Aves",
+                          "Quantidade": 11459
+                        },
+                        {
+                          "TipoCriacao": "Bovinos",
+                          "Quantidade": 18832
+                        },
+                        {
+                          "TipoCriacao": "Equinos",
+                          "Quantidade": 359
+                        },
+                        {
+                          "TipoCriacao": "Caprinos",
+                          "Quantidade": 2847
+                        },
+                        {
+                          "TipoCriacao": "Ovinos",
+                          "Quantidade": 5749
+                        },
+                        {
+                          "TipoCriacao": "Suínos",
+                          "Quantidade": 2431
+                        },
+                        {
+                          "TipoCriacao": "Outros",
+                          "Quantidade": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/animals/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get animal consumption census by county",
+        "description": "Get animal consumption census by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all animals consumption by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "CountyName":{
+                              "type":"object",
+                              "items":{
+                                "type":"array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "TipoCriacao": "string",
+                                    "Quantidade": "number"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "Acopiara": [
+                        {
+                          "TipoCriacao": "Aves",
+                          "Quantidade": 147
+                        },
+                        {
+                          "TipoCriacao": "Bovinos",
+                          "Quantidade": 387
+                        },
+                        {
+                          "TipoCriacao": "Equinos",
+                          "Quantidade": 0
+                        },
+                        {
+                          "TipoCriacao": "Caprinos",
+                          "Quantidade": 20
+                        },
+                        {
+                          "TipoCriacao": "Ovinos",
+                          "Quantidade": 56
+                        },
+                        {
+                          "TipoCriacao": "Suínos",
+                          "Quantidade": 0
+                        },
+                        {
+                          "TipoCriacao": "Outros",
+                          "Quantidade": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/aquaculture/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get aquaculture by basin",
+        "description": "Get aquaculture by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all aquaculture by basin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "Tanques": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "Tanques": 1363
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Tanques": 249
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Tanques": 43
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/aquaculture/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get aquaculture by county",
+        "description": "Get aquaculture by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all aquaculture by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "Tanques": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Municipio": "Jaguaruana",
+                        "Tanques": 562
+                      },
+                      {
+                        "Municipio": "Aracati",
+                        "Tanques": 390
+                      },
+                      {
+                        "Municipio": "Orós",
+                        "Tanques": 239
+                      },
+                      {
+                        "Municipio": "Russas",
+                        "Tanques": 206
+                      },
+                      {
+                        "Municipio": "Itaiçaba",
+                        "Tanques": 166
+                      },
+                      {
+                        "Municipio": "Jaguaribe",
+                        "Tanques": 42
+                      },
+                      {
+                        "Municipio": "Icapuí",
+                        "Tanques": 22
+                      },
+                      {
+                        "Municipio": "Cariús",
+                        "Tanques": 10
+                      },
+                      {
+                        "Municipio": "Limoeiro do Norte",
+                        "Tanques": 9
+                      },
+                      {
+                        "Municipio": "Quixeré",
+                        "Tanques": 4
+                      },
+                      {
+                        "Municipio": "Palhano",
+                        "Tanques": 4
+                      },
+                      {
+                        "Municipio": "Alto Santo",
+                        "Tanques": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/census-takers/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all census takers by basin",
+        "description": "Get census takers by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all census takers by basin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "Quantidade": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "Quantidade": 1261
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Quantidade": 1209
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Quantidade": 441
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/census-takers/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all census takers by county",
+        "description": "Get census takers by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all census takers by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "Quantidade": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Municipio": "Limoeiro do Norte",
+                        "Quantidade": 389
+                      },
+                      {
+                        "Municipio": "Russas",
+                        "Quantidade": 378
+                      },
+                      {
+                        "Municipio": "Iguatu",
+                        "Quantidade": 230
+                      },
+                      {
+                        "Municipio": "Aracati",
+                        "Quantidade": 186
+                      },
+                      {
+                        "Municipio": "Icó",
+                        "Quantidade": 166
+                      },
+                      {
+                        "Municipio": "Jucás",
+                        "Quantidade": 150
+                      },
+                      {
+                        "Municipio": "Jaguaruana",
+                        "Quantidade": 134
+                      },
+                      {
+                        "Municipio": "Jaguaribe",
+                        "Quantidade": 126
+                      },
+                      {
+                        "Municipio": "Jaguaribara",
+                        "Quantidade": 117
+                      },
+                      {
+                        "Municipio": "Cariús",
+                        "Quantidade": 114
+                      },
+                      {
+                        "Municipio": "Quixeré",
+                        "Quantidade": 108
+                      },
+                      {
+                        "Municipio": "Orós",
+                        "Quantidade": 100
+                      },
+                      {
+                        "Municipio": "Quixelô",
+                        "Quantidade": 82
+                      },
+                      {
+                        "Municipio": "Campos Sales",
+                        "Quantidade": 64
+                      },
+                      {
+                        "Municipio": "Tarrafas",
+                        "Quantidade": 56
+                      },
+                      {
+                        "Municipio": "Itaiçaba",
+                        "Quantidade": 48
+                      },
+                      {
+                        "Municipio": "Alto Santo",
+                        "Quantidade": 39
+                      },
+                      {
+                        "Municipio": "Saboeiro",
+                        "Quantidade": 27
+                      },
+                      {
+                        "Municipio": "Jaguaretama",
+                        "Quantidade": 27
+                      },
+                      {
+                        "Municipio": "Deputado Irapuan Pinheiro",
+                        "Quantidade": 27
+                      },
+                      {
+                        "Municipio": "Catarina",
+                        "Quantidade": 26
+                      },
+                      {
+                        "Municipio": "Pereiro",
+                        "Quantidade": 23
+                      },
+                      {
+                        "Municipio": "Araripe",
+                        "Quantidade": 23
+                      },
+                      {
+                        "Municipio": "Aiuaba",
+                        "Quantidade": 22
+                      },
+                      {
+                        "Municipio": "Potengi",
+                        "Quantidade": 22
+                      },
+                      {
+                        "Municipio": "Farias Brito",
+                        "Quantidade": 22
+                      },
+                      {
+                        "Municipio": "Assaré",
+                        "Quantidade": 21
+                      },
+                      {
+                        "Municipio": "Nova Olinda",
+                        "Quantidade": 20
+                      },
+                      {
+                        "Municipio": "Ererê",
+                        "Quantidade": 19
+                      },
+                      {
+                        "Municipio": "Acopiara",
+                        "Quantidade": 19
+                      },
+                      {
+                        "Municipio": "Tabuleiro do Norte",
+                        "Quantidade": 18
+                      },
+                      {
+                        "Municipio": "Milhã",
+                        "Quantidade": 16
+                      },
+                      {
+                        "Municipio": "Iracema",
+                        "Quantidade": 16
+                      },
+                      {
+                        "Municipio": "Tauá",
+                        "Quantidade": 15
+                      },
+                      {
+                        "Municipio": "Arneiroz",
+                        "Quantidade": 13
+                      },
+                      {
+                        "Municipio": "Icapuí",
+                        "Quantidade": 11
+                      },
+                      {
+                        "Municipio": "Antonina do Norte",
+                        "Quantidade": 8
+                      },
+                      {
+                        "Municipio": "Solonópole",
+                        "Quantidade": 8
+                      },
+                      {
+                        "Municipio": "Parambu",
+                        "Quantidade": 5
+                      },
+                      {
+                        "Municipio": "Fortim",
+                        "Quantidade": 5
+                      },
+                      {
+                        "Municipio": "Altaneira",
+                        "Quantidade": 4
+                      },
+                      {
+                        "Municipio": "Potiretama",
+                        "Quantidade": 4
+                      },
+                      {
+                        "Municipio": "Palhano",
+                        "Quantidade": 2
+                      },
+                      {
+                        "Municipio": "São João do Jaguaribe",
+                        "Quantidade": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/water/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all census takers by county",
+        "description": "Get census takers by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all census takers by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "ConsumoTotal": "number",
+                            "AreaIrrigadaTotal": "number",
+                            "m³/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "ConsumoTotal": 20437072,
+                        "AreaIrrigadaTotal": 2417.294,
+                        "m³/ha": 8454.525
+                      },
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "ConsumoTotal": 96903890,
+                        "AreaIrrigadaTotal": 22695.6,
+                        "m³/ha": 4269.721
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "ConsumoTotal": 15773000,
+                        "AreaIrrigadaTotal": 1306.4788,
+                        "m³/ha": 12072.909
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/water/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all security water indicator by county",
+        "description": "Get all security water indicator by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security water indicator by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "ConsumoTotal": "number",
+                            "AreaIrrigadaTotal": "number",
+                            "m³/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Municipio": "Acopiara",
+                        "ConsumoTotal": 297696,
+                        "AreaIrrigadaTotal": 15.799999,
+                        "m³/ha": 18841.52
+                      },
+                      {
+                        "Municipio": "Aiuaba",
+                        "ConsumoTotal": 113569,
+                        "AreaIrrigadaTotal": 35.1,
+                        "m³/ha": 3235.5842
+                      },
+                      {
+                        "Municipio": "Altaneira",
+                        "ConsumoTotal": 30960,
+                        "AreaIrrigadaTotal": 17,
+                        "m³/ha": 1821.1765
+                      },
+                      {
+                        "Municipio": "Alto Santo",
+                        "ConsumoTotal": 195240,
+                        "AreaIrrigadaTotal": 122.99998,
+                        "m³/ha": 1587.3174
+                      },
+                      {
+                        "Municipio": "Antonina do Norte",
+                        "ConsumoTotal": 21804,
+                        "AreaIrrigadaTotal": 11.01,
+                        "m³/ha": 1980.3815
+                      },
+                      {
+                        "Municipio": "Aracati",
+                        "ConsumoTotal": 3054396,
+                        "AreaIrrigadaTotal": 15532.3955,
+                        "m³/ha": 196.6468
+                      },
+                      {
+                        "Municipio": "Araripe",
+                        "ConsumoTotal": 315360,
+                        "AreaIrrigadaTotal": 9.299999,
+                        "m³/ha": 33909.68
+                      },
+                      {
+                        "Municipio": "Arneiroz",
+                        "ConsumoTotal": 49344,
+                        "AreaIrrigadaTotal": 22.5,
+                        "m³/ha": 2193.0667
+                      },
+                      {
+                        "Municipio": "Assaré",
+                        "ConsumoTotal": 1063620,
+                        "AreaIrrigadaTotal": 36,
+                        "m³/ha": 29545
+                      },
+                      {
+                        "Municipio": "Campos Sales",
+                        "ConsumoTotal": 506656,
+                        "AreaIrrigadaTotal": 38.1,
+                        "m³/ha": 13298.059
+                      },
+                      {
+                        "Municipio": "Cariús",
+                        "ConsumoTotal": 2531870,
+                        "AreaIrrigadaTotal": 256.50006,
+                        "m³/ha": 9870.836
+                      },
+                      {
+                        "Municipio": "Catarina",
+                        "ConsumoTotal": 181530,
+                        "AreaIrrigadaTotal": 22.100002,
+                        "m³/ha": 8214.026
+                      },
+                      {
+                        "Municipio": "Deputado Irapuan Pinheiro",
+                        "ConsumoTotal": 299016,
+                        "AreaIrrigadaTotal": 33,
+                        "m³/ha": 9061.091
+                      },
+                      {
+                        "Municipio": "Ererê",
+                        "ConsumoTotal": 246648,
+                        "AreaIrrigadaTotal": 46.950005,
+                        "m³/ha": 5253.418
+                      },
+                      {
+                        "Municipio": "Farias Brito",
+                        "ConsumoTotal": 283200,
+                        "AreaIrrigadaTotal": 25.7,
+                        "m³/ha": 11019.455
+                      },
+                      {
+                        "Municipio": "Fortim",
+                        "ConsumoTotal": 25920,
+                        "AreaIrrigadaTotal": 9.5,
+                        "m³/ha": 2728.4211
+                      },
+                      {
+                        "Municipio": "Icapuí",
+                        "ConsumoTotal": 284400,
+                        "AreaIrrigadaTotal": 14.5,
+                        "m³/ha": 19613.793
+                      },
+                      {
+                        "Municipio": "Icó",
+                        "ConsumoTotal": 3624730,
+                        "AreaIrrigadaTotal": 487.7,
+                        "m³/ha": 7432.2944
+                      },
+                      {
+                        "Municipio": "Iguatu",
+                        "ConsumoTotal": 5720255,
+                        "AreaIrrigadaTotal": 423.20032,
+                        "m³/ha": 13516.66
+                      },
+                      {
+                        "Municipio": "Iracema",
+                        "ConsumoTotal": 126768,
+                        "AreaIrrigadaTotal": 31.9,
+                        "m³/ha": 3973.9185
+                      },
+                      {
+                        "Municipio": "Itaiçaba",
+                        "ConsumoTotal": 1722240,
+                        "AreaIrrigadaTotal": 24,
+                        "m³/ha": 71760
+                      },
+                      {
+                        "Municipio": "Jaguaretama",
+                        "ConsumoTotal": 716064,
+                        "AreaIrrigadaTotal": 21.8,
+                        "m³/ha": 32846.973
+                      },
+                      {
+                        "Municipio": "Jaguaribara",
+                        "ConsumoTotal": 6173904,
+                        "AreaIrrigadaTotal": 309,
+                        "m³/ha": 19980.271
+                      },
+                      {
+                        "Municipio": "Jaguaribe",
+                        "ConsumoTotal": 7366536,
+                        "AreaIrrigadaTotal": 521,
+                        "m³/ha": 14139.225
+                      },
+                      {
+                        "Municipio": "Jaguaruana",
+                        "ConsumoTotal": 6177600,
+                        "AreaIrrigadaTotal": 98,
+                        "m³/ha": 63036.734
+                      },
+                      {
+                        "Municipio": "Jucás",
+                        "ConsumoTotal": 2845086.2,
+                        "AreaIrrigadaTotal": 276.1002,
+                        "m³/ha": 10304.543
+                      },
+                      {
+                        "Municipio": "Limoeiro do Norte",
+                        "ConsumoTotal": 41901192,
+                        "AreaIrrigadaTotal": 4109.8,
+                        "m³/ha": 10195.434
+                      },
+                      {
+                        "Municipio": "Milhã",
+                        "ConsumoTotal": 63216,
+                        "AreaIrrigadaTotal": 21.63,
+                        "m³/ha": 2922.6077
+                      },
+                      {
+                        "Municipio": "Nova Olinda",
+                        "ConsumoTotal": 301116,
+                        "AreaIrrigadaTotal": 22.600006,
+                        "m³/ha": 13323.713
+                      },
+                      {
+                        "Municipio": "Orós",
+                        "ConsumoTotal": 992010,
+                        "AreaIrrigadaTotal": 212.20004,
+                        "m³/ha": 4674.8813
+                      },
+                      {
+                        "Municipio": "Palhano",
+                        "ConsumoTotal": 23040,
+                        "AreaIrrigadaTotal": 0,
+                        "m³/ha": 0
+                      },
+                      {
+                        "Municipio": "Parambu",
+                        "ConsumoTotal": 13200,
+                        "AreaIrrigadaTotal": 8.6,
+                        "m³/ha": 1534.8837
+                      },
+                      {
+                        "Municipio": "Pereiro",
+                        "ConsumoTotal": 35928,
+                        "AreaIrrigadaTotal": 118.899994,
+                        "m³/ha": 302.1699
+                      },
+                      {
+                        "Municipio": "Potengi",
+                        "ConsumoTotal": 71136,
+                        "AreaIrrigadaTotal": 48.300003,
+                        "m³/ha": 1472.7949
+                      },
+                      {
+                        "Municipio": "Potiretama",
+                        "ConsumoTotal": 16200,
+                        "AreaIrrigadaTotal": 2.8999996,
+                        "m³/ha": 5586.2075
+                      },
+                      {
+                        "Municipio": "Quixelô",
+                        "ConsumoTotal": 236118,
+                        "AreaIrrigadaTotal": 68.17999,
+                        "m³/ha": 3463.1567
+                      },
+                      {
+                        "Municipio": "Quixeré",
+                        "ConsumoTotal": 316946.44,
+                        "AreaIrrigadaTotal": 259,
+                        "m³/ha": 1223.7314
+                      },
+                      {
+                        "Municipio": "Russas",
+                        "ConsumoTotal": 43399444,
+                        "AreaIrrigadaTotal": 2648.4,
+                        "m³/ha": 16387.043
+                      },
+                      {
+                        "Municipio": "Saboeiro",
+                        "ConsumoTotal": 343290.5,
+                        "AreaIrrigadaTotal": 37.599995,
+                        "m³/ha": 9130.067
+                      },
+                      {
+                        "Municipio": "Solonópole",
+                        "ConsumoTotal": 74784,
+                        "AreaIrrigadaTotal": 22.7,
+                        "m³/ha": 3294.4492
+                      },
+                      {
+                        "Municipio": "São João do Jaguaribe",
+                        "ConsumoTotal": 50400,
+                        "AreaIrrigadaTotal": 10,
+                        "m³/ha": 5040
+                      },
+                      {
+                        "Municipio": "Tabuleiro do Norte",
+                        "ConsumoTotal": 408296,
+                        "AreaIrrigadaTotal": 43.699997,
+                        "m³/ha": 9343.158
+                      },
+                      {
+                        "Municipio": "Tarrafas",
+                        "ConsumoTotal": 711715,
+                        "AreaIrrigadaTotal": 329.30002,
+                        "m³/ha": 2161.2966
+                      },
+                      {
+                        "Municipio": "Tauá",
+                        "ConsumoTotal": 182810,
+                        "AreaIrrigadaTotal": 14.4,
+                        "m³/ha": 12695.14
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/social/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all security social indicator by basin",
+        "description": "Get all security social indicator by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security social indicator by basin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "AreaIrrigada": "number",
+                            "EmpregosPJ": "number",
+                            "EmpregosPF": "number",
+                            "Empregos/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "AreaIrrigada": 22695.6,
+                        "EmpregosPJ": 15736,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0.69
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "AreaIrrigada": 2417.29,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "AreaIrrigada": 1306.48,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/social/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all security social indicator by county",
+        "description": "Get all security social indicator by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security social indicator by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "AreaIrrigada": "number",
+                            "EmpregosPJ": "number",
+                            "EmpregosPF": "number",
+                            "Empregos/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Municipio": "Fortim",
+                        "AreaIrrigada": 9.5,
+                        "EmpregosPJ": 19,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 2
+                      },
+                      {
+                        "Municipio": "Quixeré",
+                        "AreaIrrigada": 259,
+                        "EmpregosPJ": 389,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 1.5
+                      },
+                      {
+                        "Municipio": "Icapuí",
+                        "AreaIrrigada": 14.5,
+                        "EmpregosPJ": 21,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 1.45
+                      },
+                      {
+                        "Municipio": "Jaguaruana",
+                        "AreaIrrigada": 98,
+                        "EmpregosPJ": 130,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 1.33
+                      },
+                      {
+                        "Municipio": "Itaiçaba",
+                        "AreaIrrigada": 24,
+                        "EmpregosPJ": 26,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 1.08
+                      },
+                      {
+                        "Municipio": "Aracati",
+                        "AreaIrrigada": 15532.4,
+                        "EmpregosPJ": 11741,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0.76
+                      },
+                      {
+                        "Municipio": "Russas",
+                        "AreaIrrigada": 2648.4,
+                        "EmpregosPJ": 1774,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0.67
+                      },
+                      {
+                        "Municipio": "Limoeiro do Norte",
+                        "AreaIrrigada": 4109.8,
+                        "EmpregosPJ": 1636,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0.4
+                      },
+                      {
+                        "Municipio": "Tabuleiro do Norte",
+                        "AreaIrrigada": 43.7,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Potengi",
+                        "AreaIrrigada": 48.3,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Farias Brito",
+                        "AreaIrrigada": 25.7,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Cariús",
+                        "AreaIrrigada": 256.5,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Quixelô",
+                        "AreaIrrigada": 68.18,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Orós",
+                        "AreaIrrigada": 212.2,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Aiuaba",
+                        "AreaIrrigada": 35.1,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Tauá",
+                        "AreaIrrigada": 14.4,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Altaneira",
+                        "AreaIrrigada": 17,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Pereiro",
+                        "AreaIrrigada": 118.9,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Assaré",
+                        "AreaIrrigada": 36,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Antonina do Norte",
+                        "AreaIrrigada": 11.01,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Parambu",
+                        "AreaIrrigada": 8.6,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Nova Olinda",
+                        "AreaIrrigada": 22.6,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Potiretama",
+                        "AreaIrrigada": 2.9,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Alto Santo",
+                        "AreaIrrigada": 123,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Jaguaretama",
+                        "AreaIrrigada": 21.8,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Jucás",
+                        "AreaIrrigada": 276.1,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Iracema",
+                        "AreaIrrigada": 31.9,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Icó",
+                        "AreaIrrigada": 487.7,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Campos Sales",
+                        "AreaIrrigada": 38.1,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Solonópole",
+                        "AreaIrrigada": 22.7,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Iguatu",
+                        "AreaIrrigada": 423.2,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Saboeiro",
+                        "AreaIrrigada": 37.6,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Ererê",
+                        "AreaIrrigada": 46.95,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "São João do Jaguaribe",
+                        "AreaIrrigada": 10,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Arneiroz",
+                        "AreaIrrigada": 22.5,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Jaguaribe",
+                        "AreaIrrigada": 521,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Milhã",
+                        "AreaIrrigada": 21.63,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Jaguaribara",
+                        "AreaIrrigada": 309,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Acopiara",
+                        "AreaIrrigada": 15.8,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Deputado Irapuan Pinheiro",
+                        "AreaIrrigada": 33,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Araripe",
+                        "AreaIrrigada": 9.3,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Tarrafas",
+                        "AreaIrrigada": 329.3,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      },
+                      {
+                        "Municipio": "Catarina",
+                        "AreaIrrigada": 22.1,
+                        "EmpregosPJ": 0,
+                        "EmpregosPF": 0,
+                        "Empregos/ha": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/economic/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all security economic indicator by basin",
+        "description": "Get all security economic indicator by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security economic indicator by coubasinnty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "AreaIrrigada": "number",
+                            "Rentabilidade": "number",
+                            "R$/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "AreaIrrigada": 2111.49,
+                        "Rentabilidade": 45488400,
+                        "R$/ha": 21543.3
+                      },
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "AreaIrrigada": 7838.55,
+                        "Rentabilidade": 148190000,
+                        "R$/ha": 18905.2
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "AreaIrrigada": 1127,
+                        "Rentabilidade": 8696980,
+                        "R$/ha": 7716.93
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/indicator/security/economic/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all security economic indicator by county",
+        "description": "Get all security economic indicator by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security economic indicator by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "AreaIrrigada": "number",
+                            "ha": "number",
+                            "R$/ha": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Municipio": "Nova Olinda",
+                        "AreaIrrigada": 22.6,
+                        "Rentabilidade": 1600520,
+                        "R$/ha": 70819.2
+                      },
+                      {
+                        "Municipio": "Jucás",
+                        "AreaIrrigada": 262.8,
+                        "Rentabilidade": 13143100,
+                        "R$/ha": 50011.6
+                      },
+                      {
+                        "Municipio": "Araripe",
+                        "AreaIrrigada": 9.3,
+                        "Rentabilidade": 460192,
+                        "R$/ha": 49483
+                      },
+                      {
+                        "Municipio": "Orós",
+                        "AreaIrrigada": 211.6,
+                        "Rentabilidade": 6163420,
+                        "R$/ha": 29127.7
+                      },
+                      {
+                        "Municipio": "Icó",
+                        "AreaIrrigada": 321,
+                        "Rentabilidade": 9242700,
+                        "R$/ha": 28793.5
+                      },
+                      {
+                        "Municipio": "Antonina do Norte",
+                        "AreaIrrigada": 11.01,
+                        "Rentabilidade": 303000,
+                        "R$/ha": 27520.4
+                      },
+                      {
+                        "Municipio": "Russas",
+                        "AreaIrrigada": 2617.4,
+                        "Rentabilidade": 69680900,
+                        "R$/ha": 26622.2
+                      },
+                      {
+                        "Municipio": "Iguatu",
+                        "AreaIrrigada": 394.6,
+                        "Rentabilidade": 9683680,
+                        "R$/ha": 24540.5
+                      },
+                      {
+                        "Municipio": "Jaguaretama",
+                        "AreaIrrigada": 21.8,
+                        "Rentabilidade": 512300,
+                        "R$/ha": 23500
+                      },
+                      {
+                        "Municipio": "Limoeiro do Norte",
+                        "AreaIrrigada": 3666.55,
+                        "Rentabilidade": 70594900,
+                        "R$/ha": 19253.8
+                      },
+                      {
+                        "Municipio": "Potiretama",
+                        "AreaIrrigada": 2.9,
+                        "Rentabilidade": 48800,
+                        "R$/ha": 16827.6
+                      },
+                      {
+                        "Municipio": "Jaguaribara",
+                        "AreaIrrigada": 306.25,
+                        "Rentabilidade": 4839040,
+                        "R$/ha": 15800.9
+                      },
+                      {
+                        "Municipio": "Tabuleiro do Norte",
+                        "AreaIrrigada": 43.7,
+                        "Rentabilidade": 663160,
+                        "R$/ha": 15175.3
+                      },
+                      {
+                        "Municipio": "Farias Brito",
+                        "AreaIrrigada": 24.9,
+                        "Rentabilidade": 368868,
+                        "R$/ha": 14814
+                      },
+                      {
+                        "Municipio": "Aiuaba",
+                        "AreaIrrigada": 35.1,
+                        "Rentabilidade": 403500,
+                        "R$/ha": 11495.7
+                      },
+                      {
+                        "Municipio": "Ererê",
+                        "AreaIrrigada": 46.95,
+                        "Rentabilidade": 422000,
+                        "R$/ha": 8988.28
+                      },
+                      {
+                        "Municipio": "Tarrafas",
+                        "AreaIrrigada": 329.3,
+                        "Rentabilidade": 2503360,
+                        "R$/ha": 7602.05
+                      },
+                      {
+                        "Municipio": "Solonópole",
+                        "AreaIrrigada": 9.1,
+                        "Rentabilidade": 68000,
+                        "R$/ha": 7472.53
+                      },
+                      {
+                        "Municipio": "Iracema",
+                        "AreaIrrigada": 31.9,
+                        "Rentabilidade": 238000,
+                        "R$/ha": 7460.81
+                      },
+                      {
+                        "Municipio": "Aracati",
+                        "AreaIrrigada": 1270.6,
+                        "Rentabilidade": 7276700,
+                        "R$/ha": 5726.98
+                      },
+                      {
+                        "Municipio": "Deputado Irapuan Pinheiro",
+                        "AreaIrrigada": 33,
+                        "Rentabilidade": 188036,
+                        "R$/ha": 5698.06
+                      },
+                      {
+                        "Municipio": "Cariús",
+                        "AreaIrrigada": 254.5,
+                        "Rentabilidade": 1312250,
+                        "R$/ha": 5156.18
+                      },
+                      {
+                        "Municipio": "Icapuí",
+                        "AreaIrrigada": 14.5,
+                        "Rentabilidade": 56000,
+                        "R$/ha": 3862.07
+                      },
+                      {
+                        "Municipio": "Acopiara",
+                        "AreaIrrigada": 15.8,
+                        "Rentabilidade": 57139,
+                        "R$/ha": 3616.39
+                      },
+                      {
+                        "Municipio": "Jaguaribe",
+                        "AreaIrrigada": 380,
+                        "Rentabilidade": 1320840,
+                        "R$/ha": 3475.9
+                      },
+                      {
+                        "Municipio": "Quixelô",
+                        "AreaIrrigada": 64.28,
+                        "Rentabilidade": 167976,
+                        "R$/ha": 2613.2
+                      },
+                      {
+                        "Municipio": "Jaguaruana",
+                        "AreaIrrigada": 78,
+                        "Rentabilidade": 200500,
+                        "R$/ha": 2570.51
+                      },
+                      {
+                        "Municipio": "Alto Santo",
+                        "AreaIrrigada": 122.5,
+                        "Rentabilidade": 305000,
+                        "R$/ha": 2489.8
+                      },
+                      {
+                        "Municipio": "Fortim",
+                        "AreaIrrigada": 9.5,
+                        "Rentabilidade": 23500,
+                        "R$/ha": 2473.68
+                      },
+                      {
+                        "Municipio": "Catarina",
+                        "AreaIrrigada": 21.4,
+                        "Rentabilidade": 45101.5,
+                        "R$/ha": 2107.55
+                      },
+                      {
+                        "Municipio": "Quixeré",
+                        "AreaIrrigada": 158,
+                        "Rentabilidade": 323700,
+                        "R$/ha": 2048.73
+                      },
+                      {
+                        "Municipio": "Altaneira",
+                        "AreaIrrigada": 17,
+                        "Rentabilidade": 31300,
+                        "R$/ha": 1841.18
+                      },
+                      {
+                        "Municipio": "Itaiçaba",
+                        "AreaIrrigada": 24,
+                        "Rentabilidade": 33500,
+                        "R$/ha": 1395.83
+                      },
+                      {
+                        "Municipio": "Pereiro",
+                        "AreaIrrigada": 118.9,
+                        "Rentabilidade": 86800,
+                        "R$/ha": 730.03
+                      },
+                      {
+                        "Municipio": "São João do Jaguaribe",
+                        "AreaIrrigada": 10,
+                        "Rentabilidade": 5000,
+                        "R$/ha": 500
+                      },
+                      {
+                        "Municipio": "Tauá",
+                        "AreaIrrigada": 9.9,
+                        "Rentabilidade": 457,
+                        "R$/ha": 46.16
+                      },
+                      {
+                        "Municipio": "Campos Sales",
+                        "AreaIrrigada": 37.7,
+                        "Rentabilidade": 1649,
+                        "R$/ha": 43.74
+                      },
+                      {
+                        "Municipio": "Arneiroz",
+                        "AreaIrrigada": 22.5,
+                        "Rentabilidade": 106.5,
+                        "R$/ha": 4.73
+                      },
+                      {
+                        "Municipio": "Saboeiro",
+                        "AreaIrrigada": 37.6,
+                        "Rentabilidade": 124.9,
+                        "R$/ha": 3.32
+                      },
+                      {
+                        "Municipio": "Parambu",
+                        "AreaIrrigada": 8.6,
+                        "Rentabilidade": 24.6,
+                        "R$/ha": 2.86
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/workers/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all workers by county",
+        "description":"Get all workers by county",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security economic indicator by coubasinnty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "Tipo": "number",
+                            "Média de trabalhadores": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Municipio": "Iguatu",
+                        "Tipo": "Pessoa Física",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Municipio": "Potiretama",
+                        "Tipo": "Pessoa Física",
+                        "Média de trabalhadores": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/workers/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all workers by basin",
+        "description": "Get all workers by basin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "Tipo": "number",
+                            "Média de trabalhadores": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Tipo": "Pessoa Física",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Tipo": "Pessoa Jurídica",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Tipo": "Pessoa Física",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Tipo": "Pessoa Jurídica",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "Tipo": "Pessoa Física",
+                        "Média de trabalhadores": 0
+                      },
+                      {
+                        "Bacia": "Baixo Jaguaribe",
+                        "Tipo": "Pessoa Jurídica",
+                        "Média de trabalhadores": 13.52
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/captation/tank/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all tanks captations by county",
+        "description": "List all data per month",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Mes": "string",
+                            "Captação": "string",
+                            "Tanques": "number",
+                            "Volume/tanque": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Mes": "Fevereiro",
+                        "Captação": null,
+                        "Tanques": 1,
+                        "Volume/tanque": 0
+                      },
+                      {
+                        "Mes": "Maio",
+                        "Captação": null,
+                        "Tanques": 4,
+                        "Volume/tanque": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/captation/tank/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all tanks captations by basin",
+        "description": "List all data per month",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All security economic indicator by county",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "Mes": "string",
+                            "Captação": "string",
+                            "Tanques": "number",
+                            "Volume/tanques": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Mes": "Maio",
+                        "Captação": null,
+                        "Tanques": 43,
+                        "Volume/tanque": 288.28
+                      },
+                      {
+                        "Bacia": "Médio Jaguaribe",
+                        "Mes": "Dezembro",
+                        "Captação": null,
+                        "Tanques": 43,
+                        "Volume/tanque": 1959.07
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Mes": "Fevereiro",
+                        "Captação": null,
+                        "Tanques": 249,
+                        "Volume/tanque": 161.83
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/captation/county": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all captations by county",
+        "description": "List Flow and Volume Average",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"List all data per month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Municipio": "string",
+                            "Mes": "number",
+                            "Captação": "number",
+                            "Vazão média": "number",
+                            "Volume médio": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Municipio": "Araripe",
+                        "Mes": "Dezembro",
+                        "Captação": null,
+                        "Vazão média": 10.22,
+                        "Volume médio": 2426.67
+                      },
+                      {
+                        "Municipio": "Saboeiro",
+                        "Mes": "Julho",
+                        "Captação": null,
+                        "Vazão média": 3.67,
+                        "Volume médio": 130
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/captation/basin": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all captations by basin",
+        "description": "List Flow and Volume Average",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List all data per month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Bacia": "string",
+                            "Mes": "string",
+                            "Captação": "string",
+                            "Tanques": "number",
+                            "Volume/tanques": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data":  [
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Mes": "Janeiro",
+                        "Captação": "Subterrânea",
+                        "Vazão média": 17.01,
+                        "Volume médio": 1728.4
+                      },
+                      {
+                        "Bacia": "Alto Jaguaribe",
+                        "Mes": "Janeiro",
+                        "Captação": "Superficial",
+                        "Vazão média": 21.21,
+                        "Volume médio": 2003.39
+                      }
+                    ]
                   }
                 }
               }

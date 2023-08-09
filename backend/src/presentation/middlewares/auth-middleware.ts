@@ -2,14 +2,7 @@ import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
 import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
-import { AccessDeniedError } from "../controllers/errors";
-import {
-  forbidden,
-  ok,
-  serverError,
-  unauthenticated,
-  unauthorized,
-} from "../controllers/helpers";
+import { forbidden, ok, unauthenticated } from "../controllers/helpers";
 
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
@@ -38,7 +31,7 @@ export class AuthMiddleware implements Middleware {
       return unauthenticated();
     } catch (error) {
       console.error("[auth-middleware] ", error);
-      return forbidden(error as Error);
+      return forbidden(new Error(`Erro ao realizar autenticação`));
     }
   }
 }

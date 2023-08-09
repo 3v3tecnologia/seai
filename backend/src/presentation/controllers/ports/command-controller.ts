@@ -8,5 +8,6 @@ export abstract class CommandController<Request = any, Response = any>
   constructor(userLogs: RegisterUserLogs) {
     this.userLogs = userLogs;
   }
+
   abstract handle(request: Request): Promise<Response>;
 }

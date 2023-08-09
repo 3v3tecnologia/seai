@@ -1,13 +1,18 @@
 import { Actions } from "../repositories/log-repository";
 
 export abstract class Command {
-  private readonly _logs: Array<Actions> = [];
+  private _logs: Array<Actions> = [];
 
-  useCaseLogs(): Array<Actions> {
+  public useCaseLogs(): Array<Actions> {
     return this._logs;
   }
 
   protected addLog(logs: Actions): void {
     this._logs.push(logs);
+  }
+  public resetLog(): void {
+    if (this._logs.length) {
+      this._logs = [];
+    }
   }
 }

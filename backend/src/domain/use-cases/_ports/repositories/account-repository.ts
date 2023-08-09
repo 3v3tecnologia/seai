@@ -34,7 +34,7 @@ export namespace AccountRepository {
       email: string;
       type: userTypes;
       modules: system_modules_permissions;
-    }): Promise<boolean>;
+    }): Promise<number | null>;
   }
 
   export interface Fetch {
