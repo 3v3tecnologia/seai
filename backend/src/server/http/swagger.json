@@ -16,7 +16,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/faq/category/create": {
+    "/api/v1/faq/category/create": {
       "post": {
         "tags": [
           "FAQ CATEGORY"
@@ -137,7 +137,7 @@
         }
       }
     },
-    "/api/faq/category/delete/{id}": {
+    "/api/v1/faq/category/delete/{id}": {
       "delete": {
         "tags": [
           "FAQ CATEGORY"
@@ -248,7 +248,7 @@
         }
       }
     },
-    "/api/faq/category/list": {
+    "/api/v1/faq/category/list": {
       "get": {
         "tags": [
           "FAQ CATEGORY"
@@ -366,7 +366,7 @@
         }
       }
     },
-    "/api/faq/category/update": {
+    "/api/v1/faq/category/update": {
       "put": {
         "tags": [
           "FAQ CATEGORY"
@@ -491,7 +491,7 @@
         }
       }
     },
-    "/api/faq/create": {
+    "/api/v1/faq/create": {
       "post": {
         "tags": [
           "FAQ"
@@ -627,7 +627,7 @@
         }
       }
     },
-    "/api/faq/update": {
+    "/api/v1/faq/update": {
       "put": {
         "tags": [
           "FAQ"
@@ -766,7 +766,7 @@
         }
       }
     },
-    "/api/faq/get/{id}": {
+    "/api/v1/faq/get/{id}": {
       "get": {
         "tags": [
           "FAQ"
@@ -922,7 +922,7 @@
         }
       }
     },
-    "/api/faq/list": {
+    "/api/v1/faq/list": {
       "get": {
         "tags": [
           "FAQ"
@@ -1072,7 +1072,7 @@
         }
       }
     },
-    "/api/faq/list-by-category/{id}": {
+    "/api/v1/faq/list-by-category/{id}": {
       "get": {
         "tags": [
           "FAQ"
@@ -1233,7 +1233,7 @@
         }
       }
     },
-    "/api/faq/delete/{id}": {
+    "/api/v1/faq/delete/{id}": {
       "delete": {
         "tags": [
           "FAQ"
@@ -1344,7 +1344,7 @@
         }
       }
     },
-    "/api/user/register": {
+    "/api/v1/user/register": {
       "post": {
         "tags": [
           "USER"
@@ -1529,7 +1529,7 @@
         }
       }
     },
-    "/api/login/sign-in": {
+    "/api/v1/login/sign-in": {
       "post": {
         "tags": [
           "USER"
@@ -1652,7 +1652,7 @@
         }
       }
     },
-    "/api/login/sign-up": {
+    "/api/v1/login/sign-up": {
       "post": {
         "tags": [
           "USER"
@@ -1792,7 +1792,7 @@
         }
       }
     },
-    "/api/login/password/forgot": {
+    "/api/v1/login/password/forgot": {
       "post": {
         "tags": [
           "USER"
@@ -1909,7 +1909,7 @@
         }
       }
     },
-    "/api/login/password/reset": {
+    "/api/v1/login/password/reset": {
       "post": {
         "tags": [
           "USER"
@@ -2030,7 +2030,7 @@
         }
       }
     },
-    "/api/user/list": {
+    "/api/v1/user/list": {
       "get": {
         "tags": [
           "USER"
@@ -2166,7 +2166,7 @@
         }
       }
     },
-    "/api/user/list-user-access/{id}": {
+    "/api/v1/user/list-user-access/{id}": {
       "get": {
         "tags": [
           "USER"
@@ -2337,7 +2337,7 @@
         }
       }
     },
-    "/api/user/update": {
+    "/api/v1/user/update": {
       "put": {
         "tags": [
           "USER"
@@ -2448,7 +2448,7 @@
         }
       }
     },
-    "/api/user/delete/{id}": {
+    "/api/v1/user/delete/{id}": {
       "delete": {
         "tags": [
           "USER"
