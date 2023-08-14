@@ -186,11 +186,12 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
+      Tipo:"bacia",
       Bacia: row.Bacia,
       AreaIrrigada: Number(row.AreaIrrigada),
       EmpregosPJ: Number(row.EmpregosPJ),
       EmpregosPF: Number(row.EmpregosPF),
-      ["Empregos/ha"]: Number(row["Empregos/ha"]),
+      EmpregosPorArea: Number(row["Empregos/ha"]),
     }));
   }
 
@@ -248,11 +249,12 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Municipio: row.Municipio,
+      Nome: row.Municipio,
+      Tipo:"municipio",
       AreaIrrigada: Number(row.AreaIrrigada),
       EmpregosPJ: Number(row.EmpregosPJ),
       EmpregosPF: Number(row.EmpregosPF),
-      ["Empregos/ha"]: Number(row["Empregos/ha"]),
+      EmpregosPorArea: Number(row["Empregos/ha"]),
     }));
   }
 
@@ -339,10 +341,17 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Bacia: row.Bacia,
-      ConsumoTotal: Number(row.ConsumoTotal),
-      AreaIrrigadaTotal: Number(row.AreaIrrigadaTotal),
-      ["m³/ha"]: Number(row["m³/ha"]),
+      Nome: row.Bacia,
+      Tipo:"bacia",
+      ConsumoTotal: {
+        unidade:"m³",
+        valor:Number(row.ConsumoTotal)
+      },
+      AreaIrrigadaTotal: {
+        unidade:"ha",
+        valor: Number(row.AreaIrrigadaTotal)
+      },
+      VolumePorArea: Number(row["m³/ha"]),
     }));
   }
   async getWaterSecurityByCounty(): Promise<Array<WaterSecurityByCountyData> | null> {
@@ -425,10 +434,17 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Municipio: row.Municipio,
-      ConsumoTotal: Number(row.ConsumoTotal),
-      AreaIrrigadaTotal: Number(row.AreaIrrigadaTotal),
-      ["m³/ha"]: Number(row["m³/ha"]),
+      Nome: row.Municipio,
+      Tipo:"municipio",
+      ConsumoTotal: {
+        unidade:"m³",
+        valor:Number(row.ConsumoTotal)
+      },
+      AreaIrrigadaTotal: {
+        unidade:"ha",
+        valor:Number(row.AreaIrrigadaTotal)
+      },
+      VolumePorArea: Number(row["m³/ha"]),
     }));
   }
 
