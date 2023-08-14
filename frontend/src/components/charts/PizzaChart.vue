@@ -1,5 +1,5 @@
 <template>
-  <CardChart>
+  <CardChart is-centered>
     <apexchart
       :width="props.width"
       type="pie"
@@ -78,6 +78,26 @@ const options = {
     type: "pie",
     // group: "chart-pie",
     id: props.id,
+    toolbar: {
+      show: true,
+      offsetX: 0,
+      offsetY: 0,
+      tools: {
+        download: true,
+      },
+      export: {
+        svg: {
+          filename: props.title.split(" ").join("_"),
+        },
+        png: {
+          filename: props.title.split(" ").join("_"),
+        },
+        csv: {
+          filename: props.title.split(" ").join("_"),
+        },
+      },
+      autoSelected: "zoom",
+    },
   },
   events: {
     dataPointSelection: (event, chartContext, config) => {

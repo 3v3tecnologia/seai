@@ -56,7 +56,7 @@
           <div
             class="col-lg-5 d-flex align-items-center justify-content-center"
           >
-            <BarChart
+            <PizzaChart
               series-name="Volume"
               :data="anuallyWaterConsumeBar.data"
               title="Consumo anual de água (m³)"
