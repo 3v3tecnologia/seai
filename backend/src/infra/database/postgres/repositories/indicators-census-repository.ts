@@ -63,10 +63,17 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     const toDomain: Array<EconomicSecurityByBasinData> = data.rows.map(
       (row: any) => ({
-        Bacia: row.Bacia,
-        AreaIrrigada: Number(row.AreaIrrigada),
-        Rentabilidade: Number(row.Rentabilidade),
-        ["R$/ha"]: Number(row["R$/ha"]),
+        Tipo:"bacia",
+        Nome: row.Bacia,
+        AreaIrrigada: {
+          unidade: "ha",
+          valor: Number(row.AreaIrrigada)
+        },
+        Rentabilidade: {
+          unidade: "R$",
+          valor: Number(row.Rentabilidade)
+        },
+        RentabilidadePorArea: Number(row["R$/ha"]),
       })
     );
 
@@ -121,10 +128,17 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Municipio: row.Municipio,
-      AreaIrrigada: Number(row.AreaIrrigada),
-      Rentabilidade: Number(row.Rentabilidade),
-      ["R$/ha"]: Number(row["R$/ha"]),
+      Tipo:"municipio",
+      Nome: row.Municipio,
+      AreaIrrigada: {
+        unidade:"ha",
+        valor: Number(row.AreaIrrigada)
+      },
+      Rentabilidade: {
+        unidade:"R$",
+        valor:Number(row.Rentabilidade)
+      },
+      RentabilidadePorArea: Number(row["R$/ha"]),
     }));
   }
 
@@ -187,8 +201,11 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       Tipo:"bacia",
-      Bacia: row.Bacia,
-      AreaIrrigada: Number(row.AreaIrrigada),
+      Nome: row.Bacia,
+      AreaIrrigada: {
+        unidade:"ha",
+        valor: Number(row.AreaIrrigada)
+      },
       EmpregosPJ: Number(row.EmpregosPJ),
       EmpregosPF: Number(row.EmpregosPF),
       EmpregosPorArea: Number(row["Empregos/ha"]),
