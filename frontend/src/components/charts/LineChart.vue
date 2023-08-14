@@ -95,6 +95,27 @@ const options = {
     type: "line",
     group: props.group,
     id: props.id,
+    toolbar: {
+      show: true,
+      offsetX: 0,
+      offsetY: 0,
+      tools: {
+        download: true,
+      },
+      export: {
+        svg: {
+          filename: props.title.split(" ").join("_"),
+        },
+        png: {
+          filename: props.title.split(" ").join("_"),
+        },
+        csv: {
+          filename: undefined,
+          show: false,
+        },
+      },
+      autoSelected: "zoom",
+    },
   },
   yaxis: {
     show: false,
