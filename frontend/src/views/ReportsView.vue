@@ -1,16 +1,16 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <div class="d-flex align-items-center justify-content-start">
+      <div>
         <BaseSelect
           inline-label
           remove-margin
           v-model="hydrographicBasin"
           :options="hydrographicBasinOptions"
-          label="Bacia hidrográfica"
+          label="Bacias hidrográficas"
         />
 
-        <div class="px-4" />
+        <div class="px-4 py-2" />
 
         <BaseSelect
           :disabled="!hydrographicBasin.value"
@@ -18,179 +18,46 @@
           remove-margin
           v-model="city"
           :options="cityOptions"
-          label="Município"
+          label="Municípios"
         />
+
+        <div class="my-2">
+          <router-link :to="showingTab === 'charts' ? 'reports' : 'charts'">
+            {{
+              showingTab === "charts"
+                ? "Acessar exportação de dados"
+                : "Visualizar gráficos"
+            }}
+          </router-link>
+        </div>
       </div>
 
       <div class="mt-4 mt-lg-5">
-        <div class="row mb-3 mb-lg-5">
-          <div class="col-lg-6 d-flex align-items-center justify-content-start">
-            <BarChart
-              :width="400"
-              :data="anuallyEarn.data"
-              title="Rendimento anual (R$)"
-              series-name="Rendimento"
-              :labels="anuallyEarn.labels"
-              color="#7D3AC1"
-              is-horizontal
-              formatter="money"
-              id="7"
-            />
-          </div>
-          <div class="col-lg-6 d-flex align-items-center justify-content-end">
-            <BarChart
-              :width="400"
-              series-name="Produzido"
-              :data="anuallyProduction.data"
-              title="Produção anual (kg)"
-              :labels="anuallyProduction.labels"
-              tooltip-sufix="kg"
-              id="11"
-              is-horizontal
-              color="#29066B"
-            />
-          </div>
-        </div>
-
-        <div class="row mb-3 mb-lg-5">
-          <div
-            class="col-lg-5 d-flex align-items-center justify-content-center"
-          >
-            <PizzaChart
-              series-name="Volume"
-              :data="anuallyWaterConsumeBar.data"
-              title="Consumo anual de água (m³)"
-              :labels="anuallyWaterConsumeBar.labels"
-              color="#176BAD"
-              id="9"
-              tooltip-sufix="m³"
-            />
-          </div>
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <BarChart
-              series-name="Área"
-              :data="anuallyEarn.data"
-              title="Área Irrigada total (ha)"
-              :labels="anuallyEarn.labels"
-              color="#142459"
-              id="10"
-              tooltip-sufix="ha"
-            />
-          </div>
-          <div class="col-lg-3">
-            <ScatterChart
-              id="8"
-              :data="anuallyWaterCPI.data"
-              title="Consumo de água"
-              :labels="anuallyWaterCPI.labels"
-              :tooltip-sufix="['m³', 'ha']"
-            />
-          </div>
-        </div>
-
-        <div class="row mb-2 mb-lg-4">
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <ScatterChart
-              id="1"
-              :data="productiveSecurityKg.data"
-              title="Segurança produtiva"
-              group="3"
-              :labels="productiveSecurityKg.labels"
-              :tooltip-sufix="['kg', 'ha']"
-            />
-          </div>
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <LineChart
-              series-name="Proporção"
-              id="2"
-              :data="anuallyProduction.data"
-              title="Segurança econômica"
-              group="1"
-              :labels="anuallyProduction.labels"
-              tooltip-sufix="R$/ha"
-              color="#29066B"
-            />
-          </div>
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <LineChart
-              series-name="Proporção"
-              id="3"
-              :data="anuallyProduction.data"
-              title="Segurança social"
-              group="2"
-              :labels="anuallyProduction.labels"
-              tooltip-sufix="empregos/ha"
-              color="#29066B"
-            />
-          </div>
-        </div>
-        <div class="row">
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <ScatterChart
-              series-name="Proporção"
-              id="4"
-              :data="productiveSecurityEarn.data"
-              title="Segurança produtiva"
-              :labels="productiveSecurityEarn.labels"
-              group="3"
-              :tooltip-sufix="['kg', 'm³']"
-            />
-          </div>
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <LineChart
-              series-name="Proporção"
-              id="5"
-              :data="anuallyProduction.data"
-              title="Segurança econômica"
-              :labels="anuallyProduction.labels"
-              tooltip-sufix="R$/m³"
-              group="1"
-              color="#29066B"
-            />
-          </div>
-          <div
-            class="col-lg-4 d-flex align-items-center justify-content-center"
-          >
-            <LineChart
-              series-name="Proporção"
-              id="6"
-              :data="anuallyProduction.data"
-              title="Segurança social"
-              group="2"
-              :labels="anuallyProduction.labels"
-              tooltip-sufix="empregos/m³"
-              color="#29066B"
-            />
-          </div>
-        </div>
+        <ChartReports
+          v-if="showingTab === 'charts'"
+          :data="indicatorResponse"
+        />
+        <ExportData v-else :data="indicatorResponse" />
       </div>
     </BasicContentWrapper>
   </div>
 </template>
 
 <script lang="ts" setup>
+import ChartReports from "@/components/charts/ChartReports.vue";
+import ExportData from "@/components/charts/ExportData.vue";
 import BaseSelect from "@/components/BaseSelect.vue";
-import ScatterChart from "@/components/charts/ScatterChart.vue";
-import PizzaChart from "@/components/charts/PizzaChart.vue";
-import LineChart from "@/components/charts/LineChart.vue";
-import BarChart from "@/components/charts/BarChart.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
-import { computed, ref } from "vue";
+import { computed, ref, defineProps } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
+
+defineProps({
+  showingTab: {
+    type: String,
+  },
+});
 
 const defaultHydroOption = {
   title: "Todas as bacias",
@@ -214,76 +81,99 @@ const cityOptions = computed(() => [
 const hydrographicBasin = ref(hydrographicBasinOptions.value[0]);
 const city = ref(cityOptions.value[0]);
 
-const anuallyWaterConsumeBar = {
-  data: [297.696, 113.569, 30.96],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyWaterConsumeBar = {
+//   data: [297.696, 113.569, 30.96],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyEarn = {
-  data: [1297696, 1113569, 213096],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyEarn = {
+//   data: [1297696, 1113569, 213096],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyWaterIrrigatedBar = {
-  data: [15.8, 35.1, 17.0],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyWaterIrrigatedBar = {
+//   data: [15.8, 35.1, 17.0],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyProduction = {
-  data: [200000, 300000, 450000],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyProduction = {
+//   data: [200000, 300000, 450000],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyWaterIrrigated = {
-  data: [15.8, 35.1, 17.0],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyWaterIrrigated = {
+//   data: [15.8, 35.1, 17.0],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const productiveSecurityEarn = {
-  // data: [29350, 15500, 40603],
-  data: anuallyEarn.data.map((val, i) => {
-    const area = anuallyWaterIrrigated.data[i];
+// const productiveSecurityEarn = {
+//   // data: [29350, 15500, 40603],
+//   data: anuallyEarn.data.map((val, i) => {
+//     const area = anuallyWaterIrrigated.data[i];
 
-    if (!area || !val) {
-      return 0;
-    }
+//     if (!area || !val) {
+//       return 0;
+//     }
 
-    return [val, area];
-  }),
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+//     return [val, area];
+//   }),
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const productiveSecurityKg = {
-  // data: [29350, 15500, 40603],
-  data: anuallyProduction.data.map((val, i) => {
-    const area = anuallyWaterIrrigated.data[i];
+// const productiveSecurityKg = {
+//   // data: [29350, 15500, 40603],
+//   data: anuallyProduction.data.map((val, i) => {
+//     const area = anuallyWaterIrrigated.data[i];
 
-    if (!area || !val) {
-      return 0;
-    }
+//     if (!area || !val) {
+//       return 0;
+//     }
 
-    return [val, area];
-  }),
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+//     return [val, area];
+//   }),
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyWaterConsume = {
-  data: [297.696, 113.569, 30.96],
-  labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
-};
+// const anuallyWaterConsume = {
+//   data: [297.696, 113.569, 30.96],
+//   labels: ["Baixo Jaguaribe", "Alto Jaguaribe", "Médio Jaguaribe"],
+// };
 
-const anuallyWaterCPI = {
-  data: anuallyWaterConsume.data.map((consumed, i) => {
-    const area = anuallyWaterIrrigated.data[i];
-
-    if (!area || !consumed) {
-      return 0;
-    }
-
-    return [consumed, area];
-  }),
-  labels: anuallyWaterConsume.labels,
-};
+const indicatorResponse = [
+  {
+    basin: "Baixo Jaguaribe",
+    city: null,
+    anuallyEarn: 1297696,
+    anuallyProduction: 200000,
+    anuallyWaterConsumeBar: 1235512,
+    anuallyWaterCPI: 12355,
+    productiveSecurityKg: 23124,
+    productiveSecurityEarn: 31233213,
+    area: 123123,
+  },
+  {
+    basin: "Médio Jaguaribe",
+    city: null,
+    anuallyEarn: 31233,
+    anuallyProduction: 24213,
+    anuallyWaterConsumeBar: 44353,
+    anuallyWaterCPI: 232355,
+    productiveSecurityKg: 5542,
+    productiveSecurityEarn: 1231235,
+    area: 93923921,
+  },
+  {
+    basin: "Alto Jaguaribe",
+    city: null,
+    anuallyEarn: 3123313,
+    anuallyProduction: 2313123,
+    anuallyWaterConsumeBar: 41233,
+    anuallyWaterCPI: 2131123,
+    productiveSecurityKg: 412312312,
+    productiveSecurityEarn: 512312312,
+    area: 3123040,
+  },
+];
 </script>
 
 <style lang="scss" scoped></style>

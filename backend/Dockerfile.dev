@@ -1,0 +1,24 @@
+# syntax=docker/dockerfile:1.4
+# Final stage
+FROM node:18-bullseye-slim
+
+LABEL mode="development"
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm ci
+
+ADD . .
+
+ARG PORT=8080
+ENV PORT $PORT
+EXPOSE $PORT
+
+HEALTHCHECK --interval=30s --timeout=12s --start-period=30s \
+  CMD node healthcheck.js
+
+CMD npm run dev:watch
+
+

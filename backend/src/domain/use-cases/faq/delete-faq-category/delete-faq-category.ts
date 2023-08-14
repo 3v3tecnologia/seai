@@ -19,6 +19,7 @@ export class DeleteFaqCategory
   async delete(
     request: DeleteFaqCategoryDTO.params
   ): Promise<Either<Error, string | null>> {
+    this.resetLog();
     const exists = await this.faqRepository.loadCategoryById(
       request.id_category
     );

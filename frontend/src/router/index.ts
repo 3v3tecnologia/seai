@@ -26,6 +26,17 @@ const routes: Array<RouteRecordRaw> = [
     path: "/reports",
     name: "reports",
     component: ReportsView,
+    props: {
+      showingTab: "reports",
+    },
+  },
+  {
+    path: "/charts",
+    name: "charts",
+    component: ReportsView,
+    props: {
+      showingTab: "charts",
+    },
   },
   {
     path: "/change-password",

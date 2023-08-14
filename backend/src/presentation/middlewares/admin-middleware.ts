@@ -1,14 +1,13 @@
 import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
-import { AccessDeniedError } from "../controllers/errors";
+import { AccountRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/account-repository";
 import {
   forbidden,
   ok,
   serverError,
   unauthorized,
 } from "../controllers/helpers";
-import { AccountRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/account-repository";
 
 function hasAnyKey(obj: any, matcher: any): boolean {
   const ob1 = Object.entries(obj);
@@ -69,7 +68,7 @@ export class AdminMiddleware implements Middleware {
       return unauthorized();
     } catch (error) {
       console.error("[admin-middleware] ", error);
-      return serverError(error as Error);
+      return serverError(new Error("Error ao verificar autorização."));
     }
   }
 }

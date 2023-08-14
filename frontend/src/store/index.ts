@@ -63,7 +63,7 @@ export const store = createStore<Estado>({
     ["SET_USERS"](state, users: IUsersWrapper) {
       state.users = users;
     },
-    ["SET_CURRENT_USER"](state, id: number) {
+    ["SET_CURRENT_USER"](state) {
       // const user = state.users.data.find((usr) => usr.id == id);
       const user = state.users.data.find((usr) => usr.id);
       state.currentUser = user || null;
@@ -87,7 +87,8 @@ export const store = createStore<Estado>({
       try {
         // TODO
         // CONNECT API
-        // const { data: userLogged } = await http.post(`/auth`, user);
+        const { data } = await http.post(`/api/login/sign-in`, user);
+        console.log("teste", data, user);
 
         const userLogged = {
           login: user.login,
@@ -104,6 +105,16 @@ export const store = createStore<Estado>({
         return true;
       } catch (e) {
         toast.error("Credenciais inválidas.");
+        console.error(e);
+      }
+    },
+    async ["FETCH_CENSUS"]({ commit, state }) {
+      try {
+        const { data } = await http.get(`/user`);
+        console.log({ data });
+        return true;
+      } catch (e) {
+        console.error(e);
       }
     },
     async ["CREATE_USER"]({ commit, state }, user: INewUser) {

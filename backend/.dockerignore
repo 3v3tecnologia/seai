@@ -4,3 +4,10 @@ node_modules
 .gitignore
 .editorconfig
 .prettierrc
+.vscode
+.git
+.gitignore
+README.md
+Dockerfile*
+docker-compose*
+dist

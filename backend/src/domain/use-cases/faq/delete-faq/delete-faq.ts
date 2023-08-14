@@ -13,6 +13,7 @@ export class DeleteFaq extends Command implements DeleteFaqProtocol {
   async delete(
     request: DeleteFaqDTO.params
   ): Promise<Either<Error, DeleteFaqDTO.result>> {
+    this.resetLog();
     const exists = await this.faqRepository.loadById(request.id);
 
     if (!exists) {

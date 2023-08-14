@@ -13,7 +13,7 @@ export namespace FaqRepository {
     add(data: {
       question: string;
       answer: string;
-      order: string;
+      order: number;
       categories: Array<number>;
     }): Promise<boolean>;
   }
@@ -27,7 +27,7 @@ export namespace FaqRepository {
       id: number;
       question: string;
       answer: string;
-      order: string;
+      order: number;
       categories: Array<number>;
     }): Promise<boolean>;
   }
@@ -84,6 +84,12 @@ export namespace CategoryRepository {
     loadCategories(): Promise<Array<FaqCategoriesData> | null>;
   }
 
+  export interface FetchAllByIds {
+    loadCategoriesByIds(
+      ids: Array<number>
+    ): Promise<Array<CategoryRepository.FaqCategoriesData> | null>;
+  }
+
   export interface FetchById {
     loadCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
   }
@@ -107,4 +113,5 @@ export interface FaqRepositoryProtocol
     CategoryRepository.DeleteById,
     CategoryRepository.Fetch,
     CategoryRepository.FetchById,
+    CategoryRepository.FetchAllByIds,
     CategoryRepository.FetchByTitle {}

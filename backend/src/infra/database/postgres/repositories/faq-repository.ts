@@ -9,7 +9,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   async add(data: {
     question: string;
     answer: string;
-    order: string;
+    order: number;
     categories: Array<number>;
   }): Promise<boolean> {
     const { question, answer, order, categories } = data;
@@ -20,6 +20,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
           Question: question,
           Answer: answer,
           Order: order,
+          CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")
         .into("FAQ");
@@ -47,10 +48,11 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
     title: string,
     description: string
   ): Promise<boolean> {
-    const result = await governmentDb("Category")
+    await governmentDb("Category")
       .update({
         Title: title,
         Description: description,
+        UpdatedAt: governmentDb.fn.now(),
       })
       .returning("Id")
       .where("Id", id_category);
@@ -59,10 +61,11 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
 
   async addCategory(title: string, description: string): Promise<void> {
-    const faqId = await governmentDb
+    await governmentDb
       .insert({
         Title: title,
         Description: description,
+        CreatedAt: governmentDb.fn.now(),
       })
       .returning("Id")
       .into("Category");
@@ -101,7 +104,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
     id: number;
     question: string;
     answer: string;
-    order: string;
+    order: number;
     categories: Array<number>;
   }): Promise<boolean> {
     const { id, question, answer, order, categories } = data;
@@ -113,6 +116,7 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
             Question: question,
             Answer: answer,
             Order: order,
+            UpdatedAt: governmentDb.fn.now(),
           },
           ["Id"]
         )
@@ -263,6 +267,26 @@ export class KnexFaqRepository implements FaqRepositoryProtocol {
   }
   async loadCategories(): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
     const categories = await governmentDb.select("*").from("Category");
+
+    if (categories.length) {
+      return categories.map((category) => ({
+        id: category.Id,
+        title: category.Title,
+        description: category.Description,
+        created_at: category.CreatedAt,
+        updated_at: category.UpdatedAt,
+      }));
+    }
+
+    return null;
+  }
+  async loadCategoriesByIds(
+    ids: Array<number>
+  ): Promise<Array<CategoryRepository.FaqCategoriesData> | null> {
+    const categories = await governmentDb
+      .select("*")
+      .from("Category")
+      .whereIn("Id", ids);
 
     if (categories.length) {
       return categories.map((category) => ({
