@@ -42,21 +42,22 @@ CREATE TABLE "EquipmentLocation" (
 	PRIMARY KEY("IdLocation")
 );
 
-CREATE TABLE "ReadTime" (
-	"IdTime" INT GENERATED ALWAYS AS IDENTITY,
-	"Time" TIMESTAMP NOT NULL, 
-	PRIMARY KEY("IdTime")
-);
+-- CREATE TABLE "ReadTime" (
+-- 	"IdTime" INT GENERATED ALWAYS AS IDENTITY,
+-- 	"Time" ta NOT NULL, 
+-- 	PRIMARY KEY("IdTime")
+-- );
 
 
 CREATE TABLE "ReadPluviometers" (
 	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
 	"Value" REAL,
-	"FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
+	"Time" TIMESTAMPTZ NOT NULL,
+	-- "FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
 	PRIMARY KEY("IdRead"),
-	UNIQUE("FK_Organ", "FK_Time", "FK_Equipment")
+	UNIQUE("FK_Organ", "Time", "FK_Equipment")
 );
 
 CREATE TABLE "ReadStations" (
@@ -65,11 +66,12 @@ CREATE TABLE "ReadStations" (
 	"RelativeHumidity" REAL,
 	"AtmosphericTemperature" REAL,
 	"WindVelocity" REAL,
-	"FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
+	-- "FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
+	"Time" TIMESTAMPTZ NOT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
 	PRIMARY KEY("IdRead"),
-	UNIQUE("FK_Organ", "FK_Time", "FK_Equipment")
+	UNIQUE("FK_Organ", "Time", "FK_Equipment")
 );
 
 CREATE TABLE "Et0" (
