@@ -1,8 +1,18 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <div>
+      <div class="d-flex flex-column">
+        <BaseSwitch v-model="showPerBacin" />
+
         <BaseSelect
+          inline-label
+          remove-margin
+          v-model="hydrographicBasin"
+          :options="hydrographicBasinOptions"
+          label="Bacias hidrográficas"
+        />
+
+        <BaseCheckboxGroup
           inline-label
           remove-margin
           v-model="hydrographicBasin"
@@ -46,17 +56,24 @@
 <script lang="ts" setup>
 import ChartReports from "@/components/charts/ChartReports.vue";
 import ExportData from "@/components/charts/ExportData.vue";
+import BaseSwitch from "@/components/BaseSwitch.vue";
 import BaseSelect from "@/components/BaseSelect.vue";
+import BaseCheckboxGroup from "@/components/BaseSelect.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
-import { computed, ref, defineProps } from "vue";
+import { computed, ref, defineProps, watch } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
+const showPerBacin = ref(false);
 
 defineProps({
   showingTab: {
     type: String,
   },
+});
+
+watch(showPerBacin, (val) => {
+  store.dispatch("UPDATE_SHOW_PER_BACIN", val);
 });
 
 const defaultHydroOption = {

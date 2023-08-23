@@ -13,12 +13,14 @@ import http from "@/http";
 
 import { previewEmailCensured } from "@/helpers/formatEmail";
 import INewUser from "@/interfaces/INewUser";
+import IReportsFilters from "@/interfaces/IReportsFilters";
 
 interface Estado {
   auth: IAuth | null;
   users: IUsersWrapper;
   currentUser: INewUser | null;
   cityOptions: ICityOption[];
+  reportsFilters: IReportsFilters;
   hydrographicBasinOptions: IHydrographicBasinOption[];
 }
 
@@ -54,11 +56,17 @@ export const store = createStore<Estado>({
       totalActives: 0,
       totalInactives: 0,
     },
+    reportsFilters: {
+      showPerBasin: true,
+    },
     currentUser: null,
   },
   mutations: {
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
+    },
+    ["SET_SHOW_PER_BACIN"](state, val) {
+      state.reportsFilters.showPerBasin = val;
     },
     ["SET_USERS"](state, users: IUsersWrapper) {
       state.users = users;
@@ -73,7 +81,7 @@ export const store = createStore<Estado>({
     ["SIGN_OUT"]({ commit }) {
       commit("SET_USER", null);
     },
-    async ["SEND_EMAIL_CHANGE_PASSWORD"]({ commit }, { login, email }) {
+    async ["SEND_EMAIL_CHANGE_PASSWORD"]() {
       try {
         // TODO
         // SEND HERE TO API THE OBJECT WITH LOGIN AND OR EMAIL
@@ -85,30 +93,33 @@ export const store = createStore<Estado>({
     },
     async ["LOGIN_USER"]({ commit }, user: IUser) {
       try {
-        // TODO
-        // CONNECT API
-        const { data } = await http.post(`/api/login/sign-in`, user);
-        console.log("teste", data, user);
+        const { data } = await http.post(`login/sign-in`, user);
+        const token = data?.data?.accessToken;
 
-        const userLogged = {
-          login: user.login,
-          id: 1,
-          token: "dlapsdlapsldapsdladlapsdld123123123123",
-        };
+        if (token) {
+          const userLogged = {
+            login: "teste_login",
+            id: 1,
+            token,
+          };
 
-        http.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${userLogged.token}`;
-        commit("SET_USER", userLogged);
+          http.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${userLogged.token}`;
+          commit("SET_USER", userLogged);
 
-        toast.success("Logado com sucesso.");
-        return true;
+          toast.success("Logado com sucesso.");
+          return true;
+        }
       } catch (e) {
         toast.error("Credenciais inválidas.");
         console.error(e);
       }
     },
-    async ["FETCH_CENSUS"]({ commit, state }) {
+    async ["UPDATE_SHOW_PER_BACIN"]({ commit }, val: boolean) {
+      commit("SET_SHOW_PER_BACIN", val);
+    },
+    async ["FETCH_CENSUS"]() {
       try {
         const { data } = await http.get(`/user`);
         console.log({ data });
@@ -117,7 +128,7 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["CREATE_USER"]({ commit, state }, user: INewUser) {
+    async ["CREATE_USER"](user: any) {
       try {
         const createdUser = Object.assign({}, user);
         // TODO
@@ -134,7 +145,7 @@ export const store = createStore<Estado>({
         toast.error("Falha ao criar usuário.");
       }
     },
-    async ["UPDATE_USER"](context, user: INewUser) {
+    async ["UPDATE_USER"](_context, _user: INewUser) {
       try {
         // TODO
         // CONNECT API
@@ -143,7 +154,7 @@ export const store = createStore<Estado>({
         toast.error("Falha ao atualizar dados do usuário.");
       }
     },
-    async ["CHANGE_PASSWORD"]({ commit }, { password, token }) {
+    async ["CHANGE_PASSWORD"]() {
       try {
         // TODO
         // CONNECT API
