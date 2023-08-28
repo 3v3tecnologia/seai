@@ -31,6 +31,7 @@ import {
   makeFetchWorkersCensusByBasinController,
   makeFetchWorkersCensusByCountyController,
 } from "../factories/controllers/workers-census";
+import { makeFetchCensusLocationsController } from "../factories/controllers/indicators-census/fetch-census-locations-controller.factory";
 
 export const censusRouter = (): Router => {
   const router = Router();
@@ -156,10 +157,11 @@ export const censusRouter = (): Router => {
     adaptRoute(makeFetchWorkersCensusByBasinController())
   );
 
+  //locations
   router.get(
-    "/workers/county",
+    "/locations",
     authorization,
-    adaptRoute(makeFetchWorkersCensusByCountyController())
+    adaptRoute(makeFetchCensusLocationsController())
   );
 
   return router;

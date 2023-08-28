@@ -1,4 +1,5 @@
 import {
+  CensusLocation,
   EconomicSecurityByBasinData,
   EconomicSecurityByCountyData,
   IndicatorsRepositoryProtocol,
@@ -10,6 +11,40 @@ import {
 import { censusDb } from "../connection/knexfile";
 
 export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
+  async getCity(): Promise<Array<CensusLocation> | null> {
+    const cities = await censusDb.raw(
+      `select m."Id",m."Municipio"  from "Municipios" m  `
+    );
+
+    if (!cities) {
+      return null;
+    }
+
+    return cities.rows.map((city: any) => {
+      return {
+        Id: city.Id,
+        Local: Number(city.Municipio),
+      };
+    });
+  }
+
+  async getBasin(): Promise<Array<CensusLocation> | null> {
+    const basins = await censusDb.raw(
+      `select m."Id",m."Municipio"  from "Municipios" m  `
+    );
+
+    if (!basins) {
+      return null;
+    }
+
+    return basins.rows.map((basin: any) => {
+      return {
+        Id: basin.Id,
+        Local: Number(basin.Municipio),
+      };
+    });
+  }
+
   async getEconomicSecurityByBasin(): Promise<Array<EconomicSecurityByBasinData> | null> {
     const data = await censusDb.raw(`
       select
@@ -63,15 +98,15 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     const toDomain: Array<EconomicSecurityByBasinData> = data.rows.map(
       (row: any) => ({
-        Tipo:"bacia",
+        Tipo: "bacia",
         Nome: row.Bacia,
         AreaIrrigada: {
           unidade: "ha",
-          valor: Number(row.AreaIrrigada)
+          valor: Number(row.AreaIrrigada),
         },
         Rentabilidade: {
           unidade: "R$",
-          valor: Number(row.Rentabilidade)
+          valor: Number(row.Rentabilidade),
         },
         RentabilidadePorArea: Number(row["R$/ha"]),
       })
@@ -128,15 +163,15 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Tipo:"municipio",
+      Tipo: "municipio",
       Nome: row.Municipio,
       AreaIrrigada: {
-        unidade:"ha",
-        valor: Number(row.AreaIrrigada)
+        unidade: "ha",
+        valor: Number(row.AreaIrrigada),
       },
       Rentabilidade: {
-        unidade:"R$",
-        valor:Number(row.Rentabilidade)
+        unidade: "R$",
+        valor: Number(row.Rentabilidade),
       },
       RentabilidadePorArea: Number(row["R$/ha"]),
     }));
@@ -200,11 +235,11 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     }
 
     return data.rows.map((row: any) => ({
-      Tipo:"bacia",
+      Tipo: "bacia",
       Nome: row.Bacia,
       AreaIrrigada: {
-        unidade:"ha",
-        valor: Number(row.AreaIrrigada)
+        unidade: "ha",
+        valor: Number(row.AreaIrrigada),
       },
       EmpregosPJ: Number(row.EmpregosPJ),
       EmpregosPF: Number(row.EmpregosPF),
@@ -267,7 +302,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       Nome: row.Municipio,
-      Tipo:"municipio",
+      Tipo: "municipio",
       AreaIrrigada: Number(row.AreaIrrigada),
       EmpregosPJ: Number(row.EmpregosPJ),
       EmpregosPF: Number(row.EmpregosPF),
@@ -359,14 +394,14 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       Nome: row.Bacia,
-      Tipo:"bacia",
+      Tipo: "bacia",
       ConsumoTotal: {
-        unidade:"m³",
-        valor:Number(row.ConsumoTotal)
+        unidade: "m³",
+        valor: Number(row.ConsumoTotal),
       },
       AreaIrrigadaTotal: {
-        unidade:"ha",
-        valor: Number(row.AreaIrrigadaTotal)
+        unidade: "ha",
+        valor: Number(row.AreaIrrigadaTotal),
       },
       VolumePorArea: Number(row["m³/ha"]),
     }));
@@ -452,14 +487,14 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       Nome: row.Municipio,
-      Tipo:"municipio",
+      Tipo: "municipio",
       ConsumoTotal: {
-        unidade:"m³",
-        valor:Number(row.ConsumoTotal)
+        unidade: "m³",
+        valor: Number(row.ConsumoTotal),
       },
       AreaIrrigadaTotal: {
-        unidade:"ha",
-        valor:Number(row.AreaIrrigadaTotal)
+        unidade: "ha",
+        valor: Number(row.AreaIrrigadaTotal),
       },
       VolumePorArea: Number(row["m³/ha"]),
     }));

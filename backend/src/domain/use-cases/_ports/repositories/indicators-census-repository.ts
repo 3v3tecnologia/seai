@@ -50,7 +50,14 @@ export interface ProductivitySecurityByCountyData {
   Municipio: string;
 }
 
+export interface CensusLocation {
+  Id: number;
+  Local: string;
+}
+
 export interface IndicatorsRepositoryProtocol {
+  getCity(): Promise<Array<CensusLocation> | null>;
+  getBasin(): Promise<Array<CensusLocation> | null>;
   getEconomicSecurityByBasin(): Promise<Array<EconomicSecurityByBasinData> | null>;
   getEconomicSecurityByCounty(): Promise<Array<EconomicSecurityByCountyData> | null>;
   getSocialSecurityByBasin(): Promise<Array<SocialSecurityByBasinData> | null>;
