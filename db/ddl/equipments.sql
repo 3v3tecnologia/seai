@@ -62,10 +62,10 @@ CREATE TABLE "ReadPluviometers" (
 
 CREATE TABLE "ReadStations" (
 	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
-	"TotalRadiation" REAL,
-	"RelativeHumidity" REAL,
-	"AtmosphericTemperature" REAL,
-	"WindVelocity" REAL,
+	"TotalRadiation" REAL DEFAULT NULL,
+	"RelativeHumidity" REAL DEFAULT NULL,
+	"AtmosphericTemperature" REAL DEFAULT NULL,
+	"WindVelocity" REAL DEFAULT NULL,
 	-- "FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
 	"Time" TIMESTAMPTZ NOT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
