@@ -20,10 +20,12 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
       return null;
     }
 
+    console.log(cities);
+
     return cities.rows.map((city: any) => {
       return {
-        Id: city.Id,
-        Local: Number(city.Municipio),
+        Id: Number(city.Id),
+        Local: city.Municipio,
       };
     });
   }
@@ -39,8 +41,8 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return basins.rows.map((basin: any) => {
       return {
-        Id: basin.Id,
-        Local: Number(basin.Municipio),
+        Id: Number(basin.Id),
+        Local: basin.Municipio,
       };
     });
   }

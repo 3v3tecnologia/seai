@@ -2718,10 +2718,10 @@
                         "items": {
                           "type": "object",
                           "properties": {
-                            "BasinName":{
-                              "type":"object",
-                              "items":{
-                                "type":"array",
+                            "BasinName": {
+                              "type": "object",
+                              "items": {
+                                "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
@@ -2867,10 +2867,10 @@
                         "items": {
                           "type": "object",
                           "properties": {
-                            "CountyName":{
-                              "type":"object",
-                              "items":{
-                                "type":"array",
+                            "CountyName": {
+                              "type": "object",
+                              "items": {
+                                "type": "array",
                                 "items": {
                                   "type": "object",
                                   "properties": {
@@ -5199,7 +5199,7 @@
           "Census"
         ],
         "summary": "Get all workers by county",
-        "description":"Get all workers by county",
+        "description": "Get all workers by county",
         "security": [
           {
             "bearerAuth": []
@@ -5229,7 +5229,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Municipio": "Iguatu",
                         "Tipo": "Pessoa Física",
@@ -5348,7 +5348,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Bacia": "Alto Jaguaribe",
                         "Tipo": "Pessoa Física",
@@ -5488,7 +5488,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Mes": "Fevereiro",
                         "Captação": null,
@@ -5611,7 +5611,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Bacia": "Médio Jaguaribe",
                         "Mes": "Maio",
@@ -5719,7 +5719,7 @@
         ],
         "responses": {
           "200": {
-            "description":"List all data per month",
+            "description": "List all data per month",
             "content": {
               "application/json": {
                 "schema": {
@@ -5743,7 +5743,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Municipio": "Araripe",
                         "Mes": "Dezembro",
@@ -5868,7 +5868,7 @@
                     }
                   },
                   "example": {
-                    "data":  [
+                    "data": [
                       {
                         "Bacia": "Alto Jaguaribe",
                         "Mes": "Janeiro",
@@ -5884,6 +5884,129 @@
                         "Volume médio": 2003.39
                       }
                     ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/census/locations": {
+      "get": {
+        "tags": [
+          "Census"
+        ],
+        "summary": "Get all basins and cities",
+        "description": "List Basins and Cities",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List all locations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "Id": "number",
+                              "Local": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": {
+                      "Bacia": [
+                        {
+                          "Id": 1,
+                          "Local": "Acopiara"
+                        }
+                      ],
+                      "Municipios": [
+                        {
+                          "Id": 1,
+                          "Local": "Aiuaba"
+                        }
+                      ]
+                    }
                   }
                 }
               }
