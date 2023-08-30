@@ -12,14 +12,6 @@
           label="Bacias hidrográficas"
         />
 
-        <BaseCheckboxGroup
-          inline-label
-          remove-margin
-          v-model="hydrographicBasin"
-          :options="hydrographicBasinOptions"
-          label="Bacias hidrográficas"
-        />
-
         <div class="px-4 py-2" />
 
         <BaseSelect
