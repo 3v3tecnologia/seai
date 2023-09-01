@@ -1572,6 +1572,9 @@
                         "properties": {
                           "accessToken": {
                             "type": "string"
+                          },
+                          "userName": {
+                            "type": "string"
                           }
                         }
                       }
@@ -1579,7 +1582,8 @@
                   },
                   "example": {
                     "data": {
-                      "accessToken": "token"
+                      "accessToken": "token",
+                      "userName": "admin"
                     }
                   }
                 }
