@@ -7,5 +7,4 @@ INSERT INTO "EquipmentType" ("Name")
 VALUES ('station'), ('pluviometer');
 
 INSERT INTO "MetereologicalEquipment" ("IdEquipmentExternal", "Name", "FK_Organ", "FK_Type", "Altitude")
-VALUES ('A305', 'Fortaleza-CE', 1, 1, 50);
-
+VALUES ('32321', 'Fortaleza - Itaperi', 2, 1,30.4 );

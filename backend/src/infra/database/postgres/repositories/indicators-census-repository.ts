@@ -32,7 +32,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
   async getBasin(): Promise<Array<CensusLocation> | null> {
     const basins = await censusDb.raw(
-      `select m."Id",m."Municipio"  from "Municipios" m  `
+      `select b."Id",b."Bacia" from "Bacias" b`
     );
 
     if (!basins) {
