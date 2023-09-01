@@ -294,3 +294,5 @@ export const store = createStore<Estado>({
 export function useStore(): Store<Estado> {
   return vuexUseStore(key);
 }
+
+export default store;

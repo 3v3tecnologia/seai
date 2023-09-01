@@ -106,9 +106,7 @@ const groupReportsOptions = [
 ];
 const groupReports = ref(groupReportsOptions[0]);
 
-store
-  .dispatch("LOGIN_USER", { login: "admin", password: "1234567" })
-  .then(() => store.dispatch("FETCH_PLACES_OPTIONS"));
+store.dispatch("FETCH_PLACES_OPTIONS");
 
 defineProps({
   showingTab: {

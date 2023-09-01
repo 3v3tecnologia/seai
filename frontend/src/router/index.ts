@@ -9,6 +9,7 @@ import UsersView from "../views/UsersView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import CreateUserView from "../views/CreateUserView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
+import store from "../store";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -74,6 +75,17 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const auth = store.state.auth;
+  if (to.path != "/login" && !auth) {
+    return next("/login");
+  }
+
+  next();
+  // ...
+  // explicitly return false to cancel the navigation
 });
 
 export default router;

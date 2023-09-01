@@ -71,7 +71,7 @@ const auth = computed(() => store.state.auth);
 const signOut = () => store.dispatch("SIGN_OUT");
 
 const active = ref(0);
-const itemsRoutes = [
+const itemsRoutesRaw = [
   {
     label: "Usuários",
     route: "/users",
@@ -85,6 +85,17 @@ const itemsRoutes = [
     route: "/charts",
   },
 ];
+
+const itemsRoutes = computed(() =>
+  itemsRoutesRaw.map((v) => {
+    if (!auth.value) {
+      v.disabled = true;
+    } else {
+      v.disabled = false;
+    }
+    return v;
+  })
+);
 
 // const slicedRoutes = [];
 // const sliceCount = 3;
