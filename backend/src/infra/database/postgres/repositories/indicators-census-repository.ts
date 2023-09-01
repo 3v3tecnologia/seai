@@ -20,8 +20,6 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
       return null;
     }
 
-    console.log(cities);
-
     return cities.rows.map((city: any) => {
       return {
         Id: Number(city.Id),
