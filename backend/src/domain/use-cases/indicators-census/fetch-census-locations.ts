@@ -1,5 +1,6 @@
 import { Either, right } from "../../../shared/Either";
 import {
+  CensusCityLocation,
   CensusLocation,
   IndicatorsRepositoryProtocol,
 } from "../_ports/repositories/indicators-census-repository";
@@ -15,7 +16,7 @@ export class FetchCensusLocations {
       Error,
       {
         Bacia: Array<CensusLocation> | null;
-        Municipio: Array<CensusLocation> | null;
+        Municipio: Array<CensusCityLocation> | null;
       } | null
     >
   > {
