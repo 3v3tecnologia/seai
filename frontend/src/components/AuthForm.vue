@@ -44,7 +44,7 @@ const handleSubmit = (e) => {
   const action = props.isLogging ? "LOGIN_USER" : "SEND_EMAIL_CHANGE_PASSWORD";
   store.dispatch(action, form.value).then((r) => {
     if (props.isLogging && !(r instanceof Error) && r) {
-      router.push({ path: "/" });
+      router.push({ path: "/users" });
     }
   });
 };

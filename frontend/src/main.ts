@@ -7,6 +7,7 @@ import { store } from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import PrimeVue from "primevue/config";
 import "primevue/resources/themes/lara-light-indigo/theme.css";
+import "primeicons/primeicons.css";
 
 /* import font awesome icon component */
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

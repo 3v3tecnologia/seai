@@ -1,9 +1,12 @@
 <template>
   <div class="d-flex flex-column align-items-start mb-5">
-    <div class="p-3 d-flex align-items-center justify-content-between w-100">
+    <div
+      class="p-3 bg-white d-flex align-items-center justify-content-between w-100"
+    >
       <LogoProject title-size="md" />
 
-      <div class="font-weight-bold pl-3">
+      <div class="align-items-center d-flex font-weight-bold pl-3">
+        <i class="pi pi-user pr-2" style="color: #708090"></i>
         <div
           class="d-flex align-items-center justify-content-center"
           v-if="auth?.login"
@@ -24,39 +27,41 @@
       </div>
     </div>
 
-    <div class="px-3 w-100">
-      <div class="pb-2 d-flex w-100 justify-content-between">
-        <div class="d-flex flex-column flex-lg-row w-100">
-          <div v-for="(routes, i) in slicedRoutes" :key="i" class="w-100">
-            <div
-              class="d-flex px-5 align-items-center justify-content-between w-100"
+    <div class="w-100">
+      <TabMenu v-model:activeIndex="active" :model="itemsRoutes" class="mb-2">
+        <template #item="{ label, item, props }">
+          <router-link
+            v-if="item.route"
+            v-slot="routerProps"
+            :to="item.route"
+            custom
+          >
+            <a
+              :href="routerProps.href"
+              v-bind="props.action"
+              @click="($event) => routerProps.navigate($event)"
+              @keydown.enter.space="($event) => routerProps.navigate($event)"
             >
-              <router-link
-                v-for="itemRoute in routes"
-                :key="itemRoute.name"
-                :to="{ name: itemRoute.name }"
-                class="my-2 my-lg-0 btn btn-base modif-outline"
-              >
-                <div class="mb-0">
-                  {{ itemRoute.title }}
-                </div>
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
+              <span v-bind="props.label">{{ label }}</span>
+            </a>
+          </router-link>
+        </template>
+      </TabMenu>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import TabMenu from "primevue/tabmenu";
 import LogoProject from "@/components/LogoProject.vue";
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
+const router = useRouter();
 const route = useRoute();
+
 const currentRouteName = route.name;
 
 const store = useStore();
@@ -65,68 +70,52 @@ const auth = computed(() => store.state.auth);
 
 const signOut = () => store.dispatch("SIGN_OUT");
 
+const active = ref(0);
 const itemsRoutes = [
   {
-    title: "Mapa",
-    name: "login",
+    label: "Usuários",
+    route: "/users",
   },
   {
-    title: "Relatórios",
-    name: "reports",
+    label: "Relatórios",
+    route: "/reports",
   },
   {
-    title: "Gráficos",
-    name: "charts",
-  },
-  {
-    title: "Cadastro",
-    name: "login",
-  },
-  {
-    title: "Notícias",
-    name: "login",
-  },
-  // {
-  //   title: "Mapa",
-  //   name: "map",
-  // },
-  // {
-  //   title: "Relatórios",
-  //   name: "users",
-  // },
-  // {
-  //   title: "Gráficos",
-  //   name: "graphics",
-  // },
-  // {
-  //   title: "Cadastro",
-  //   name: "register",
-  // },
-  // {
-  //   title: "Notícias",
-  //   name: "news",
-  // },
-  {
-    title: "Usuários",
-    name: "users",
+    label: "Gráficos",
+    route: "/charts",
   },
 ];
 
-const slicedRoutes = [];
-const sliceCount = 3;
-const arrRowsCount = Math.ceil(itemsRoutes.length / 3);
+// const slicedRoutes = [];
+// const sliceCount = 3;
+// const arrRowsCount = Math.ceil(itemsRoutes.length / 3);
 
-for (let i = 0; i < arrRowsCount; i++) {
-  const slicedItem = [];
+// for (let i = 0; i < arrRowsCount; i++) {
+//   const slicedItem = [];
 
-  for (let j = 0; j < sliceCount; j++) {
-    const indexToPush = i * sliceCount + j;
+//   for (let j = 0; j < sliceCount; j++) {
+//     const indexToPush = i * sliceCount + j;
 
-    slicedItem[j] = itemsRoutes[indexToPush];
-  }
+//     slicedItem[j] = itemsRoutes[indexToPush];
+//   }
 
-  slicedRoutes.push(slicedItem);
-}
+//   slicedRoutes.push(slicedItem);
+// }
+// onMounted(() => {
+//   active.value = slicedRoutes.findIndex(
+//     (item) => route.path === router.resolve(item.route).path
+//   );
+// });
+
+// watch(
+//   route,
+//   () => {
+//     active.value = slicedRoutes.findIndex(
+//       (item) => route.path === router.resolve(item.route).path
+//     );
+//   },
+//   { immediate: true }
+// );
 </script>
 
 <style lang="scss" scoped>

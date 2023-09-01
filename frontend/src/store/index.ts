@@ -99,10 +99,11 @@ export const store = createStore<Estado>({
       try {
         const { data } = await http.post(`login/sign-in`, user);
         const token = data?.data?.accessToken;
+        const userName = data?.data?.userName;
 
         if (token) {
           const userLogged = {
-            login: "teste_login",
+            login: userName,
             id: 1,
             token,
           };
@@ -134,6 +135,33 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_PLACES_OPTIONS"]({ commit }) {
       try {
+        const placesDTO = (places: []) => {
+          return places.map((place) => ({
+            value: place["Id"],
+            title: place["Local"],
+            IdBacia: place["IdBacia"] || place["Id"],
+          }));
+        };
+
+        const { data } = await http.get(`/census/locations`);
+
+        let [basins, cities] = [data.data.Bacia, data.data.Municipio];
+        [basins, cities] = [placesDTO(basins), placesDTO(cities)];
+
+        commit("SET_OPTIONS", {
+          basins,
+          cities,
+        });
+
+        return true;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_GENERAL_REPORTS"]({ commit }) {
+      try {
+        // TODO
+        // IMPLEMENT REQUEST OF GENERAL REPORTS
         const placesDTO = (places: []) => {
           return places.map((place) => ({
             value: place["Id"],

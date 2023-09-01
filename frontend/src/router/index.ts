@@ -62,7 +62,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/users",
     name: "users",
     component: UsersView,
-    children: [],
   },
   {
     path: "/initial-register-infos",

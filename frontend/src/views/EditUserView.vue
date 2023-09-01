@@ -27,11 +27,10 @@
         />
 
         <div class="py-2" />
-
         <BaseDropdown
           label="Tipo de usuário"
           v-model="form.role"
-          placeholder="Sua senha"
+          placeholder="Tipo de usuário"
           :options="optionsUser"
           input-required
           input-type="password"
@@ -96,7 +95,7 @@ const optionsAccess: { title: string; value: number }[] = [
 ];
 
 const form: Ref = ref({
-  role: optionsUser[0].title,
+  role: optionsUser[0],
 });
 const savedAccount: Ref = ref(false);
 const userId = ref(currentRoute.params.id || "");
@@ -117,8 +116,8 @@ watch(
   () => currentUser.value,
   (val) => {
     if (val) {
-      console.log("val", val);
       form.value = val;
+      form.value.role = optionsUser.find((o) => o.title == val.role);
     }
   },
   { immediate: true }
