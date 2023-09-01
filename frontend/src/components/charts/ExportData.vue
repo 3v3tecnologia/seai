@@ -4,9 +4,9 @@
       <button class="btn btn-success mr-2" @click="downloadCSV">
         Download CSV
       </button>
-      <button class="btn btn-success mr-2" @click="downloadJSON">
+      <!-- <button class="btn btn-success mr-2" @click="downloadJSON">
         Download json
-      </button>
+      </button> -->
     </div>
     <div class="col-lg-12">
       <div class="wrapper-table">

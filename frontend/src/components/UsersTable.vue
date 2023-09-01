@@ -13,7 +13,7 @@
 
           <div class="px-lg-4" />
 
-          <BaseSelect
+          <BaseDropdown
             inline-label
             remove-margin
             v-model="userType"
@@ -80,7 +80,7 @@ import {
   computed,
 } from "vue";
 import { usersOptions } from "@/constants";
-import BaseSelect from "@/components/BaseSelect.vue";
+import BaseDropdown from "@/components/BaseDropdown.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import { useRouter } from "vue-router";

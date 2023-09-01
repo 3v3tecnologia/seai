@@ -29,7 +29,7 @@
 import { useStore } from "vuex";
 import UsersTable from "@/components/UsersTable.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 
 const store = useStore();
 const filtersUsers = ref({});

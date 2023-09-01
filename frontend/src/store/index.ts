@@ -65,6 +65,10 @@ export const store = createStore<Estado>({
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
     },
+    ["SET_OPTIONS"](state, { basins, cities }) {
+      state.cityOptions = cities;
+      state.hydrographicBasinOptions = basins;
+    },
     ["SET_SHOW_PER_BACIN"](state, val) {
       state.reportsFilters.showPerBasin = val;
     },
@@ -123,6 +127,31 @@ export const store = createStore<Estado>({
       try {
         const { data } = await http.get(`/user`);
         console.log({ data });
+        return true;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_PLACES_OPTIONS"]({ commit }) {
+      try {
+        const placesDTO = (places: []) => {
+          return places.map((place) => ({
+            value: place["Id"],
+            title: place["Local"],
+            IdBacia: place["IdBacia"] || place["Id"],
+          }));
+        };
+
+        const { data } = await http.get(`/census/locations`);
+
+        let [basins, cities] = [data.data.Bacia, data.data.Municipio];
+        [basins, cities] = [placesDTO(basins), placesDTO(cities)];
+
+        commit("SET_OPTIONS", {
+          basins,
+          cities,
+        });
+
         return true;
       } catch (e) {
         console.error(e);

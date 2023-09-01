@@ -16,7 +16,7 @@
             <th scope="row" colspan="3">{{ moduleOption.title }}</th>
             <td>
               <div class="wrapper-select">
-                <BaseSelect
+                <BaseDropdown
                   remove-margin
                   v-model="moduleOption.access.read"
                   :options="optionsSelect"
@@ -26,11 +26,12 @@
             </td>
             <td>
               <div class="wrapper-select">
-                <BaseSelect
+                <BaseDropdown
                   remove-margin
                   v-model="moduleOption.access.register"
                   :options="optionsSelect"
                   input-required
+                  :g-width="'100px'"
                 />
               </div>
             </td>
@@ -42,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseSelect from "@/components/BaseSelect.vue";
+import BaseDropdown from "@/components/BaseDropdown.vue";
 import { defineProps, defineEmits, ref, Ref, watch } from "vue";
 
 const optionsSelect = [
@@ -56,7 +57,7 @@ const optionsSelect = [
   },
 ];
 
-const baseValuesAccess = optionsSelect[1].title;
+const baseValuesAccess = optionsSelect[1];
 const baseAccessModules = {
   read: baseValuesAccess,
   register: baseValuesAccess,

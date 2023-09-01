@@ -31,7 +31,7 @@ const handleSubmit = (e) => {
   border-radius: 5px;
 
   @media (min-width: 992px) {
-    max-width: 500px;
+    max-width: 900px;
     margin: 0 auto;
   }
 

@@ -10,6 +10,8 @@
       <ButtonsAuth :is-logging="isLogging" />
     </AuthForm>
   </div>
+
+  <div class="my-5 py-5"></div>
 </template>
 
 <script lang="ts" setup>

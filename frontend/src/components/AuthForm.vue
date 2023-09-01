@@ -33,7 +33,10 @@ const props = defineProps({
 
 const store = useStore();
 
-const form: Ref = ref({});
+const form: Ref = ref({
+  login: "admin",
+  password: "1234567",
+});
 
 const handleSubmit = (e) => {
   e.preventDefault();

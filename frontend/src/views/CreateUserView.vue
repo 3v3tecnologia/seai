@@ -18,10 +18,10 @@
 
         <div class="py-2" />
 
-        <BaseSelect
+        <BaseDropdown
           label="Tipo de usuário"
           v-model="form.role"
-          placeholder="Sua senha"
+          placeholder="Tipo de usuário"
           :options="optionsUser"
           input-required
           input-type="password"
@@ -59,7 +59,7 @@
 import LogoProject from "@/components/LogoProject.vue";
 import AccessModulesTable from "@/components/AccessModulesTable.vue";
 import BaseInput from "@/components/BaseInput.vue";
-import BaseSelect from "@/components/BaseSelect.vue";
+import BaseDropdown from "@/components/BaseDropdown.vue";
 import PrimaryButton from "@/components/PrimaryButton.vue";
 import FormWrapper from "@/components/FormWrapper.vue";
 import { previewEmailCensured } from "@/helpers/formatEmail";
@@ -89,7 +89,7 @@ const optionsAccess: { title: string; value: number }[] = [
 ];
 
 const form: Ref = ref({
-  role: optionsUser[0].title,
+  role: optionsUser[0],
 });
 const savedAccount: Ref = ref(false);
 const token = ref(currentRoute.query.token || "");

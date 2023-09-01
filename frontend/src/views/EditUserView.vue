@@ -28,7 +28,7 @@
 
         <div class="py-2" />
 
-        <BaseSelect
+        <BaseDropdown
           label="Tipo de usuário"
           v-model="form.role"
           placeholder="Sua senha"
@@ -66,7 +66,7 @@
 import LogoProject from "@/components/LogoProject.vue";
 import AccessModulesTable from "@/components/AccessModulesTable.vue";
 import BaseInput from "@/components/BaseInput.vue";
-import BaseSelect from "@/components/BaseSelect.vue";
+import BaseDropdown from "@/components/BaseDropdown.vue";
 import PrimaryButton from "@/components/PrimaryButton.vue";
 import FormWrapper from "@/components/FormWrapper.vue";
 import { previewEmailCensured } from "@/helpers/formatEmail";

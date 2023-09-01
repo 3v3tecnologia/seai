@@ -1,12 +1,12 @@
 <template>
   <span class="p-float-label">
-    <MultiSelect
+    <Dropdown
       v-model="inputValue"
       :options="options"
       optionLabel="title"
+      class="wrapper-dropdown"
       :placeholder="placeholder"
-      class="wrapper-check"
-      display="chip"
+      :style="`max-width: ${width}; min-width: ${width};`"
     />
     <label for="dd-city">{{ placeholder }}</label>
   </span>
@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, Ref, watch } from "vue";
-import MultiSelect from "primevue/multiselect";
+import Dropdown from "primevue/dropdown";
 
 const props = defineProps({
   label: String,
@@ -30,6 +30,10 @@ const props = defineProps({
   inlineLabel: {
     type: Boolean,
     default: false,
+  },
+  width: {
+    type: String,
+    default: "150px",
   },
   placeholder: {
     type: String,
@@ -49,20 +53,19 @@ const props = defineProps({
   },
 });
 
-const inputValue: Ref<[]> = ref([]);
+const inputValue: Ref<object> = ref({});
 
 const emit = defineEmits(["update:modelValue"]);
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    inputValue.value = val;
+  },
+  { immediate: true }
+);
 
 watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
 </script>
-
-<style lang="scss" scoped>
-.wrapper-check {
-  & :deep .p-multiselect-label-container {
-    max-width: 200px;
-    min-width: 200px;
-  }
-}
-</style>

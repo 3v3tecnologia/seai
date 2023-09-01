@@ -5,6 +5,8 @@ import VueApexCharts from "vue3-apexcharts";
 import router from "./router";
 import { store } from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import PrimeVue from "primevue/config";
+import "primevue/resources/themes/lara-light-indigo/theme.css";
 
 /* import font awesome icon component */
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -26,5 +28,6 @@ createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)
   .use(router)
+  .use(PrimeVue)
   .use(VueApexCharts)
   .mount("#app");

@@ -1,37 +1,55 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <div class="d-flex flex-column">
-        <BaseSwitch v-model="showPerBacin" />
+      <div class="d-flex flex-column flex-lg-row align-items-center">
+        <div class="pt-3 pb-2"></div>
 
-        <BaseSelect
+        <BaseDropdown
+          v-model="showingDataFormat"
+          :options="showingDataOptions"
+          placeholder="Agrupamento"
+        />
+
+        <div class="px-4"></div>
+
+        <BaseDropdown
+          v-model="groupReports"
+          :options="groupReportsOptions"
+          placeholder="Tipo de relatório"
+          width="200px"
+        />
+
+        <div class="pr-md-5"></div>
+
+        <BaseCheckBox
           inline-label
           remove-margin
           v-model="hydrographicBasin"
           :options="hydrographicBasinOptions"
           label="Bacias hidrográficas"
+          placeholder="Bacias hidrográficas"
         />
 
-        <div class="px-4 py-2" />
+        <div class="px-4 py-3" />
 
-        <BaseSelect
-          :disabled="!hydrographicBasin.value"
+        <BaseCheckBox
           inline-label
           remove-margin
           v-model="city"
           :options="cityOptions"
           label="Municípios"
+          placeholder="Municípios"
         />
+      </div>
 
-        <div class="my-2">
-          <router-link :to="showingTab === 'charts' ? 'reports' : 'charts'">
-            {{
-              showingTab === "charts"
-                ? "Acessar exportação de dados"
-                : "Visualizar gráficos"
-            }}
-          </router-link>
-        </div>
+      <div class="mt-4 mb-2">
+        <router-link :to="showingTab === 'charts' ? 'reports' : 'charts'">
+          {{
+            showingTab === "charts"
+              ? "Acessar exportação de dados"
+              : "Visualizar gráficos"
+          }}
+        </router-link>
       </div>
 
       <div class="mt-4 mt-lg-5">
@@ -49,14 +67,48 @@
 import ChartReports from "@/components/charts/ChartReports.vue";
 import ExportData from "@/components/charts/ExportData.vue";
 import BaseSwitch from "@/components/BaseSwitch.vue";
-import BaseSelect from "@/components/BaseSelect.vue";
-import BaseCheckboxGroup from "@/components/BaseSelect.vue";
+import BaseDropdown from "@/components/BaseDropdown.vue";
+import BaseCheckBox from "@/components/BaseCheckBox.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-const showPerBacin = ref(false);
+const showingDataOptions = [
+  {
+    title: "Bacia Hidrográfica",
+    value: 1,
+  },
+  {
+    title: "Cidade",
+    value: 2,
+  },
+];
+const showingDataFormat = ref(showingDataOptions[0]);
+
+const groupReportsOptions = [
+  {
+    title: "Geral",
+    value: 1,
+  },
+  {
+    title: "Animais",
+    value: 2,
+  },
+  {
+    title: "Aquiculturas",
+    value: 3,
+  },
+  {
+    title: "Indicadores",
+    value: 4,
+  },
+];
+const groupReports = ref(groupReportsOptions[0]);
+
+store
+  .dispatch("LOGIN_USER", { login: "admin", password: "1234567" })
+  .then(() => store.dispatch("FETCH_PLACES_OPTIONS"));
 
 defineProps({
   showingTab: {
@@ -64,31 +116,28 @@ defineProps({
   },
 });
 
-watch(showPerBacin, (val) => {
-  store.dispatch("UPDATE_SHOW_PER_BACIN", val);
-});
+// watch(showPerBasin, (val) => {
+//   store.dispatch("UPDATE_SHOW_PER_BACIN", val);
+// });
 
-const defaultHydroOption = {
-  title: "Todas as bacias",
-  value: null,
-};
-const defaultCityOption = {
-  title: "Todas as cidades",
-  value: null,
-};
+const hydrographicBasinOptions = computed(
+  () => store.state.hydrographicBasinOptions
+);
 
-const hydrographicBasinOptions = computed(() => [
-  defaultHydroOption,
-  ...store.state.hydrographicBasinOptions,
-]);
+const cityOptions = computed(() =>
+  store.state.cityOptions.filter((val) => {
+    if (hydrographicBasin.value.length) {
+      return hydrographicBasin.value.find(
+        (v: { value: number }) => v.value == val.IdBacia
+      );
+    }
 
-const cityOptions = computed(() => [
-  defaultCityOption,
-  ...store.state.cityOptions,
-]);
+    return val;
+  })
+);
 
-const hydrographicBasin = ref(hydrographicBasinOptions.value[0]);
-const city = ref(cityOptions.value[0]);
+const hydrographicBasin = ref([]);
+const city = ref([]);
 
 // const anuallyWaterConsumeBar = {
 //   data: [297.696, 113.569, 30.96],
@@ -184,5 +233,3 @@ const indicatorResponse = [
   },
 ];
 </script>
-
-<style lang="scss" scoped></style>
