@@ -52,12 +52,11 @@ CREATE TABLE "EquipmentLocation" (
 CREATE TABLE "ReadPluviometers" (
 	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
 	"Value" REAL,
-	"Time" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	"Time" DATE NOT NULL DEFAULT CURRENT_DATE,
 	-- "FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
-	PRIMARY KEY("IdRead"),
-	UNIQUE("FK_Organ", "Time", "FK_Equipment")
+	PRIMARY KEY("IdRead")
 );
 
 CREATE TABLE "ReadStations" (
@@ -67,15 +66,15 @@ CREATE TABLE "ReadStations" (
 	"AtmosphericTemperature" REAL DEFAULT NULL,
 	"WindVelocity" REAL DEFAULT NULL,
 	-- "FK_Time" INT REFERENCES "ReadTime"("IdTime"),	
-	"Time" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	"Time" DATE NOT NULL DEFAULT CURRENT_DATE,
+	-- "Time" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
-	PRIMARY KEY("IdRead"),
-	UNIQUE("FK_Organ", "Time", "FK_Equipment")
+	PRIMARY KEY("IdRead")
 );
 
 CREATE TABLE "Et0" (
 	"Value" REAL,
-	"FK_Station_Read" INT REFERENCES "ReadStations"("IdRead"),	
+	"FK_Station_Read" INT REFERENCES "ReadStations"("IdRead") ON DELETE CASCADE,	
 	PRIMARY KEY("FK_Station_Read")
 );
