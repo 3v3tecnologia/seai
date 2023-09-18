@@ -102,7 +102,7 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
           Value: Number(row.WindVelocity) || null,
         },
         ETO: {
-          Unit: "mm/day",
+          Unit: "mm",
           Value: Number(row.Eto) || null,
         },
       },

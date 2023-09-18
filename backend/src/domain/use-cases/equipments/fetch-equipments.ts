@@ -1,19 +1,15 @@
 import { Either, right } from "../../../shared/Either";
-import {
-  CensusTakersByBasinData,
-  CensusTakersRepositoryProtocol,
-} from "../_ports/repositories/census-takers-repository";
+
+import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
 export class FetchEquipments {
-  private readonly censusTakersRepository: CensusTakersRepositoryProtocol;
+  private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
-  constructor(censusTakersRepository: CensusTakersRepositoryProtocol) {
-    this.censusTakersRepository = censusTakersRepository;
+  constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
+    this.equipmentsRepository = equipmentsRepository;
   }
-  async execute(): Promise<
-    Either<Error, Array<CensusTakersByBasinData> | null>
-  > {
-    const data = await this.censusTakersRepository.getByBasin();
+  async execute(): Promise<Either<Error, Array<any> | null>> {
+    const data = await this.equipmentsRepository.getEquipments();
 
     return right(data);
   }
