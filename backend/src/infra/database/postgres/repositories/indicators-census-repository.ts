@@ -1,4 +1,5 @@
 import {
+  CensusCityLocation,
   CensusLocation,
   EconomicSecurityByBasinData,
   EconomicSecurityByCountyData,
@@ -11,9 +12,9 @@ import {
 import { censusDb } from "../connection/knexfile";
 
 export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
-  async getCity(): Promise<Array<CensusLocation> | null> {
+  async getCity(): Promise<Array<CensusCityLocation> | null> {
     const cities = await censusDb.raw(
-      `select m."Id",m."Municipio"  from "Municipios" m  `
+      `select m."Id",m."Municipio",m."Bacia_Id"  from "Municipios" m  `
     );
 
     if (!cities) {
@@ -24,6 +25,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
       return {
         Id: Number(city.Id),
         Local: city.Municipio,
+        IdBacia: city.Bacia_Id,
       };
     });
   }
@@ -40,7 +42,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     return basins.rows.map((basin: any) => {
       return {
         Id: Number(basin.Id),
-        Local: basin.Municipio,
+        Local: basin.Bacia,
       };
     });
   }

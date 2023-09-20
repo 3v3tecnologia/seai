@@ -54,9 +54,12 @@ export interface CensusLocation {
   Id: number;
   Local: string;
 }
+export interface CensusCityLocation extends CensusLocation {
+  IdBacia: number;
+}
 
 export interface IndicatorsRepositoryProtocol {
-  getCity(): Promise<Array<CensusLocation> | null>;
+  getCity(): Promise<Array<CensusCityLocation> | null>;
   getBasin(): Promise<Array<CensusLocation> | null>;
   getEconomicSecurityByBasin(): Promise<Array<EconomicSecurityByBasinData> | null>;
   getEconomicSecurityByCounty(): Promise<Array<EconomicSecurityByCountyData> | null>;

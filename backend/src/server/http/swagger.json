@@ -6007,10 +6007,476 @@
                       "Municipios": [
                         {
                           "Id": 1,
-                          "Local": "Aiuaba"
+                          "Local": "Aiuaba",
+                          "IdBacia": 1
                         }
                       ]
                     }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipments": {
+      "get": {
+        "tags": [
+          "Equipments"
+        ],
+        "summary": "Get all equipments",
+        "description": "List all stations and pluviometer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All equipments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "Id": "number",
+                              "Code": "number",
+                              "Name": "string",
+                              "Type": "string",
+                              "Altitude": "number",
+                              "Organ": "string",
+                              "LocationPosition": "string",
+                              "LocationName": "string",
+                              "CreatedAt": "string",
+                              "UpdatedAt": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Id": 2,
+                        "Code": 23978,
+                        "Name": "Fortaleza",
+                        "Type": "pluviometer",
+                        "Altitude": 30.4,
+                        "Organ": "FUNCEME",
+                        "LocationPosition": null,
+                        "LocationName": null,
+                        "CreatedAt": "2023-08-29T17:54:07.838Z",
+                        "UpdatedAt": "2023-08-29T17:54:07.838Z"
+                      },
+                      {
+                        "Id": 1,
+                        "Code": 32321,
+                        "Name": "Fortaleza - Itaperi",
+                        "Type": "station",
+                        "Altitude": 30.4,
+                        "Organ": "FUNCEME",
+                        "LocationPosition": null,
+                        "LocationName": null,
+                        "CreatedAt": "2023-08-29T17:54:07.838Z",
+                        "UpdatedAt": "2023-08-29T17:54:07.838Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipments/measures/stations": {
+      "get": {
+        "tags": [
+          "Equipments"
+        ],
+        "summary": "Get all stations measures",
+        "description": "List all daily stations measures",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daily stations measures",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "Date": "number",
+                              "IdRead": "number",
+                              "IdEquipment": "number",
+                              "Code": "number",
+                              "Name": "string",
+                              "Measures": {
+                                "type": "object",
+                                "properties": {
+                                  "TotalRadiation": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  },
+                                  "RelativeHumidity": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  },
+                                  "AtmosphericTemperature": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  },
+                                  "WindVelocity": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  },
+                                  "ETO": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Date": "2023-04-09T00:00:00.000Z",
+                        "IdRead": 8,
+                        "IdEquipment": 1,
+                        "Code": 32321,
+                        "Name": "Fortaleza - Itaperi",
+                        "Measures": {
+                          "TotalRadiation": {
+                            "Unit": "W/m",
+                            "Value": 137.29
+                          },
+                          "RelativeHumidity": {
+                            "Unit": "%",
+                            "Value": null
+                          },
+                          "AtmosphericTemperature": {
+                            "Unit": "°C",
+                            "Value": null
+                          },
+                          "WindVelocity": {
+                            "Unit": "m/s",
+                            "Value": null
+                          },
+                          "ETO": {
+                            "Unit": "mm",
+                            "Value": null
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipments/measures/pluviometers": {
+      "get": {
+        "tags": [
+          "Equipments"
+        ],
+        "summary": "Get all pluviometers measures",
+        "description": "List all daily pluviometers measures",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daily pluviometers measures",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "Date": "number",
+                              "IdRead": "number",
+                              "IdEquipment": "number",
+                              "Code": "number",
+                              "Name": "string",
+                              "Measures": {
+                                "type": "object",
+                                "properties": {
+                                  "Precipitation": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Unit": "string",
+                                      "Value": "number"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Date": "2023-04-09T00:00:00.000Z",
+                        "IdRead": 8,
+                        "IdEquipment": 2,
+                        "Code": 23978,
+                        "Name": "Fortaleza",
+                        "Measures": {
+                          "Precipitation": {
+                            "Unit": "mm",
+                            "Value": null
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               }

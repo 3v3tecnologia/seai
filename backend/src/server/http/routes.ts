@@ -5,6 +5,7 @@ import {
   userRouter,
   faqRouter,
   censusRouter,
+  equipmentsRouter,
 } from "./http-routes";
 
 export function setRoutes(app: Express): void {
@@ -14,6 +15,7 @@ export function setRoutes(app: Express): void {
   router.use("/login", loginRouter());
   router.use("/faq", faqRouter());
   router.use("/census", censusRouter());
+  router.use("/equipments", equipmentsRouter());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });
