@@ -2,6 +2,7 @@
   <CardChart is-centered>
     <apexchart
       :width="props.width"
+      :height="hasMonthlyFilter ? 'auto' : props.width"
       type="pie"
       :options="options"
       :series="series"
@@ -34,6 +35,11 @@ const props = defineProps({
   tooltipSufix: {
     type: String,
     default: "",
+    required: false,
+  },
+  hasMonthlyFilter: {
+    type: Boolean,
+    default: false,
     required: false,
   },
   tooltipPrefix: {
@@ -121,11 +127,12 @@ const options = {
     {
       breakpoint: 480,
       options: {
+        legend: {
+          show: true,
+          position: "bottom",
+        },
         chart: {
           width: 200,
-        },
-        legend: {
-          position: "bottom",
         },
       },
     },

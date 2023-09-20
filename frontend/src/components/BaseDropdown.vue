@@ -69,3 +69,11 @@ watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
 </script>
+
+<style lang="scss" scoped>
+.wrapper-dropdown {
+  & > :first-child {
+    text-align: start !important;
+  }
+}
+</style>

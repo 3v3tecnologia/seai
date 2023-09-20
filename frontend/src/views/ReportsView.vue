@@ -42,7 +42,7 @@
         />
       </div>
 
-      <div class="mt-4 mb-2">
+      <div class="mt-5 mb-2">
         <router-link :to="showingTab === 'charts' ? 'reports' : 'charts'">
           {{
             showingTab === "charts"
@@ -55,7 +55,8 @@
       <div class="mt-4 mt-lg-5">
         <ChartReports
           v-if="showingTab === 'charts'"
-          :data="indicatorResponse"
+          :data="reportsData"
+          :current-report="groupReports"
         />
         <ExportData v-else :data="indicatorResponse" />
       </div>
@@ -114,9 +115,20 @@ defineProps({
   },
 });
 
-// watch(showPerBasin, (val) => {
-//   store.dispatch("UPDATE_SHOW_PER_BACIN", val);
-// });
+const filtersRequest = computed(() => ({
+  showingDataFormat: { ...showingDataFormat.value },
+  groupReports: { ...groupReports.value },
+}));
+
+watch(
+  () => filtersRequest.value,
+  async (val) => {
+    await store.dispatch("FETCH_REPORTS_DATA", val);
+  },
+  { deep: true, immediate: true }
+);
+
+const reportsData = computed(() => store.state.reportsData);
 
 const hydrographicBasinOptions = computed(
   () => store.state.hydrographicBasinOptions

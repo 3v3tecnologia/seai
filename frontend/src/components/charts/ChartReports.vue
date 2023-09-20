@@ -1,19 +1,43 @@
 <template>
   <div>
-    <div class="row mb-3 mb-lg-5">
-      <div class="col-lg-6 d-flex align-items-center justify-content-start">
-        <BarChart
+    <div v-if="currentReport.value === 1" class="row mb-3 mb-lg-5">
+      <!-- <div > -->
+      <div class="col-lg-4 d-flex align-items-center justify-content-start">
+        <PizzaChart
           :width="400"
-          :data="anuallyEarn"
-          title="Rendimento anual (R$)"
-          series-name="Rendimento"
-          :labels="labels"
+          :data="workersCount.data"
+          title="Quantidade de trabalhadores"
+          series-name="Quantidade"
+          :labels="workersCount.labels"
           color="#7D3AC1"
-          is-horizontal
-          formatter="money"
           id="7"
         />
       </div>
+      <div class="col-lg-4 d-flex align-items-center justify-content-start">
+        <PizzaChart
+          :width="400"
+          :data="registeredCount.data"
+          title="Quantidade de recenseados"
+          series-name="Quantidade"
+          :labels="registeredCount.labels"
+          color="#7D3AC1"
+          id="8"
+        />
+      </div>
+      <div class="col-lg-4 d-flex align-items-center justify-content-start">
+        <PizzaChart
+          :width="400"
+          :data="captationCount.data"
+          title="Captação mensal"
+          series-name="Captação"
+          :labels="captationCount.labels"
+          color="#7D3AC1"
+          id="9"
+          has-monthly-filter
+        />
+        <!-- </div> -->
+      </div>
+      <!-- 
       <div class="col-lg-6 d-flex align-items-center justify-content-end">
         <BarChart
           :width="400"
@@ -134,50 +158,81 @@
           tooltip-sufix="empregos/m³"
           color="#29066B"
         />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineProps, computed } from "vue";
-import BaseCheckBox from "@/components/BaseCheckBox.vue";
 import ScatterChart from "@/components/charts/ScatterChart.vue";
 import PizzaChart from "@/components/charts/PizzaChart.vue";
-import LineChart from "@/components/charts/LineChart.vue";
-import BarChart from "@/components/charts/BarChart.vue";
 
 const props = defineProps({
   data: {
     type: Array,
     default: () => [],
   },
+  currentReport: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-computed(() => {
-  return {};
-});
-const labels = computed(() => props.data.map((val) => val.city || val.basin));
+const workersCount = computed(() => ({
+  data: props.data.workersCount.map(
+    (w: { [x: string]: any }) => w["Média de trabalhadores"]
+  ),
+  labels: props.data.workersCount.map(
+    (w: { [x: string]: any }) =>
+      `${w["Bacia"] || w["Municipio"]} - ${w["Tipo"]}`
+  ),
+}));
 
-const anuallyEarn = computed(() => props.data.map((val) => val.anuallyEarn));
+const captationCount = computed(() => ({
+  data: props.data.captationCount.map(
+    (w: { [x: string]: any }) => w["Captação"]
+  ),
+  labels: props.data.captationCount.map(
+    (w: { [x: string]: any }) => w["Bacia"] || w["Municipio"]
+  ),
+}));
 
-const anuallyProduction = computed(() =>
-  props.data.map((val) => val.anuallyProduction)
-);
+const registeredCount = computed(() => ({
+  data: props.data.registeredCount.map(
+    (w: { [x: string]: any }) => w["Quantidade"]
+  ),
+  labels: props.data.registeredCount.map(
+    (w: { [x: string]: any }) => w["Bacia"] || w["Municipio"]
+  ),
+}));
+// const workersCountData = computed(() =>
+//   props.data.workersCount.map((w) => w["Média de trabalhadores"])
+// );
+// const workersCountData = computed(() =>
+//   props.data.workersCount.map((w) => w["Média de trabalhadores"])
+// );
+// const labels = computed(() => props.data.map((val) => val.city || val.basin));
 
-const anuallyWaterConsumeBar = computed(() =>
-  props.data.map((val) => val.anuallyWaterConsumeBar)
-);
+// const anuallyEarn = computed(() => props.data.map((val) => val.anuallyEarn));
 
-const anuallyWaterCPI = computed(() =>
-  props.data.map((val) => [val.anuallyWaterCPI, val.area])
-);
+// const anuallyProduction = computed(() =>
+//   props.data.map((val) => val.anuallyProduction)
+// );
 
-const productiveSecurityKg = computed(() =>
-  props.data.map((val) => [val.productiveSecurityKg, val.area])
-);
+// const anuallyWaterConsumeBar = computed(() =>
+//   props.data.map((val) => val.anuallyWaterConsumeBar)
+// );
 
-const productiveSecurityEarn = computed(() =>
-  props.data.map((val) => [val.productiveSecurityEarn, val.area])
-);
+// const anuallyWaterCPI = computed(() =>
+//   props.data.map((val) => [val.anuallyWaterCPI, val.area])
+// );
+
+// const productiveSecurityKg = computed(() =>
+//   props.data.map((val) => [val.productiveSecurityKg, val.area])
+// );
+
+// const productiveSecurityEarn = computed(() =>
+//   props.data.map((val) => [val.productiveSecurityEarn, val.area])
+// );
 </script>

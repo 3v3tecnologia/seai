@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <div class="py-4" />
-
     <LogoProject />
 
     <div class="py-3"></div>

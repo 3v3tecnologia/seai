@@ -14,6 +14,7 @@ import http from "@/http";
 import { previewEmailCensured } from "@/helpers/formatEmail";
 import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
+import IReportsData from "@/interfaces/IReportsData";
 
 interface Estado {
   auth: IAuth | null;
@@ -22,13 +23,21 @@ interface Estado {
   cityOptions: ICityOption[];
   reportsFilters: IReportsFilters;
   hydrographicBasinOptions: IHydrographicBasinOption[];
+  reportsData: IReportsData;
 }
 
 export const key: InjectionKey<Store<Estado>> = Symbol();
 
+const reportsDataDefault: IReportsData = {
+  registeredCount: [],
+  captionCount: [],
+  workersCount: [],
+};
+
 export const store = createStore<Estado>({
   state: {
     auth: null,
+    reportsData: reportsDataDefault,
     hydrographicBasinOptions: [
       {
         title: "Alto Jaguaribe",
@@ -64,6 +73,12 @@ export const store = createStore<Estado>({
   mutations: {
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
+    },
+    ["SET_REPORTS_DATA"](state, data) {
+      state.reportsData = {
+        ...reportsDataDefault,
+        ...data,
+      };
     },
     ["SET_OPTIONS"](state, { basins, cities }) {
       state.cityOptions = cities;
@@ -181,6 +196,41 @@ export const store = createStore<Estado>({
         });
 
         return true;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORTS_DATA"]({ commit }, filters) {
+      try {
+        const showingDataFormat = filters.showingDataFormat.value;
+        const groupmentParam = filters.groupReports.value;
+        let groupmentParamUrl = "basin";
+
+        if (groupmentParam === 1) {
+          groupmentParamUrl = "basin";
+        } else if (groupmentParam === 2) {
+          groupmentParamUrl = "county";
+        } else if (groupmentParam === 3) {
+          groupmentParamUrl = "consumption";
+        }
+
+        if (showingDataFormat === 1) {
+          const {
+            data: { data: workersCount },
+          } = await http.get(`/census/workers/${groupmentParamUrl}`);
+          const {
+            data: { data: captationCount },
+          } = await http.get(`/census/captation/${groupmentParamUrl}`);
+          const {
+            data: { data: registeredCount },
+          } = await http.get(`/census/census-takers/${groupmentParamUrl}`);
+
+          commit("SET_REPORTS_DATA", {
+            workersCount,
+            captationCount,
+            registeredCount,
+          });
+        }
       } catch (e) {
         console.error(e);
       }

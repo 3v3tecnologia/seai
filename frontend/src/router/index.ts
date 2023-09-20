@@ -80,12 +80,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = store.state.auth;
   if (to.path != "/login" && !auth) {
-    return next("/login");
+    next("/login");
+  } else {
+    next();
   }
-
-  next();
-  // ...
-  // explicitly return false to cancel the navigation
 });
 
 export default router;
