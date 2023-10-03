@@ -1,16 +1,14 @@
 <template>
   <div class="row">
     <div class="col-lg-12 mb-2">
-      <div v-if="currentReport.value === 1">
-        <TableReport
-          v-for="(report, i) in generalReports"
-          :key="report.title"
-          :class="i ? 'mt-4' : ''"
-          :data="report.data"
-          :title="report.title"
-          :columns="report.columns"
-        />
-      </div>
+      <TableReport
+        v-for="(report, i) in currentReportTables"
+        :key="report.title"
+        :class="i ? 'mt-4' : ''"
+        :data="report.data"
+        :title="report.title"
+        :columns="report.columns"
+      />
     </div>
     <div class="col-lg-12">
       <div class="wrapper-table">
@@ -33,13 +31,21 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  currentReport: {
+    type: Object,
+    default: () => ({}),
+  },
   showCities: {
     type: Boolean,
     default: false,
   },
-  currentReport: {
-    type: Object,
-    default: () => ({}),
+  showBasin: {
+    type: Boolean,
+    default: false,
+  },
+  showConsuming: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -47,11 +53,120 @@ const basicColumns = computed(() => [
   {
     title: "Bacia",
     field: "Bacia",
+    visible: props.showBasin,
   },
   {
     title: "Municipio",
     field: "Municipio",
     visible: props.showCities,
+  },
+]);
+
+const aquaReports = computed(() => [
+  {
+    title: "Quantidade de tanques",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Tanques",
+        field: "Tanques",
+      },
+    ],
+    data: props.data.aquaculture,
+  },
+  {
+    title: "Captação de tanques",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Mes",
+        field: "Mes",
+      },
+      {
+        title: "Tanques",
+        field: "Tanques",
+      },
+      {
+        title: "Captação",
+        field: "Captação",
+      },
+      {
+        title: "Volume por tanque",
+        field: "Volume/tanque",
+      },
+    ],
+    data: props.data.tankCaptation,
+  },
+]);
+
+const indicators = computed(() => [
+  {
+    title: "Segurança econômica",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Rentabilidade",
+        field: "Rentabilidade",
+      },
+      {
+        title: "Rentabilidade por área",
+        field: "RentabilidadePorArea",
+      },
+    ],
+    data: props.data.securityEconomic,
+  },
+  {
+    title: "Segurança social",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Empregos por pessoa física",
+        field: "EmpregosPF",
+      },
+      {
+        title: "Empregos por pessoa jurídica",
+        field: "EmpregosPJ",
+      },
+      {
+        title: "Empregos por área",
+        field: "EmpregosPorArea",
+      },
+    ],
+    data: props.data.securitySocial,
+  },
+  {
+    title: "Segurança hídrica",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Consumo total",
+        field: "ConsumoTotal",
+      },
+      {
+        title: "Volume por área",
+        field: "VolumePorArea",
+      },
+    ],
+    data: props.data.securityWater,
+  },
+]);
+
+const animals = computed(() => [
+  {
+    title: "Animais",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Tipo de criação",
+        field: "TipoCriacao",
+      },
+      {
+        title: "Consumo",
+        field: "Consumo",
+        visible: props.showConsuming,
+      },
+    ],
+    data: props.data.animals,
   },
 ]);
 
@@ -61,14 +176,14 @@ const generalReports = computed(() => [
     columns: [
       ...basicColumns.value,
       {
-        title: "Valor",
+        title: "Registrados",
         field: "Quantidade",
       },
     ],
     data: props.data.registeredCount,
   },
   {
-    title: "Quantidade de trabalhadores (média)",
+    title: "Quantidade de trabalhadores",
     columns: [
       ...basicColumns.value,
       {
@@ -76,7 +191,7 @@ const generalReports = computed(() => [
         field: "Tipo",
       },
       {
-        title: "Valor",
+        title: "Trabalhadores",
         field: "Média de trabalhadores",
       },
     ],
@@ -91,6 +206,10 @@ const generalReports = computed(() => [
         field: "Captação",
       },
       {
+        title: "Mes",
+        field: "Mes",
+      },
+      {
         title: "Vazão média",
         field: "Vazão média",
       },
@@ -103,23 +222,17 @@ const generalReports = computed(() => [
   },
 ]);
 
-const downloadData = (type) => {
-  try {
-    tabulator.value.downloadToTab(`${type}`, `seai_indicadores.${type}`, {
-      bom: true,
-    });
-
-    toast.success("Dados baixados com sucesso", {
-      position: toast.POSITION.BOTTOM_RIGHT,
-    });
-  } catch (e) {
-    return toast.error("Ocorreu um erro ao baixar arquivo.", {
-      position: toast.POSITION.BOTTOM_RIGHT,
-    });
+const currentReportTables = computed(() => {
+  if (props.currentReport.value === 1) {
+    return generalReports.value;
+  } else if (props.currentReport.value === 2) {
+    return animals.value;
+  } else if (props.currentReport.value === 3) {
+    return aquaReports.value;
+  } else if (props.currentReport.value === 4) {
+    return indicators.value;
   }
-};
 
-const downloadCSV = () => {
-  downloadData("csv");
-};
+  return [];
+});
 </script>

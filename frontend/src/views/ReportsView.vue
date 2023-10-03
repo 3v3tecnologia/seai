@@ -5,18 +5,19 @@
         <div class="pt-3 pb-2"></div>
 
         <BaseDropdown
-          v-model="showingDataFormat"
-          :options="showingDataOptions"
-          placeholder="Agrupamento"
+          v-model="groupReports"
+          :options="groupReportsOptions"
+          placeholder="Tipo de relatório"
+          width="200px"
         />
 
         <div class="px-4"></div>
 
         <BaseDropdown
-          v-model="groupReports"
-          :options="groupReportsOptions"
-          placeholder="Tipo de relatório"
-          width="200px"
+          v-model="showingDataFormat"
+          :options="showingDataOptions"
+          :option-disabled="showingDataOptions"
+          placeholder="Agrupamento"
         />
 
         <div class="pr-md-5"></div>
@@ -24,6 +25,7 @@
         <BaseCheckBox
           inline-label
           remove-margin
+          :disabled="showingDataFormat.value === 2"
           v-model="hydrographicBasin"
           :options="hydrographicBasinOptions"
           label="Bacias hidrográficas"
@@ -60,8 +62,10 @@
           :current-report="groupReports"
         />
         <ExportData
-          :show-cities="showingDataFormat.value === 2"
           v-else
+          :show-cities="showCities"
+          :show-consuming="showConsuming"
+          :show-basin="showBasin"
           :data="reportsData"
           :current-report="groupReports"
         />
@@ -83,17 +87,22 @@ import { useStore } from "vuex";
 const isLoading = ref(true);
 const store = useStore();
 
-const showingDataOptions = [
+const totalGroupment = [
   {
-    title: "Bacia Hidrográfica",
+    title: "Bacia hidrográfica",
     value: 1,
   },
   {
-    title: "Cidade",
+    title: "Município",
     value: 2,
   },
+  {
+    title: "Tipo de criação",
+    value: 3,
+  },
 ];
-const showingDataFormat = ref(showingDataOptions[0]);
+
+const showingDataFormat = ref(totalGroupment[0]);
 
 const groupReportsOptions = [
   {
@@ -113,7 +122,18 @@ const groupReportsOptions = [
     value: 4,
   },
 ];
+
 const groupReports = ref(groupReportsOptions[0]);
+
+const showingDataOptions = computed(() =>
+  totalGroupment.filter((opt) =>
+    groupReports.value.value === 2 ? true : opt.value != 3
+  )
+);
+
+const showConsuming = computed(() => showingDataFormat.value.value === 3);
+const showBasin = computed(() => showingDataFormat.value.value === 1);
+const showCities = computed(() => showingDataFormat.value.value === 2);
 
 store.dispatch("FETCH_PLACES_OPTIONS");
 
@@ -132,20 +152,24 @@ const hydrographicBasinName = computed(() =>
   hydrographicBasin.value.map((d) => d["title"])
 );
 
+const citiesName = computed(() => city.value.map((d) => d["title"]));
+
 const reportsData = computed(() => {
   const reportsDataRaw = store.state.reportsData;
   const filteredData = {};
 
-  if (!hydrographicBasinName.value.length) {
+  if (!hydrographicBasinName.value.length && !citiesName.value.length) {
     return reportsDataRaw;
   }
 
   Object.keys(reportsDataRaw).forEach(
     (key) =>
       (filteredData[key] = reportsDataRaw[key].filter((d) => {
-        const data = hydrographicBasinName.value.includes(d["Bacia"]);
+        const includesBasin = hydrographicBasinName.value.includes(d["Bacia"]);
+        const includesCity = citiesName.value.includes(d["Municipio"]);
+        console.log("teste", d["Municipio"]);
 
-        return data;
+        return includesBasin || includesCity;
       }))
   );
 
@@ -178,6 +202,20 @@ watch(
   async (val) => {
     if (val.value.value === 1) {
       city.value = [];
+    } else if (val.value.value === 2) {
+      hydrographicBasin.value = [];
+    }
+
+    await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
+  },
+  { deep: true }
+);
+
+watch(
+  () => groupReports,
+  async (newVal) => {
+    if (newVal.value.value !== 2 && showingDataFormat.value.value === 3) {
+      showingDataFormat.value = totalGroupment[0];
     }
 
     await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);

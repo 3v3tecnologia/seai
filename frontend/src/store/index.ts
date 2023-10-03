@@ -16,6 +16,48 @@ import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
 
+const dataFormatUrl = {
+  1: "basin",
+  2: "county",
+  3: "consumption",
+};
+
+const getValor = (item: any) => {
+  const keys = Object.keys(item);
+
+  keys.forEach((key) => {
+    if (item[key].valor) {
+      item[key] = item[key]["valor"];
+    }
+  });
+
+  if (item.Tipo === "bacia") {
+    item["Bacia"] = item["Nome"];
+  } else {
+    item["Municipio"] = item["Nome"];
+  }
+
+  return item;
+};
+
+const ungroupData = (items: any) => {
+  const keys = Object.keys(items);
+  const totalData: { [x: string]: number | string }[] = [];
+
+  keys.forEach((key) => {
+    const data = items[key].map((i: any) => {
+      i.Bacia = key;
+      i.Municipio = key;
+
+      return i;
+    });
+
+    totalData.push(...data);
+  });
+
+  return totalData;
+};
+
 interface Estado {
   auth: IAuth | null;
   users: IUsersWrapper;
@@ -32,6 +74,12 @@ const reportsDataDefault: IReportsData = {
   registeredCount: [],
   captionCount: [],
   workersCount: [],
+  aquaculture: [],
+  tankCaptation: [],
+  securityWater: [],
+  securitySocial: [],
+  securityEconomic: [],
+  securityProductive: [],
 };
 
 export const store = createStore<Estado>({
@@ -200,36 +248,111 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["FETCH_REPORTS_DATA"]({ commit }, filters) {
+    async ["FETCH_REPORT_GENERAL"]({ commit }, filters) {
       try {
-        const showingDataFormat = filters.showingDataFormat.value;
-        const groupmentParam = filters.groupReports.value;
-        let showingDataFormatUrl = "basin";
+        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
-        if (showingDataFormat === 1) {
-          showingDataFormatUrl = "basin";
-        } else if (showingDataFormat === 2) {
-          showingDataFormatUrl = "county";
-        } else if (showingDataFormat === 3) {
-          showingDataFormatUrl = "consumption";
-        }
+        const {
+          data: { data: workersCount },
+        } = await http.get(`/census/workers/${showingDataFormatUrl}`);
+        const {
+          data: { data: captationCount },
+        } = await http.get(`/census/captation/${showingDataFormatUrl}`);
+        const {
+          data: { data: registeredCount },
+        } = await http.get(`/census/census-takers/${showingDataFormatUrl}`);
+
+        commit("SET_REPORTS_DATA", {
+          workersCount,
+          captationCount,
+          registeredCount,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORT_AQUACULTURE"]({ commit }, filters) {
+      try {
+        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+
+        const {
+          data: { data: tankCaptation },
+        } = await http.get(`/census/captation/tank/${showingDataFormatUrl}`);
+        const {
+          data: { data: aquaculture },
+        } = await http.get(`/census/aquaculture/${showingDataFormatUrl}`);
+
+        commit("SET_REPORTS_DATA", {
+          tankCaptation,
+          aquaculture,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORT_INDICATORS"]({ commit }, filters) {
+      try {
+        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+
+        const {
+          data: { data: securityWater },
+        } = await http.get(
+          `/census/indicator/security/water/${showingDataFormatUrl}`
+        );
+
+        const {
+          data: { data: securitySocial },
+        } = await http.get(
+          `/census/indicator/security/social/${showingDataFormatUrl}`
+        );
+
+        const {
+          data: { data: securityEconomic },
+        } = await http.get(
+          `/census/indicator/security/economic/${showingDataFormatUrl}`
+        );
+
+        commit("SET_REPORTS_DATA", {
+          securityWater: securityWater.map(getValor),
+          securitySocial: securitySocial.map(getValor),
+          securityEconomic: securityEconomic.map(getValor),
+          securityProductive: [],
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORT_ANIMALS"]({ commit }, filters) {
+      try {
+        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+
+        const {
+          data: { data: animals },
+        } = await http.get(`/census/animals/${showingDataFormatUrl}`);
+
+        commit("SET_REPORTS_DATA", {
+          animals: showingDataFormat === 3 ? animals : ungroupData(animals),
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORTS_DATA"]({ dispatch }, filters) {
+      try {
+        const groupmentParam = filters.groupReports.value;
 
         if (groupmentParam === 1) {
-          const {
-            data: { data: workersCount },
-          } = await http.get(`/census/workers/${showingDataFormatUrl}`);
-          const {
-            data: { data: captationCount },
-          } = await http.get(`/census/captation/${showingDataFormatUrl}`);
-          const {
-            data: { data: registeredCount },
-          } = await http.get(`/census/census-takers/${showingDataFormatUrl}`);
-
-          commit("SET_REPORTS_DATA", {
-            workersCount,
-            captationCount,
-            registeredCount,
-          });
+          dispatch("FETCH_REPORT_GENERAL", filters);
+        } else if (groupmentParam === 2) {
+          dispatch("FETCH_REPORT_ANIMALS", filters);
+        } else if (groupmentParam === 3) {
+          dispatch("FETCH_REPORT_AQUACULTURE", filters);
+        } else if (groupmentParam === 4) {
+          dispatch("FETCH_REPORT_INDICATORS", filters);
         }
       } catch (e) {
         console.error(e);

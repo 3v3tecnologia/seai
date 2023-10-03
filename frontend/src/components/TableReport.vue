@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, defineProps, computed, watch } from "vue";
+import { onMounted, ref, defineProps, watch } from "vue";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 
