@@ -1,6 +1,8 @@
 <template>
-  <CardChart is-centered>
+  <CardChart is-centered style="max-height: 282.9px; min-height: 282.9px">
     <apexchart
+      ref="pizzaChart"
+      class="h-100"
       :width="props.width"
       :height="hasMonthlyFilter ? 'auto' : props.width"
       type="pie"
@@ -10,8 +12,8 @@
   </CardChart>
 </template>
 
-<script lang="ts" setup>
-import { defineProps, ref } from "vue";
+<script setup>
+import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
 const props = defineProps({
@@ -54,22 +56,26 @@ const props = defineProps({
   },
 });
 
-const dataDTO = props.data.map((val) => {
-  return val ? val : 0;
-});
+const dataDTO = computed(() =>
+  props.data.map((val) => {
+    return val ? val : 0;
+  })
+);
+const total = computed(() => dataDTO.value.reduce((a, b) => a + b, 0));
 
-const total = dataDTO.reduce((a, b) => a + b, 0);
+const calcPercent = (val) =>
+  total.value ? +(val / total.value).toFixed(3) : 0;
 
-const series = dataDTO
-  .map((val) => val / total)
-  .map((val) => Number(val.toFixed(2)));
+let series = computed(() => dataDTO.value.map(calcPercent));
+
+const pizzaChart = ref(null);
 
 const title = {
   text: props.title,
   align: "left",
   margin: 10,
   offsetX: 0,
-  offsetY: 0,
+  offsetY: -10,
   floating: false,
   style: {
     fontSize: "16px",
@@ -78,7 +84,8 @@ const title = {
     color: "#263238",
   },
 };
-const options = {
+
+const options = computed(() => ({
   chart: {
     width: 380,
     type: "pie",
@@ -117,7 +124,7 @@ const options = {
         const sufix = props.tooltipSufix ? ` ${props.tooltipSufix}` : "";
         const prefix = props.tooltipPrefix ? `${props.tooltipPrefix} ` : "";
 
-        return `${prefix}${formattedVal}${sufix}`;
+        return `${(val * 100).toFixed(1)}% (${prefix}${formattedVal}${sufix})`;
       },
     },
   },
@@ -133,9 +140,12 @@ const options = {
         },
         chart: {
           width: 200,
+          toolbar: {
+            show: false,
+          },
         },
       },
     },
   ],
-};
+}));
 </script>

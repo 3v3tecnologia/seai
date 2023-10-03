@@ -204,26 +204,26 @@ export const store = createStore<Estado>({
       try {
         const showingDataFormat = filters.showingDataFormat.value;
         const groupmentParam = filters.groupReports.value;
-        let groupmentParamUrl = "basin";
-
-        if (groupmentParam === 1) {
-          groupmentParamUrl = "basin";
-        } else if (groupmentParam === 2) {
-          groupmentParamUrl = "county";
-        } else if (groupmentParam === 3) {
-          groupmentParamUrl = "consumption";
-        }
+        let showingDataFormatUrl = "basin";
 
         if (showingDataFormat === 1) {
+          showingDataFormatUrl = "basin";
+        } else if (showingDataFormat === 2) {
+          showingDataFormatUrl = "county";
+        } else if (showingDataFormat === 3) {
+          showingDataFormatUrl = "consumption";
+        }
+
+        if (groupmentParam === 1) {
           const {
             data: { data: workersCount },
-          } = await http.get(`/census/workers/${groupmentParamUrl}`);
+          } = await http.get(`/census/workers/${showingDataFormatUrl}`);
           const {
             data: { data: captationCount },
-          } = await http.get(`/census/captation/${groupmentParamUrl}`);
+          } = await http.get(`/census/captation/${showingDataFormatUrl}`);
           const {
             data: { data: registeredCount },
-          } = await http.get(`/census/census-takers/${groupmentParamUrl}`);
+          } = await http.get(`/census/census-takers/${showingDataFormatUrl}`);
 
           commit("SET_REPORTS_DATA", {
             workersCount,

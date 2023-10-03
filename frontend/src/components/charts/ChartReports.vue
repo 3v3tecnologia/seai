@@ -1,7 +1,6 @@
 <template>
   <div>
     <div v-if="currentReport.value === 1" class="row mb-3 mb-lg-5">
-      <!-- <div > -->
       <div class="col-lg-4 d-flex align-items-center justify-content-start">
         <PizzaChart
           :width="400"
@@ -24,15 +23,31 @@
           id="8"
         />
       </div>
+
       <div class="col-lg-4 d-flex align-items-center justify-content-start">
         <PizzaChart
           :width="400"
-          :data="captationCount.data"
-          title="Captação mensal"
+          :data="captationCountSuper.data"
+          title="Captação mensal superficial"
           series-name="Captação"
-          :labels="captationCount.labels"
+          :labels="captationCountSuper.labels"
           color="#7D3AC1"
           id="9"
+          has-monthly-filter
+        />
+      </div>
+
+      <div
+        class="col-lg-4 d-flex align-items-center justify-content-start mt-4"
+      >
+        <PizzaChart
+          :width="400"
+          :data="captationCountUnder.data"
+          title="Captação mensal subterrânea"
+          series-name="Captação"
+          :labels="captationCountUnder.labels"
+          color="#7D3AC1"
+          id="10"
           has-monthly-filter
         />
         <!-- </div> -->
@@ -163,15 +178,15 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { defineProps, computed } from "vue";
 import ScatterChart from "@/components/charts/ScatterChart.vue";
 import PizzaChart from "@/components/charts/PizzaChart.vue";
 
 const props = defineProps({
   data: {
-    type: Array,
-    default: () => [],
+    type: Object,
+    default: () => ({}),
   },
   currentReport: {
     type: Object,
@@ -180,31 +195,37 @@ const props = defineProps({
 });
 
 const workersCount = computed(() => ({
-  data: props.data.workersCount.map(
-    (w: { [x: string]: any }) => w["Média de trabalhadores"]
-  ),
+  data: props.data.workersCount.map((w) => w["Média de trabalhadores"]),
   labels: props.data.workersCount.map(
-    (w: { [x: string]: any }) =>
-      `${w["Bacia"] || w["Municipio"]} - ${w["Tipo"]}`
+    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Tipo"]}`
   ),
 }));
 
-const captationCount = computed(() => ({
-  data: props.data.captationCount.map(
-    (w: { [x: string]: any }) => w["Captação"]
+const captationCountUnderFiltered = computed(() =>
+  props.data.captationCount.filter((c) => c["Captação"] === "Subterrânea")
+);
+
+const captationCountUnder = computed(() => ({
+  data: captationCountUnderFiltered.value.map((w) => w["Volume médio"]),
+  labels: captationCountUnderFiltered.value.map(
+    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Mes"]}`
   ),
-  labels: props.data.captationCount.map(
-    (w: { [x: string]: any }) => w["Bacia"] || w["Municipio"]
+}));
+
+const captationCountSuperFiltered = computed(() =>
+  props.data.captationCount.filter((c) => c["Captação"] === "Superficial")
+);
+
+const captationCountSuper = computed(() => ({
+  data: captationCountSuperFiltered.value.map((w) => w["Volume médio"]),
+  labels: captationCountSuperFiltered.value.map(
+    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Mes"]}`
   ),
 }));
 
 const registeredCount = computed(() => ({
-  data: props.data.registeredCount.map(
-    (w: { [x: string]: any }) => w["Quantidade"]
-  ),
-  labels: props.data.registeredCount.map(
-    (w: { [x: string]: any }) => w["Bacia"] || w["Municipio"]
-  ),
+  data: props.data.registeredCount.map((w) => w["Quantidade"]),
+  labels: props.data.registeredCount.map((w) => w["Bacia"] || w["Municipio"]),
 }));
 // const workersCountData = computed(() =>
 //   props.data.workersCount.map((w) => w["Média de trabalhadores"])

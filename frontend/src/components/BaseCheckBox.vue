@@ -6,14 +6,15 @@
       optionLabel="title"
       :placeholder="placeholder"
       class="wrapper-check"
+      :disabled="disabled"
       display="chip"
     />
     <label for="dd-city">{{ placeholder }}</label>
   </span>
 </template>
 
-<script lang="ts" setup>
-import { defineProps, defineEmits, ref, Ref, watch } from "vue";
+<script setup>
+import { defineProps, defineEmits, ref, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 
 const props = defineProps({
@@ -49,13 +50,20 @@ const props = defineProps({
   },
 });
 
-const inputValue: Ref<[]> = ref([]);
+const inputValue = ref([]);
 
 const emit = defineEmits(["update:modelValue"]);
 
 watch(inputValue, (val) => {
   emit("update:modelValue", val);
 });
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    inputValue.value = val;
+  }
+);
 </script>
 
 <style lang="scss" scoped>

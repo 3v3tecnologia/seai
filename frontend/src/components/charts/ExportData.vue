@@ -1,12 +1,16 @@
 <template>
   <div class="row">
-    <div class="col-lg-12 d-flex mb-2">
-      <button class="btn btn-success mr-2" @click="downloadCSV">
-        Download CSV
-      </button>
-      <!-- <button class="btn btn-success mr-2" @click="downloadJSON">
-        Download json
-      </button> -->
+    <div class="col-lg-12 mb-2">
+      <div v-if="currentReport.value === 1">
+        <TableReport
+          v-for="(report, i) in generalReports"
+          :key="report.title"
+          :class="i ? 'mt-4' : ''"
+          :data="report.data"
+          :title="report.title"
+          :columns="report.columns"
+        />
+      </div>
     </div>
     <div class="col-lg-12">
       <div class="wrapper-table">
@@ -16,10 +20,10 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { TabulatorFull as Tabulator } from "tabulator-tables";
+<script setup>
+import TableReport from "../TableReport.vue";
 import { toast } from "vue3-toastify";
-import { ref, defineProps, onMounted } from "vue";
+import { ref, defineProps, computed } from "vue";
 
 const table = ref(null);
 const tabulator = ref(null);
@@ -29,73 +33,75 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  showCities: {
+    type: Boolean,
+    default: false,
+  },
+  currentReport: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-const columns = [
+const basicColumns = computed(() => [
   {
     title: "Bacia",
-    field: "basin",
-    headerTooltip: true,
+    field: "Bacia",
   },
   {
-    title: "Cidade",
-    field: "city",
-    headerTooltip: true,
-    formatter: (col) => {
-      return col._cell.value ?? "Todas";
-    },
+    title: "Municipio",
+    field: "Municipio",
+    visible: props.showCities,
   },
-  {
-    title: "Rendimento (R$)",
-    field: "anuallyEarn",
-    headerTooltip: true,
-  },
-  {
-    title: "Produção (kg)",
-    field: "anuallyProduction",
-    headerTooltip: true,
-  },
-  {
-    title: "Consumo de água (m³)",
-    field: "anuallyWaterConsumeBar",
-    headerTooltip: true,
-  },
-  {
-    title: "Consumo por hectare (m³/ha)",
-    field: "anuallyWaterCPI",
-    headerTooltip: true,
-  },
-  {
-    title: "Segurança Econômica (R$/ha)",
-    field: "productiveSecurityKg",
-    headerTooltip: true,
-  },
-  {
-    title: "Segurança produtiva (kg/ha)",
-    field: "productiveSecurityEarn",
-    headerTooltip: true,
-  },
-  {
-    title: "Segurança econômica (R$/ha)",
-    field: "productiveSecurityEarn",
-    headerTooltip: true,
-  },
-  {
-    title: "Segurança social (empregos/ha)",
-    field: "productiveSecurityEarn",
-    headerTooltip: true,
-  },
-];
+]);
 
-onMounted(() => {
-  //instantiate Tabulator when element is mounted
-  tabulator.value = new Tabulator(table.value, {
-    data: props.data,
-    reactiveData: false,
-    columns,
-    layout: "fitColumns",
-  });
-});
+const generalReports = computed(() => [
+  {
+    title: "Quantidade de registrados",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Valor",
+        field: "Quantidade",
+      },
+    ],
+    data: props.data.registeredCount,
+  },
+  {
+    title: "Quantidade de trabalhadores (média)",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Tipo",
+        field: "Tipo",
+      },
+      {
+        title: "Valor",
+        field: "Média de trabalhadores",
+      },
+    ],
+    data: props.data.workersCount,
+  },
+  {
+    title: "Captação mensal",
+    columns: [
+      ...basicColumns.value,
+      {
+        title: "Captação",
+        field: "Captação",
+      },
+      {
+        title: "Vazão média",
+        field: "Vazão média",
+      },
+      {
+        title: "Volume médio",
+        field: "Volume médio",
+      },
+    ],
+    data: props.data.captationCount,
+  },
+]);
 
 const downloadData = (type) => {
   try {
@@ -116,17 +122,4 @@ const downloadData = (type) => {
 const downloadCSV = () => {
   downloadData("csv");
 };
-
-const downloadJSON = () => {
-  downloadData("json");
-};
 </script>
-
-<style lang="scss" scoped>
-@import "~tabulator-tables/dist/css/tabulator_bootstrap4.min.css";
-
-.wrapper-table {
-  border: 1px solid #4b4b4b59;
-  border-radius: 5px;
-}
-</style>
