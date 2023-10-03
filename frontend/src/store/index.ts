@@ -66,13 +66,14 @@ interface Estado {
   reportsFilters: IReportsFilters;
   hydrographicBasinOptions: IHydrographicBasinOption[];
   reportsData: IReportsData;
+  isLoadingReport: boolean;
 }
 
 export const key: InjectionKey<Store<Estado>> = Symbol();
 
 const reportsDataDefault: IReportsData = {
   registeredCount: [],
-  captionCount: [],
+  captationCount: [],
   workersCount: [],
   aquaculture: [],
   tankCaptation: [],
@@ -85,6 +86,7 @@ const reportsDataDefault: IReportsData = {
 export const store = createStore<Estado>({
   state: {
     auth: null,
+    isLoadingReport: false,
     reportsData: reportsDataDefault,
     hydrographicBasinOptions: [
       {
@@ -121,6 +123,9 @@ export const store = createStore<Estado>({
   mutations: {
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
+    },
+    ["SET_LOADING_REPORT"](state, bool: boolean) {
+      state.isLoadingReport = bool;
     },
     ["SET_REPORTS_DATA"](state, data) {
       state.reportsData = {
@@ -341,7 +346,9 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["FETCH_REPORTS_DATA"]({ dispatch }, filters) {
+    async ["FETCH_REPORTS_DATA"]({ commit, dispatch }, filters) {
+      commit("SET_LOADING_REPORT", true);
+
       try {
         const groupmentParam = filters.groupReports.value;
 
@@ -357,6 +364,8 @@ export const store = createStore<Estado>({
       } catch (e) {
         console.error(e);
       }
+
+      commit("SET_LOADING_REPORT", false);
     },
     async ["CREATE_USER"](user: any) {
       try {

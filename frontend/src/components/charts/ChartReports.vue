@@ -180,7 +180,7 @@
         <BarChart
           :width="400"
           :data="workersCount.data"
-          title="Quantidade de trabalhadores"
+          title="Animais"
           series-name="Quantidade"
           :labels="workersCount.labels"
           color="#7D3AC1"

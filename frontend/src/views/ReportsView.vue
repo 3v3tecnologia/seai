@@ -16,8 +16,8 @@
         <BaseDropdown
           v-model="showingDataFormat"
           :options="showingDataOptions"
-          :option-disabled="showingDataOptions"
           placeholder="Agrupamento"
+          :disabled="isLoadingReport"
         />
 
         <div class="pr-md-5"></div>
@@ -55,7 +55,7 @@
         </router-link>
       </div>
 
-      <div v-if="!isLoading" class="mt-4 mt-lg-5">
+      <div v-if="!isLoadingReport" class="mt-4 mt-lg-5">
         <ChartReports
           v-if="showingTab === 'charts'"
           :data="reportsData"
@@ -84,7 +84,6 @@ import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { useStore } from "vuex";
 
-const isLoading = ref(true);
 const store = useStore();
 
 const totalGroupment = [
@@ -180,6 +179,8 @@ const hydrographicBasinOptions = computed(
   () => store.state.hydrographicBasinOptions
 );
 
+const isLoadingReport = computed(() => store.state.isLoadingReport);
+
 const cityOptions = computed(() => {
   return store.state.cityOptions.filter((val) => {
     if (hydrographicBasin.value.length) {
@@ -193,9 +194,7 @@ const cityOptions = computed(() => {
 const hydrographicBasin = ref([]);
 const city = ref([]);
 
-store
-  .dispatch("FETCH_REPORTS_DATA", filtersRequest.value)
-  .finally(() => (isLoading.value = false));
+store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
 
 watch(
   () => showingDataFormat,

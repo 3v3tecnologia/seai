@@ -1,6 +1,6 @@
 export default interface IReportsData {
   registeredCount: [];
-  captionCount: [];
+  captationCount: [];
   workersCount: [];
   aquaculture: [];
   tankCaptation: [];

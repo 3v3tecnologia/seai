@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, watch } from "vue";
+import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
 const props = defineProps({
@@ -81,7 +81,7 @@ const seriesData = dataDTO.map((val) => Number(val.toFixed(2)));
 
 const series = [{ name: props.seriesName, data: seriesData }];
 
-const title = {
+const title = computed(() => ({
   text: props.title,
   align: "left",
   margin: 10,
@@ -94,8 +94,9 @@ const title = {
     fontFamily: "Secular One",
     color: "#263238",
   },
-};
-const options = {
+}));
+
+const options = computed(() => ({
   chart: {
     type: "bar",
     // group: "chart",
@@ -157,7 +158,7 @@ const options = {
       },
     },
   },
-  title,
+  title: title.value,
   labels: props.labels,
   responsive: [
     {
@@ -172,5 +173,5 @@ const options = {
       },
     },
   ],
-};
+}));
 </script>
