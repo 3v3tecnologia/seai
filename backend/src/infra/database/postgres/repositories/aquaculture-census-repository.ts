@@ -73,7 +73,7 @@ export class KnexAquacultureCensusRepository
     }
 
     return data.rows.map((row: any) => ({
-      Bacia: row.Bacia,
+      Municipio: row.Municipio,
       Mes: row.Mes,
       ["Captação"]: row["Captação"],
       Tanques: Number(row.Tanques),
