@@ -71,51 +71,65 @@ export class KnexCaptationCensusRepository
   }
   async getFlowAndVolumeAvgByCounty(): Promise<Array<any> | null> {
     const data = await censusDb.raw(`
-      select
+    SELECT
       m."Municipio",
+      b."Bacia",
       spsb."Mes",
       spsb."Captação",
-      round(cast(avg(spsb."Vazao") as numeric), 2) as "Vazão média (m³/h)",
-      round(cast(avg(spsb."VolumeMes") as numeric), 2) as "Volume médio (m³)"
-      from
+      round(
+        CAST(
+          avg(spsb."Vazao") AS NUMERIC
+        ),
+        2
+      ) AS "Vazão média (m³/h)",
+      round(
+        CAST(
+          avg(spsb."VolumeMes") AS NUMERIC
+        ),
+        2
+      ) AS "Volume médio (m³)"
+    FROM
       (
-          select
-          sp."Rh_Id" as "Rh_Id",
-          'Superficial' as "Captação",
+        SELECT
+          sp."Rh_Id" AS "Rh_Id",
+          'Superficial' AS "Captação",
           cm.*
-          from
+        FROM
           "Superficial" sp
-          inner join
-          "CaptacaoMedia" cm
-          on
+        INNER JOIN
+              "CaptacaoMedia" cm
+              ON
           sp."Captacao_Id" = cm."Id"
-          union all
-          select
-          sb."Rh_Id" as "Rh_Id",
-          'Subterrânea' as "Captação",
+      UNION ALL
+        SELECT
+          sb."Rh_Id" AS "Rh_Id",
+          'Subterrânea' AS "Captação",
           cm.*
-          from
+        FROM
           "Subterranea" sb
-          inner join
-          "CaptacaoMedia" cm
-          on
+        INNER JOIN
+              "CaptacaoMedia" cm
+              ON
           sb."Captacao_Id" = cm."Id"
-      ) as "spsb"
-      inner join
-      "RecursoHidrico" rh
-      on
+      ) AS "spsb"
+    INNER JOIN
+          "RecursoHidrico" rh
+          ON
       rh."Id" = spsb."Rh_Id"
-      inner join
-      "Municipios" m
-      on
+    INNER JOIN
+          "Municipios" m
+          ON
       m."Id" = rh."Municipio_Id"
-      where
+    INNER JOIN "Bacias" b 
+      ON b."Id" = m."Bacia_Id" 
+      
+    WHERE
       spsb."VolumeMes" > 0
-      group by
+    GROUP BY
       m."Municipio",
+      b."Bacia",
       spsb."Mes",
-      spsb."Captação"
-      ;
+      spsb."Captação";
   `);
 
     if (!data.rowCount) {
@@ -123,6 +137,7 @@ export class KnexCaptationCensusRepository
     }
 
     return data.rows.map((row: any) => ({
+      Bacia: row.Bacia,
       Municipio: row.Municipio,
       Mes: row.Mes,
       ["Captação"]: row["Captação"],
