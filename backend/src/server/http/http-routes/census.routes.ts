@@ -157,6 +157,12 @@ export const censusRouter = (): Router => {
     adaptRoute(makeFetchWorkersCensusByBasinController())
   );
 
+  router.get(
+    "/workers/county",
+    authorization,
+    adaptRoute(makeFetchWorkersCensusByCountyController())
+  );
+
   //locations
   router.get(
     "/locations",
