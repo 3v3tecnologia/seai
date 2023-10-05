@@ -22,10 +22,10 @@
 
         <div class="pr-md-5"></div>
 
+        <!-- :disabled="showingDataFormat.value === 2" -->
         <BaseCheckBox
           inline-label
           remove-margin
-          :disabled="showingDataFormat.value === 2"
           v-model="hydrographicBasin"
           :options="hydrographicBasinOptions"
           label="Bacias hidrográficas"
@@ -166,7 +166,6 @@ const reportsData = computed(() => {
       (filteredData[key] = reportsDataRaw[key].filter((d) => {
         const includesBasin = hydrographicBasinName.value.includes(d["Bacia"]);
         const includesCity = citiesName.value.includes(d["Municipio"]);
-        console.log("teste", d["Municipio"]);
 
         return includesBasin || includesCity;
       }))
@@ -201,8 +200,6 @@ watch(
   async (val) => {
     if (val.value.value === 1) {
       city.value = [];
-    } else if (val.value.value === 2) {
-      hydrographicBasin.value = [];
     }
 
     await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
