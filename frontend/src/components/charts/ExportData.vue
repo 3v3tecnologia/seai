@@ -28,8 +28,8 @@ const tabulator = ref(null);
 
 const props = defineProps({
   data: {
-    type: Array,
-    default: () => [],
+    type: Object,
+    default: () => ({}),
   },
   currentReport: {
     type: Object,

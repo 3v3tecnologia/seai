@@ -218,4 +218,19 @@ watch(
   },
   { deep: true }
 );
+
+watch(
+  () => hydrographicBasin.value,
+  (newVal) => {
+    if (newVal.length) {
+      const idBasins = newVal.map((d) => d.IdBacia);
+      const availableCities = city.value.filter((c) =>
+        idBasins.includes(c.IdBacia)
+      );
+
+      city.value = availableCities;
+    }
+  },
+  { deep: true }
+);
 </script>

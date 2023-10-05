@@ -9,7 +9,10 @@
       :disabled="disabled"
       display="chip"
     />
-    <label for="dd-city">{{ placeholder }}</label>
+    <label for="dd-city"
+      >{{ placeholder }}
+      {{ inputValue.length ? `(${inputValue.length})` : "" }}</label
+    >
   </span>
 </template>
 
