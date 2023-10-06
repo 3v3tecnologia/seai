@@ -53,6 +53,8 @@ const props = defineProps({
   },
 });
 
+const tempInterval = ref(null);
+
 const inputValue = ref([]);
 
 const emit = defineEmits(["update:modelValue"]);

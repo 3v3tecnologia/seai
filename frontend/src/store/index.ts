@@ -347,9 +347,8 @@ export const store = createStore<Estado>({
       }
     },
     async ["FETCH_REPORTS_DATA"]({ commit, dispatch }, filters) {
-      commit("SET_LOADING_REPORT", true);
-
       try {
+        commit("SET_LOADING_REPORT", true);
         const groupmentParam = filters.groupReports.value;
 
         if (groupmentParam === 1) {

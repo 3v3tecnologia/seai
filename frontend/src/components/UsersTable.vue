@@ -79,7 +79,7 @@ import {
   onMounted,
   computed,
 } from "vue";
-import { usersOptions } from "@/constants";
+import { usersOptions } from "@/constants.js";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseInput from "@/components/BaseInput.vue";

@@ -1,315 +1,20 @@
 <template>
   <div>
-    <div v-if="currentReport.value === 1" class="row mb-3 mb-lg-5">
-      <div class="col-lg-6 d-flex align-items-center justify-content-start">
-        <BarChart
-          :width="400"
-          :data="registeredCount.data.slice(0, 3)"
-          title="Quantidade de recenseados"
-          series-name="Recenseados"
-          :labels="registeredCount.labels"
-          tooltip-sufix=""
-          id="8"
-          color="#29066B"
-        />
-      </div>
-
-      <div class="col-lg-6 d-flex align-items-center justify-content-start">
-        <StackedBarChart
-          :width="400"
-          id="7"
-          title="Quantidade de trabalhadores"
-          series-name="trabalhadores"
-          :data="workersCount.data"
-          :stack-key="workersCount.stackKey"
-          :value-key="workersCount.valueKey"
-        />
-      </div>
-
+    <div class="text-black-50 d-flex">
+      Máximo de {{ itemsPerGraph }} bacias/municípios por gráfico
+    </div>
+    <div class="row justify-content-center mb-3 mb-lg-5">
       <div
+        v-for="chart in chartsGroups[currentReport.value - 1]"
+        :key="chart.id"
         class="col-lg-6 d-flex align-items-center justify-content-start mt-4"
       >
-        <StackedBarChart
-          :width="400"
-          id="9"
-          title="Captação mensal superficial"
-          series-name="Captação superficial"
-          :data="captationCountSuper.data"
-          :value-key="captationCountSuper.valueKey"
-          :stack-key="captationCountSuper.stackKey"
+        <component
+          v-if="chart.data && chart.data.length"
+          :is="chart.component"
+          v-bind="chart"
         />
       </div>
-
-      <div
-        class="col-lg-6 d-flex align-items-center justify-content-start mt-4"
-      >
-        <StackedBarChart
-          :width="400"
-          id="10"
-          title="Captação mensal subterrânea"
-          series-name="Captação subterrânea"
-          :data="captationCountUnder.data"
-          :stack-key="captationCountUnder.stackKey"
-          :value-key="captationCountUnder.valueKey"
-        />
-      </div>
-      <!-- 
-      <div class="col-lg-6 d-flex align-items-center justify-content-end">
-        <BarChart
-          :width="400"
-          series-name="Produzido"
-          :data="anuallyProduction"
-          title="Produção anual (kg)"
-          :labels="labels"
-          tooltip-sufix="kg"
-          id="11"
-          is-horizontal
-          color="#29066B"
-        />
-      </div>
-    </div>
-
-    <div class="row mb-3 mb-lg-5">
-      <div class="col-lg-5 d-flex align-items-center justify-content-center">
-        <BarChart
-          series-name="Volume"
-          :data="anuallyWaterConsumeBar"
-          title="Consumo anual de água (m³)"
-          :labels="labels"
-          color="#176BAD"
-          id="9"
-          tooltip-sufix="m³"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <BarChart
-          series-name="Área"
-          :data="anuallyEarn"
-          title="Área Irrigada total (ha)"
-          :labels="labels"
-          color="#142459"
-          id="10"
-          tooltip-sufix="ha"
-        />
-      </div>
-      <div class="col-lg-3">
-        <ScatterChart
-          id="8"
-          :data="anuallyWaterCPI"
-          title="Consumo de água"
-          :labels="labels"
-          :tooltip-sufix="['m³', 'ha']"
-        />
-      </div>
-    </div>
-
-    <div class="row mb-2 mb-lg-45">
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <ScatterChart
-          id="1"
-          :data="productiveSecurityKg"
-          title="Segurança produtiva"
-          group="3"
-          :labels="labels"
-          :tooltip-sufix="['kg', 'ha']"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="2"
-          :data="anuallyProduction"
-          title="Segurança econômica"
-          group="1"
-          :labels="labels"
-          tooltip-sufix="R$/ha"
-          color="#29066B"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="3"
-          :data="anuallyProduction"
-          title="Segurança social"
-          group="2"
-          :labels="labels"
-          tooltip-sufix="empregos/ha"
-          color="#29066B"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <ScatterChart
-          series-name="Proporção"
-          id="4"
-          :data="productiveSecurityEarn"
-          title="Segurança produtiva"
-          :labels="labels"
-          group="3"
-          :tooltip-sufix="['kg', 'm³']"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="5"
-          :data="anuallyProduction"
-          title="Segurança econômica"
-          :labels="labels"
-          tooltip-sufix="R$/m³"
-          group="1"
-          color="#29066B"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="6"
-          :data="anuallyProduction"
-          title="Segurança social"
-          group="2"
-          :labels="labels"
-          tooltip-sufix="empregos/m³"
-          color="#29066B"
-        />
-      </div> -->
-    </div>
-    <div v-else-if="currentReport.value === 2" class="row mb-3 mb-lg-5">
-      <div class="col-lg-12 d-flex align-items-center justify-content-start">
-        <BarChart
-          :width="400"
-          :data="workersCount.data"
-          title="Animais"
-          series-name="Quantidade"
-          :labels="workersCount.labels"
-          color="#7D3AC1"
-          id="7"
-        />
-      </div>
-      <!-- 
-      <div class="col-lg-6 d-flex align-items-center justify-content-end">
-        <BarChart
-          :width="400"
-          series-name="Produzido"
-          :data="anuallyProduction"
-          title="Produção anual (kg)"
-          :labels="labels"
-          tooltip-sufix="kg"
-          id="11"
-          is-horizontal
-          color="#29066B"
-        />
-      </div>
-    </div>
-
-    <div class="row mb-3 mb-lg-5">
-      <div class="col-lg-5 d-flex align-items-center justify-content-center">
-        <BarChart
-          series-name="Volume"
-          :data="anuallyWaterConsumeBar"
-          title="Consumo anual de água (m³)"
-          :labels="labels"
-          color="#176BAD"
-          id="9"
-          tooltip-sufix="m³"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <BarChart
-          series-name="Área"
-          :data="anuallyEarn"
-          title="Área Irrigada total (ha)"
-          :labels="labels"
-          color="#142459"
-          id="10"
-          tooltip-sufix="ha"
-        />
-      </div>
-      <div class="col-lg-3">
-        <ScatterChart
-          id="8"
-          :data="anuallyWaterCPI"
-          title="Consumo de água"
-          :labels="labels"
-          :tooltip-sufix="['m³', 'ha']"
-        />
-      </div>
-    </div>
-
-    <div class="row mb-2 mb-lg-45">
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <ScatterChart
-          id="1"
-          :data="productiveSecurityKg"
-          title="Segurança produtiva"
-          group="3"
-          :labels="labels"
-          :tooltip-sufix="['kg', 'ha']"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="2"
-          :data="anuallyProduction"
-          title="Segurança econômica"
-          group="1"
-          :labels="labels"
-          tooltip-sufix="R$/ha"
-          color="#29066B"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="3"
-          :data="anuallyProduction"
-          title="Segurança social"
-          group="2"
-          :labels="labels"
-          tooltip-sufix="empregos/ha"
-          color="#29066B"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <ScatterChart
-          series-name="Proporção"
-          id="4"
-          :data="productiveSecurityEarn"
-          title="Segurança produtiva"
-          :labels="labels"
-          group="3"
-          :tooltip-sufix="['kg', 'm³']"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="5"
-          :data="anuallyProduction"
-          title="Segurança econômica"
-          :labels="labels"
-          tooltip-sufix="R$/m³"
-          group="1"
-          color="#29066B"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-center">
-        <LineChart
-          series-name="Proporção"
-          id="6"
-          :data="anuallyProduction"
-          title="Segurança social"
-          group="2"
-          :labels="labels"
-          tooltip-sufix="empregos/m³"
-          color="#29066B"
-        />
-      </div> -->
     </div>
   </div>
 </template>
@@ -320,6 +25,7 @@ import ScatterChart from "@/components/charts/ScatterChart.vue";
 import PizzaChart from "@/components/charts/PizzaChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import StackedBarChart from "@/components/charts/StackedBarChart.vue";
+import { itemsPerGraph } from "@/constants";
 
 const props = defineProps({
   data: {
@@ -330,6 +36,20 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  currentDataFormat: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+
+const registeredCount = computed(() => {
+  const valueKey = "Quantidade";
+  const data = props.data.registeredCount;
+
+  return {
+    data,
+    valueKey,
+  };
 });
 
 const workersCount = computed(() => {
@@ -372,8 +92,210 @@ const captationCountSuper = computed(() => {
   };
 });
 
-const registeredCount = computed(() => ({
-  data: props.data.registeredCount.map((w) => w["Quantidade"]),
-  labels: props.data.registeredCount.map((w) => w["Bacia"] || w["Municipio"]),
-}));
+const animals = computed(() => {
+  const stackKey = "TipoCriacao";
+  const valueKey = "Quantidade";
+  const data = props.data.animals;
+
+  return {
+    data,
+    stackKey,
+    valueKey,
+  };
+});
+
+const aquacultureCount = computed(() => {
+  const valueKey = "QuantidadeTanques";
+  const data = props.data.aquaculture;
+
+  return {
+    data,
+    valueKey,
+  };
+});
+
+const aquacultureSuper = computed(() => {
+  const stackKey = "Mes";
+  const valueKey = "Volume/tanque";
+  const data = props.data.tankCaptation.filter(
+    (c) => c["Captação"] === "Superficial"
+  );
+
+  return {
+    data,
+    valueKey,
+    stackKey,
+  };
+});
+
+const aquacultureUnder = computed(() => {
+  const stackKey = "Mes";
+  const valueKey = "Volume/tanque";
+  const data = props.data.tankCaptation.filter(
+    (c) => c["Captação"] === "Subterrânea"
+  );
+
+  return {
+    data,
+    valueKey,
+    stackKey,
+  };
+});
+
+const securityEconomic = computed(() => {
+  const valueKey = "RentabilidadePorArea";
+  const data = props.data.securityEconomic;
+
+  return {
+    data,
+    valueKey,
+  };
+});
+
+const securitySocial = computed(() => {
+  const valueKey = "EmpregosPorArea";
+  const data = props.data.securitySocial;
+
+  return {
+    data,
+    valueKey,
+  };
+});
+
+const securityWater = computed(() => {
+  const valueKey = "VolumePorArea";
+  const data = props.data.securityWater;
+
+  return {
+    data,
+    valueKey,
+  };
+});
+
+const chartsGroups = computed(() =>
+  [
+    [
+      {
+        component: BarChart,
+        title: "Quantidade de recenseados",
+        "series-name": "Recenseados",
+        "value-key": registeredCount.value.valueKey,
+        data: registeredCount.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Quantidade de trabalhadores",
+        "series-name": "trabalhadores",
+        "value-key": workersCount.value.valueKey,
+        "stack-key": workersCount.value.stackKey,
+        data: workersCount.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Captação mensal superficial (volume)",
+        "series-name": "Captação superficial (volume)",
+        "value-key": captationCountSuper.value.valueKey,
+        "stack-key": captationCountSuper.value.stackKey,
+        data: captationCountSuper.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Captação mensal superficial (vazão)",
+        "series-name": "Captação superficial (vazão)",
+        "value-key": "Vazão média",
+        "stack-key": captationCountSuper.value.stackKey,
+        data: captationCountSuper.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Captação mensal subterrânea (volume)",
+        "series-name": "Captação subterrânea (volume)",
+        "value-key": captationCountUnder.value.valueKey,
+        "stack-key": captationCountUnder.value.stackKey,
+        data: captationCountUnder.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Captação mensal subterrânea (vazão)",
+        "series-name": "Captação subterrânea (vazão)",
+        "value-key": "Vazão média",
+        "stack-key": captationCountUnder.value.stackKey,
+        data: captationCountUnder.value.data,
+      },
+    ],
+    [
+      {
+        component:
+          props.currentDataFormat.value === 3 ? BarChart : StackedBarChart,
+        title: "Animais",
+        "series-name": "Animais",
+        "value-key":
+          props.currentDataFormat.value === 3
+            ? "Consumo"
+            : animals.value.valueKey,
+        "stack-key": animals.value.stackKey,
+        data: animals.value.data,
+        "group-by-key":
+          props.currentDataFormat.value === 3 ? "TipoCriacao" : "",
+      },
+    ],
+    [
+      {
+        component: StackedBarChart,
+        title: "Captação de tanques subterrânea (volume)",
+        "series-name": "Captação subterrânea (volume)",
+        "value-key": aquacultureUnder.value.valueKey,
+        "stack-key": aquacultureUnder.value.stackKey,
+        data: aquacultureUnder.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: "Captação de tanques superficial (volume)",
+        "series-name": "Captação superficial (volume)",
+        "value-key": aquacultureSuper.value.valueKey,
+        "stack-key": aquacultureSuper.value.stackKey,
+        data: aquacultureSuper.value.data,
+      },
+      {
+        component: BarChart,
+        title: "Quantidade de tanques",
+        "series-name": "Tanques",
+        "value-key": "Tanques",
+        data: aquacultureCount.value.data,
+      },
+    ],
+    [
+      {
+        component: BarChart,
+        title: "Segurança econômica",
+        "series-name": "Rentabilidade por área",
+        "value-key": securityEconomic.value.valueKey,
+        data: securityEconomic.value.data,
+      },
+      {
+        component: BarChart,
+        title: "Segurança social",
+        "series-name": "Empregos por área",
+        "value-key": securitySocial.value.valueKey,
+        data: securitySocial.value.data,
+      },
+      {
+        component: BarChart,
+        title: "Segurança hídrica",
+        "series-name": "Volume por área",
+        "value-key": securityWater.value.valueKey,
+        data: securityWater.value.data,
+      },
+    ],
+  ].map((sub, i) => {
+    sub.map((chart, j) => {
+      chart.id = `chart-item-${i}-${j}`;
+      chart.width = 400;
+
+      return chart;
+    });
+
+    return sub;
+  })
+);
 </script>

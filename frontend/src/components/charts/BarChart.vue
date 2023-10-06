@@ -9,13 +9,23 @@
   </CardChart>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
+
+import { groupByKeyData, labelsCharts } from "./helpers";
 
 const props = defineProps({
   data: {
     type: Array,
+    required: true,
+  },
+  groupByKey: {
+    type: String,
+    required: false,
+  },
+  valueKey: {
+    type: String,
     required: true,
   },
   labels: {
@@ -78,13 +88,27 @@ const props = defineProps({
   },
 });
 
-const dataDTO = props.data.map((val) => {
-  return val ? val : 0;
+const groupedData = computed(() =>
+  groupByKeyData(props.data, props.groupByKey)
+);
+
+const labels = computed(() => labelsCharts(groupedData.value));
+
+const orderedData = computed(() => {
+  const totalData = [];
+
+  labels.value.forEach((d) => {
+    totalData.push(...groupedData.value[d]);
+  });
+
+  return totalData.map((d) =>
+    d[props.valueKey] ? +d[props.valueKey].toFixed(2) : 0
+  );
 });
 
-const seriesData = dataDTO.map((val) => Number(val.toFixed(2)));
-
-const series = [{ name: props.seriesName, data: seriesData }];
+const series = computed(() => [
+  { name: props.seriesName, data: orderedData.value },
+]);
 
 const title = computed(() => ({
   text: props.title,
@@ -147,9 +171,9 @@ const options = computed(() => ({
     },
   },
   xaxis: {
-    labels: {
-      categories: props.labels,
-    },
+    type: "category",
+    tickPlacement: "on",
+    categories: labels.value,
   },
   legend: {
     show: false,
@@ -182,7 +206,6 @@ const options = computed(() => ({
   //   },
   // },
   title: title.value,
-  labels: props.labels,
   responsive: [
     {
       breakpoint: 480,

@@ -22,7 +22,6 @@
 
         <div class="pr-md-5"></div>
 
-        <!-- :disabled="showingDataFormat.value === 2" -->
         <BaseCheckBox
           inline-label
           remove-margin
@@ -60,6 +59,7 @@
           v-if="showingTab === 'charts'"
           :data="reportsData"
           :current-report="groupReports"
+          :current-data-format="showingDataFormat"
         />
         <ExportData
           v-else
@@ -68,6 +68,7 @@
           :show-basin="showBasin"
           :data="reportsData"
           :current-report="groupReports"
+          :current-data-format="showingDataFormat"
         />
       </div>
     </BasicContentWrapper>

@@ -31,6 +31,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  currentDataFormat: {
+    type: Object,
+    default: () => ({}),
+  },
   currentReport: {
     type: Object,
     default: () => ({}),
@@ -81,10 +85,6 @@ const aquaReports = computed(() => [
       {
         title: "Mes",
         field: "Mes",
-      },
-      {
-        title: "Tanques",
-        field: "Tanques",
       },
       {
         title: "Captação",

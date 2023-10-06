@@ -12,3 +12,5 @@ export const usersOptions = [
     value: 2,
   },
 ];
+
+export const itemsPerGraph = 20;

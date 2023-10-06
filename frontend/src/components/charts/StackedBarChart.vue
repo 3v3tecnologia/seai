@@ -13,12 +13,17 @@
 <script setup>
 import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
+import { groupByKeyData, getUniqueStackKeys, labelsCharts } from "./helpers";
 
 const props = defineProps({
   data: {
     type: Object,
     required: true,
     default: () => ({}),
+  },
+  groupByKey: {
+    type: String,
+    required: false,
   },
   stackKey: {
     type: String,
@@ -74,41 +79,20 @@ const props = defineProps({
   },
 });
 
-const groupByLocation = (data) => {
-  if (!data.length) {
-    return {};
-  }
-  const groupdedData = {};
-
-  const keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
-  // console.log(data);
-  const mapedKeysUnique = new Set(data.map((d) => d[keyGroup]));
-
-  mapedKeysUnique.forEach((key) => {
-    groupdedData[key] = data.filter((d) => d[keyGroup] === key);
-  });
-
-  return groupdedData;
-};
-
-const getUniqueStackKeys = (data, stackKey) => {
-  return [...new Set(data.map((d) => d[stackKey]))];
-};
-
-const groupedData = computed(() => groupByLocation(props.data));
+const groupedData = computed(() => groupByKeyData(props.data));
 
 const seriesStackKeys = computed(() =>
   getUniqueStackKeys(props.data, props.stackKey)
 );
 
-const labels = computed(() => Object.keys(groupedData.value));
+const labels = computed(() => labelsCharts(groupedData.value));
 
 const series = computed(() =>
   seriesStackKeys.value.map((stack) => {
     const data = labels.value
       .map((l) => groupedData.value[l] || [])
       .map((l) => l.find((v) => v[props.stackKey] == stack))
-      .map((l) => l[props.valueKey]);
+      .map((l) => (l ? l[props.valueKey] : 0));
 
     return {
       name: stack,
@@ -161,10 +145,9 @@ const options = computed(() => ({
       horizontal: props.isHorizontal,
       borderRadius: 10,
       dataLabels: {
-        enabled: true,
         total: {
           offsetY: 2,
-          enabled: true,
+          enabled: labels.value.length <= 20 ? true : false,
           formatter: function (val, opts) {
             return +val.toFixed(2);
           },
@@ -179,7 +162,9 @@ const options = computed(() => ({
   xaxis: {
     type: "category",
     tickPlacement: "on",
-    categories: labels.value,
+    categories: labels.value.map((val) =>
+      val.length > 15 ? `${val.slice(0, 12)}...` : val
+    ),
   },
   legend: {
     position: "bottom",
