@@ -165,6 +165,11 @@ const animals = computed(() => [
         field: "Consumo",
         visible: props.showConsuming,
       },
+      {
+        title: "Quantidade",
+        field: "Quantidade",
+        visible: !props.showConsuming,
+      },
     ],
     data: props.data.animals,
   },

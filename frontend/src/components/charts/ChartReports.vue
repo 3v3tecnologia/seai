@@ -1,56 +1,57 @@
 <template>
   <div>
     <div v-if="currentReport.value === 1" class="row mb-3 mb-lg-5">
-      <div class="col-lg-4 d-flex align-items-center justify-content-start">
-        <PizzaChart
+      <div class="col-lg-6 d-flex align-items-center justify-content-start">
+        <BarChart
           :width="400"
-          :data="workersCount.data"
-          title="Quantidade de trabalhadores"
-          series-name="Quantidade"
-          :labels="workersCount.labels"
-          color="#7D3AC1"
-          id="7"
-        />
-      </div>
-      <div class="col-lg-4 d-flex align-items-center justify-content-start">
-        <PizzaChart
-          :width="400"
-          :data="registeredCount.data"
+          :data="registeredCount.data.slice(0, 3)"
           title="Quantidade de recenseados"
-          series-name="Quantidade"
+          series-name="Recenseados"
           :labels="registeredCount.labels"
-          color="#7D3AC1"
+          tooltip-sufix=""
           id="8"
+          color="#29066B"
         />
       </div>
 
-      <div class="col-lg-4 d-flex align-items-center justify-content-start">
-        <PizzaChart
+      <div class="col-lg-6 d-flex align-items-center justify-content-start">
+        <StackedBarChart
           :width="400"
-          :data="captationCountSuper.data"
-          title="Captação mensal superficial"
-          series-name="Captação"
-          :labels="captationCountSuper.labels"
-          color="#7D3AC1"
-          id="9"
-          has-monthly-filter
+          id="7"
+          title="Quantidade de trabalhadores"
+          series-name="trabalhadores"
+          :data="workersCount.data"
+          :stack-key="workersCount.stackKey"
+          :value-key="workersCount.valueKey"
         />
       </div>
 
       <div
-        class="col-lg-4 d-flex align-items-center justify-content-start mt-4"
+        class="col-lg-6 d-flex align-items-center justify-content-start mt-4"
       >
-        <PizzaChart
+        <StackedBarChart
           :width="400"
-          :data="captationCountUnder.data"
-          title="Captação mensal subterrânea"
-          series-name="Captação"
-          :labels="captationCountUnder.labels"
-          color="#7D3AC1"
-          id="10"
-          has-monthly-filter
+          id="9"
+          title="Captação mensal superficial"
+          series-name="Captação superficial"
+          :data="captationCountSuper.data"
+          :value-key="captationCountSuper.valueKey"
+          :stack-key="captationCountSuper.stackKey"
         />
-        <!-- </div> -->
+      </div>
+
+      <div
+        class="col-lg-6 d-flex align-items-center justify-content-start mt-4"
+      >
+        <StackedBarChart
+          :width="400"
+          id="10"
+          title="Captação mensal subterrânea"
+          series-name="Captação subterrânea"
+          :data="captationCountUnder.data"
+          :stack-key="captationCountUnder.stackKey"
+          :value-key="captationCountUnder.valueKey"
+        />
       </div>
       <!-- 
       <div class="col-lg-6 d-flex align-items-center justify-content-end">
@@ -318,6 +319,7 @@ import { defineProps, computed } from "vue";
 import ScatterChart from "@/components/charts/ScatterChart.vue";
 import PizzaChart from "@/components/charts/PizzaChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
+import StackedBarChart from "@/components/charts/StackedBarChart.vue";
 
 const props = defineProps({
   data: {
@@ -330,34 +332,45 @@ const props = defineProps({
   },
 });
 
-const workersCount = computed(() => ({
-  data: props.data.workersCount.map((w) => w["Média de trabalhadores"]),
-  labels: props.data.workersCount.map(
-    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Tipo"]}`
-  ),
-}));
+const workersCount = computed(() => {
+  const stackKey = "Tipo";
+  const valueKey = "Média de trabalhadores";
 
-const captationCountUnderFiltered = computed(() =>
-  props.data.captationCount.filter((c) => c["Captação"] === "Subterrânea")
-);
+  return {
+    data: props.data.workersCount,
+    labels: Object.keys(props.data.workersCount),
+    stackKey,
+    valueKey,
+  };
+});
 
-const captationCountUnder = computed(() => ({
-  data: captationCountUnderFiltered.value.map((w) => w["Volume médio"]),
-  labels: captationCountUnderFiltered.value.map(
-    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Mes"]}`
-  ),
-}));
+const captationCountUnder = computed(() => {
+  const stackKey = "Mes";
+  const valueKey = "Volume médio";
+  const data = props.data.captationCount.filter(
+    (c) => c["Captação"] === "Subterrânea"
+  );
 
-const captationCountSuperFiltered = computed(() =>
-  props.data.captationCount.filter((c) => c["Captação"] === "Superficial")
-);
+  return {
+    data,
+    stackKey,
+    valueKey,
+  };
+});
 
-const captationCountSuper = computed(() => ({
-  data: captationCountSuperFiltered.value.map((w) => w["Volume médio"]),
-  labels: captationCountSuperFiltered.value.map(
-    (w) => `${w["Bacia"] || w["Municipio"]} - ${w["Mes"]}`
-  ),
-}));
+const captationCountSuper = computed(() => {
+  const stackKey = "Mes";
+  const valueKey = "Volume médio";
+  const data = props.data.captationCount.filter(
+    (c) => c["Captação"] === "Superficial"
+  );
+
+  return {
+    data,
+    stackKey,
+    valueKey,
+  };
+});
 
 const registeredCount = computed(() => ({
   data: props.data.registeredCount.map((w) => w["Quantidade"]),

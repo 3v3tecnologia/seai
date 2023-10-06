@@ -1,6 +1,7 @@
 <template>
   <CardChart>
     <apexchart
+      class="h-100"
       :height="props.height"
       type="bar"
       :options="options"
@@ -9,17 +10,22 @@
   </CardChart>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
 const props = defineProps({
   data: {
-    type: Array,
+    type: Object,
+    required: true,
+    default: () => ({}),
+  },
+  stackKey: {
+    type: String,
     required: true,
   },
-  labels: {
-    type: Array,
+  valueKey: {
+    type: String,
     required: true,
   },
   title: {
@@ -57,16 +63,6 @@ const props = defineProps({
     default: false,
     required: false,
   },
-  isReversed: {
-    type: Boolean,
-    default: false,
-    required: false,
-  },
-  color: {
-    type: String,
-    default: "",
-    required: false,
-  },
   height: {
     type: Number,
     default: 270,
@@ -78,13 +74,48 @@ const props = defineProps({
   },
 });
 
-const dataDTO = props.data.map((val) => {
-  return val ? val : 0;
-});
+const groupByLocation = (data) => {
+  if (!data.length) {
+    return {};
+  }
+  const groupdedData = {};
 
-const seriesData = dataDTO.map((val) => Number(val.toFixed(2)));
+  const keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
+  // console.log(data);
+  const mapedKeysUnique = new Set(data.map((d) => d[keyGroup]));
 
-const series = [{ name: props.seriesName, data: seriesData }];
+  mapedKeysUnique.forEach((key) => {
+    groupdedData[key] = data.filter((d) => d[keyGroup] === key);
+  });
+
+  return groupdedData;
+};
+
+const getUniqueStackKeys = (data, stackKey) => {
+  return [...new Set(data.map((d) => d[stackKey]))];
+};
+
+const groupedData = computed(() => groupByLocation(props.data));
+
+const seriesStackKeys = computed(() =>
+  getUniqueStackKeys(props.data, props.stackKey)
+);
+
+const labels = computed(() => Object.keys(groupedData.value));
+
+const series = computed(() =>
+  seriesStackKeys.value.map((stack) => {
+    const data = labels.value
+      .map((l) => groupedData.value[l] || [])
+      .map((l) => l.find((v) => v[props.stackKey] == stack))
+      .map((l) => l[props.valueKey]);
+
+    return {
+      name: stack,
+      data,
+    };
+  })
+);
 
 const title = computed(() => ({
   text: props.title,
@@ -106,13 +137,9 @@ const options = computed(() => ({
     type: "bar",
     // group: "chart",
     id: props.id,
+    stacked: true,
     toolbar: {
       show: true,
-      offsetX: 0,
-      offsetY: 0,
-      tools: {
-        download: true,
-      },
       export: {
         svg: {
           filename: props.title.split(" ").join("_"),
@@ -124,20 +151,23 @@ const options = computed(() => ({
           filename: props.title.split(" ").join("_"),
         },
       },
-      autoSelected: "zoom",
+    },
+    zoom: {
+      enabled: true,
     },
   },
-  // fill: {
-  //   colors: props.color ? [props.color] : undefined,
-  // },
   plotOptions: {
     bar: {
-      distributed: true,
       horizontal: props.isHorizontal,
+      borderRadius: 10,
       dataLabels: {
-        borderRadius: 10,
+        enabled: true,
         total: {
-          enabled: props.hasDataLabels,
+          offsetY: 2,
+          enabled: true,
+          formatter: function (val, opts) {
+            return +val.toFixed(2);
+          },
           style: {
             fontSize: "13px",
             fontWeight: 900,
@@ -147,20 +177,16 @@ const options = computed(() => ({
     },
   },
   xaxis: {
-    labels: {
-      categories: props.labels,
-    },
+    type: "category",
+    tickPlacement: "on",
+    categories: labels.value,
   },
   legend: {
-    show: false,
     position: "bottom",
-    offsetY: -5,
+    offsetY: 5,
   },
   fill: {
     opacity: 1,
-  },
-  yaxis: {
-    reversed: props.isReversed,
   },
   // tooltip: {
   //   y: {
@@ -182,19 +208,5 @@ const options = computed(() => ({
   //   },
   // },
   title: title.value,
-  labels: props.labels,
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: "bottom",
-        },
-      },
-    },
-  ],
 }));
 </script>
