@@ -46,6 +46,7 @@ CREATE TABLE "ReadPluviometers" (
 	"IdRead" INT GENERATED ALWAYS AS IDENTITY,
 	"Value" REAL,
 	"Time" DATE NOT NULL DEFAULT CURRENT_DATE,
+	"Hour" SMALLINT DEFAULT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
 	PRIMARY KEY("IdRead")
