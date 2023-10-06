@@ -119,45 +119,61 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
   async getEconomicSecurityByCounty(): Promise<Array<EconomicSecurityByCountyData> | null> {
     const data = await censusDb.raw(`
-      select
-        m."Municipio",
-        round(cast(sum(ci."AreaIrrigada") as numeric),
-        2) as "AreaIrrigada",
-        round(cast(sum(i."Rentabilidade") as numeric),
-        2) as "Rentabilidade",
-        round(cast(sum(i."Rentabilidade") / sum(ci."AreaIrrigada") as numeric),
-        2) as "R$/ha"
-      from
-        "CulturasIrrigadas" ci
-      inner join
-      "Irrigacao" i
-      on
-        i."Id" = ci."Irrigacao_Id"
-      inner join
-      "Usos" u
-      on
-        i."Usos_Id" = u."Id"
-      inner join
-      "Cadastro" c
-      on
-        c."Id" = u."Cad_Id"
-      inner join
-      "Contatos" co
-      on
-        co."Id" = c."Localizacao_Id"
-      inner join
-      "Municipios" m
-      on
-        m."Id" = co."Municipio_Id"
-      where
-        "Rentabilidade" is not null
-        and
-      ci."AreaIrrigada" > 0
-      group by
-        m."Municipio"
-      order by
-        "R$/ha"
-      desc;
+      SELECT
+              m."Municipio",
+              b."Bacia",
+              round(
+              CAST(
+                  sum(ci."AreaIrrigada") AS NUMERIC
+              ),
+              2
+          ) AS "AreaIrrigada",
+              round(
+              CAST(
+                  sum(i."Rentabilidade") AS NUMERIC
+              ),
+              2
+          ) AS "Rentabilidade",
+              round(
+              CAST(
+                  sum(i."Rentabilidade") / sum(ci."AreaIrrigada") AS NUMERIC
+              ),
+              2
+          ) AS "R$/ha"
+      FROM
+              "CulturasIrrigadas" ci
+      INNER JOIN
+            "Irrigacao" i
+            ON
+              i."Id" = ci."Irrigacao_Id"
+      INNER JOIN
+            "Usos" u
+            ON
+              i."Usos_Id" = u."Id"
+      INNER JOIN
+            "Cadastro" c
+            ON
+              c."Id" = u."Cad_Id"
+      INNER JOIN
+            "Contatos" co
+            ON
+              co."Id" = c."Localizacao_Id"
+      INNER JOIN
+            "Municipios" m
+            ON
+              m."Id" = co."Municipio_Id"
+      INNER JOIN "Bacias" b
+                ON b."Id" = m."Bacia_Id"
+      WHERE
+              "Rentabilidade" IS NOT NULL
+          AND
+            ci."AreaIrrigada" > 0
+      GROUP BY
+              m."Municipio",
+              b."Bacia"
+      ORDER BY
+              "R$/ha"
+            DESC;
     `);
 
     if (!data.rowCount) {
@@ -167,6 +183,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     return data.rows.map((row: any) => ({
       Tipo: "municipio",
       Nome: row.Municipio,
+      Bacia: row.Bacia,
       AreaIrrigada: {
         unidade: "ha",
         valor: Number(row.AreaIrrigada),
@@ -251,51 +268,64 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
   async getSocialSecurityByCounty(): Promise<Array<SocialSecurityByCountyData> | null> {
     const data = await censusDb.raw(`
-        select
-          m."Municipio",
-          round(cast(sum(ci."AreaIrrigada") as numeric),
-          2) as "AreaIrrigada",
-          sum(coalesce(pf."NumTrabalhadores", 0)) as "EmpregosPF",
-          sum(coalesce(pj."NumTrabalhadores", 0)) as "EmpregosPJ",
-          round(cast(sum(coalesce(pf."NumTrabalhadores", 0)) + sum(coalesce(pj."NumTrabalhadores", 0)) / sum(ci."AreaIrrigada") as numeric),
-          2) as "Empregos/ha"
-        from
-          "CulturasIrrigadas" ci
-        inner join
-        "Irrigacao" i
-        on
-          i."Id" = ci."Irrigacao_Id"
-        inner join
-        "Usos" u
-        on
-          i."Usos_Id" = u."Id"
-        inner join
-        "Cadastro" c
-        on
-          c."Id" = u."Cad_Id"
-        inner join
-        "Contatos" co
-        on
-          co."Id" = c."Localizacao_Id"
-        inner join
-        "Municipios" m
-        on
-          m."Id" = co."Municipio_Id"
-        inner join
-        "PessoaFisica" pf
-        on
-          pf."Cad_Id" = c."Id"
-        inner join
-        "PessoaJuridica" pj
-        on
-          pj."Cad_Id" = c."Id"
-        where
-          ci."AreaIrrigada" > 0
-        group by
-          m."Municipio"
-        order by
-          "Empregos/ha"
-        desc;
+        SELECT
+                  m."Municipio",
+                  b."Bacia",
+                  round(
+                CAST(
+                    sum(ci."AreaIrrigada") AS NUMERIC
+                ),
+                  2
+            ) AS "AreaIrrigada",
+                  sum(COALESCE(pf."NumTrabalhadores", 0)) AS "EmpregosPF",
+                  sum(COALESCE(pj."NumTrabalhadores", 0)) AS "EmpregosPJ",
+                  round(
+                CAST(
+                    sum(COALESCE(pf."NumTrabalhadores", 0)) + sum(COALESCE(pj."NumTrabalhadores", 0)) / sum(ci."AreaIrrigada") AS NUMERIC
+                ),
+                  2
+            ) AS "Empregos/ha"
+        FROM
+                  "CulturasIrrigadas" ci
+        INNER JOIN
+                "Irrigacao" i
+                ON
+                  i."Id" = ci."Irrigacao_Id"
+        INNER JOIN
+                "Usos" u
+                ON
+                  i."Usos_Id" = u."Id"
+        INNER JOIN
+                "Cadastro" c
+                ON
+                  c."Id" = u."Cad_Id"
+        INNER JOIN
+                "Contatos" co
+                ON
+                  co."Id" = c."Localizacao_Id"
+        INNER JOIN
+                "Municipios" m
+                ON
+                  m."Id" = co."Municipio_Id"
+        INNER JOIN "Bacias" b
+                  ON
+            b."Id" = m."Bacia_Id"
+        INNER JOIN
+                "PessoaFisica" pf
+                ON
+                  pf."Cad_Id" = c."Id"
+        INNER JOIN
+                "PessoaJuridica" pj
+                ON
+                  pj."Cad_Id" = c."Id"
+        WHERE
+                  ci."AreaIrrigada" > 0
+        GROUP BY
+                  m."Municipio",
+                  b."Bacia"
+        ORDER BY
+                  "Empregos/ha"
+                DESC;
   `);
 
     if (!data.rowCount) {
@@ -304,6 +334,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       Nome: row.Municipio,
+      Bacia: row.Bacia,
       Tipo: "municipio",
       AreaIrrigada: Number(row.AreaIrrigada),
       EmpregosPJ: Number(row.EmpregosPJ),
