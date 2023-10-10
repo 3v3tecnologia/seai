@@ -4,7 +4,15 @@
       <h4 class="mb-0 font-weight-bold">
         {{ title }}
       </h4>
-      <button class="btn btn-success" @click="downloadCSV">Download CSV</button>
+
+      <div class="d-flex">
+        <button class="btn mr-2 btn-success" @click="downloadCSV">
+          Download CSV
+        </button>
+        <button class="btn btn-success" @click="downloadXLSX">
+          Download XLSX
+        </button>
+      </div>
     </div>
 
     <div class="wrapper-table w-100">
@@ -27,6 +35,13 @@ const fileName = () => {
 
 const downloadCSV = () => {
   tabulator.value.download("csv", `${fileName()}.csv`, { bom: true });
+};
+
+const downloadXLSX = () => {
+  tabulator.value.download("xlsx", `${fileName()}.xlsx`, {
+    sheetName: fileName(),
+    bom: true,
+  });
 };
 
 const props = defineProps({
@@ -52,23 +67,11 @@ watch(
   }
 );
 
-// Redraw columns based on columns visibility;
+// Redraw columns;
 watch(
   () => props.columns,
-  (newValue, oldValue) => {
-    const updateColumns = [];
-
-    newValue.forEach((currentVal, i) => {
-      const oldValLoop = oldValue[i];
-
-      if (oldValLoop.visible != currentVal.visible) {
-        updateColumns.push(currentVal);
-      }
-
-      updateColumns.forEach((val) =>
-        tabulator.value.updateColumnDefinition(val.title, val)
-      );
-    });
+  (newValue) => {
+    tabulator.value?.setColumns(newValue);
   }
 );
 

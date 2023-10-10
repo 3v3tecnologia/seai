@@ -17,7 +17,6 @@
           v-model="showingDataFormatTemp"
           :options="showingDataOptions"
           placeholder="Agrupamento"
-          :disabled="isLoadingReport"
         />
 
         <div class="pr-md-5"></div>

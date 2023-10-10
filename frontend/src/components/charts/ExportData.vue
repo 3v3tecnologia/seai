@@ -161,9 +161,9 @@ const animals = computed(() => [
         field: "TipoCriacao",
       },
       {
-        title: "Consumo",
+        title: "Consumo (litros/dia)",
         field: "Consumo",
-        visible: props.showConsuming,
+        visible: !!props.showConsuming,
       },
       {
         title: "Quantidade",
@@ -177,11 +177,11 @@ const animals = computed(() => [
 
 const generalReports = computed(() => [
   {
-    title: "Quantidade de registrados",
+    title: "Quantidade de recenseados",
     columns: [
       ...basicColumns.value,
       {
-        title: "Registrados",
+        title: "Recenseados",
         field: "Quantidade",
       },
     ],
@@ -215,11 +215,11 @@ const generalReports = computed(() => [
         field: "Mes",
       },
       {
-        title: "Vazão média",
+        title: "Vazão média (m³/h)",
         field: "Vazão média",
       },
       {
-        title: "Volume médio",
+        title: "Volume médio (m³)",
         field: "Volume médio",
       },
     ],

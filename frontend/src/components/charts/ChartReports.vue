@@ -3,7 +3,13 @@
     <div class="text-black-50 d-flex">
       Máximo de {{ itemsPerGraph }} bacias/municípios por gráfico
     </div>
-    <div class="row justify-content-center mb-3 mb-lg-5">
+    <div class="row mb-3 mb-lg-5">
+      <div
+        v-if="!isLoadingReport && !hasDataToShow"
+        class="col-lg-12 mt-4 h4 font-weight-bold"
+      >
+        Sem dados para as localizações selecionadas
+      </div>
       <div
         v-for="chart in chartsGroups[currentReport.value - 1]"
         :key="chart.id"
@@ -21,12 +27,14 @@
 
 <script setup>
 import { defineProps, computed } from "vue";
-import ScatterChart from "@/components/charts/ScatterChart.vue";
-import PizzaChart from "@/components/charts/PizzaChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import StackedBarChart from "@/components/charts/StackedBarChart.vue";
-import { itemsPerGraph } from "@/constants";
+import { itemsPerGraph, reportsTitles } from "@/constants";
+import { useStore } from "vuex";
 
+const store = useStore();
+
+const isLoadingReport = computed(() => store.state.isLoadingReport);
 const props = defineProps({
   data: {
     type: Object,
@@ -50,6 +58,10 @@ const registeredCount = computed(() => {
     data,
     valueKey,
   };
+});
+
+const hasDataToShow = computed(() => {
+  return !!Object.values(props.data).find((c) => c.length);
 });
 
 const workersCount = computed(() => {
@@ -177,14 +189,14 @@ const chartsGroups = computed(() =>
     [
       {
         component: BarChart,
-        title: "Quantidade de recenseados",
+        title: reportsTitles.registereds,
         "series-name": "Recenseados",
         "value-key": registeredCount.value.valueKey,
         data: registeredCount.value.data,
       },
       {
         component: StackedBarChart,
-        title: "Quantidade de trabalhadores",
+        title: reportsTitles.workers,
         "series-name": "trabalhadores",
         "value-key": workersCount.value.valueKey,
         "stack-key": workersCount.value.stackKey,
@@ -192,32 +204,31 @@ const chartsGroups = computed(() =>
       },
       {
         component: StackedBarChart,
-        title: "Captação mensal superficial (volume)",
-        "series-name": "Captação superficial (volume)",
+        title: reportsTitles.superMonthVol,
+        "series-name": "Volume de captação superficial (m³)",
         "value-key": captationCountSuper.value.valueKey,
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
       {
         component: StackedBarChart,
-        title: "Captação mensal superficial (vazão)",
-        "series-name": "Captação superficial (vazão)",
+        title: reportsTitles.superMonthFlow,
+        "series-name": "Vazão média de captação mensal superficial (m³/h)",
         "value-key": "Vazão média",
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
       {
         component: StackedBarChart,
-        title: "Captação mensal subterrânea (volume)",
-        "series-name": "Captação subterrânea (volume)",
+        title: reportsTitles.underMonthVol,
+        "series-name": "Volume de captação mensal subterrânea (m³)",
         "value-key": captationCountUnder.value.valueKey,
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
       },
       {
         component: StackedBarChart,
-        title: "Captação mensal subterrânea (vazão)",
-        "series-name": "Captação subterrânea (vazão)",
+        title: reportsTitles.underMonthFlow,
         "value-key": "Vazão média",
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
@@ -227,7 +238,7 @@ const chartsGroups = computed(() =>
       {
         component:
           props.currentDataFormat.value === 3 ? BarChart : StackedBarChart,
-        title: "Animais",
+        title: reportsTitles.animals,
         "series-name": "Animais",
         "value-key":
           props.currentDataFormat.value === 3
@@ -242,46 +253,46 @@ const chartsGroups = computed(() =>
     [
       {
         component: StackedBarChart,
-        title: "Captação de tanques subterrânea (volume)",
-        "series-name": "Captação subterrânea (volume)",
+        title: reportsTitles.underVolTanks,
+        "series-name": "Volume de captação de tanques subterrâneos (m³)",
         "value-key": aquacultureUnder.value.valueKey,
         "stack-key": aquacultureUnder.value.stackKey,
         data: aquacultureUnder.value.data,
       },
       {
-        component: StackedBarChart,
-        title: "Captação de tanques superficial (volume)",
-        "series-name": "Captação superficial (volume)",
-        "value-key": aquacultureSuper.value.valueKey,
-        "stack-key": aquacultureSuper.value.stackKey,
-        data: aquacultureSuper.value.data,
-      },
-      {
         component: BarChart,
-        title: "Quantidade de tanques",
+        title: reportsTitles.tanks,
         "series-name": "Tanques",
         "value-key": "Tanques",
         data: aquacultureCount.value.data,
+      },
+      {
+        component: StackedBarChart,
+        title: reportsTitles.underFlowTanks,
+        "series-name": "Vazão média de captação de tanques subterrâneos (m³)",
+        "value-key": aquacultureSuper.value.valueKey,
+        "stack-key": aquacultureSuper.value.stackKey,
+        data: aquacultureSuper.value.data,
       },
     ],
     [
       {
         component: BarChart,
-        title: "Segurança econômica",
+        title: reportsTitles.secEconomic,
         "series-name": "Rentabilidade por área",
         "value-key": securityEconomic.value.valueKey,
         data: securityEconomic.value.data,
       },
       {
         component: BarChart,
-        title: "Segurança social",
+        title: reportsTitles.secSocial,
         "series-name": "Empregos por área",
         "value-key": securitySocial.value.valueKey,
         data: securitySocial.value.data,
       },
       {
         component: BarChart,
-        title: "Segurança hídrica",
+        title: reportsTitles.secHydro,
         "series-name": "Volume por área",
         "value-key": securityWater.value.valueKey,
         data: securityWater.value.data,
