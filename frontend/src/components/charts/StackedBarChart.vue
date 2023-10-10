@@ -13,7 +13,14 @@
 <script setup>
 import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
-import { groupByKeyData, getUniqueStackKeys, labelsCharts } from "./helpers";
+import {
+  groupByKeyData,
+  getUniqueStackKeys,
+  labelsCharts,
+  formatterPlot,
+  formatterXTooltip,
+  formatterLabels,
+} from "./helpers";
 
 const props = defineProps({
   data: {
@@ -143,16 +150,14 @@ const options = computed(() => ({
   plotOptions: {
     bar: {
       horizontal: props.isHorizontal,
-      borderRadius: 10,
+      // borderRadius: 10,
       dataLabels: {
         total: {
           offsetY: 2,
-          enabled: labels.value.length <= 20 ? true : false,
-          formatter: function (val, opts) {
-            return +val.toFixed(2);
-          },
+          enabled: true,
+          formatter: formatterPlot,
           style: {
-            fontSize: "13px",
+            fontSize: "11px",
             fontWeight: 900,
           },
         },
@@ -161,10 +166,11 @@ const options = computed(() => ({
   },
   xaxis: {
     type: "category",
-    tickPlacement: "on",
-    categories: labels.value.map((val) =>
-      val.length > 15 ? `${val.slice(0, 12)}...` : val
-    ),
+    // tickPlacement: "on",
+    categories: labels.value,
+    labels: {
+      formatter: formatterLabels,
+    },
   },
   legend: {
     position: "bottom",
@@ -173,25 +179,12 @@ const options = computed(() => ({
   fill: {
     opacity: 1,
   },
-  // tooltip: {
-  //   y: {
-  //     formatter: function (val, b) {
-  //       let formattedVal = props.data[b.dataPointIndex].toFixed(2);
-
-  //       if (props.formatter == "money") {
-  //         formattedVal = props.data[b.dataPointIndex].toLocaleString("pt-br", {
-  //           style: "currency",
-  //           currency: "BRL",
-  //         });
-  //       }
-
-  //       const sufix = props.tooltipSufix ? ` ${props.tooltipSufix}` : "";
-  //       const prefix = props.tooltipPrefix ? `${props.tooltipPrefix} ` : "";
-
-  //       return `${prefix}${formattedVal}${sufix}`;
-  //     },
-  //   },
-  // },
+  tooltip: {
+    x: {
+      show: true,
+      formatter: formatterXTooltip,
+    },
+  },
   title: title.value,
 }));
 </script>

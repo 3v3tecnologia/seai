@@ -13,7 +13,12 @@
 import { computed, defineProps, ref, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
-import { groupByKeyData, labelsCharts } from "./helpers";
+import {
+  formatterLabels,
+  formatterXTooltip,
+  groupByKeyData,
+  labelsCharts,
+} from "./helpers";
 
 const props = defineProps({
   data: {
@@ -148,7 +153,6 @@ const options = computed(() => ({
           filename: props.title.split(" ").join("_"),
         },
       },
-      autoSelected: "zoom",
     },
   },
   // fill: {
@@ -158,22 +162,14 @@ const options = computed(() => ({
     bar: {
       distributed: true,
       horizontal: props.isHorizontal,
-      dataLabels: {
-        borderRadius: 10,
-        total: {
-          enabled: props.hasDataLabels,
-          style: {
-            fontSize: "13px",
-            fontWeight: 900,
-          },
-        },
-      },
     },
   },
   xaxis: {
     type: "category",
-    tickPlacement: "on",
     categories: labels.value,
+    labels: {
+      formatter: formatterLabels,
+    },
   },
   legend: {
     show: false,
@@ -185,6 +181,12 @@ const options = computed(() => ({
   },
   yaxis: {
     reversed: props.isReversed,
+  },
+  tooltip: {
+    x: {
+      show: true,
+      formatter: formatterXTooltip,
+    },
   },
   // tooltip: {
   //   y: {

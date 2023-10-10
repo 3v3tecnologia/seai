@@ -5,7 +5,7 @@
         <div class="pt-3 pb-2"></div>
 
         <BaseDropdown
-          v-model="groupReports"
+          v-model="groupReportsTemp"
           :options="groupReportsOptions"
           placeholder="Tipo de relatório"
           width="200px"
@@ -14,7 +14,7 @@
         <div class="px-4"></div>
 
         <BaseDropdown
-          v-model="showingDataFormat"
+          v-model="showingDataFormatTemp"
           :options="showingDataOptions"
           placeholder="Agrupamento"
           :disabled="isLoadingReport"
@@ -25,7 +25,7 @@
         <BaseCheckBox
           inline-label
           remove-margin
-          v-model="hydrographicBasin"
+          v-model="hydrographicBasinTemp"
           :options="hydrographicBasinOptions"
           label="Bacias hidrográficas"
           placeholder="Bacias hidrográficas"
@@ -36,12 +36,22 @@
         <BaseCheckBox
           inline-labe
           remove-margin
-          v-model="city"
-          :disabled="showingDataFormat.value === 1"
+          v-model="cityTemp"
+          :disabled="showingDataFormatTemp.value === 1"
           :options="cityOptions"
           label="Municípios"
           placeholder="Municípios"
         />
+
+        <div class="px-4 py-3" />
+
+        <button
+          @click="applyFilters"
+          :disabled="isLoadingReport"
+          class="btn btn-success px-4 py-2"
+        >
+          Gerar relatório
+        </button>
       </div>
 
       <div class="mt-5 mb-2">
@@ -125,9 +135,12 @@ const groupReportsOptions = [
 
 const groupReports = ref(groupReportsOptions[0]);
 
+const groupReportsTemp = ref({ ...groupReports.value });
+const showingDataFormatTemp = ref({ ...showingDataFormat.value });
+
 const showingDataOptions = computed(() =>
   totalGroupment.filter((opt) =>
-    groupReports.value.value === 2 ? true : opt.value != 3
+    groupReportsTemp.value.value === 2 ? true : opt.value != 3
   )
 );
 
@@ -183,8 +196,8 @@ const isLoadingReport = computed(() => store.state.isLoadingReport);
 
 const cityOptions = computed(() => {
   return store.state.cityOptions.filter((val) => {
-    if (hydrographicBasin.value.length) {
-      return hydrographicBasin.value.find((v) => v.value == val.IdBacia);
+    if (hydrographicBasinTemp.value.length) {
+      return hydrographicBasinTemp.value.find((v) => v.value == val.IdBacia);
     }
 
     return val;
@@ -194,6 +207,16 @@ const cityOptions = computed(() => {
 const hydrographicBasin = ref([]);
 const city = ref([]);
 
+const hydrographicBasinTemp = ref([...hydrographicBasin.value]);
+const cityTemp = ref([...city.value]);
+
+const applyFilters = () => {
+  groupReports.value = groupReportsTemp.value;
+  showingDataFormat.value = showingDataFormatTemp.value;
+  hydrographicBasin.value = hydrographicBasinTemp.value;
+  city.value = cityTemp.value;
+};
+
 store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
 
 watch(
@@ -201,35 +224,40 @@ watch(
   async (val) => {
     if (val.value.value === 1) {
       city.value = [];
+      cityTemp.value = city.value;
     }
-
-    await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
   },
   { deep: true }
 );
 
 watch(
-  () => groupReports,
+  () => groupReportsTemp,
   async (newVal) => {
-    if (newVal.value.value !== 2 && showingDataFormat.value.value === 3) {
-      showingDataFormat.value = totalGroupment[0];
+    if (newVal.value.value !== 2 && showingDataFormatTemp.value.value === 3) {
+      showingDataFormatTemp.value = totalGroupment[0];
     }
-
-    await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
   },
   { deep: true }
 );
 
 watch(
-  () => hydrographicBasin.value,
+  () => filtersRequest.value,
+  async (newVal) => {
+    await store.dispatch("FETCH_REPORTS_DATA", newVal);
+  },
+  { deep: true }
+);
+
+watch(
+  () => hydrographicBasinTemp.value,
   (newVal) => {
     if (newVal.length) {
       const idBasins = newVal.map((d) => d.IdBacia);
-      const availableCities = city.value.filter((c) =>
+      const availableCities = cityTemp.value.filter((c) =>
         idBasins.includes(c.IdBacia)
       );
 
-      city.value = availableCities;
+      cityTemp.value = availableCities;
     }
   },
   { deep: true }
