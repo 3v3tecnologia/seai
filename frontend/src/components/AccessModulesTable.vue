@@ -42,9 +42,9 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import BaseDropdown from "@/components/BaseDropdown.vue";
-import { defineProps, defineEmits, ref, Ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, computed } from "vue";
 
 const optionsSelect = [
   {
@@ -65,21 +65,42 @@ const baseAccessModules = {
 
 const modulesOptions = ref([
   {
+    id: 1,
     title: "Notícias",
-    value: "reports",
+    value: "news",
     access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
   {
+    id: 2,
     title: "Cadastro",
     value: "register",
     access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
   {
+    id: 3,
     title: "Usuários",
-    value: "users",
+    value: "user",
     access: JSON.parse(JSON.stringify(baseAccessModules)),
   },
 ]);
+
+const accessDTO = computed(() => {
+  const keys = modulesOptions.value.map((c) => c.value);
+  const accessformatted = {};
+
+  keys.forEach((key, i) => {
+    const moduleData = modulesOptions.value[i];
+    const data = {
+      id: moduleData.id,
+      read: !!moduleData.access.read.value,
+      write: !!moduleData.access.register.value,
+    };
+
+    accessformatted[key] = data;
+  });
+
+  return accessformatted;
+});
 
 defineProps({
   label: String,
@@ -98,12 +119,16 @@ defineProps({
   },
 });
 
-const inputValue: Ref<number | string> = ref(2);
+const inputValue = ref(2);
 const emit = defineEmits(["update:modelValue"]);
 
-watch(inputValue, (val) => {
-  emit("update:modelValue", val);
-});
+watch(
+  accessDTO,
+  (val) => {
+    emit("update:modelValue", val);
+  },
+  { immediate: true }
+);
 
 // TODO IMPLEMENT LOGIC TO PUT ALL TRUE IF CAN REGISTER AND ALL FALSE IF CANT READ
 // watch(modulesOptions.value, (newVal, oldVal) => {

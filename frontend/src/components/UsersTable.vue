@@ -69,7 +69,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import {
   defineProps,
   defineEmits,
@@ -84,7 +84,6 @@ import BaseDropdown from "@/components/BaseDropdown.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { toast } from "vue3-toastify";

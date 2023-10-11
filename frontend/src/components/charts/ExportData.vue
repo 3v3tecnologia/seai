@@ -91,7 +91,7 @@ const aquaReports = computed(() => [
         field: "Captação",
       },
       {
-        title: "Volume por tanque",
+        title: "Volume por tanque (m³)",
         field: "Volume/tanque",
       },
     ],

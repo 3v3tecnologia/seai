@@ -20,7 +20,7 @@
 
         <BaseDropdown
           label="Tipo de usuário"
-          v-model="form.role"
+          v-model="form.type"
           placeholder="Tipo de usuário"
           :options="optionsUser"
           input-required
@@ -29,7 +29,7 @@
 
         <div class="py-3" />
 
-        <AccessModulesTable />
+        <AccessModulesTable v-model="acessData" />
       </template>
       <template v-else v-slot:content>
         <div class="pt-3 pb-5">
@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import LogoProject from "@/components/LogoProject.vue";
 import AccessModulesTable from "@/components/AccessModulesTable.vue";
 import BaseInput from "@/components/BaseInput.vue";
@@ -63,9 +63,8 @@ import BaseDropdown from "@/components/BaseDropdown.vue";
 import PrimaryButton from "@/components/PrimaryButton.vue";
 import FormWrapper from "@/components/FormWrapper.vue";
 import { previewEmailCensured } from "@/helpers/formatEmail";
-import { defineProps } from "vue";
+import { computed, defineProps, watch } from "vue";
 import { ref } from "vue";
-import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
@@ -74,31 +73,32 @@ const router = useRouter();
 const currentRoute = useRoute();
 const store = useStore();
 
-const optionsUser: { title: string; value: number }[] = [
+const optionsUser = [
   { title: "Básico", value: 0 },
   { title: "Admin", value: 1 },
 ];
 
-const optionsAccess: { title: string; value: number }[] = [
-  { title: "Notícias leitura", value: 0 },
-  { title: "Notícias escrita", value: 1 },
-  { title: "Equipamentos leitura", value: 0 },
-  { title: "Equipamentos escrita", value: 1 },
-  { title: "Usuários leitura", value: 0 },
-  { title: "Usuários escrita", value: 1 },
-];
+const acessData = ref({});
 
-const form: Ref = ref({
-  role: optionsUser[0],
+const form = ref({
+  type: optionsUser[0],
 });
-const savedAccount: Ref = ref(false);
+const savedAccount = ref(false);
 const token = ref(currentRoute.query.token || "");
+
+const formDTO = computed(() => {
+  return {
+    email: form.value.email,
+    type: form.value.type.value ? "admin" : "standard",
+    modules: acessData.value,
+  };
+});
 
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  const { email, role } = form.value;
-  const hasEmptyForm = [email, role].filter((val) => !val).length;
+  const { email, type } = form.value;
+  const hasEmptyForm = [email, type].filter((val) => !val).length;
 
   if (hasEmptyForm) {
     return toast.warn("Preencha todos os campos.");
@@ -108,7 +108,7 @@ const handleSubmit = (e) => {
     return router.push({ name: "users" });
   }
 
-  store.dispatch("CREATE_USER", form.value).then(() => {
+  store.dispatch("CREATE_USER", formDTO.value).then(() => {
     savedAccount.value = true;
   });
 };

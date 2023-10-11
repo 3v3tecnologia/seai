@@ -366,22 +366,35 @@ export const store = createStore<Estado>({
 
       commit("SET_LOADING_REPORT", false);
     },
-    async ["CREATE_USER"](user: any) {
+    async ["CREATE_USER"]({ commit }, user: any) {
+      console.log(user);
       try {
-        const createdUser = Object.assign({}, user);
-        // TODO
-        // CONNECT API
-        // const { data: userLogged } = await http.post(`/auth`, user);
-        const newId = Math.floor(Math.random() * (10000 - 1) + 1);
-        createdUser.id = newId;
-        createdUser.created_at = moment(new Date()).format("YYYY/MM/DD");
+        const {
+          data: { data },
+        } = await http.post(`/user/register/`, user);
+        console.log("teste", data, user);
 
         toast.success("Usuário criado com sucesso.");
         toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
-        return true;
       } catch (e) {
         toast.error("Falha ao criar usuário.");
+        console.error("erro ao criar usuario", e, user);
       }
+      // try {
+      //   const createdUser = Object.assign({}, user);
+      //   // TODO
+      //   // CONNECT API
+      //   // const { data: userLogged } = await http.post(`/auth`, user);
+      //   const newId = Math.floor(Math.random() * (10000 - 1) + 1);
+      //   createdUser.id = newId;
+      //   createdUser.created_at = moment(new Date()).format("YYYY/MM/DD");
+
+      //   toast.success("Usuário criado com sucesso.");
+      //   toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
+      //   return true;
+      // } catch (e) {
+      //   toast.error("Falha ao criar usuário.");
+      // }
     },
     async ["UPDATE_USER"](_context, _user: INewUser) {
       try {
@@ -421,52 +434,61 @@ export const store = createStore<Estado>({
       commit("SET_CURRENT_USER", id);
     },
     async ["GET_USERS"]({ commit }) {
+      // try {
+      // TODO
+      // CONNECT API
+      // const { data: users } = await http.get(`/users);
+      //   const generateRandomInt = (max: number, min: number) =>
+      //     Math.floor(Math.random() * (max - min) + min);
+      //   const arrayLength = generateRandomInt(130, 50);
+      //   const mockedUsers = Array.from(Array(arrayLength).keys()).map(
+      //     (index) => {
+      //       const myRandomNumber = generateRandomInt(1000, 0);
+      //       const role = index % 2 ? "Administradores" : "Básico";
+      //       return {
+      //         name: `user${myRandomNumber}`,
+      //         email: `etc${myRandomNumber}@gmail.com`,
+      //         created_at: "2022-08-02 09:15:54.000",
+      //         role,
+      //         status: (index + myRandomNumber) % 2,
+      //         id: myRandomNumber,
+      //       };
+      //     }
+      //   );
+      //   const totalAdmins = mockedUsers.filter(
+      //     (usr) => usr.role === "Básico"
+      //   ).length;
+      //   const totalBasics = mockedUsers.filter(
+      //     (usr) => usr.role === "Administradores"
+      //   ).length;
+      //   const totalActives = mockedUsers.filter((usr) => usr.status).length;
+      //   const totalInactives = mockedUsers.filter((usr) => !usr.status).length;
+      //   const usersDTO = {
+      //     data: mockedUsers,
+      //     totalAdmins,
+      //     totalBasics,
+      //     totalActives,
+      //     totalInactives,
+      //   };
+      //   commit("SET_USERS", usersDTO);
+      // } catch (e) {
+      //   toast.error("Credenciais inválidas.");
+      // }
+
       try {
-        // TODO
-        // CONNECT API
-        // const { data: users } = await http.get(`/users);
+        const {
+          data: { data: users },
+        } = await http.get(`/user/list`);
 
-        const generateRandomInt = (max: number, min: number) =>
-          Math.floor(Math.random() * (max - min) + min);
-
-        const arrayLength = generateRandomInt(130, 50);
-
-        const mockedUsers = Array.from(Array(arrayLength).keys()).map(
-          (index) => {
-            const myRandomNumber = generateRandomInt(1000, 0);
-            const role = index % 2 ? "Administradores" : "Básico";
-
-            return {
-              name: `user${myRandomNumber}`,
-              email: `etc${myRandomNumber}@gmail.com`,
-              created_at: "2022-08-02 09:15:54.000",
-              role,
-              status: (index + myRandomNumber) % 2,
-              id: myRandomNumber,
-            };
-          }
-        );
-
-        const totalAdmins = mockedUsers.filter(
-          (usr) => usr.role === "Básico"
-        ).length;
-        const totalBasics = mockedUsers.filter(
-          (usr) => usr.role === "Administradores"
-        ).length;
-        const totalActives = mockedUsers.filter((usr) => usr.status).length;
-        const totalInactives = mockedUsers.filter((usr) => !usr.status).length;
-
-        const usersDTO = {
-          data: mockedUsers,
-          totalAdmins,
-          totalBasics,
-          totalActives,
-          totalInactives,
-        };
-
-        commit("SET_USERS", usersDTO);
+        commit("SET_USERS", {
+          data: users,
+          totalAdmins: users.filter((u: any) => u.type === "admin").length,
+          totalBasics: users.filter((u: any) => u.type !== "admin").length,
+          totalActives: 0,
+          totalInactives: 0,
+        });
       } catch (e) {
-        toast.error("Credenciais inválidas.");
+        toast.error("Erro ao buscar usuários.");
       }
     },
   },
