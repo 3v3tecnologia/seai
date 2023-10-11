@@ -49,14 +49,6 @@ const usersCount = [
     key: "totalBasics",
     title: "Básicos",
   },
-  {
-    key: "totalActives",
-    title: "Ativos",
-  },
-  {
-    key: "totalInactives",
-    title: "Inativos",
-  },
 ];
 </script>
 
