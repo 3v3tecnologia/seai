@@ -1420,17 +1420,17 @@
                   "email": "test@gmail.com",
                   "type": "standard",
                   "modules": {
-                    "news_manager": {
+                    "news": {
                       "id": 1,
                       "read": true,
                       "write": true
                     },
-                    "registers": {
+                    "register": {
                       "id": 2,
                       "read": true,
                       "write": true
                     },
-                    "users_manager": {
+                    "user": {
                       "id": 3,
                       "read": true,
                       "write": true
@@ -1550,8 +1550,8 @@
                   }
                 },
                 "example": {
-                  "login": "test",
-                  "password": "12345"
+                  "login": "admin",
+                  "password": "1234567"
                 }
               }
             }
@@ -1691,11 +1691,11 @@
                   }
                 },
                 "example": {
-                  "email": "test@gmail.com",
-                  "name": "test",
-                  "login": "test",
-                  "password": "123",
-                  "confirmPassword": "123"
+                  "email": "admin@gmail.com",
+                  "name": "admin",
+                  "login": "admin",
+                  "password": "1234567",
+                  "confirmPassword": "1234567"
                 }
               }
             }
@@ -1819,7 +1819,7 @@
                   }
                 },
                 "example": {
-                  "email": "test@gmail.com"
+                  "email": "admin@gmail.com"
                 }
               }
             }
@@ -2357,7 +2357,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Faq Id",
+            "description": "User Id",
             "required": true,
             "schema": {
               "type": "number"
