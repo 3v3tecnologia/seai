@@ -1371,7 +1371,7 @@
                   "modules": {
                     "type": "object",
                     "properties": {
-                      "news_manager": {
+                      "news": {
                         "type": "object",
                         "properties": {
                           "id": {
@@ -1399,7 +1399,7 @@
                           }
                         }
                       },
-                      "user_manager": {
+                      "user": {
                         "type": "object",
                         "properties": {
                           "id": {
