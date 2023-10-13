@@ -1,4 +1,8 @@
 import {
+  Modules,
+  PermissionType,
+} from "../../../../domain/entities/user/user-modules-access";
+import {
   AccountRepository,
   AccountRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/account-repository";
@@ -7,7 +11,7 @@ import { governmentDb } from "../connection/knexfile";
 export class KnexAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
-    type: "admin" | "standard";
+    type: PermissionType;
     modules: AccountRepository.system_modules_permissions;
   }): Promise<number | null> {
     let id_user = null;
@@ -26,27 +30,27 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules.news_manager.id,
-          Read: data.modules.news_manager.read,
-          Write: data.modules.news_manager.write,
+          Fk_Module: data.modules[Modules.NEWS].id,
+          Read: data.modules[Modules.NEWS].read,
+          Write: data.modules[Modules.NEWS].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules.registers.id,
-          Read: data.modules.registers.read,
-          Write: data.modules.registers.write,
+          Fk_Module: data.modules[Modules.REGISTER].id,
+          Read: data.modules[Modules.REGISTER].read,
+          Write: data.modules[Modules.REGISTER].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules.users_manager.id,
-          Read: data.modules.users_manager.read,
-          Write: data.modules.users_manager.write,
+          Fk_Module: data.modules[Modules.USER].id,
+          Read: data.modules[Modules.USER].read,
+          Write: data.modules[Modules.USER].write,
         })
         .into("User_Access");
 

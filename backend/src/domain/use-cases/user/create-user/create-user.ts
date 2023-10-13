@@ -1,7 +1,6 @@
 import env from "../../../../server/http/env";
-import { Email } from "../../../entities/user/email";
 import { User } from "../../../entities/user/user";
-import { SystemModules } from "../../../entities/user/user-modules-access";
+import { Modules } from "../../../entities/user/user-modules-access";
 import { Command } from "../../_ports/core/command";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
@@ -48,9 +47,9 @@ export class CreateUser extends Command implements CreateUserProtocol {
     }
 
     const userModulesAccess = [
-      request.modules.news_manager.id,
-      request.modules.registers.id,
-      request.modules.users_manager.id,
+      request.modules[Modules.NEWS].id,
+      request.modules[Modules.REGISTER].id,
+      request.modules[Modules.USER].id,
     ];
 
     // evitar ter que salvar usuário com módulos que não existem

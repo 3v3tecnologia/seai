@@ -71,8 +71,6 @@ export class SignUp extends Command {
       return left(new UnmatchedPasswordError());
     }
 
-    console.log("MODULOS = ", access);
-
     const userOrError = User.create(
       {
         email: account.email,

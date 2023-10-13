@@ -1,5 +1,4 @@
 import { Either, left, right } from "../../../shared/Either";
-import { concatenateMessages } from "../../../shared/Guard";
 import { Notification } from "../../../shared/notification/notification";
 import { Email } from "./email";
 import { UserLogin } from "./login";

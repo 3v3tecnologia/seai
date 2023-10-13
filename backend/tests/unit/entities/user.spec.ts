@@ -10,17 +10,17 @@ describe("#User entity", () => {
         email,
         type: "standard",
         modulesAccess: {
-          news_manager: {
+          news: {
             id: 1,
             read: true,
             write: false,
           },
-          registers: {
+          register: {
             id: 2,
             read: true,
             write: false,
           },
-          users_manager: {
+          user: {
             id: 3,
             read: false,
             write: false,
@@ -38,17 +38,17 @@ describe("#User entity", () => {
         email: "test@gmail.com",
         type: "standard",
         modulesAccess: {
-          news_manager: {
+          news: {
             id: 1,
             read: true,
             write: false,
           },
-          registers: {
+          register: {
             id: 2,
             read: true,
             write: false,
           },
-          users_manager: {
+          user: {
             id: 3,
             read: true,
             write: false,
@@ -68,17 +68,17 @@ describe("#User entity", () => {
         email: "test@gmail.com",
         type: "admin",
         modulesAccess: {
-          news_manager: {
+          news: {
             id: 1,
             read: true,
             write: false,
           },
-          registers: {
+          register: {
             id: 2,
             read: true,
             write: false,
           },
-          users_manager: {
+          user: {
             id: 3,
             read: true,
             write: false,
@@ -105,17 +105,17 @@ describe("#User entity", () => {
         login:
           "testasdasdsagdashdgdfahsgdafhgfsdhgafsghdfshdfhgsasdasddasdasdassd",
         modulesAccess: {
-          news_manager: {
+          news: {
             id: 1,
             read: true,
             write: false,
           },
-          registers: {
+          register: {
             id: 2,
             read: true,
             write: false,
           },
-          users_manager: {
+          user: {
             id: 3,
             read: false,
             write: false,
@@ -135,17 +135,17 @@ describe("#User entity", () => {
         name: "",
         type: "standard",
         modulesAccess: {
-          news_manager: {
+          news: {
             id: 1,
             read: true,
             write: false,
           },
-          registers: {
+          register: {
             id: 2,
             read: true,
             write: false,
           },
-          users_manager: {
+          user: {
             id: 3,
             read: false,
             write: false,

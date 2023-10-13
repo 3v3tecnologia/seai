@@ -6,25 +6,21 @@ import {
 } from "../../../shared/Guard";
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 
-export type SystemModulesProps = {
-  news_manager: {
-    id?: number;
-    read: boolean;
-    write: boolean;
-  };
-  registers: {
-    id?: number;
-    read: boolean;
-    write: boolean;
-  };
-  users_manager: {
-    id?: number;
-    read: boolean;
-    write: boolean;
-  };
+export type SystemModulesPermissions = {
+  id?: number;
+  read: boolean;
+  write: boolean;
 };
 
-type PermissionType = "admin" | "standard";
+export enum Modules {
+  NEWS = "news",
+  REGISTER = "register",
+  USER = "user",
+}
+
+export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
+
+export type PermissionType = "admin" | "standard";
 export class SystemModules {
   private modules: SystemModulesProps;
 
@@ -45,9 +41,9 @@ export class SystemModules {
     permission_type: PermissionType
   ): Either<string, void> {
     const isNullOrUndefinedArgs = againstNullOrUndefinedBulk([
-      { argument: modules.news_manager, argumentName: "news_manager" },
-      { argument: modules.registers, argumentName: "registers" },
-      { argument: modules.users_manager, argumentName: "users_manager" },
+      { argument: modules[Modules.NEWS], argumentName: Modules.NEWS },
+      { argument: modules[Modules.REGISTER], argumentName: Modules.REGISTER },
+      { argument: modules[Modules.USER], argumentName: Modules.USER },
     ]);
 
     if (isNullOrUndefinedArgs.isLeft()) {
@@ -56,47 +52,47 @@ export class SystemModules {
 
     const isSatisfiedTypes = checkArgumentsTypesBulk([
       {
-        argument: modules.news_manager.id,
+        argument: modules[Modules.NEWS].id,
         argumentName: "identificador do acesso ao módulo de notícias",
         type: "number",
       },
       {
-        argument: modules.users_manager.id,
+        argument: modules[Modules.USER].id,
         argumentName: "identificador do acesso ao módulo de usuários",
         type: "number",
       },
       {
-        argument: modules.registers.id,
+        argument: modules[Modules.REGISTER].id,
         argumentName: "identificador do acesso ao módulo de cadastro",
         type: "number",
       },
       {
-        argument: modules.news_manager.read,
+        argument: modules[Modules.NEWS].read,
         argumentName: "permissão para leitura de notícias",
         type: "boolean",
       },
       {
-        argument: modules.news_manager.write,
+        argument: modules[Modules.NEWS].write,
         argumentName: "permissão para escrita de notícias",
         type: "boolean",
       },
       {
-        argument: modules.users_manager.read,
+        argument: modules[Modules.USER].read,
         argumentName: "permissão para leitura de usuários",
         type: "boolean",
       },
       {
-        argument: modules.users_manager.write,
+        argument: modules[Modules.USER].write,
         argumentName: "permissão para escrita de usuários",
         type: "boolean",
       },
       {
-        argument: modules.registers.read,
+        argument: modules[Modules.REGISTER].read,
         argumentName: "permissão para leitura de registros",
         type: "boolean",
       },
       {
-        argument: modules.registers.write,
+        argument: modules[Modules.REGISTER].write,
         argumentName: "permissão para escrita ",
         type: "boolean",
       },
@@ -108,9 +104,9 @@ export class SystemModules {
 
     if (permission_type === "admin") {
       const hasAdminPermissions = [
-        SystemModules.hasAdminPermission(modules.news_manager),
-        SystemModules.hasAdminPermission(modules.registers),
-        SystemModules.hasAdminPermission(modules.users_manager),
+        SystemModules.hasAdminPermission(modules[Modules.NEWS]),
+        SystemModules.hasAdminPermission(modules[Modules.REGISTER]),
+        SystemModules.hasAdminPermission(modules[Modules.USER]),
       ].every((permission) => permission === true);
 
       if (hasAdminPermissions === false) {
@@ -122,7 +118,7 @@ export class SystemModules {
 
     if (permission_type === "standard") {
       const hasUserManageAccess =
-        modules.users_manager.read || modules.users_manager.write;
+        modules[Modules.USER].read || modules[Modules.USER].write;
 
       if (hasUserManageAccess) {
         return left(

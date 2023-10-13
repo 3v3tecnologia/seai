@@ -59,8 +59,6 @@ export class AdminMiddleware implements Middleware {
         this.module
       );
 
-      console.log("ADMIN : ",module)
-
       if (module) {
         if (hasAnyKey(module, this.access)) {
           return ok({ accountId });

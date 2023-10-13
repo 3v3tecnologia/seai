@@ -4,6 +4,11 @@ import { HttpResponse } from "../ports";
 import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
+import {
+  Modules,
+  PermissionType,
+  SystemModulesPermissions,
+} from "../../../domain/entities/user/user-modules-access";
 
 export class CreateUserController extends CommandController<
   CreateUserController.Request,
@@ -46,20 +51,11 @@ export namespace CreateUserController {
   export type Request = {
     accountId: number;
     email: string;
-    type: "admin" | "standard";
+    type: PermissionType;
     modules: {
-      news_manager: {
-        read: boolean;
-        write: boolean;
-      };
-      registers: {
-        read: boolean;
-        write: boolean;
-      };
-      users_manager: {
-        read: boolean;
-        write: boolean;
-      };
+      [Modules.NEWS]: Required<SystemModulesPermissions>;
+      [Modules.REGISTER]: Required<SystemModulesPermissions>;
+      [Modules.USER]: Required<SystemModulesPermissions>;
     };
   };
 }

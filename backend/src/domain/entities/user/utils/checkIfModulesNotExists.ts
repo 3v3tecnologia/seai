@@ -1,6 +1,6 @@
 import { Either, left, right } from "../../../../shared/Either";
 import { UserModuleAccessErrors } from "../errors/invalid-user-permissions";
-import { SystemModules } from "../user-modules-access";
+import { Modules, SystemModules } from "../user-modules-access";
 
 type existsModules = Array<{
   id: number;
@@ -12,9 +12,9 @@ export function checkIfModulesNotExists(
   existing_modules: existsModules
 ): Either<UserModuleAccessErrors.InvalidUserPermissionError, void> {
   const new_modules_list = [
-    new_modules.value.news_manager,
-    new_modules.value.registers,
-    new_modules.value.users_manager,
+    new_modules.value[Modules.NEWS],
+    new_modules.value[Modules.REGISTER],
+    new_modules.value[Modules.USER],
   ];
   // evitar ter que salvar usuário com módulos que não existem
   new_modules_list.forEach((module) => {

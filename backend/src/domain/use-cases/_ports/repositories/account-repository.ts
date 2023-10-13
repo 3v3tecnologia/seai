@@ -1,3 +1,9 @@
+import {
+  Modules,
+  PermissionType,
+  SystemModulesProps,
+} from "../../../entities/user/user-modules-access";
+
 export namespace AccountRepository {
   export type UserData = {
     id?: number;
@@ -10,24 +16,14 @@ export namespace AccountRepository {
     updatedAt?: string;
   };
 
-  export type userTypes = "admin" | "standard";
+  export type userTypes = PermissionType;
 
   export type AccountModulesData = {
     id: number;
     name: string;
   };
 
-  export type module_permission = {
-    id?: number;
-    read: boolean;
-    write: boolean;
-  };
-
-  export type system_modules_permissions = {
-    news_manager: module_permission;
-    registers: module_permission;
-    users_manager: module_permission;
-  };
+  export type system_modules_permissions = SystemModulesProps;
 
   export interface Add {
     add(data: {
