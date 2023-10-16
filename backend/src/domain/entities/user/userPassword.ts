@@ -1,9 +1,10 @@
 import { Either, left, right } from "../../../shared/Either";
+import { UnmatchedPasswordError } from "../../use-cases/user/authentication/errors";
 import { PasswordErrors } from "./errors/invalid-password";
 
 interface IUserPasswordProps {
   value: string;
-  confirm?: string;
+  confirm?: string | null;
   isHashed?: boolean;
 }
 
@@ -38,7 +39,8 @@ export class UserPassword {
   ): Either<
     | PasswordErrors.EmptyPasswordError
     | PasswordErrors.PasswordLengthError
-    | PasswordErrors.PasswordWithoutNumbersError,
+    | PasswordErrors.PasswordWithoutNumbersError
+    | PasswordErrors.UnmatchedPasswordError,
     UserPassword
   > {
     if (!props.value || props.value.length === 0) {
@@ -53,6 +55,17 @@ export class UserPassword {
       }
       if (noNumberIn(props.value)) {
         return left(new PasswordErrors.PasswordWithoutNumbersError());
+      }
+      if (
+        Reflect.has(props, "confirm") === false ||
+        props.confirm === null ||
+        props.confirm === undefined
+      ) {
+        return left(new Error("Confirm password is required"));
+      }
+      // TODO: Check if password has same values
+      if (props.value.length !== props.confirm?.length) {
+        return left(new UnmatchedPasswordError());
       }
     }
 

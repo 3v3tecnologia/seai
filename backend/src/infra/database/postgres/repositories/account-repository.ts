@@ -1,7 +1,5 @@
-import {
-  Modules,
-  PermissionType,
-} from "../../../../domain/entities/user/user-modules-access";
+import { UserType } from "../../../../domain/entities/user/user";
+import { Modules } from "../../../../domain/entities/user/user-modules-access";
 import {
   AccountRepository,
   AccountRepositoryProtocol,
@@ -11,7 +9,7 @@ import { governmentDb } from "../connection/knexfile";
 export class KnexAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
-    type: PermissionType;
+    type: UserType;
     modules: AccountRepository.system_modules_permissions;
   }): Promise<number | null> {
     let id_user = null;
@@ -149,17 +147,50 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     email: string;
     name: string;
     login: string;
+    type: string;
     password: string;
+    modules?: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
-    const rows = await governmentDb("User").where({ Id: data.id }).update({
-      Email: data.email,
-      Name: data.name,
-      Login: data.login,
-      Password: data.password,
-      UpdatedAt: governmentDb.fn.now(),
+    let result = false;
+    await governmentDb.transaction(async (trx) => {
+      await trx("User").where({ Id: data.id }).update({
+        Email: data.email,
+        Name: data.name,
+        Login: data.login,
+        Password: data.password,
+        UpdatedAt: governmentDb.fn.now(),
+      });
+
+      if (data.modules) {
+        await trx("User_Access")
+          .update({
+            Fk_Module: data.modules[Modules.NEWS].id,
+            Read: data.modules[Modules.NEWS].read,
+            Write: data.modules[Modules.NEWS].write,
+          })
+          .where({ Fk_User: data.id });
+
+        await trx("User_Access")
+          .update({
+            Fk_Module: data.modules[Modules.REGISTER].id,
+            Read: data.modules[Modules.REGISTER].read,
+            Write: data.modules[Modules.REGISTER].write,
+          })
+          .where({ Fk_User: data.id });
+
+        await trx("User_Access")
+          .insert({
+            Fk_Module: data.modules[Modules.USER].id,
+            Read: data.modules[Modules.USER].read,
+            Write: data.modules[Modules.USER].write,
+          })
+          .where({ Fk_User: data.id });
+      }
+
+      result = true;
     });
 
-    return rows > 0;
+    return result;
   }
 
   async getByEmail(email: string): Promise<AccountRepository.UserData | null> {

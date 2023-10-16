@@ -1,6 +1,6 @@
+import { UserType } from "../../../entities/user/user";
 import {
   Modules,
-  PermissionType,
   SystemModulesProps,
 } from "../../../entities/user/user-modules-access";
 
@@ -16,7 +16,7 @@ export namespace AccountRepository {
     updatedAt?: string;
   };
 
-  export type userTypes = PermissionType;
+  export type userTypes = UserType;
 
   export type AccountModulesData = {
     id: number;
