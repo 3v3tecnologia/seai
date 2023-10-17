@@ -13,6 +13,7 @@ export namespace AccountRepository {
     password?: string;
     type: string;
     createdAt?: string;
+    modules?: SystemModulesProps | null;
     updatedAt?: string;
   };
 
@@ -52,25 +53,31 @@ export namespace AccountRepository {
   }
 
   export interface GetById {
-    getById(id_user: number): Promise<UserData | null>;
+    getById(
+      id_user: number
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface GetByEmail {
-    getByEmail(email: string): Promise<UserData | null>;
+    getByEmail(
+      email: string
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface GetByLogin {
-    getByLogin(login: string): Promise<UserData | null>;
+    getByLogin(
+      login: string
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface CheckIfEmailExists {
     checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   }
 
-  export interface GetUserModulesPermissions {
-    getUserModulesPermissions(
+  export interface GetUserById {
+    getUserById(
       id_user: number
-    ): Promise<system_modules_permissions | null>;
+    ): Promise<Required<Omit<AccountRepository.UserData, "password">> | null>;
   }
 
   export interface GetModules {
@@ -98,6 +105,6 @@ export interface AccountRepositoryProtocol
     AccountRepository.GetByEmail,
     AccountRepository.GetByLogin,
     AccountRepository.CheckIfEmailExists,
-    AccountRepository.GetUserModulesPermissions,
+    AccountRepository.GetUserById,
     AccountRepository.GetModules,
     AccountRepository.GetUserModuleByName {}

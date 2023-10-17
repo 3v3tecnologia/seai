@@ -49,21 +49,18 @@ export class SignUp extends Command {
     const loginAlreadyExists = await this.accountRepository.getByLogin(
       user.login
     );
+
     if (!!loginAlreadyExists) {
       return left(new LoginAlreadyExists(user.login));
     }
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
-    const account = await this.accountRepository.getByEmail(user.email);
+    const account = await this.accountRepository.getUserById(user.accountId);
 
-    if (!account) {
-      return left(new AccountEmailNotFound(user.email));
+    if (account === null) {
+      return left(new Error(`Usuário não encontrado.`));
     }
 
-    const access = await this.accountRepository.getUserModulesPermissions(
-      account.id as number
-    );
-
-    if (!access) {
+    if (!account.modules) {
       return left(new UserModulesNotFound());
     }
 
@@ -77,8 +74,9 @@ export class SignUp extends Command {
         type: account.type as UserType,
         login: user.login,
         name: user.name,
-        modulesAccess: access,
+        modulesAccess: account.modules,
         password: user.password,
+        confirmPassword: user.confirmPassword,
       },
       account.id
     );

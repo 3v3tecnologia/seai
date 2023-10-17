@@ -34,7 +34,6 @@ export class SignUpController extends CommandController<
 export namespace SignUpController {
   export type Request = {
     accountId: number;
-    email: string;
     name: string;
     login: string;
     password: string;

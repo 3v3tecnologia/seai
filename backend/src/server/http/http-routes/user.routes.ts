@@ -3,7 +3,7 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 import {
   makeCreateUserController,
   makeDeleteUserController,
-  makeGetUserAccessModulesController,
+  makeFetchUserByIdController,
   makeGetUsersController,
 } from "../factories/controllers/user";
 
@@ -55,10 +55,16 @@ export const userRouter = (): Router => {
   );
 
   router.get(
-    "/list-user-access/:id",
+    "/profile",
+    authorization,
+    adaptRoute(makeFetchUserByIdController())
+  );
+
+  router.get(
+    "/:id",
     authorization,
     userWriteAccessAuth,
-    adaptRoute(makeGetUserAccessModulesController())
+    adaptRoute(makeFetchUserByIdController())
   );
 
   return router;
