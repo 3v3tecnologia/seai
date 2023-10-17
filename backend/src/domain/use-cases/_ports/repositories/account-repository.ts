@@ -43,7 +43,7 @@ export namespace AccountRepository {
       email: string;
       name: string;
       login: string;
-      password: string;
+      password?: string;
     }): Promise<boolean>;
   }
 

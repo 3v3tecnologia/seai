@@ -104,7 +104,7 @@ export class SystemModules {
       return left(concatenateMessages(isSatisfiedTypes.value));
     }
 
-    if (permission_type === "admin") {
+    /*if (permission_type === "admin") {
       const hasAdminPermissions = [
         SystemModules.hasAdminPermission(modules[Modules.NEWS]),
         SystemModules.hasAdminPermission(modules[Modules.REGISTER]),
@@ -116,7 +116,7 @@ export class SystemModules {
           "Para usuário administrador, é necessário definir todas as permissões."
         );
       }
-    }
+    }*/
 
     if (permission_type === "standard") {
       const hasUserManageAccess =

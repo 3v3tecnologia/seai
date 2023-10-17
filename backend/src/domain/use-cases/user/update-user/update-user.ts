@@ -37,8 +37,8 @@ export class UpdateUser extends Command {
       string
     >
   > {
-    const alreadyExistsAccount = await this.accountRepository.getByLogin(
-      request.login
+    const alreadyExistsAccount = await this.accountRepository.getById(
+      request.id
     );
 
     const userNotFound = alreadyExistsAccount === null;
@@ -47,14 +47,18 @@ export class UpdateUser extends Command {
       return left(new AccountNotFoundError(request.login));
     }
 
-    // Se login não for do mesmo usuário então é sinal que já existe um login
-    // cadastrado e o sistema deve bloquear a edição.
-    const hasOtherAccountWithSameLogin =
-      alreadyExistsAccount?.login === request.login &&
-      alreadyExistsAccount.id !== request.id;
+    const userWithLogin = await this.accountRepository.getByLogin(
+      request.login
+    );
 
-    if (hasOtherAccountWithSameLogin) {
-      return left(new Error(`Usuário com login ${request.login} já existe.`));
+    if (userWithLogin) {
+      // Se login não for do mesmo usuário então é sinal que já existe um login
+      // cadastrado e o sistema deve bloquear a edição.
+      const hasOtherAccountWithSameLogin = userWithLogin.id !== request.id;
+
+      if (hasOtherAccountWithSameLogin) {
+        return left(new Error(`Usuário com login ${request.login} já existe.`));
+      }
     }
 
     const modules = await this.accountRepository.getModules();
@@ -62,7 +66,7 @@ export class UpdateUser extends Command {
     const userPermissionType =
       alreadyExistsAccount.type === UserTypes.STANDARD
         ? UserTypes.STANDARD
-        : request.type;
+        : request.type || UserTypes.ADMIN;
 
     const createUserDTO = {
       email: request.email,
@@ -101,8 +105,6 @@ export class UpdateUser extends Command {
       return left(userAccountOrError.value);
     }
 
-    const hashedPassword = await this.encoder.hash(request.password);
-
     const user = userAccountOrError.value as User;
 
     const userToPersistency = {
@@ -110,9 +112,16 @@ export class UpdateUser extends Command {
       email: user.email?.value as string,
       login: user.login?.value as string,
       name: user.email?.value as string,
-      password: hashedPassword,
       modules: user.access ? user.access.value : null,
     };
+
+    if (user.password?.value) {
+      const hashedPassword = await this.encoder.hash(user.password?.value);
+
+      Object.assign(userToPersistency, {
+        password: hashedPassword,
+      });
+    }
 
     // TODO: deve passar todos os campos do 'account'
     await this.accountRepository.update(userToPersistency);

@@ -148,43 +148,56 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     name: string;
     login: string;
     type: string;
-    password: string;
+    password?: string;
     modules?: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
     let result = false;
     await governmentDb.transaction(async (trx) => {
-      await trx("User").where({ Id: data.id }).update({
+      const userToUpdate = {
         Email: data.email,
         Name: data.name,
         Login: data.login,
-        Password: data.password,
         UpdatedAt: governmentDb.fn.now(),
-      });
+      };
+
+      if (data.password) {
+        Object.assign(userToUpdate, {
+          Password: data.password,
+        });
+      }
+
+      await trx("User").where({ Id: data.id }).update(userToUpdate);
 
       if (data.modules) {
         await trx("User_Access")
+          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
+          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
           .update({
-            Fk_Module: data.modules[Modules.NEWS].id,
             Read: data.modules[Modules.NEWS].read,
             Write: data.modules[Modules.NEWS].write,
-          })
-          .where({ Fk_User: data.id });
+          });
 
         await trx("User_Access")
-          .update({
+          .where({
+            Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
+            UpdatedAt: governmentDb.fn.now(),
+          })
+          // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
+          .update({
             Read: data.modules[Modules.REGISTER].read,
             Write: data.modules[Modules.REGISTER].write,
-          })
-          .where({ Fk_User: data.id });
+            UpdatedAt: governmentDb.fn.now(),
+          });
 
         await trx("User_Access")
-          .insert({
-            Fk_Module: data.modules[Modules.USER].id,
+          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
+          // .andWhere({ Fk_Module: data.modules[Modules.USER].id })
+          .update({
             Read: data.modules[Modules.USER].read,
             Write: data.modules[Modules.USER].write,
-          })
-          .where({ Fk_User: data.id });
+            UpdatedAt: governmentDb.fn.now(),
+          });
       }
 
       result = true;

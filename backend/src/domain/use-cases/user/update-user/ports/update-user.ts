@@ -1,5 +1,5 @@
 import { Either } from "../../../../../shared/Either";
-import { UserTypes } from "../../../../entities/user/user";
+import { UserType } from "../../../../entities/user/user";
 import { SystemModulesProps } from "../../../../entities/user/user-modules-access";
 
 export namespace UpdateUserDTO {
@@ -8,12 +8,12 @@ export namespace UpdateUserDTO {
   export type params = {
     id: number;
     email: string;
-    type: UserTypes;
+    type?: UserType;
     name: string;
     login: string;
-    password: string;
-    confirmPassword: string;
-    modules: system_modules_permissions;
+    password?: string;
+    confirmPassword?: string;
+    modules?: system_modules_permissions;
   };
   export type result = {};
 }

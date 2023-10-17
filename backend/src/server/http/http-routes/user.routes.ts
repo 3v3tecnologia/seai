@@ -12,6 +12,7 @@ import {
   userReadAccessAuth,
   authorization,
 } from "../http-middlewares";
+import { makeUpdateUserController } from "../factories/controllers/user/update-user.controller-factory";
 
 export const userRouter = (): Router => {
   const router = Router();
@@ -23,11 +24,13 @@ export const userRouter = (): Router => {
     adaptRoute(makeCreateUserController())
   );
 
+  router.put("/profile", authorization, adaptRoute(makeUpdateUserController()));
+
   router.put(
-    "/update/:id",
+    "/:id",
     authorization,
     userWriteAccessAuth,
-    adaptRoute(makeDeleteUserController())
+    adaptRoute(makeUpdateUserController())
   );
 
   router.delete(
