@@ -76,7 +76,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
   }
   async getUserById(
     id_user: number
-  ): Promise<Required<Omit<AccountRepository.UserData, "password">> | null> {
+  ): Promise<Required<AccountRepository.UserData> | null> {
     const result = await governmentDb
       .select("Id", "Name", "Login", "Email", "Type", "CreatedAt", "UpdatedAt")
       .where({ Id: id_user })
@@ -167,23 +167,29 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return mods;
   }
 
-  async list(): Promise<Array<AccountRepository.UserData> | null> {
-    const users = await governmentDb.select("*").from("User");
+  async list(): Promise<Array<Required<AccountRepository.UserData>> | null> {
+    const result = await governmentDb.select("*").from("User");
 
-    if (!users) {
+    if (!result) {
       return null;
     }
-    return users.map((user) => {
+
+    const users = result.map((user) => {
+      // const modules = await this.getUserModules(user.Id);
+
       return {
-        id: user.Id,
+        id: Number(user.Id),
         name: user.Name,
         login: user.Login,
-        email: user.Email,
-        type: user.Type,
-        createdAt: user.CreatedAt,
-        updatedAt: user.UpdatedAt,
+        email: String(user.Email),
+        type: String(user.Type),
+        createdAt: String(user.CreatedAt),
+        updatedAt: String(user.UpdatedAt),
+        modules: null,
       };
     });
+
+    return users;
   }
 
   async update(data: {
@@ -301,7 +307,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
 
   async getByLogin(
     login: string
-  ): Promise<Required<AccountRepository.UserData> | null> {
+  ): Promise<Required<AccountRepository.FullUserData> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
@@ -355,7 +361,7 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
 
   async getById(
     id_user: number
-  ): Promise<Required<AccountRepository.UserData> | null> {
+  ): Promise<Required<AccountRepository.FullUserData> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")

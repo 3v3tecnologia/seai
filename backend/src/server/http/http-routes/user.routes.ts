@@ -60,12 +60,12 @@ export const userRouter = (): Router => {
     adaptRoute(makeFetchUserByIdController())
   );
 
-  router.get(
-    "/:id",
-    authorization,
-    userWriteAccessAuth,
-    adaptRoute(makeFetchUserByIdController())
-  );
+  // router.get(
+  //   "/:id",
+  //   authorization,
+  //   userWriteAccessAuth,
+  //   adaptRoute(makeFetchUserByIdController())
+  // );
 
   return router;
 };

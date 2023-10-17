@@ -1,8 +1,5 @@
 import { UserType } from "../../../entities/user/user";
-import {
-  Modules,
-  SystemModulesProps,
-} from "../../../entities/user/user-modules-access";
+import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 
 export namespace AccountRepository {
   export type UserData = {
@@ -10,12 +7,13 @@ export namespace AccountRepository {
     name?: string;
     login?: string;
     email: string;
-    password?: string;
     type: string;
     createdAt?: string;
     modules?: SystemModulesProps | null;
     updatedAt?: string;
   };
+
+  export type FullUserData = UserData & { password: string };
 
   export type userTypes = UserType;
 
@@ -35,7 +33,7 @@ export namespace AccountRepository {
   }
 
   export interface Fetch {
-    list(): Promise<Array<UserData> | null>;
+    list(): Promise<Array<Required<AccountRepository.UserData>> | null>;
   }
 
   export interface Update {
@@ -55,7 +53,7 @@ export namespace AccountRepository {
   export interface GetById {
     getById(
       id_user: number
-    ): Promise<Required<AccountRepository.UserData> | null>;
+    ): Promise<Required<AccountRepository.FullUserData> | null>;
   }
 
   export interface GetByEmail {
@@ -67,7 +65,7 @@ export namespace AccountRepository {
   export interface GetByLogin {
     getByLogin(
       login: string
-    ): Promise<Required<AccountRepository.UserData> | null>;
+    ): Promise<Required<AccountRepository.FullUserData> | null>;
   }
 
   export interface CheckIfEmailExists {
@@ -77,7 +75,7 @@ export namespace AccountRepository {
   export interface GetUserById {
     getUserById(
       id_user: number
-    ): Promise<Required<Omit<AccountRepository.UserData, "password">> | null>;
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface GetModules {
