@@ -1,7 +1,7 @@
-import { LoaUserModules } from "../../../../../domain/use-cases/user/load_user_access/load_user_access";
+import { FetchUserById } from "../../../../../domain/use-cases/user/fetch-user-by-id/fetch-user-by-id";
 import { KnexAccountRepository } from "../../../../../infra/database/postgres/repositories/account-repository";
 
-export const makeGetUsersAccessModules = (): LoaUserModules => {
+export const makeFetchUserByIdModules = (): FetchUserById => {
   const accountRepository = new KnexAccountRepository();
-  return new LoaUserModules(accountRepository);
+  return new FetchUserById(accountRepository);
 };

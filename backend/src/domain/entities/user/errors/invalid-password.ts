@@ -28,4 +28,10 @@ export namespace PasswordErrors {
       this.name = "PasswordNotMatchingError";
     }
   }
+  export class UnmatchedPasswordError extends Error {
+    constructor() {
+      super("Confirme a senha");
+      this.name = "UnmatchedPasswordError";
+    }
+  }
 }

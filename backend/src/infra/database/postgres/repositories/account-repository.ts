@@ -1,6 +1,7 @@
+import { UserType } from "../../../../domain/entities/user/user";
 import {
   Modules,
-  PermissionType,
+  SystemModulesProps,
 } from "../../../../domain/entities/user/user-modules-access";
 import {
   AccountRepository,
@@ -11,7 +12,7 @@ import { governmentDb } from "../connection/knexfile";
 export class KnexAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
-    type: PermissionType;
+    type: UserType;
     modules: AccountRepository.system_modules_permissions;
   }): Promise<number | null> {
     let id_user = null;
@@ -73,32 +74,73 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
       };
     });
   }
-  async getUserModulesPermissions(
+  async getUserById(
     id_user: number
-  ): Promise<AccountRepository.system_modules_permissions | null> {
-    const modules = await governmentDb
+  ): Promise<Required<AccountRepository.UserData> | null> {
+    const result = await governmentDb
+      .select("Id", "Name", "Login", "Email", "Type", "CreatedAt", "UpdatedAt")
+      .where({ Id: id_user })
+      .from("User")
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt } = result;
+
+    const user: {
+      id: number;
+      name: string;
+      login: string;
+      email: string;
+      type: string;
+      createdAt: string;
+      updatedAt: string;
+      modules: SystemModulesProps | null;
+    } = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      modules: null,
+    };
+
+    const modules = await this.getUserModules(id_user);
+
+    if (modules) {
+      Object.assign(user, {
+        modules,
+      });
+    }
+
+    return user;
+  }
+  async getUserModules(id_user: number): Promise<SystemModulesProps | null> {
+    const result = await governmentDb
       .select("*")
       .where({ Fk_User: id_user })
       .from("User_Access")
       .innerJoin("Module", "Module.Id", "User_Access.Fk_Module");
 
-    if (!modules) {
+    if (!result.length) {
       return null;
     }
 
-    const mods = {} as AccountRepository.system_modules_permissions;
-
-    modules.forEach((module) => {
-      Object.assign(mods, {
-        [module.Name]: {
-          id: module.Id,
-          read: module.Read,
-          write: module.Write,
+    const modules = result.reduce((prev: any, current) => {
+      return Object.assign(prev, {
+        [current.Name]: {
+          id: Number(current.Id),
+          read: Boolean(current.Read),
+          write: Boolean(current.Write),
         },
       });
-    });
+    }, {});
 
-    return mods;
+    return modules as SystemModulesProps;
   }
   async getUserModulesByName(
     id_user: number,
@@ -125,23 +167,29 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return mods;
   }
 
-  async list(): Promise<Array<AccountRepository.UserData> | null> {
-    const users = await governmentDb.select("*").from("User");
+  async list(): Promise<Array<Required<AccountRepository.UserData>> | null> {
+    const result = await governmentDb.select("*").from("User");
 
-    if (!users) {
+    if (!result) {
       return null;
     }
-    return users.map((user) => {
+
+    const users = result.map((user) => {
+      // const modules = await this.getUserModules(user.Id);
+
       return {
-        id: user.Id,
+        id: Number(user.Id),
         name: user.Name,
         login: user.Login,
-        email: user.Email,
-        type: user.Type,
-        createdAt: user.CreatedAt,
-        updatedAt: user.UpdatedAt,
+        email: String(user.Email),
+        type: String(user.Type),
+        createdAt: String(user.CreatedAt),
+        updatedAt: String(user.UpdatedAt),
+        modules: null,
       };
     });
+
+    return users;
   }
 
   async update(data: {
@@ -149,63 +197,161 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     email: string;
     name: string;
     login: string;
-    password: string;
+    type: string;
+    password?: string;
+    modules?: AccountRepository.system_modules_permissions;
   }): Promise<boolean> {
-    const rows = await governmentDb("User").where({ Id: data.id }).update({
-      Email: data.email,
-      Name: data.name,
-      Login: data.login,
-      Password: data.password,
-      UpdatedAt: governmentDb.fn.now(),
+    let result = false;
+    await governmentDb.transaction(async (trx) => {
+      const userToUpdate = {
+        Email: data.email,
+        Name: data.name,
+        Login: data.login,
+        UpdatedAt: governmentDb.fn.now(),
+      };
+
+      if (data.password) {
+        Object.assign(userToUpdate, {
+          Password: data.password,
+        });
+      }
+
+      await trx("User").where({ Id: data.id }).update(userToUpdate);
+
+      if (data.modules) {
+        await trx("User_Access")
+          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
+          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
+          .update({
+            Read: data.modules[Modules.NEWS].read,
+            Write: data.modules[Modules.NEWS].write,
+          });
+
+        await trx("User_Access")
+          .where({
+            Fk_User: data.id,
+            Fk_Module: data.modules[Modules.REGISTER].id,
+            UpdatedAt: governmentDb.fn.now(),
+          })
+          // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
+          .update({
+            Read: data.modules[Modules.REGISTER].read,
+            Write: data.modules[Modules.REGISTER].write,
+            UpdatedAt: governmentDb.fn.now(),
+          });
+
+        await trx("User_Access")
+          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
+          // .andWhere({ Fk_Module: data.modules[Modules.USER].id })
+          .update({
+            Read: data.modules[Modules.USER].read,
+            Write: data.modules[Modules.USER].write,
+            UpdatedAt: governmentDb.fn.now(),
+          });
+      }
+
+      result = true;
     });
 
-    return rows > 0;
+    return result;
   }
 
-  async getByEmail(email: string): Promise<AccountRepository.UserData | null> {
-    const user = await governmentDb
+  async getByEmail(
+    email: string
+  ): Promise<Required<AccountRepository.UserData> | null> {
+    const result = await governmentDb
       .select("*")
       .from("User")
       .where("Email", email)
       .first();
 
-    if (!user) {
+    if (!result) {
       return null;
     }
 
-    return {
-      id: user.Id,
-      name: user.Name,
-      login: user.Login,
-      email: user.Email,
-      password: user.Password,
-      type: user.Type,
-      createdAt: user.CreatedAt,
-      updatedAt: user.UpdatedAt,
+    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+      result;
+
+    const user: {
+      id: number;
+      name: string;
+      login: string;
+      email: string;
+      password: string;
+      type: string;
+      createdAt: string;
+      updatedAt: string;
+      modules: SystemModulesProps | null;
+    } = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      password: Password,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      modules: null,
     };
+
+    const modules = await this.getUserModules(Id);
+
+    if (modules) {
+      Object.assign(user, {
+        modules,
+      });
+    }
+
+    return user;
   }
 
-  async getByLogin(login: string): Promise<AccountRepository.UserData | null> {
-    const user = await governmentDb
+  async getByLogin(
+    login: string
+  ): Promise<Required<AccountRepository.FullUserData> | null> {
+    const result = await governmentDb
       .select("*")
       .from("User")
       .where("Login", login)
       .first();
 
-    if (!user) {
+    if (!result) {
       return null;
     }
 
-    return {
-      id: user.Id,
-      name: user.Name,
-      login: user.Login,
-      email: user.Email,
-      password: user.Password,
-      type: user.Type,
-      createdAt: user.CreatedAt,
-      updatedAt: user.UpdatedAt,
+    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+      result;
+
+    const user: {
+      id: number;
+      name: string;
+      login: string;
+      email: string;
+      password: string;
+      type: string;
+      createdAt: string;
+      updatedAt: string;
+      modules: SystemModulesProps | null;
+    } = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      password: Password,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      modules: null,
     };
+
+    const modules = await this.getUserModules(Id);
+
+    if (modules) {
+      Object.assign(user, {
+        modules,
+      });
+    }
+
+    return user;
   }
 
   async deleteById(id_user: number): Promise<boolean> {
@@ -213,27 +359,53 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return true;
   }
 
-  async getById(id_user: number): Promise<AccountRepository.UserData | null> {
-    const user = await governmentDb
+  async getById(
+    id_user: number
+  ): Promise<Required<AccountRepository.FullUserData> | null> {
+    const result = await governmentDb
       .select("*")
       .from("User")
       .where({ Id: id_user })
       .first();
 
-    if (!user) {
+    if (!result) {
       return null;
     }
 
-    return {
-      id: user.Id,
-      name: user.Name,
-      login: user.Login,
-      email: user.Email,
-      password: user.Password,
-      type: user.Type,
-      createdAt: user.CreatedAt,
-      updatedAt: user.UpdatedAt,
+    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+      result;
+
+    const user: {
+      id: number;
+      name: string;
+      login: string;
+      email: string;
+      password: string;
+      type: string;
+      createdAt: string;
+      updatedAt: string;
+      modules: SystemModulesProps | null;
+    } = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      password: Password,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      modules: null,
     };
+
+    const modules = await this.getUserModules(Id);
+
+    if (modules) {
+      Object.assign(user, {
+        modules,
+      });
+    }
+
+    return user;
   }
 
   async checkIfEmailAlreadyExists(email: string): Promise<boolean> {

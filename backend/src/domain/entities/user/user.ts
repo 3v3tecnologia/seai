@@ -7,13 +7,17 @@ import { UserName } from "./name";
 import { SystemModules, SystemModulesProps } from "./user-modules-access";
 import { UserPassword } from "./userPassword";
 
-export type UserType = "admin" | "standard";
+export enum UserTypes {
+  ADMIN = "admin",
+  STANDARD = "standard",
+}
+export type UserType = UserTypes.ADMIN | UserTypes.STANDARD;
 interface UserProps {
   name?: UserName | null;
   login?: UserLogin | null;
   email: Email;
   password?: UserPassword | null;
-  modulesAccess: SystemModules;
+  modulesAccess: SystemModules | null;
   type: UserType;
 }
 
@@ -24,13 +28,13 @@ export class User {
   private _email: Email;
   private _password: UserPassword | null;
   public type: UserType;
-  public readonly _modulesAccess: SystemModules;
+  private readonly _modulesAccess: SystemModules | null;
 
   private constructor(props: UserProps, id?: number) {
     this._id = id || null;
     this._email = props.email;
     this.type = props.type;
-    this._modulesAccess = props.modulesAccess;
+    this._modulesAccess = props.modulesAccess || null;
     this._name = props.name || null;
     this._login = props.login || null;
     this._password = props.password || null;
@@ -55,7 +59,7 @@ export class User {
     return this._password;
   }
 
-  get access(): SystemModules {
+  get access(): SystemModules | null {
     return this._modulesAccess;
   }
 
@@ -81,7 +85,8 @@ export class User {
       name?: string;
       login?: string;
       password?: string;
-      modulesAccess: SystemModulesProps;
+      confirmPassword?: string;
+      modulesAccess: SystemModulesProps | null;
     },
     id?: number
   ): Either<Error, User> {
@@ -100,10 +105,19 @@ export class User {
         )
       );
     }
-    const accessOrError = SystemModules.create(props.modulesAccess, props.type);
+    let userAccess: SystemModules | null = null;
 
-    if (accessOrError.isLeft()) {
-      errors.addError(accessOrError.value);
+    if (props.modulesAccess) {
+      const accessOrError = SystemModules.create(
+        props.modulesAccess,
+        props.type
+      );
+
+      if (accessOrError.isRight()) {
+        userAccess = accessOrError.value as SystemModules;
+      } else {
+        errors.addError(accessOrError.value);
+      }
     }
 
     const nameOrError = Reflect.has(props, "name")
@@ -117,6 +131,9 @@ export class User {
     const passwordOrError = Reflect.has(props, "password")
       ? UserPassword.create({
           value: props.password as string,
+          confirm: Reflect.has(props, "confirmPassword")
+            ? props.confirmPassword
+            : null,
         })
       : null;
 
@@ -146,8 +163,6 @@ export class User {
 
     const name = nameOrError === null ? null : (nameOrError?.value as UserName);
 
-    const modulesAccess = accessOrError.value as SystemModules;
-
     return right(
       new User(
         {
@@ -156,7 +171,7 @@ export class User {
           login,
           password,
           name,
-          modulesAccess,
+          modulesAccess: userAccess !== undefined ? userAccess : null,
         },
         id
       )

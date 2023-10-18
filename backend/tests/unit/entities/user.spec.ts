@@ -1,4 +1,4 @@
-import { User } from "../../../src/domain/entities/user/user";
+import { User, UserTypes } from "../../../src/domain/entities/user/user";
 
 // npx jest user.spec.ts
 describe("#User entity", () => {
@@ -8,7 +8,7 @@ describe("#User entity", () => {
 
       const userOrError = User.create({
         email,
-        type: "standard",
+        type: UserTypes.STANDARD,
         modulesAccess: {
           news: {
             id: 1,
@@ -36,7 +36,7 @@ describe("#User entity", () => {
     test("should not create a basic user with user manager permission", () => {
       const userOrError = User.create({
         email: "test@gmail.com",
-        type: "standard",
+        type: UserTypes.STANDARD,
         modulesAccess: {
           news: {
             id: 1,
@@ -66,7 +66,7 @@ describe("#User entity", () => {
     test("should not create a admin user without all permissions equal true", () => {
       const userOrError = User.create({
         email: "test@gmail.com",
-        type: "admin",
+        type: UserTypes.ADMIN,
         modulesAccess: {
           news: {
             id: 1,
@@ -101,7 +101,7 @@ describe("#User entity", () => {
     test("should not create a user with invalid login", () => {
       const userOrError = User.create({
         email: "test@gmail.com",
-        type: "standard",
+        type: UserTypes.STANDARD,
         login:
           "testasdasdsagdashdgdfahsgdafhgfsdhgafsghdfshdfhgsasdasddasdasdassd",
         modulesAccess: {
@@ -133,7 +133,7 @@ describe("#User entity", () => {
       const userOrError = User.create({
         email: "test@gmail.com",
         name: "",
-        type: "standard",
+        type: UserTypes.STANDARD,
         modulesAccess: {
           news: {
             id: 1,

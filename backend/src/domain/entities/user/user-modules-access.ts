@@ -1,10 +1,13 @@
+import { AccountRepository } from "./../../use-cases/_ports/repositories/account-repository";
 import { Either, left, right } from "../../../shared/Either";
 import {
   againstNullOrUndefinedBulk,
   checkArgumentsTypesBulk,
   concatenateMessages,
 } from "../../../shared/Guard";
+import { UserModulesNotFound } from "../../use-cases/user/sign-up/errors/user-email-not-found";
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
+import { UserType } from "./user";
 
 export type SystemModulesPermissions = {
   id?: number;
@@ -20,7 +23,6 @@ export enum Modules {
 
 export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
 
-export type PermissionType = "admin" | "standard";
 export class SystemModules {
   private modules: SystemModulesProps;
 
@@ -38,7 +40,7 @@ export class SystemModules {
 
   static validate(
     modules: Required<SystemModulesProps>,
-    permission_type: PermissionType
+    permission_type: UserType
   ): Either<string, void> {
     const isNullOrUndefinedArgs = againstNullOrUndefinedBulk([
       { argument: modules[Modules.NEWS], argumentName: Modules.NEWS },
@@ -102,7 +104,7 @@ export class SystemModules {
       return left(concatenateMessages(isSatisfiedTypes.value));
     }
 
-    if (permission_type === "admin") {
+    /*if (permission_type === "admin") {
       const hasAdminPermissions = [
         SystemModules.hasAdminPermission(modules[Modules.NEWS]),
         SystemModules.hasAdminPermission(modules[Modules.REGISTER]),
@@ -114,7 +116,7 @@ export class SystemModules {
           "Para usuário administrador, é necessário definir todas as permissões."
         );
       }
-    }
+    }*/
 
     if (permission_type === "standard") {
       const hasUserManageAccess =
@@ -130,10 +132,50 @@ export class SystemModules {
     return right();
   }
 
+  static checkIfModuleExists(
+    newUserModuleAccess: SystemModulesProps,
+    systemModules: Array<AccountRepository.AccountModulesData> | null
+  ): Either<UserModulesNotFound, boolean> {
+    const systemModulesIds = systemModules?.map((module) => module.id);
+
+    if (systemModulesIds === undefined || systemModulesIds?.length === 0) {
+      return left(new UserModulesNotFound());
+    }
+
+    const userModulesAccess = [
+      newUserModuleAccess[Modules.NEWS].id,
+      newUserModuleAccess[Modules.REGISTER].id,
+      newUserModuleAccess[Modules.USER].id,
+    ];
+
+    // evitar ter que salvar usuário com módulos que não existem
+    userModulesAccess.forEach((userModuleId) => {
+      const moduleNotExists =
+        systemModulesIds.some((moduleId) => moduleId === userModuleId) ===
+        false;
+
+      if (moduleNotExists) {
+        return left(new UserModulesNotFound());
+      }
+    });
+
+    return right(true);
+  }
+
   static create(
     modules: Required<SystemModulesProps>,
-    permission_type: PermissionType
+    permission_type: UserType,
+    systemModules?: Array<AccountRepository.AccountModulesData>
   ): Either<Error, SystemModules> {
+    if (systemModules) {
+      const isExistsOrError = SystemModules.checkIfModuleExists(
+        modules,
+        systemModules
+      );
+      if (isExistsOrError.isLeft()) {
+        return left(isExistsOrError.value);
+      }
+    }
     const isValidOrError = SystemModules.validate(modules, permission_type);
 
     if (isValidOrError.isLeft()) {
