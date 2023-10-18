@@ -1,8 +1,5 @@
-import {
-  Modules,
-  PermissionType,
-  SystemModulesProps,
-} from "../../../entities/user/user-modules-access";
+import { UserType } from "../../../entities/user/user";
+import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 
 export namespace AccountRepository {
   export type UserData = {
@@ -10,13 +7,15 @@ export namespace AccountRepository {
     name?: string;
     login?: string;
     email: string;
-    password?: string;
     type: string;
     createdAt?: string;
+    modules?: SystemModulesProps | null;
     updatedAt?: string;
   };
 
-  export type userTypes = PermissionType;
+  export type FullUserData = UserData & { password: string };
+
+  export type userTypes = UserType;
 
   export type AccountModulesData = {
     id: number;
@@ -34,7 +33,7 @@ export namespace AccountRepository {
   }
 
   export interface Fetch {
-    list(): Promise<Array<UserData> | null>;
+    list(): Promise<Array<Required<AccountRepository.UserData>> | null>;
   }
 
   export interface Update {
@@ -43,7 +42,7 @@ export namespace AccountRepository {
       email: string;
       name: string;
       login: string;
-      password: string;
+      password?: string;
     }): Promise<boolean>;
   }
 
@@ -52,25 +51,31 @@ export namespace AccountRepository {
   }
 
   export interface GetById {
-    getById(id_user: number): Promise<UserData | null>;
+    getById(
+      id_user: number
+    ): Promise<Required<AccountRepository.FullUserData> | null>;
   }
 
   export interface GetByEmail {
-    getByEmail(email: string): Promise<UserData | null>;
+    getByEmail(
+      email: string
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface GetByLogin {
-    getByLogin(login: string): Promise<UserData | null>;
+    getByLogin(
+      login: string
+    ): Promise<Required<AccountRepository.FullUserData> | null>;
   }
 
   export interface CheckIfEmailExists {
     checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   }
 
-  export interface GetUserModulesPermissions {
-    getUserModulesPermissions(
+  export interface GetUserById {
+    getUserById(
       id_user: number
-    ): Promise<system_modules_permissions | null>;
+    ): Promise<Required<AccountRepository.UserData> | null>;
   }
 
   export interface GetModules {
@@ -98,6 +103,6 @@ export interface AccountRepositoryProtocol
     AccountRepository.GetByEmail,
     AccountRepository.GetByLogin,
     AccountRepository.CheckIfEmailExists,
-    AccountRepository.GetUserModulesPermissions,
+    AccountRepository.GetUserById,
     AccountRepository.GetModules,
     AccountRepository.GetUserModuleByName {}

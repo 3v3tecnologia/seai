@@ -6,9 +6,9 @@ import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 import {
   Modules,
-  PermissionType,
   SystemModulesPermissions,
 } from "../../../domain/entities/user/user-modules-access";
+import { UserType } from "../../../domain/entities/user/user";
 
 export class CreateUserController extends CommandController<
   CreateUserController.Request,
@@ -51,7 +51,7 @@ export namespace CreateUserController {
   export type Request = {
     accountId: number;
     email: string;
-    type: PermissionType;
+    type: UserType;
     modules: {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;

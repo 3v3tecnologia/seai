@@ -2170,7 +2170,7 @@
         }
       }
     },
-    "/api/v1/user/list-user-access/{id}": {
+    "/api/v1/user/profile": {
       "get": {
         "tags": [
           "USER"
@@ -2180,22 +2180,11 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Get access from user by user id",
-        "description": "Get access from user by user id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "User Id",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
+        "summary": "Get user profile",
+        "description": "Get user profile",
         "responses": {
           "200": {
-            "description": "Get user access successfully",
+            "description": "Get users successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -2206,46 +2195,42 @@
                       "data": {
                         "type": "object",
                         "properties": {
-                          "news": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
-                            }
+                          "id": {
+                            "type": "number"
                           },
-                          "register": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
-                            }
+                          "name": {
+                            "type": "string"
                           },
-                          "user": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
+                          "login": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "modules": {
+                            "news": {
+                              "id": 1,
+                              "read": true,
+                              "write": true
+                            },
+                            "user": {
+                              "id": 2,
+                              "read": true,
+                              "write": true
+                            },
+                            "register": {
+                              "id": 3,
+                              "read": true,
+                              "write": true
                             }
                           }
                         }
@@ -2253,23 +2238,17 @@
                     }
                   },
                   "example": {
-                    "data": {
-                      "news": {
+                    "data": [
+                      {
                         "id": 1,
-                        "read": true,
-                        "write": true
-                      },
-                      "register": {
-                        "id": 3,
-                        "read": true,
-                        "write": true
-                      },
-                      "user": {
-                        "id": 2,
-                        "read": true,
-                        "write": true
+                        "name": "test",
+                        "login": "test",
+                        "email": "test2@gmail.com",
+                        "type": "standard",
+                        "createdAt": "2023-06-29T21:06:44.887Z",
+                        "updatedAt": "2023-06-29T21:06:44.887Z"
                       }
-                    }
+                    ]
                   }
                 }
               }
@@ -2341,7 +2320,7 @@
         }
       }
     },
-    "/api/v1/user/update": {
+    "/api/v1/user": {
       "put": {
         "tags": [
           "USER"
@@ -2351,19 +2330,110 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Update user [In progress]",
+        "summary": "Update user",
         "description": "[In progress]",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "User Id",
-            "required": true,
-            "schema": {
-              "type": "number"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "modules": {
+                    "type": "object",
+                    "properties": {
+                      "news": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "register": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
+                  }
+                  
+                },
+                "example": {
+                  "email":"davispenha12@gmail.com",
+                  "modules":{
+                    "news": {
+                      "id":1,
+                      "read": false,
+                      "write": false
+                    },
+                    "register": {
+                      "id":2,
+                      "read": false,
+                      "write": true
+                    },
+                    "user": {
+                      "id":3,
+                      "read": true,
+                      "write": false
+                    }
+                  },
+                  "type":"admin",
+                  "name":"tester",
+                  "password":"1234567",
+                  "login":"tester",
+                  "confirmPassword":"1234567"
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "User created successfully",
@@ -2380,7 +2450,7 @@
                     }
                   },
                   "example": {
-                    "data": "TODO"
+                    "data": "Usuário tester atualizado com sucesso."
                   }
                 }
               }

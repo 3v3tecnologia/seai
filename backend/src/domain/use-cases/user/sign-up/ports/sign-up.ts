@@ -2,7 +2,7 @@ import { Either } from "../../../../../shared/Either";
 
 export namespace SignUpDTO {
   export type params = {
-    email: string;
+    accountId: number;
     name: string;
     login: string;
     password: string;

@@ -1,6 +1,9 @@
 import env from "../../../../server/http/env";
 import { User } from "../../../entities/user/user";
-import { Modules } from "../../../entities/user/user-modules-access";
+import {
+  SystemModules,
+  SystemModulesProps,
+} from "../../../entities/user/user-modules-access";
 import { Command } from "../../_ports/core/command";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
@@ -46,20 +49,14 @@ export class CreateUser extends Command implements CreateUserProtocol {
       return left(new Error("Não há módulos de acesso cadastrado"));
     }
 
-    const userModulesAccess = [
-      request.modules[Modules.NEWS].id,
-      request.modules[Modules.REGISTER].id,
-      request.modules[Modules.USER].id,
-    ];
+    const hasValidModulesOrError = SystemModules.checkIfModuleExists(
+      request.modules,
+      modules
+    );
 
-    // evitar ter que salvar usuário com módulos que não existem
-    userModulesAccess.forEach((module) => {
-      if (
-        modules.some((module_access) => module_access.id === module) === false
-      ) {
-        return left(new Error("Módulos de acesso do usuário não existe"));
-      }
-    });
+    if (hasValidModulesOrError.isLeft()) {
+      return left(hasValidModulesOrError.value);
+    }
 
     const userOrError = User.create({
       email: request.email,
@@ -76,7 +73,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
     const user_id = await this.accountRepository.add({
       email: user.email?.value as string,
       type: user.type,
-      modules: user.access.value,
+      modules: user.access?.value as SystemModulesProps,
     });
 
     if (user_id) {

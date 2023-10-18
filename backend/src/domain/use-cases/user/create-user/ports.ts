@@ -1,8 +1,6 @@
 import { Either } from "../../../../shared/Either";
-import {
-  PermissionType,
-  SystemModulesProps,
-} from "../../../entities/user/user-modules-access";
+import { UserType } from "../../../entities/user/user";
+import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 import { MailServiceError } from "../../errors/mail-service-error";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
 
@@ -16,7 +14,7 @@ export namespace CreateUserDTO {
 
   export type Params = {
     email: string;
-    type: PermissionType;
+    type: UserType;
     modules: system_modules_permissions;
   };
 

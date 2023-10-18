@@ -5,6 +5,7 @@ dotenv.config({
 import { setupApp } from "./app";
 import { terminate } from "./gracefull-shutdown";
 
+
 import env from "./env";
 
 let server;
@@ -19,6 +20,7 @@ let server;
     timeout: 1000,
     coredump: false,
   });
+
 
   // programmer errors = let this program crash!
   process.on("uncaughtException", exitHandler(1, "Unexpected Error"));
