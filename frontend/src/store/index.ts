@@ -388,13 +388,14 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["UPDATE_USER"](_context, _user: INewUser) {
+    async ["UPDATE_USER"]({ state }, user: any) {
       try {
-        // TODO
-        // CONNECT API
-        toast.success("Dados do usuário atualizados com sucesso.");
+        await http.put(`/user/${state.currentUser?.id}`, user);
+
+        toast.success("Dados de usuário atualizados com sucesso.");
       } catch (e) {
-        toast.error("Falha ao atualizar dados do usuário.");
+        toast.error("Falha ao atualizar usuário.");
+        console.error(e);
       }
     },
     async ["CHANGE_PASSWORD"]() {
@@ -425,8 +426,7 @@ export const store = createStore<Estado>({
     async ["GET_CURRENT_USER"]({ commit }, id: number) {
       const {
         data: { data },
-      } = await http.get(`user/list-user-access/${id}`);
-      console.log("o q vem do edit", data);
+      } = await http.get(`/user/list?userId=${id}`);
       commit("SET_CURRENT_USER", data);
     },
     async ["GET_USERS"]({ commit }) {
@@ -449,11 +449,12 @@ export const store = createStore<Estado>({
     async ["INITIAL_REGISTER"]({ commit }, params) {
       try {
         const { token, ...form } = params;
+
         const {
           data: { data },
         } = await http.post(`/login/sign-up`, form, {
           headers: {
-            token,
+            Authorization: `Bearer ${token}`,
           },
         });
 

@@ -2,9 +2,7 @@
   <div class="home">
     <div class="py-4" />
 
-    <LogoProject />
-
-    <div class="py-3"></div>
+    <div class="py-3" />
     <FormWrapper title="Registrar conta" @submit="handleSubmit">
       <template v-if="!savedAccount" v-slot:content>
         <div class="py-2"></div>
@@ -13,14 +11,6 @@
           v-model="form.name"
           placeholder="Insira um nome"
           input-required
-        />
-
-        <BaseInput
-          label="Email"
-          v-model="form.email"
-          placeholder="Insira um email"
-          input-required
-          type="email"
         />
 
         <BaseInput
@@ -70,6 +60,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const router = useRouter();
 const currentRoute = useRoute();
@@ -85,14 +76,40 @@ const handleSubmit = async (e: any) => {
   if (savedAccount.value === true) {
     return router.push({ name: "login" });
   }
+  const validatedForm = validateForm(form.value);
 
-  await store
-    .dispatch("INITIAL_REGISTER", {
-      ...form.value,
-      token,
-    })
-    .then(() => {
-      savedAccount.value = true;
-    });
+  if (validatedForm) {
+    await store
+      .dispatch("INITIAL_REGISTER", {
+        ...form.value,
+        token: token.value,
+      })
+      .then(() => {
+        savedAccount.value = true;
+      });
+  }
+};
+
+const validateForm = ({
+  name,
+  password,
+  confirmPassword,
+  login,
+}: {
+  [x: string]: string;
+}) => {
+  const hasEmptyValue =
+    [name, password, confirmPassword, login].findIndex((c) => !c) >= 0;
+  const isPasswordsUnMatching = password != confirmPassword;
+
+  if (hasEmptyValue) {
+    toast.error("Preencha todos os campos");
+    return false;
+  } else if (isPasswordsUnMatching) {
+    toast.error("Senhas estão divergindo");
+    return false;
+  }
+
+  return true;
 };
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div class="mb-5 pb-5">
     <div class="py-4" />
-
     <div class="pb-3"></div>
     <FormWrapper :title="formTitle" @submit="handleSubmit">
       <template v-if="!savedAccount" v-slot:content>
@@ -56,6 +55,7 @@
 
 <script setup>
 import LogoProject from "@/components/LogoProject.vue";
+import { previewEmailCensured } from "@/helpers/formatEmail";
 import AccessModulesTable from "@/components/AccessModulesTable.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
@@ -96,7 +96,15 @@ watch(
   async (val) => {
     if (!val) {
       await store.dispatch("GET_CURRENT_USER", userId.value);
-      acessData.value = currentUser.value;
+
+      if (currentUser.value) {
+        acessData.value = currentUser.value.value;
+        form.value.email = currentUser.value.email;
+        form.value.name = currentUser.value.name;
+        form.value.login = currentUser.value.login;
+        form.value.type =
+          currentUser.value.type === "admin" ? optionsUser[1] : optionsUser[0];
+      }
     }
   },
   { immediate: true }
@@ -110,7 +118,7 @@ const formTitle = computed(() => {
 
 const formDTO = computed(() => {
   return {
-    email: form.value.email,
+    ...form.value,
     type: form.value.type.value ? "admin" : "standard",
     modules: acessData.value,
   };
@@ -131,9 +139,15 @@ const handleSubmit = async (e) => {
       return router.push({ name: "users" });
     }
 
-    await store.dispatch("CREATE_USER", formDTO.value).then(() => {
-      savedAccount.value = true;
-    });
+    if (isCreating.value) {
+      await store.dispatch("CREATE_USER", formDTO.value).then(() => {
+        savedAccount.value = true;
+      });
+    } else {
+      await store.dispatch("UPDATE_USER", formDTO.value).then(() => {
+        savedAccount.value = true;
+      });
+    }
   } catch (e) {
     console.error("erro no salve", e);
   }

@@ -2,8 +2,6 @@
   <div class="mb-5 pb-5">
     <div class="py-4" />
 
-    <LogoProject />
-
     <div class="py-3" />
 
     <FormWrapper title="Editar usuário" @submit="handleSubmit">

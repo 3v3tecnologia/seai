@@ -18,6 +18,7 @@
     </div>
 
     <UsersTable
+      v-if="users.data.length"
       :get-users="getUsers"
       :users="users.data"
       v-model="filtersUsers"
