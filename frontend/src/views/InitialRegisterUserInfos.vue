@@ -16,6 +16,14 @@
         />
 
         <BaseInput
+          label="Email"
+          v-model="form.email"
+          placeholder="Insira um email"
+          input-required
+          type="email"
+        />
+
+        <BaseInput
           label="Login"
           v-model="form.login"
           placeholder="Insira um login"
@@ -33,7 +41,7 @@
 
         <BaseInput
           label="Confirmar senha"
-          v-model="form.confirm_password"
+          v-model="form.confirmPassword"
           placeholder="Confirme sua senha"
           input-required
           input-type="password"
@@ -71,18 +79,16 @@ const form: Ref = ref({});
 const savedAccount: Ref = ref(false);
 const token = ref(currentRoute.query.token || "");
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e: any) => {
   e.preventDefault();
 
   if (savedAccount.value === true) {
     return router.push({ name: "login" });
   }
 
-  const { name, login, password, confirm_password } = form.value;
-
-  store
-    .dispatch("CHANGE_PASSWORD", {
-      password,
+  await store
+    .dispatch("INITIAL_REGISTER", {
+      ...form.value,
       token,
     })
     .then(() => {

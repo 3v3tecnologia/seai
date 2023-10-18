@@ -1,4 +1,3 @@
-import moment from "moment";
 import "vue3-toastify/dist/index.css";
 import { createStore, Store, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
@@ -21,6 +20,9 @@ const dataFormatUrl = {
   2: "county",
   3: "consumption",
 };
+
+const setAxiosHeader = (token: string) =>
+  (http.defaults.headers.common["Authorization"] = `Bearer ${token}`);
 
 const getValor = (item: any) => {
   const keys = Object.keys(item);
@@ -123,6 +125,7 @@ export const store = createStore<Estado>({
   mutations: {
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
+      setAxiosHeader(user?.token || "");
     },
     ["SET_LOADING_REPORT"](state, bool: boolean) {
       state.isLoadingReport = bool;
@@ -143,10 +146,10 @@ export const store = createStore<Estado>({
     ["SET_USERS"](state, users: IUsersWrapper) {
       state.users = users;
     },
-    ["SET_CURRENT_USER"](state) {
+    ["SET_CURRENT_USER"](state, user) {
       // const user = state.users.data.find((usr) => usr.id == id);
-      const user = state.users.data.find((usr) => usr.id);
-      state.currentUser = user || null;
+      // const user = state.users.data.find((usr) => usr.id);
+      state.currentUser = user;
     },
   },
   actions: {
@@ -172,13 +175,9 @@ export const store = createStore<Estado>({
         if (token) {
           const userLogged = {
             login: userName,
-            id: 1,
             token,
           };
 
-          http.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${userLogged.token}`;
           commit("SET_USER", userLogged);
 
           toast.success("Logado com sucesso.");
@@ -367,34 +366,27 @@ export const store = createStore<Estado>({
       commit("SET_LOADING_REPORT", false);
     },
     async ["CREATE_USER"]({ commit }, user: any) {
-      console.log(user);
       try {
-        const {
-          data: { data },
-        } = await http.post(`/user/register/`, user);
-        console.log("teste", data, user);
+        await http.post(`/user/register/`, user);
 
         toast.success("Usuário criado com sucesso.");
         toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
       } catch (e) {
         toast.error("Falha ao criar usuário.");
-        console.error("erro ao criar usuario", e, user);
+        console.error(e);
       }
-      // try {
-      //   const createdUser = Object.assign({}, user);
-      //   // TODO
-      //   // CONNECT API
-      //   // const { data: userLogged } = await http.post(`/auth`, user);
-      //   const newId = Math.floor(Math.random() * (10000 - 1) + 1);
-      //   createdUser.id = newId;
-      //   createdUser.created_at = moment(new Date()).format("YYYY/MM/DD");
+    },
+    async ["DELETE_USERS"]({ commit }, ids: number[]) {
+      try {
+        await Promise.allSettled(
+          ids.map(async (id) => await http.delete(`/user/delete/${id}`))
+        );
 
-      //   toast.success("Usuário criado com sucesso.");
-      //   toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
-      //   return true;
-      // } catch (e) {
-      //   toast.error("Falha ao criar usuário.");
-      // }
+        toast.success("Sucesso ao deletar usuário(s)");
+      } catch (e) {
+        toast.error("Falha ao deletar usuário(s).");
+        console.error(e);
+      }
     },
     async ["UPDATE_USER"](_context, _user: INewUser) {
       try {
@@ -431,50 +423,13 @@ export const store = createStore<Estado>({
     //   }
     // },
     async ["GET_CURRENT_USER"]({ commit }, id: number) {
-      commit("SET_CURRENT_USER", id);
+      const {
+        data: { data },
+      } = await http.get(`user/list-user-access/${id}`);
+      console.log("o q vem do edit", data);
+      commit("SET_CURRENT_USER", data);
     },
     async ["GET_USERS"]({ commit }) {
-      // try {
-      // TODO
-      // CONNECT API
-      // const { data: users } = await http.get(`/users);
-      //   const generateRandomInt = (max: number, min: number) =>
-      //     Math.floor(Math.random() * (max - min) + min);
-      //   const arrayLength = generateRandomInt(130, 50);
-      //   const mockedUsers = Array.from(Array(arrayLength).keys()).map(
-      //     (index) => {
-      //       const myRandomNumber = generateRandomInt(1000, 0);
-      //       const role = index % 2 ? "Administradores" : "Básico";
-      //       return {
-      //         name: `user${myRandomNumber}`,
-      //         email: `etc${myRandomNumber}@gmail.com`,
-      //         created_at: "2022-08-02 09:15:54.000",
-      //         role,
-      //         status: (index + myRandomNumber) % 2,
-      //         id: myRandomNumber,
-      //       };
-      //     }
-      //   );
-      //   const totalAdmins = mockedUsers.filter(
-      //     (usr) => usr.role === "Básico"
-      //   ).length;
-      //   const totalBasics = mockedUsers.filter(
-      //     (usr) => usr.role === "Administradores"
-      //   ).length;
-      //   const totalActives = mockedUsers.filter((usr) => usr.status).length;
-      //   const totalInactives = mockedUsers.filter((usr) => !usr.status).length;
-      //   const usersDTO = {
-      //     data: mockedUsers,
-      //     totalAdmins,
-      //     totalBasics,
-      //     totalActives,
-      //     totalInactives,
-      //   };
-      //   commit("SET_USERS", usersDTO);
-      // } catch (e) {
-      //   toast.error("Credenciais inválidas.");
-      // }
-
       try {
         const {
           data: { data: users },
@@ -489,6 +444,34 @@ export const store = createStore<Estado>({
         });
       } catch (e) {
         toast.error("Erro ao buscar usuários.");
+      }
+    },
+    async ["INITIAL_REGISTER"]({ commit }, params) {
+      try {
+        const { token, ...form } = params;
+        const {
+          data: { data },
+        } = await http.post(`/login/sign-up`, form, {
+          headers: {
+            token,
+          },
+        });
+
+        if (data) {
+          const userLogged = {
+            login: data.userName,
+            token,
+          };
+
+          setAxiosHeader(userLogged.token);
+          commit("SET_USER", userLogged);
+        }
+
+        toast.success("Sucesso ao finalizar edição de usuário.");
+      } catch (e: any) {
+        toast.error("Erro ao finalizar edição de usuário.");
+        toast.error(e.error);
+        console.error(e);
       }
     },
   },

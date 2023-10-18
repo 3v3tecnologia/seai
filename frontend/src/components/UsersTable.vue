@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseModal v-if="showConfirmModal" :users="selectedUsers" />
+    <UsersDeleteModal v-if="showConfirmModal" :users="selectedUsers" />
     <div>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center">
@@ -70,18 +70,10 @@
 </template>
 
 <script setup>
-import {
-  defineProps,
-  defineEmits,
-  ref,
-  watch,
-  reactive,
-  onMounted,
-  computed,
-} from "vue";
+import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import { usersOptions } from "@/constants.js";
 import BaseDropdown from "@/components/BaseDropdown.vue";
-import BaseModal from "@/components/BaseModal.vue";
+import UsersDeleteModal from "@/components/UsersDeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import { useRouter } from "vue-router";
 
@@ -127,16 +119,9 @@ const columns = [
   },
   {
     title: "Função",
-    field: "role",
-  },
-  {
-    title: "Status",
-    field: "status",
+    field: "type",
     formatter: (col) => {
-      if (col._cell.value) {
-        return "Ativo";
-      }
-      return "Inativo";
+      return col._cell.value === "admin" ? "Admin" : "Básico";
     },
   },
 ];
@@ -200,7 +185,7 @@ const filtersTable = computed(() => {
 
   return [
     {
-      field: "role",
+      field: "type",
       type: "like",
       value: userTypeVal,
     },

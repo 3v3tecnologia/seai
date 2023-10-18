@@ -8,7 +8,7 @@ export const usersOptions = [
     value: 1,
   },
   {
-    title: "Administradores",
+    title: "Admin",
     value: 2,
   },
 ];

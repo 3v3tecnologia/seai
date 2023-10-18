@@ -8,6 +8,7 @@
     <slot />
     <label v-if="label">{{ label }}</label>
     <input
+      :disabled="disabled"
       v-model="inputValue"
       :type="inputType"
       class="form-control"
@@ -26,6 +27,10 @@ const props = defineProps({
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
   removeMargin: {
     type: Boolean,

@@ -57,6 +57,8 @@ const usersCount = [
   background: rgba(203, 197, 197, 0.529);
   border-radius: 5px;
   border: 1px solid black;
+  max-width: 800px !important;
+  margin: auto;
 
   .wrapper-counter {
     display: flex;

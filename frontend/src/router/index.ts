@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/user/edit/:id",
     name: "edit-user",
-    component: EditUserView,
+    component: CreateUserView,
   },
   {
     path: "/retrieve-account",
@@ -77,9 +77,9 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to: any, from, next) => {
   const auth = store.state.auth;
-  if (to.path != "/login" && !auth) {
+  if (!["login", "initial-register-infos"].includes(to.name) && !auth) {
     next("/login");
   } else {
     next();

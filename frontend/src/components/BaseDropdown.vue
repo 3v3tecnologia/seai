@@ -2,6 +2,7 @@
   <span class="p-float-label">
     <Dropdown
       v-model="inputValue"
+      :disabled="disabled"
       :options="options"
       optionLabel="title"
       class="wrapper-dropdown"

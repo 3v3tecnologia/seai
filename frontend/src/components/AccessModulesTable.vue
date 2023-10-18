@@ -18,6 +18,7 @@
               <div class="wrapper-select">
                 <BaseDropdown
                   remove-margin
+                  :disabled="moduleOption.isDisabled || !!props.userType.value"
                   v-model="moduleOption.access.read"
                   :options="optionsSelect"
                   input-required
@@ -28,6 +29,7 @@
               <div class="wrapper-select">
                 <BaseDropdown
                   remove-margin
+                  :disabled="moduleOption.isDisabled || !!props.userType.value"
                   v-model="moduleOption.access.register"
                   :options="optionsSelect"
                   input-required
@@ -63,6 +65,11 @@ const baseAccessModules = {
   register: baseValuesAccess,
 };
 
+const baseCompleteAccessModule = {
+  read: optionsSelect[0],
+  register: optionsSelect[0],
+};
+
 const modulesOptions = ref([
   {
     id: 1,
@@ -81,6 +88,7 @@ const modulesOptions = ref([
     title: "Usuários",
     value: "user",
     access: JSON.parse(JSON.stringify(baseAccessModules)),
+    isDisabled: true,
   },
 ]);
 
@@ -102,9 +110,12 @@ const accessDTO = computed(() => {
   return accessformatted;
 });
 
-defineProps({
+const props = defineProps({
   label: String,
-  modelValue: String || Number,
+  modelValue: {
+    type: Object,
+    required: true,
+  },
   inputRequired: {
     type: Boolean,
     default: true,
@@ -117,10 +128,25 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  userType: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-const inputValue = ref(2);
 const emit = defineEmits(["update:modelValue"]);
+
+watch(
+  () => modulesOptions.value,
+  (val) => {
+    val.forEach((perm) => {
+      if (perm.access.register.value && !perm.access.read.value) {
+        perm.access.read = optionsSelect[0];
+      }
+    });
+  },
+  { deep: true }
+);
 
 watch(
   accessDTO,
@@ -130,44 +156,44 @@ watch(
   { immediate: true }
 );
 
-// TODO IMPLEMENT LOGIC TO PUT ALL TRUE IF CAN REGISTER AND ALL FALSE IF CANT READ
-// watch(modulesOptions.value, (newVal, oldVal) => {
-//   const positiveOption = optionsSelect.find((opt) => opt.value);
-//   const negativeOption = optionsSelect.find((opt) => !opt.value);
+watch(
+  () => props.modelValue,
+  (val) => {
+    // TODO  SET THE VALUE OF MODULE PERMISSION WITH DTO RESPECTIVE VALUE, EASY PEASY
+    // modulesOptions.value.forEach(module => {
+    //   val[module.value].access.read =
+    // })
+    console.log("atualizou o valor do model", val, modulesOptions.value);
+  }
+);
 
-//   newVal.forEach((moduleOpt, index) => {
-//     const oldRegisterValue = oldVal[index].access.register;
-//     const newRegisterValue = newVal[index].access.register;
+watch(
+  () => props.userType.value,
+  (val) => {
+    const permissionOptionIndex = val ? 0 : 1;
+    const optionDefault = optionsSelect[permissionOptionIndex];
 
-//     const oldReadValue = oldVal[index].access.read;
-//     const newReadValue = newVal[index].access.read;
-//     console.log(
-//       "bb",
-//       oldRegisterValue,
-//       newRegisterValue,
-//       oldReadValue,
-//       newReadValue
-//     );
+    if (permissionOptionIndex) {
+      const userPermission = modulesOptions.value[2].access;
 
-//     if (
-//       newRegisterValue == positiveOption?.title &&
-//       oldRegisterValue == negativeOption?.title
-//     ) {
-//       moduleOpt.access.read = positiveOption?.title;
-//     } else if (
-//       oldReadValue == positiveOption?.title &&
-//       newReadValue == negativeOption?.title
-//     ) {
-//       moduleOpt.access.register = negativeOption?.title;
-//     }
-//   });
-// });
+      userPermission.read = optionDefault;
+      userPermission.register = optionDefault;
+    } else {
+      modulesOptions.value.forEach((item) => {
+        const itemPermission = item.access;
+        itemPermission.read = optionDefault;
+        itemPermission.register = optionDefault;
+      });
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>
 .wrapper-table {
   border: 1px solid rgba(0, 0, 0, 0.35);
-  max-height: 215px;
+  // max-height: 215px;
   overflow-y: scroll;
 
   & * {

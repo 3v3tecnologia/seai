@@ -2,10 +2,8 @@
   <div class="mb-5 pb-5">
     <div class="py-4" />
 
-    <LogoProject />
-
-    <div class="py-3"></div>
-    <FormWrapper title="Criar novo usuário" @submit="handleSubmit">
+    <div class="pb-3"></div>
+    <FormWrapper :title="formTitle" @submit="handleSubmit">
       <template v-if="!savedAccount" v-slot:content>
         <div class="py-2"></div>
         <BaseInput
@@ -14,6 +12,7 @@
           placeholder="Insira um email"
           input-required
           input-type="email"
+          :disabled="!isCreating"
         />
 
         <div class="py-2" />
@@ -29,7 +28,7 @@
 
         <div class="py-3" />
 
-        <AccessModulesTable v-model="acessData" />
+        <AccessModulesTable :user-type="form.type" v-model="acessData" />
       </template>
       <template v-else v-slot:content>
         <div class="pt-3 pb-5">
@@ -62,8 +61,7 @@ import BaseInput from "@/components/BaseInput.vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import PrimaryButton from "@/components/PrimaryButton.vue";
 import FormWrapper from "@/components/FormWrapper.vue";
-import { previewEmailCensured } from "@/helpers/formatEmail";
-import { computed, defineProps, watch } from "vue";
+import { computed, watch } from "vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
@@ -86,6 +84,30 @@ const form = ref({
 const savedAccount = ref(false);
 const token = ref(currentRoute.query.token || "");
 
+const isCreating = computed(() => {
+  return currentRoute.name === "create-user";
+});
+const currentUser = computed(() => store.state.currentUser);
+
+const userId = ref(currentRoute.params.id || "");
+
+watch(
+  () => isCreating.value,
+  async (val) => {
+    if (!val) {
+      await store.dispatch("GET_CURRENT_USER", userId.value);
+      acessData.value = currentUser.value;
+    }
+  },
+  { immediate: true }
+);
+
+const formTitle = computed(() => {
+  return isCreating.value
+    ? "Criar novo usuário"
+    : "Atualizar permissões de usuário";
+});
+
 const formDTO = computed(() => {
   return {
     email: form.value.email,
@@ -94,22 +116,26 @@ const formDTO = computed(() => {
   };
 });
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+const handleSubmit = async (e) => {
+  try {
+    e.preventDefault();
 
-  const { email, type } = form.value;
-  const hasEmptyForm = [email, type].filter((val) => !val).length;
+    const { email, type } = form.value;
+    const hasEmptyForm = [email, type].filter((val) => !val).length;
 
-  if (hasEmptyForm) {
-    return toast.warn("Preencha todos os campos.");
+    if (hasEmptyForm) {
+      return toast.warn("Preencha todos os campos.");
+    }
+
+    if (savedAccount.value) {
+      return router.push({ name: "users" });
+    }
+
+    await store.dispatch("CREATE_USER", formDTO.value).then(() => {
+      savedAccount.value = true;
+    });
+  } catch (e) {
+    console.error("erro no salve", e);
   }
-
-  if (savedAccount.value) {
-    return router.push({ name: "users" });
-  }
-
-  store.dispatch("CREATE_USER", formDTO.value).then(() => {
-    savedAccount.value = true;
-  });
 };
 </script>

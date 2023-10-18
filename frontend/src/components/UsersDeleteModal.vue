@@ -48,15 +48,25 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Cancelar
           </button>
-          <button type="button" class="btn btn-danger">Confirmar</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-dismiss="modal"
+            @click="deleteUsers"
+          >
+            Confirmar
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { defineProps, onMounted, watch } from "vue";
+<script setup>
+import { computed, defineProps, onMounted, watch } from "vue";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const props = defineProps({
   showModal: {
@@ -68,4 +78,11 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const usersIds = computed(() => props.users.map((u) => u.id));
+
+const deleteUsers = async () => {
+  await store.dispatch("DELETE_USERS", usersIds.value);
+  await store.dispatch("GET_USERS", usersIds.value);
+};
 </script>
