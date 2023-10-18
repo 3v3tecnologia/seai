@@ -2320,7 +2320,7 @@
         }
       }
     },
-    "/api/v1/user/update": {
+    "/api/v1/user": {
       "put": {
         "tags": [
           "USER"
@@ -2340,7 +2340,70 @@
                 "properties": {
                   "email": {
                     "type": "string"
+                  },
+                  "modules": {
+                    "type": "object",
+                    "properties": {
+                      "news": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "register": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
                   }
+                  
                 },
                 "example": {
                   "email":"davispenha12@gmail.com",
