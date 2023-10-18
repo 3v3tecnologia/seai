@@ -2320,177 +2320,6 @@
         }
       }
     },
-    "/api/v1/user/list-user-access/{id}": {
-      "get": {
-        "tags": [
-          "USER"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Get access from user by user id",
-        "description": "Get access from user by user id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "User Id",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Get user access successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "news": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
-                            }
-                          },
-                          "register": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
-                            }
-                          },
-                          "user": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "read": {
-                                "type": "boolean"
-                              },
-                              "write": {
-                                "type": "boolean"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "example": {
-                    "data": {
-                      "news": {
-                        "id": 1,
-                        "read": true,
-                        "write": true
-                      },
-                      "register": {
-                        "id": 3,
-                        "read": true,
-                        "write": true
-                      },
-                      "user": {
-                        "id": 2,
-                        "read": true,
-                        "write": true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "Internal server error"
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "Forbidden access"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "No authorization",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "No authorization"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/user/update": {
       "put": {
         "tags": [
@@ -2501,19 +2330,47 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Update user [In progress]",
+        "summary": "Update user",
         "description": "[In progress]",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "User Id",
-            "required": true,
-            "schema": {
-              "type": "number"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email":"davispenha12@gmail.com",
+                  "modules":{
+                    "news": {
+                      "id":1,
+                      "read": false,
+                      "write": false
+                    },
+                    "register": {
+                      "id":2,
+                      "read": false,
+                      "write": true
+                    },
+                    "user": {
+                      "id":3,
+                      "read": true,
+                      "write": false
+                    }
+                  },
+                  "type":"admin",
+                  "name":"tester",
+                  "password":"1234567",
+                  "login":"tester",
+                  "confirmPassword":"1234567"
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "User created successfully",
@@ -2530,7 +2387,7 @@
                     }
                   },
                   "example": {
-                    "data": "TODO"
+                    "data": "Usuário tester atualizado com sucesso."
                   }
                 }
               }
