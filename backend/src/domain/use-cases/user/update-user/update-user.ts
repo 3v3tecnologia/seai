@@ -44,20 +44,44 @@ export class UpdateUser extends Command {
     const userNotFound = alreadyExistsAccount === null;
 
     if (userNotFound) {
-      return left(new AccountNotFoundError(request.login));
+      return left(new AccountNotFoundError(request.email));
     }
 
-    const userWithLogin = await this.accountRepository.getByLogin(
-      request.login
-    );
+    // Usuário admin pode editar usuário mesmo não havendo login ain
 
-    if (userWithLogin) {
-      // Se login não for do mesmo usuário então é sinal que já existe um login
-      // cadastrado e o sistema deve bloquear a edição.
-      const hasOtherAccountWithSameLogin = userWithLogin.id !== request.id && userWithLogin.login!==null;
+    if (request.login !== null) {
+      const userWithLogin = await this.accountRepository.getByLogin(
+        request.login
+      );
 
-      if (hasOtherAccountWithSameLogin) {
-        return left(new Error(`Usuário com login ${request.login} já existe.`));
+      if (userWithLogin) {
+        // Se login não for do mesmo usuário então é sinal que já existe um login
+        // cadastrado e o sistema deve bloquear a edição.
+        const hasOtherAccountWithSameLogin =
+          userWithLogin.id !== request.id && userWithLogin.login !== null;
+
+        if (hasOtherAccountWithSameLogin) {
+          return left(
+            new Error(`Usuário com login ${request.login} já existe.`)
+          );
+        }
+      }
+    }
+
+    if (request.email !== null) {
+      const userWithSameEmail = await this.accountRepository.getByEmail(
+        request.email
+      );
+
+      if (userWithSameEmail) {
+        const hasOtherAccountWithSameEmail =
+          userWithSameEmail.id !== request.id;
+
+        if (hasOtherAccountWithSameEmail) {
+          return left(
+            new Error(`Usuário com email ${request.email} já existe.`)
+          );
+        }
       }
     }
 
@@ -92,7 +116,7 @@ export class UpdateUser extends Command {
     }
 
     // TODO: add validation in controller
-    if (Reflect.has(request, "password")) {
+    if (Reflect.has(request, "password") && request.password !== null) {
       Object.assign(createUserDTO, {
         password: request.password,
         confirmPassword: request.confirmPassword,
@@ -109,14 +133,15 @@ export class UpdateUser extends Command {
 
     const userToPersistency = {
       id: user.id as number,
-      email: user.email?.value as string,
-      login: user.login?.value as string,
-      name: user.email?.value as string,
+      email: user.email ? (user.email.value as string) : null,
+      login: user.login ? (user.login.value as string) : null,
+      type: user.type ? (user.type as string) : null,
+      name: user.name ? (user.name.value as string) : null,
       modules: user.access ? user.access.value : null,
     };
 
-    if (user.password?.value) {
-      const hashedPassword = await this.encoder.hash(user.password?.value);
+    if (user.password) {
+      const hashedPassword = await this.encoder.hash(user.password.value);
 
       Object.assign(userToPersistency, {
         password: hashedPassword,
@@ -129,9 +154,9 @@ export class UpdateUser extends Command {
     this.addLog({
       action: "update",
       table: "User",
-      description: `Usuário ${request.login} atualizado com sucesso`,
+      description: `Usuário atualizado com sucesso`,
     });
 
-    return right(`Usuário ${request.login} atualizado com sucesso.`);
+    return right(`Usuário atualizado com sucesso.`);
   }
 }

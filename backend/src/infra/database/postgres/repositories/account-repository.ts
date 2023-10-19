@@ -194,12 +194,12 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
 
   async update(data: {
     id: number;
-    email: string;
-    name: string;
-    login: string;
-    type: string;
+    email: string | null;
+    name: string | null;
+    login: string | null;
+    type?: string | null;
     password?: string;
-    modules?: AccountRepository.system_modules_permissions;
+    modules?: AccountRepository.system_modules_permissions | null;
   }): Promise<boolean> {
     let result = false;
     await governmentDb.transaction(async (trx) => {

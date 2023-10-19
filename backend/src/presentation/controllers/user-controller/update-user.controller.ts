@@ -34,23 +34,20 @@ export class UpdateUserController extends CommandController<
         login,
       } = request;
 
-      console.log("Update user controller : ", request);
-
       const dto = {
         id: accountId,
-        name,
-        login,
+        name: Reflect.has(request, "name") ? (request.name as string) : null,
+        login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
-        password,
-        confirmPassword,
+        password: Reflect.has(request, "password")
+          ? (request.password as string)
+          : null,
+        confirmPassword: Reflect.has(request, "confirmPassword")
+          ? (request.confirmPassword as string)
+          : null,
         modules,
+        type: request.type,
       };
-
-      if (type) {
-        Object.assign(dto, {
-          type,
-        });
-      }
 
       const updateOrError = await this.updateUser.execute(dto);
 
@@ -72,11 +69,11 @@ export namespace UpdateUserController {
   export type Request = {
     accountId: number;
     email: string;
-    type?: UserType;
-    name: string;
-    login: string;
-    password?: string;
-    confirmPassword?: string;
+    type: UserType;
+    name: string | null;
+    login: string | null;
+    password?: string | null;
+    confirmPassword?: string | null;
     modules?: {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;

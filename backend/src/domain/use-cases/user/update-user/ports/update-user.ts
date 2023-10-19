@@ -8,11 +8,11 @@ export namespace UpdateUserDTO {
   export type params = {
     id: number;
     email: string;
-    type?: UserType;
-    name: string;
-    login: string;
-    password?: string;
-    confirmPassword?: string;
+    type: UserType;
+    name: string | null;
+    login: string | null;
+    password?: string | null;
+    confirmPassword?: string | null;
     modules?: system_modules_permissions;
   };
   export type result = {};
