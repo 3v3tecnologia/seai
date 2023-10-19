@@ -24,7 +24,7 @@ export class UpdateUserController extends CommandController<
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
       const {
-        accountId,
+        id,
         email,
         modules,
         type,
@@ -35,7 +35,7 @@ export class UpdateUserController extends CommandController<
       } = request;
 
       const dto = {
-        id: accountId,
+        id: Number(id),
         name: Reflect.has(request, "name") ? (request.name as string) : null,
         login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
@@ -55,7 +55,7 @@ export class UpdateUserController extends CommandController<
         return forbidden(updateOrError.value);
       }
 
-      await this.userLogs.log(request.accountId, this.updateUser);
+      await this.userLogs.log(request.id, this.updateUser);
 
       return created(updateOrError.value);
     } catch (error) {
@@ -67,7 +67,7 @@ export class UpdateUserController extends CommandController<
 
 export namespace UpdateUserController {
   export type Request = {
-    accountId: number;
+    id: number;
     email: string;
     type: UserType;
     name: string | null;
