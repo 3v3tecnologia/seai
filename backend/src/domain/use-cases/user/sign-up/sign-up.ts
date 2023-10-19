@@ -94,7 +94,7 @@ export class SignUp extends Command {
       id: userDomain.id as number,
       email: userDomain.email?.value as string,
       login: userDomain.login?.value as string,
-      name: userDomain.email?.value as string,
+      name: userDomain.name?.value as string,
       password: hashedPassword,
     });
 
