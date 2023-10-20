@@ -222,6 +222,11 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
           Password: data.password,
         });
       }
+      if (data.type) {
+        Object.assign(userToUpdate, {
+          Type: data.type,
+        });
+      }
 
       await trx("User").where({ Id: data.id }).update(userToUpdate);
 
@@ -238,7 +243,6 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
           .where({
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
-            UpdatedAt: governmentDb.fn.now(),
           })
           // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
           .update({

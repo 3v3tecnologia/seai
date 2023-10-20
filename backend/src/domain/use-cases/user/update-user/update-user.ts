@@ -87,10 +87,7 @@ export class UpdateUser extends Command {
 
     const modules = await this.accountRepository.getModules();
 
-    const userPermissionType =
-      alreadyExistsAccount.type === UserTypes.STANDARD
-        ? UserTypes.STANDARD
-        : request.type || UserTypes.ADMIN;
+    const userPermissionType = request.type;
 
     const createUserDTO = {
       email: request.email,
@@ -100,7 +97,7 @@ export class UpdateUser extends Command {
       modulesAccess: null,
     };
 
-    if (request.modules && alreadyExistsAccount.type === UserTypes.ADMIN) {
+    if (request.modules && request.type === UserTypes.ADMIN) {
       const hasValidModulesOrError = SystemModules.checkIfModuleExists(
         request.modules,
         modules
@@ -147,7 +144,6 @@ export class UpdateUser extends Command {
         password: hashedPassword,
       });
     }
-
     // TODO: deve passar todos os campos do 'account'
     await this.accountRepository.update(userToPersistency);
 
