@@ -192,6 +192,13 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return users;
   }
 
+  async updateUserPassword(user_id: number, password: string): Promise<void> {
+    await governmentDb("User").where({ Id: user_id }).update({
+      Password: password,
+      UpdatedAt: governmentDb.fn.now(),
+    });
+  }
+
   async update(data: {
     id: number;
     email: string | null;

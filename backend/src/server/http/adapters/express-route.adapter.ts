@@ -9,6 +9,7 @@ export const adaptRoute = (controller: Controller) => {
       ...(request.params || {}),
       ...(request.query || {}),
       accountId: request.accountId,
+      accessToken: request.accessToken || null,
     };
 
     const res = await controller.handle(req);
@@ -19,7 +20,6 @@ export const adaptRoute = (controller: Controller) => {
       });
     }
 
-    console.error(res);
     //Enviar a mensagem do erro, evitar passar muitas informações detalhadas
     return response.status(res.statusCode).json({
       error: res.body.message,

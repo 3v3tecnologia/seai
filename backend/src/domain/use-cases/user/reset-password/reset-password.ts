@@ -30,7 +30,8 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
   }
   async execute(
     access_token: string,
-    password: string
+    password: string,
+    confirmPassword: string
   ): Promise<Either<Error, null>> {
     if (!access_token) {
       return left(new Error("Token não informado"));
@@ -53,6 +54,7 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
 
     const passwordOrError = UserPassword.create({
       value: password,
+      confirm: confirmPassword,
       isHashed: false,
     });
 
@@ -64,13 +66,10 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
 
     user.password = newPassword;
 
-    await this.accountRepository.update({
-      email: user.email,
-      id: user.id as number,
-      login: user.login as string,
-      name: user.name as string,
-      password: user.password,
-    });
+    await this.accountRepository.updateUserPassword(
+      user.id as number,
+      user.password
+    );
 
     this.addLog({
       action: "update",

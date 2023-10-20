@@ -19,9 +19,11 @@ export class ResetPasswordController extends CommandController<
     request: ResetPasswordController.Request
   ): Promise<HttpResponse> {
     try {
+      console.log({ request });
       const createdOrError = await this.resetPassword.execute(
-        request.token,
-        request.password
+        request.accessToken,
+        request.password,
+        request.confirmPassword
       );
 
       if (createdOrError.isLeft()) {
@@ -41,6 +43,7 @@ export namespace ResetPasswordController {
   export type Request = {
     accountId: number;
     password: string;
-    token: string;
+    confirmPassword: string;
+    accessToken: string;
   };
 }
