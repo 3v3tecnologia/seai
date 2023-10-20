@@ -24,6 +24,7 @@ export class UpdateUserController extends CommandController<
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
       const {
+        id,
         accountId,
         email,
         modules,
@@ -34,23 +35,20 @@ export class UpdateUserController extends CommandController<
         login,
       } = request;
 
-      console.log("Update user controller : ", request);
-
       const dto = {
-        id: accountId,
-        name,
-        login,
+        id: Number(accountId) || Number(id),
+        name: Reflect.has(request, "name") ? (request.name as string) : null,
+        login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
-        password,
-        confirmPassword,
+        password: Reflect.has(request, "password")
+          ? (request.password as string)
+          : null,
+        confirmPassword: Reflect.has(request, "confirmPassword")
+          ? (request.confirmPassword as string)
+          : null,
         modules,
+        type: request.type,
       };
-
-      if (type) {
-        Object.assign(dto, {
-          type,
-        });
-      }
 
       const updateOrError = await this.updateUser.execute(dto);
 
@@ -58,7 +56,7 @@ export class UpdateUserController extends CommandController<
         return forbidden(updateOrError.value);
       }
 
-      await this.userLogs.log(request.accountId, this.updateUser);
+      await this.userLogs.log(request.id, this.updateUser);
 
       return created(updateOrError.value);
     } catch (error) {
@@ -70,13 +68,14 @@ export class UpdateUserController extends CommandController<
 
 export namespace UpdateUserController {
   export type Request = {
+    id: number;
     accountId: number;
     email: string;
-    type?: UserType;
-    name: string;
-    login: string;
-    password?: string;
-    confirmPassword?: string;
+    type: UserType;
+    name: string | null;
+    login: string | null;
+    password?: string | null;
+    confirmPassword?: string | null;
     modules?: {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;

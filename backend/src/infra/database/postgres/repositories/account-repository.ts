@@ -192,14 +192,21 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return users;
   }
 
+  async updateUserPassword(user_id: number, password: string): Promise<void> {
+    await governmentDb("User").where({ Id: user_id }).update({
+      Password: password,
+      UpdatedAt: governmentDb.fn.now(),
+    });
+  }
+
   async update(data: {
     id: number;
-    email: string;
-    name: string;
-    login: string;
-    type: string;
+    email: string | null;
+    name: string | null;
+    login: string | null;
+    type?: string | null;
     password?: string;
-    modules?: AccountRepository.system_modules_permissions;
+    modules?: AccountRepository.system_modules_permissions | null;
   }): Promise<boolean> {
     let result = false;
     await governmentDb.transaction(async (trx) => {
@@ -213,6 +220,11 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
       if (data.password) {
         Object.assign(userToUpdate, {
           Password: data.password,
+        });
+      }
+      if (data.type) {
+        Object.assign(userToUpdate, {
+          Type: data.type,
         });
       }
 
@@ -231,7 +243,6 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
           .where({
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
-            UpdatedAt: governmentDb.fn.now(),
           })
           // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
           .update({

@@ -24,7 +24,7 @@ export class AuthMiddleware implements Middleware {
 
       if (decodedTokenOrError) {
         if (decodedTokenOrError.sub) {
-          return ok({ accountId: decodedTokenOrError.accountId });
+          return ok({ accountId: decodedTokenOrError.accountId, accessToken });
         }
       }
 

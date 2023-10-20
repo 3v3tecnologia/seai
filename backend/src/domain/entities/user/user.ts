@@ -82,8 +82,8 @@ export class User {
     props: {
       email: string;
       type: UserType;
-      name?: string;
-      login?: string;
+      name?: string | null;
+      login?: string | null;
       password?: string;
       confirmPassword?: string;
       modulesAccess: SystemModulesProps | null;
@@ -120,30 +120,33 @@ export class User {
       }
     }
 
-    const nameOrError = Reflect.has(props, "name")
-      ? UserName.create(props.name as string)
-      : null;
+    const nameOrError =
+      Reflect.has(props, "name") && props.name !== null
+        ? UserName.create(props.name as string)
+        : null;
 
     if (nameOrError !== null && nameOrError.isLeft()) {
       errors.addError(nameOrError.value);
     }
 
-    const passwordOrError = Reflect.has(props, "password")
-      ? UserPassword.create({
-          value: props.password as string,
-          confirm: Reflect.has(props, "confirmPassword")
-            ? props.confirmPassword
-            : null,
-        })
-      : null;
+    const passwordOrError =
+      Reflect.has(props, "password") && props.password !== null
+        ? UserPassword.create({
+            value: props.password as string,
+            confirm: Reflect.has(props, "confirmPassword")
+              ? props.confirmPassword
+              : null,
+          })
+        : null;
 
     if (passwordOrError !== null && passwordOrError.isLeft()) {
       errors.addError(passwordOrError.value);
     }
 
-    const loginOrError = Reflect.has(props, "login")
-      ? UserLogin.create(props.login as string)
-      : null;
+    const loginOrError =
+      Reflect.has(props, "login") && props.login !== null
+        ? UserLogin.create(props.login as string)
+        : null;
 
     if (loginOrError !== null && loginOrError.isLeft()) {
       errors.addError(loginOrError.value);

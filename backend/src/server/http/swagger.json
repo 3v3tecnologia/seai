@@ -1934,13 +1934,13 @@
                   "password": {
                     "type": "string"
                   },
-                  "token": {
+                  "confirmPassword": {
                     "type": "string"
                   }
                 },
                 "example": {
-                  "password": "12345",
-                  "token": "12345"
+                  "password": "123456789",
+                  "confirmPassword": "123456789"
                 }
               }
             }
@@ -2170,156 +2170,7 @@
         }
       }
     },
-    "/api/v1/user/profile": {
-      "get": {
-        "tags": [
-          "USER"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Get user profile",
-        "description": "Get user profile",
-        "responses": {
-          "200": {
-            "description": "Get users successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "number"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "login": {
-                            "type": "string"
-                          },
-                          "email": {
-                            "type": "string"
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "createdAt": {
-                            "type": "string"
-                          },
-                          "updatedAt": {
-                            "type": "string"
-                          },
-                          "modules": {
-                            "news": {
-                              "id": 1,
-                              "read": true,
-                              "write": true
-                            },
-                            "user": {
-                              "id": 2,
-                              "read": true,
-                              "write": true
-                            },
-                            "register": {
-                              "id": 3,
-                              "read": true,
-                              "write": true
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "example": {
-                    "data": [
-                      {
-                        "id": 1,
-                        "name": "test",
-                        "login": "test",
-                        "email": "test2@gmail.com",
-                        "type": "standard",
-                        "createdAt": "2023-06-29T21:06:44.887Z",
-                        "updatedAt": "2023-06-29T21:06:44.887Z"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "Internal server error"
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "Forbidden access"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "No authorization",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "error": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "error": "No authorization"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
+
     "/api/v1/user": {
       "put": {
         "tags": [
@@ -2403,32 +2254,31 @@
                   "login": {
                     "type": "string"
                   }
-                  
                 },
                 "example": {
-                  "email":"davispenha12@gmail.com",
-                  "modules":{
+                  "email": "davispenha12@gmail.com",
+                  "modules": {
                     "news": {
-                      "id":1,
+                      "id": 1,
                       "read": false,
                       "write": false
                     },
                     "register": {
-                      "id":2,
+                      "id": 2,
                       "read": false,
                       "write": true
                     },
                     "user": {
-                      "id":3,
+                      "id": 3,
                       "read": true,
                       "write": false
                     }
                   },
-                  "type":"admin",
-                  "name":"tester",
-                  "password":"1234567",
-                  "login":"tester",
-                  "confirmPassword":"1234567"
+                  "type": "admin",
+                  "name": "tester",
+                  "password": "1234567",
+                  "login": "tester",
+                  "confirmPassword": "1234567"
                 }
               }
             }
@@ -2451,6 +2301,355 @@
                   },
                   "example": {
                     "data": "Usuário tester atualizado com sucesso."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/profile": {
+      "put": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update user profile",
+        "description": "[In progress]",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "modules": {
+                    "type": "object",
+                    "properties": {
+                      "news": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "register": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "write": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email": "davispenha12@gmail.com",
+                  "modules": {
+                    "news": {
+                      "id": 1,
+                      "read": false,
+                      "write": false
+                    },
+                    "register": {
+                      "id": 2,
+                      "read": false,
+                      "write": true
+                    },
+                    "user": {
+                      "id": 3,
+                      "read": true,
+                      "write": false
+                    }
+                  },
+                  "type": "admin",
+                  "name": "tester",
+                  "password": "1234567",
+                  "login": "tester",
+                  "confirmPassword": "1234567"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Usuário tester atualizado com sucesso."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "USER"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user profile",
+        "description": "Get user profile",
+        "responses": {
+          "200": {
+            "description": "Get users successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "login": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "modules": {
+                            "news": {
+                              "id": 1,
+                              "read": true,
+                              "write": true
+                            },
+                            "user": {
+                              "id": 2,
+                              "read": true,
+                              "write": true
+                            },
+                            "register": {
+                              "id": 3,
+                              "read": true,
+                              "write": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "id": 1,
+                        "name": "test",
+                        "login": "test",
+                        "email": "test2@gmail.com",
+                        "type": "standard",
+                        "createdAt": "2023-06-29T21:06:44.887Z",
+                        "updatedAt": "2023-06-29T21:06:44.887Z"
+                      }
+                    ]
                   }
                 }
               }

@@ -39,11 +39,16 @@ export namespace AccountRepository {
   export interface Update {
     update(data: {
       id: number;
-      email: string;
-      name: string;
-      login: string;
-      password?: string;
+      email: string | null;
+      name: string | null;
+      login: string | null;
+      type?: string | null;
+      password?: string | null;
+      modules?: AccountRepository.system_modules_permissions | null;
     }): Promise<boolean>;
+  }
+  export interface UpdatePassword {
+    updateUserPassword(user_id: number, password: string): Promise<void>;
   }
 
   export interface DeleteById {
@@ -98,6 +103,7 @@ export interface AccountRepositoryProtocol
   extends AccountRepository.Add,
     AccountRepository.Fetch,
     AccountRepository.Update,
+    AccountRepository.UpdatePassword,
     AccountRepository.DeleteById,
     AccountRepository.GetById,
     AccountRepository.GetByEmail,
