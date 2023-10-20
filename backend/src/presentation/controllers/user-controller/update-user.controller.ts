@@ -25,6 +25,7 @@ export class UpdateUserController extends CommandController<
     try {
       const {
         id,
+        accountId,
         email,
         modules,
         type,
@@ -35,7 +36,7 @@ export class UpdateUserController extends CommandController<
       } = request;
 
       const dto = {
-        id: Number(id),
+        id: Number(accountId) || Number(id),
         name: Reflect.has(request, "name") ? (request.name as string) : null,
         login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
@@ -68,6 +69,7 @@ export class UpdateUserController extends CommandController<
 export namespace UpdateUserController {
   export type Request = {
     id: number;
+    accountId: number;
     email: string;
     type: UserType;
     name: string | null;
