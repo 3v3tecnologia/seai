@@ -97,7 +97,7 @@ export class UpdateUser extends Command {
       modulesAccess: null,
     };
 
-    if (request.modules && request.type === UserTypes.ADMIN) {
+    if (request.modules) {
       const hasValidModulesOrError = SystemModules.checkIfModuleExists(
         request.modules,
         modules

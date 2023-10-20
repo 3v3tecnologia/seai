@@ -119,8 +119,10 @@ export class SystemModules {
     }*/
 
     if (permission_type === "standard") {
-      const hasUserManageAccess =
-        modules[Modules.USER].read || modules[Modules.USER].write;
+      const hasUserManageAccess = [
+        modules[Modules.USER].read,
+        modules[Modules.USER].write,
+      ].some((permission) => permission === true);
 
       if (hasUserManageAccess) {
         return left(
