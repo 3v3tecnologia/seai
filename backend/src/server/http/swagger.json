@@ -1934,13 +1934,13 @@
                   "password": {
                     "type": "string"
                   },
-                  "token": {
+                  "confirmPassword": {
                     "type": "string"
                   }
                 },
                 "example": {
-                  "password": "12345",
-                  "token": "12345"
+                  "password": "123456789",
+                  "confirmPassword": "123456789"
                 }
               }
             }
@@ -2403,32 +2403,31 @@
                   "login": {
                     "type": "string"
                   }
-                  
                 },
                 "example": {
-                  "email":"davispenha12@gmail.com",
-                  "modules":{
+                  "email": "davispenha12@gmail.com",
+                  "modules": {
                     "news": {
-                      "id":1,
+                      "id": 1,
                       "read": false,
                       "write": false
                     },
                     "register": {
-                      "id":2,
+                      "id": 2,
                       "read": false,
                       "write": true
                     },
                     "user": {
-                      "id":3,
+                      "id": 3,
                       "read": true,
                       "write": false
                     }
                   },
-                  "type":"admin",
-                  "name":"tester",
-                  "password":"1234567",
-                  "login":"tester",
-                  "confirmPassword":"1234567"
+                  "type": "admin",
+                  "name": "tester",
+                  "password": "1234567",
+                  "login": "tester",
+                  "confirmPassword": "1234567"
                 }
               }
             }
