@@ -2,9 +2,9 @@
   <div class="home mb-5">
     <div class="py-4" />
 
-    <LogoProject />
+    <!-- <LogoProject /> -->
 
-    <h3 class="my-3">Recuperar conta</h3>
+    <h3 class="mb-3">Recuperar conta</h3>
 
     <p>Enviaremos os dados por email para a recuperação de sua conta</p>
 

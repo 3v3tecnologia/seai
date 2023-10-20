@@ -135,8 +135,11 @@ const handleSubmit = (e) => {
     return router.push({ name: "users" });
   }
 
-  store.dispatch("UPDATE_USER", form.value).then(() => {
-    savedAccount.value = true;
-  });
+  store
+    .dispatch("UPDATE_USER", form.value)
+    .then(() => {
+      savedAccount.value = true;
+    })
+    .catch(console.error);
 };
 </script>

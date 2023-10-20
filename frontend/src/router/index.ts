@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import AuthView from "../views/AuthView.vue";
 import ReportsView from "../views/ReportsView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
-import EditUserView from "../views/EditUserView.vue";
+import ProfileEditView from "../views/ProfileEditView.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
 import UsersView from "../views/UsersView.vue";
@@ -14,6 +14,10 @@ import store from "../store";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
+    redirect: { path: "/users" },
+  },
+  {
+    path: "/home",
     name: "home",
     component: HomeView,
     // redirect: { path: "/login" },
@@ -22,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "login",
     component: AuthView,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileEditView,
   },
   {
     path: "/reports",
@@ -79,7 +88,15 @@ const router = createRouter({
 
 router.beforeEach((to: any, from, next) => {
   const auth = store.state.auth;
-  if (!["login", "initial-register-infos"].includes(to.name) && !auth) {
+  if (
+    ![
+      "login",
+      "initial-register-infos",
+      "change-password",
+      "retrieve-account",
+    ].includes(to.name) &&
+    !auth
+  ) {
     next("/login");
   } else {
     next();

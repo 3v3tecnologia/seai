@@ -98,7 +98,7 @@ watch(
       await store.dispatch("GET_CURRENT_USER", userId.value);
 
       if (currentUser.value) {
-        acessData.value = currentUser.value.value;
+        acessData.value = currentUser.value.modules;
         form.value.email = currentUser.value.email;
         form.value.name = currentUser.value.name;
         form.value.login = currentUser.value.login;
@@ -140,13 +140,19 @@ const handleSubmit = async (e) => {
     }
 
     if (isCreating.value) {
-      await store.dispatch("CREATE_USER", formDTO.value).then(() => {
-        savedAccount.value = true;
-      });
+      await store
+        .dispatch("CREATE_USER", formDTO.value)
+        .then(() => {
+          savedAccount.value = true;
+        })
+        .catch(console.error);
     } else {
-      await store.dispatch("UPDATE_USER", formDTO.value).then(() => {
-        savedAccount.value = true;
-      });
+      await store
+        .dispatch("UPDATE_USER", formDTO.value)
+        .then(() => {
+          savedAccount.value = true;
+        })
+        .catch(console.error);
     }
   } catch (e) {
     console.error("erro no salve", e);

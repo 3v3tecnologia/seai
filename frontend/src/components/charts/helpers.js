@@ -1,4 +1,16 @@
+import { toast } from "vue3-toastify";
 import { itemsPerGraph } from "../../constants";
+
+export const validatePasswords = ({ password, confirmPassword }) => {
+  const isPasswordsUnMatching = password != confirmPassword;
+
+  if (isPasswordsUnMatching) {
+    toast.error("Senhas estão divergindo");
+    return false;
+  }
+
+  return true;
+};
 
 export const groupByKeyData = (data, groupByKeyData) => {
   if (!data.length) {

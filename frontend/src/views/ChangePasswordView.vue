@@ -1,11 +1,5 @@
 <template>
   <div class="home">
-    <div class="py-4" />
-
-    <LogoProject />
-
-    <div class="py-3"></div>
-
     <FormWrapper title="Mudar senha" @submit="handleSubmit">
       <template v-if="!changedPassword" v-slot:content>
         <div class="mb-3 mt-4">
@@ -30,7 +24,7 @@
 
         <BaseInput
           label="Confirmar nova senha"
-          v-model="form.confirm_password"
+          v-model="form.confirmPassword"
           placeholder="Confirme sua nova senha"
           input-type="password"
           input-required
@@ -46,6 +40,8 @@
         />
       </template>
     </FormWrapper>
+
+    <div class="py-5"></div>
   </div>
 </template>
 
@@ -59,6 +55,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
+import { validatePasswords } from "@/components/charts/helpers";
 
 const router = useRouter();
 const currentRoute = useRoute();
@@ -76,14 +73,23 @@ const handleSubmit = (e) => {
   }
 
   const password = form.value.password;
+  const confirmPassword = form.value.password;
+
+  const isValidPassword = validatePasswords(form.value);
+
+  if (!isValidPassword) {
+    return;
+  }
 
   store
     .dispatch("CHANGE_PASSWORD", {
+      confirmPassword,
       password,
-      token,
+      token: token.value,
     })
     .then(() => {
       changedPassword.value = true;
-    });
+    })
+    .catch(console.error);
 };
 </script>

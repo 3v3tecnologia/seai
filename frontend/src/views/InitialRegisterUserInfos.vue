@@ -61,6 +61,7 @@ import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
+import { validatePasswords } from "@/components/charts/helpers";
 
 const router = useRouter();
 const currentRoute = useRoute();
@@ -86,7 +87,8 @@ const handleSubmit = async (e: any) => {
       })
       .then(() => {
         savedAccount.value = true;
-      });
+      })
+      .catch(console.error);
   }
 };
 
@@ -100,16 +102,13 @@ const validateForm = ({
 }) => {
   const hasEmptyValue =
     [name, password, confirmPassword, login].findIndex((c) => !c) >= 0;
-  const isPasswordsUnMatching = password != confirmPassword;
+  const isValidPassword = validatePasswords({ password, confirmPassword });
 
   if (hasEmptyValue) {
     toast.error("Preencha todos os campos");
     return false;
-  } else if (isPasswordsUnMatching) {
-    toast.error("Senhas estão divergindo");
-    return false;
   }
 
-  return true;
+  return isValidPassword;
 };
 </script>

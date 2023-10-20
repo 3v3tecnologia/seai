@@ -1,7 +1,6 @@
 <template>
   <div class="wrapper-component">
     <label for="table" class="font-weight-bold"> Acessos </label>
-
     <div class="wrapper-table">
       <table class="table">
         <thead>
@@ -63,11 +62,6 @@ const baseValuesAccess = optionsSelect[1];
 const baseAccessModules = {
   read: baseValuesAccess,
   register: baseValuesAccess,
-};
-
-const baseCompleteAccessModule = {
-  read: optionsSelect[0],
-  register: optionsSelect[0],
 };
 
 const modulesOptions = ref([
@@ -138,9 +132,23 @@ const emit = defineEmits(["update:modelValue"]);
 
 watch(
   () => modulesOptions.value,
-  (val) => {
-    val.forEach((perm) => {
-      if (perm.access.register.value && !perm.access.read.value) {
+  (val, oldVal) => {
+    val.forEach((perm, i) => {
+      const somethingChanged =
+        oldVal[i].access.register.value !== perm.access.register.value &&
+        oldVal[i].access.read.value !== perm.access.read.value;
+      const hadNoPermition = !(
+        oldVal[i].access.register.value && oldVal[i].access.read.value
+      );
+      const hasNoPermition = !perm.access.read.value;
+      const hasAllPermition = !perm.access.read.value;
+      const canOnlyRead = perm.access.read.value && !perm.access.register.value;
+
+      if (!somethingChanged) {
+        return;
+      }
+
+      if (hadNoPermition && perm.access.register.value) {
         perm.access.read = optionsSelect[0];
       }
     });
@@ -156,15 +164,24 @@ watch(
   { immediate: true }
 );
 
+const getOption = (val) => (val ? optionsSelect[0] : optionsSelect[1]);
+
 watch(
   () => props.modelValue,
   (val) => {
-    // TODO  SET THE VALUE OF MODULE PERMISSION WITH DTO RESPECTIVE VALUE, EASY PEASY
-    // modulesOptions.value.forEach(module => {
-    //   val[module.value].access.read =
-    // })
-    console.log("atualizou o valor do model", val, modulesOptions.value);
-  }
+    if (!val || !Object.keys(val).length) {
+      return;
+    }
+
+    modulesOptions.value.forEach((module) => {
+      const read = getOption(val[module.value].read);
+      const write = getOption(val[module.value].write);
+
+      module.access.read = read;
+      module.access.register = write;
+    });
+  },
+  { immediate: true }
 );
 
 watch(

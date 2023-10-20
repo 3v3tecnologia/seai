@@ -10,6 +10,7 @@
     <input
       :disabled="disabled"
       v-model="inputValue"
+      :minlength="minLength"
       :type="inputType"
       class="form-control"
       :placeholder="placeholder"
@@ -39,6 +40,10 @@ const props = defineProps({
   inputType: {
     type: String,
     default: "text",
+  },
+  minLength: {
+    type: Number,
+    default: 0,
   },
 });
 

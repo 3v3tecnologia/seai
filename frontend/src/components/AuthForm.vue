@@ -2,13 +2,14 @@
 <template>
   <FormWrapper @submit="handleSubmit">
     <template v-slot:content>
-      <BaseInut label="Login" v-model="form.login" :input-required="isLogging" placeholder="Seu login" />
-      <BaseInut v-if="!isLogging" label="Email" v-model="form.email" input-type="password" placeholder="Seu email">
-        <div class="mb-3">
-          ou
-        </div>
-      </BaseInut>
-      <BaseInut v-else label="Senha" v-model="form.password" input-type="password" placeholder="Sua senha" />
+      <span v-if="isLogging">
+        <BaseInut label="Login" v-model="form.login" :input-required="isLogging" placeholder="Seu login" />
+        <BaseInut label="Senha" v-model="form.password" input-type="password" placeholder="Sua senha" />
+      </span>
+
+      <span v-else>
+        <BaseInut label="Email" v-model="form.email" input-type="email" placeholder="Seu email" />
+      </span>
     </template>
 
     <template v-slot:buttons>
@@ -42,10 +43,14 @@ const handleSubmit = (e) => {
   e.preventDefault();
 
   const action = props.isLogging ? "LOGIN_USER" : "SEND_EMAIL_CHANGE_PASSWORD";
-  store.dispatch(action, form.value).then((r) => {
-    if (props.isLogging && !(r instanceof Error) && r) {
-      router.push({ path: "/users" });
-    }
-  });
+
+  store
+    .dispatch(action, form.value)
+    .then((r) => {
+      if (props.isLogging && !(r instanceof Error) && r) {
+        router.push({ path: "/users" });
+      }
+    })
+    .catch(console.error);
 };
 </script>

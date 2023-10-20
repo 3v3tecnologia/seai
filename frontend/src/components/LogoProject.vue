@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper-logo">
-    <router-link :to="{ name: 'home' }">
+    <router-link :to="{ name: 'users' }">
       <h1 class="main-logo mb-0" :class="props.titleSize">SEAI</h1>
     </router-link>
   </div>

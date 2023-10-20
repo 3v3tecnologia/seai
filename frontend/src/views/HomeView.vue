@@ -7,7 +7,7 @@
     </div>
   </div>
 </template>
-
+<!-- 
 <script lang="ts" setup>
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -21,7 +21,7 @@ const auth = computed(() => store.state.auth);
 if (!auth.value) {
   router.push({ name: "login" });
 }
-</script>
+</script> -->
 
 <style lang="scss" scoped>
 .wrapper-mock {

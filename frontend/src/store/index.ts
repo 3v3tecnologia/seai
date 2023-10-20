@@ -15,6 +15,12 @@ import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
 
+const formatTemporaryToken = (token: string) => ({
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
 const dataFormatUrl = {
   1: "basin",
   2: "county",
@@ -64,6 +70,7 @@ interface Estado {
   auth: IAuth | null;
   users: IUsersWrapper;
   currentUser: INewUser | null;
+  profile: INewUser | null;
   cityOptions: ICityOption[];
   reportsFilters: IReportsFilters;
   hydrographicBasinOptions: IHydrographicBasinOption[];
@@ -121,6 +128,7 @@ export const store = createStore<Estado>({
       showPerBasin: true,
     },
     currentUser: null,
+    profile: null,
   },
   mutations: {
     ["SET_USER"](state, user: IAuth) {
@@ -151,19 +159,27 @@ export const store = createStore<Estado>({
       // const user = state.users.data.find((usr) => usr.id);
       state.currentUser = user;
     },
+    ["SET_CURRENT_PROFILE"](state, user) {
+      // const user = state.users.data.find((usr) => usr.id == id);
+      // const user = state.users.data.find((usr) => usr.id);
+      state.profile = user;
+    },
   },
   actions: {
     ["SIGN_OUT"]({ commit }) {
       commit("SET_USER", null);
     },
-    async ["SEND_EMAIL_CHANGE_PASSWORD"]() {
+    async ["SEND_EMAIL_CHANGE_PASSWORD"](
+      context,
+      { email }: { email: string }
+    ) {
       try {
-        // TODO
-        // SEND HERE TO API THE OBJECT WITH LOGIN AND OR EMAIL
-        // const { data: userCreated } = await http.post(`/user`, user);
+        await http.post(`login/password/forgot`, { email });
         toast.success("Email de recuperação enviado com sucesso.");
-      } catch (e) {
+      } catch (e: any) {
         toast.error("Falha ao enviar email de recuperação.");
+
+        throw Error(e?.response?.data?.error);
       }
     },
     async ["LOGIN_USER"]({ commit }, user: IUser) {
@@ -371,9 +387,10 @@ export const store = createStore<Estado>({
 
         toast.success("Usuário criado com sucesso.");
         toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
-      } catch (e) {
+      } catch (e: any) {
         toast.error("Falha ao criar usuário.");
         console.error(e);
+        throw Error(e?.response?.data?.error);
       }
     },
     async ["DELETE_USERS"]({ commit }, ids: number[]) {
@@ -393,41 +410,63 @@ export const store = createStore<Estado>({
         await http.put(`/user/${state.currentUser?.id}`, user);
 
         toast.success("Dados de usuário atualizados com sucesso.");
-      } catch (e) {
+      } catch (e: any) {
         toast.error("Falha ao atualizar usuário.");
         console.error(e);
+        throw Error(e?.response?.data?.error);
       }
     },
-    async ["CHANGE_PASSWORD"]() {
+    async ["UPDATE_PROFILE"]({ state, commit }, user: any) {
       try {
-        // TODO
-        // CONNECT API
-        // const { data: userLogged } = await http.post(`/change-password`, {password, token});
+        await http.put(`/user/profile/`, {
+          ...state.profile,
+          email: user.email,
+          name: user.name,
+          login: user.login,
+        });
 
+        const auth = {
+          ...state.auth,
+          login: user.name,
+        };
+
+        commit("SET_USER", auth);
+
+        toast.success("Dados de usuário atualizados com sucesso.");
+      } catch (e: any) {
+        toast.error("Falha ao atualizar dados.");
+        toast.error(e?.response?.data?.error);
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
+    async ["CHANGE_PASSWORD"](context, form) {
+      try {
+        await http.post(
+          `login/password/reset`,
+          { ...form, token: `Bearer ${form.token}` },
+          formatTemporaryToken(form.token)
+        );
         toast.success("Senha atualizada com sucesso.");
         return true;
-      } catch (e) {
-        toast.error("Credenciais inválidas.");
+      } catch (e: any) {
+        toast.error("Erro ao alterar senha.");
+        toast.error(e?.response?.data?.error);
+        throw Error(e?.response?.data?.error);
       }
     },
-    // async ["CREATE_USER"]({ commit }, form) {
-    //   try {
-    //     // TODO
-    //     // CONNECT API
-    //     // const { data: userLogged } = await http.post(`/change-password`, {password, token});
-
-    //     toast.success("Conta criada com sucesso.");
-    //     toast.success(`Email enviado para ${previewEmailCensured(form.email)}`);
-    //     return true;
-    //   } catch (e) {
-    //     toast.error("Erro ao criar usuário.");
-    //   }
-    // },
     async ["GET_CURRENT_USER"]({ commit }, id: number) {
       const {
         data: { data },
       } = await http.get(`/user/list?userId=${id}`);
       commit("SET_CURRENT_USER", data);
+    },
+    async ["GET_PROFILE"]({ commit }, id: number) {
+      const {
+        data: { data },
+      } = await http.get(`/user/profile`);
+
+      commit("SET_CURRENT_PROFILE", data);
     },
     async ["GET_USERS"]({ commit }) {
       try {
@@ -452,11 +491,11 @@ export const store = createStore<Estado>({
 
         const {
           data: { data },
-        } = await http.post(`/login/sign-up`, form, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        } = await http.post(
+          `/login/sign-up`,
+          form,
+          formatTemporaryToken(token)
+        );
 
         if (data) {
           const userLogged = {
@@ -471,8 +510,8 @@ export const store = createStore<Estado>({
         toast.success("Sucesso ao finalizar edição de usuário.");
       } catch (e: any) {
         toast.error("Erro ao finalizar edição de usuário.");
-        toast.error(e.error);
-        console.error(e);
+        toast.error(e?.response?.data?.error);
+        throw Error(e?.response?.data?.error);
       }
     },
   },

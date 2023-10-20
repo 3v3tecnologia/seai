@@ -5,9 +5,9 @@
       <router-link :to="secondaryItem.routeName" class="ml-3 text-dark">
         {{ secondaryItem.text }}
       </router-link>
-      <router-link to="/" class="ml-3 text-dark">
+      <!-- <router-link to="/" class="ml-3 text-dark">
         Continuar sem sessão
-      </router-link>
+      </router-link> -->
     </div>
   </div>
 </template>

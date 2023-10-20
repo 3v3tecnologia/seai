@@ -54,7 +54,7 @@
 <script lang="ts" setup>
 import TabMenu from "primevue/tabmenu";
 import LogoProject from "@/components/LogoProject.vue";
-import { onMounted, ref, watch } from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -75,6 +75,10 @@ const itemsRoutesRaw = [
   {
     label: "Usuários",
     route: "/users",
+  },
+  {
+    label: "Perfil",
+    route: "/profile",
   },
   {
     label: "Relatórios",
