@@ -17,9 +17,20 @@
             inline-label
             remove-margin
             v-model="userType"
-            :options="usersOptions"
-            label="Filtrar por"
+            :options="usersOptions.options"
+            :placeholder="usersOptions.label"
           />
+
+          <div v-for="(filter, i) in filters" :key="i" class="d-flex">
+            <div class="px-lg-4" />
+            <BaseDropdown
+              inline-label
+              remove-margin
+              v-model="userType"
+              :options="filter.options"
+              :placeholder="filter.label"
+            />
+          </div>
         </div>
 
         <div class="d-flex align-items-center">
@@ -80,7 +91,6 @@ import { useRouter } from "vue-router";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { toast } from "vue3-toastify";
-import moment from "moment";
 
 const router = useRouter();
 
@@ -88,7 +98,7 @@ const table = ref(null);
 const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
-const userType = ref(usersOptions[0]);
+const userType = ref(usersOptions.options[0]);
 const search = ref("");
 
 const setSelectedUsers = () => {
@@ -98,6 +108,10 @@ const setSelectedUsers = () => {
 const props = defineProps({
   actionText: {
     type: String,
+    required: true,
+  },
+  filters: {
+    type: Array,
     required: true,
   },
   storeDataKey: {

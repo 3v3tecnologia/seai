@@ -1,9 +1,11 @@
 import moment from "moment/moment";
+import { usersOptions } from "@/constants.js";
 
 const user = {
   actionText: "usuário",
   getDataKey: "GET_USERS",
   storeDataKey: "users",
+  filters: [usersOptions],
   actionRoutes: {
     edit: "edit-user",
     create: "create-user",

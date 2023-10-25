@@ -25,6 +25,7 @@
       :data="data.data"
       :store-data-key="storeDataKey"
       :columns="columns"
+      :filters="filters"
       :action-routes="actionRoutes"
     />
   </BasicContentWrapper>
@@ -59,6 +60,10 @@ const props = defineProps({
   },
   actionRoutes: {
     type: Object,
+    required: true,
+  },
+  filters: {
+    type: Array,
     required: true,
   },
 });
