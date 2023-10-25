@@ -88,6 +88,10 @@ const itemsRoutesRaw = [
     label: "Gráficos",
     route: "/charts",
   },
+  {
+    label: "Equipamentos",
+    route: "/equipments",
+  },
 ];
 
 const itemsRoutes = computed(() =>

@@ -5,11 +5,12 @@ import RetrieveAccount from "../views/RetrieveAccount.vue";
 import ProfileEditView from "../views/ProfileEditView.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
-import UsersView from "../views/UsersView.vue";
+import BaseCrudView from "../views/BaseCrudView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import CreateUserView from "../views/CreateUserView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 import store from "../store";
+import routeProps from "./props";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,9 +37,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/reports",
     name: "reports",
     component: ReportsView,
-    props: {
-      showingTab: "reports",
-    },
   },
   {
     path: "/charts",
@@ -59,7 +57,7 @@ const routes: Array<RouteRecordRaw> = [
     component: CreateUserView,
   },
   {
-    path: "/user/edit/:id",
+    path: "/users/edit/:id",
     name: "edit-user",
     component: CreateUserView,
   },
@@ -71,7 +69,19 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/users",
     name: "users",
-    component: UsersView,
+    component: BaseCrudView,
+    props: routeProps.user,
+  },
+  {
+    path: "/equipments",
+    name: "equipments",
+    component: BaseCrudView,
+    props: routeProps.equipments,
+  },
+  {
+    path: "/equipments/create-equipment",
+    name: "create-equipment",
+    component: CreateUserView,
   },
   {
     path: "/initial-register-infos",

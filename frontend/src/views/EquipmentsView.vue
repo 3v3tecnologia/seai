@@ -19,8 +19,8 @@
 
     <UsersTable
       v-if="users.data.length"
-      :get-users="getUsers"
-      :users="users.data"
+      :get-data="getData"
+      :data="users.data"
       v-model="filtersUsers"
     />
   </BasicContentWrapper>
@@ -35,20 +35,20 @@ import { computed, ref } from "vue";
 const store = useStore();
 const filtersUsers = ref({});
 
-const getUsers = () => store.dispatch("GET_USERS");
+const getData = () => store.dispatch("GET_EQUIPMENTS");
 
-getUsers();
+getData();
 
 const users = computed(() => store.state.users);
 
 const usersCount = [
   {
     key: "totalAdmins",
-    title: "Administradores",
+    title: "Estações",
   },
   {
     key: "totalBasics",
-    title: "Básicos",
+    title: "Pluviômetros",
   },
 ];
 </script>

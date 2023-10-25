@@ -68,6 +68,7 @@ const ungroupData = (items: any) => {
 
 interface Estado {
   auth: IAuth | null;
+  equipments: any;
   users: IUsersWrapper;
   currentUser: INewUser | null;
   profile: INewUser | null;
@@ -124,6 +125,11 @@ export const store = createStore<Estado>({
       totalActives: 0,
       totalInactives: 0,
     },
+    equipments: {
+      data: [],
+      totalStations: 0,
+      totalPluviometers: 0,
+    },
     reportsFilters: {
       showPerBasin: true,
     },
@@ -131,6 +137,9 @@ export const store = createStore<Estado>({
     profile: null,
   },
   mutations: {
+    ["SET_EQUIPMENTS"](state, equipments: any) {
+      state.equipments = equipments;
+    },
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
       setAxiosHeader(user?.token || "");
@@ -480,6 +489,42 @@ export const store = createStore<Estado>({
           totalBasics: users.filter((u: any) => u.type !== "admin").length,
           totalActives: 0,
           totalInactives: 0,
+        });
+      } catch (e) {
+        toast.error("Erro ao buscar usuários.");
+      }
+    },
+    async ["GET_EQUIPMENTS"]({ commit }) {
+      try {
+        const data = [
+          {
+            id: 1,
+            NomeEquipamento: "Pluviômetro Francisca",
+            IdExterno: "12344222",
+            NomeOrgao: "INMET",
+            NomeTipoEquipamento: "pluviometer",
+            NomeLocalização: "Mossoró",
+            PossuiErrosDeLeituraPendentes: true,
+          },
+          {
+            id: 1,
+            NomeEquipamento: "Estação Joaquim",
+            IdExterno: "123Hfds",
+            NomeOrgao: "FUNCEME",
+            NomeTipoEquipamento: "station",
+            NomeLocalização: "Fortaleza",
+            PossuiErrosDeLeituraPendentes: false,
+          },
+        ];
+
+        commit("SET_EQUIPMENTS", {
+          data,
+          totalPluviometers: data.filter(
+            (d: any) => d.NomeTipoEquipamento === "pluviometer"
+          ).length,
+          totalStations: data.filter(
+            (d: any) => d.NomeTipoEquipamento === "station"
+          ).length,
         });
       } catch (e) {
         toast.error("Erro ao buscar usuários.");
