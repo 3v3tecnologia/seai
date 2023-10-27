@@ -77,8 +77,12 @@ const itemsRoutesRaw = [
     route: "/users",
   },
   {
-    label: "Perfil",
-    route: "/profile",
+    label: "Órgãos Metereológicos",
+    route: "/metereological-bodies",
+  },
+  {
+    label: "Equipamentos",
+    route: "/equipments",
   },
   {
     label: "Relatórios",
@@ -89,8 +93,8 @@ const itemsRoutesRaw = [
     route: "/charts",
   },
   {
-    label: "Equipamentos",
-    route: "/equipments",
+    label: "Perfil",
+    route: "/profile",
   },
 ];
 

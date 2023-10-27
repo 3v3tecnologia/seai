@@ -1,6 +1,7 @@
 <template>
   <BasicContentWrapper>
     <div
+      v-if="headerLabels.length"
       class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-5"
     >
       <div

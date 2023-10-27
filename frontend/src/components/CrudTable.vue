@@ -1,6 +1,6 @@
 <template>
   <div>
-    <UsersDeleteModal
+    <DeleteModal
       :action-text="actionText"
       v-if="showConfirmModal"
       :users="selectedUsers"
@@ -80,7 +80,7 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
-import UsersDeleteModal from "@/components/UsersDeleteModal.vue";
+import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import { useRouter } from "vue-router";
 
@@ -183,6 +183,7 @@ const generateTabulatorLang = (key, text) => {
 const langs = {
   ...generateTabulatorLang("users", "usuário"),
   ...generateTabulatorLang("equipments", "equipamento"),
+  ...generateTabulatorLang("metereologicalBodies", "órg. metereológico"),
 };
 
 onMounted(() => {
@@ -306,6 +307,7 @@ const handleDeleteUsers = () => {
 
 const handleEditUser = () => {
   setSelectedUsers();
+  const id = selectedUsers.value[0]?.id ?? selectedUsers.value[0]?.Id;
 
   if (!selectedUsers.value.length) {
     return toast.warning(`Não há ${props.actionText} selecionado.`);
@@ -315,7 +317,7 @@ const handleEditUser = () => {
 
   router.push({
     name: props.actionRoutes.edit,
-    params: { id: selectedUsers.value[0]?.id },
+    params: { id },
   });
 };
 </script>

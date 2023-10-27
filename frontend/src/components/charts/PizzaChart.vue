@@ -112,11 +112,6 @@ const options = computed(() => ({
       autoSelected: "zoom",
     },
   },
-  events: {
-    dataPointSelection: (event, chartContext, config) => {
-      console.log("apontou pra um ponto", event);
-    },
-  },
   tooltip: {
     y: {
       formatter: function (val, b) {

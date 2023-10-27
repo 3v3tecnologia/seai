@@ -32,6 +32,43 @@ const routes: Array<RouteRecordRaw> = [
     path: "/profile",
     name: "profile",
     component: ProfileEditView,
+    props: routeProps.profile,
+  },
+  {
+    path: "/metereological-bodies",
+    name: "metereological-bodies",
+    component: BaseCrudView,
+    props: routeProps.metereologicalBodies,
+  },
+  {
+    path: "/metereological-bodies/edit/:id",
+    name: "edit-body",
+    component: ProfileEditView,
+    props: routeProps.editBody,
+  },
+  {
+    path: "/metereological-bodies/create",
+    name: "create-body",
+    component: ProfileEditView,
+    props: routeProps.createBody,
+  },
+  {
+    path: "/equipments",
+    name: "equipments",
+    component: BaseCrudView,
+    props: routeProps.equipments,
+  },
+  {
+    path: "/equipments/edit/:id",
+    name: "edit-equipment",
+    component: ProfileEditView,
+    props: routeProps.editEquipment,
+  },
+  {
+    path: "/equipments/create",
+    name: "create-equipment",
+    component: ProfileEditView,
+    props: routeProps.createEquipment,
   },
   {
     path: "/reports",
@@ -52,7 +89,7 @@ const routes: Array<RouteRecordRaw> = [
     component: ChangePasswordView,
   },
   {
-    path: "/users/create-user",
+    path: "/users/create",
     name: "create-user",
     component: CreateUserView,
   },
@@ -71,17 +108,6 @@ const routes: Array<RouteRecordRaw> = [
     name: "users",
     component: BaseCrudView,
     props: routeProps.user,
-  },
-  {
-    path: "/equipments",
-    name: "equipments",
-    component: BaseCrudView,
-    props: routeProps.equipments,
-  },
-  {
-    path: "/equipments/create-equipment",
-    name: "create-equipment",
-    component: CreateUserView,
   },
   {
     path: "/initial-register-infos",

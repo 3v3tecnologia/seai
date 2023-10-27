@@ -83,7 +83,7 @@ const aquaReports = computed(() => [
     columns: [
       ...basicColumns.value,
       {
-        title: "Mes",
+        title: "Mês",
         field: "Mes",
       },
       {
@@ -211,7 +211,7 @@ const generalReports = computed(() => [
         field: "Captação",
       },
       {
-        title: "Mes",
+        title: "Mês",
         field: "Mes",
       },
       {

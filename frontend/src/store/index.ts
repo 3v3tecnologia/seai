@@ -69,7 +69,9 @@ const ungroupData = (items: any) => {
 interface Estado {
   auth: IAuth | null;
   equipments: any;
-  metereologicalBodies: [];
+  currentBody: any;
+  currentEquipment: any;
+  metereologicalBodies: any;
   users: IUsersWrapper;
   currentUser: INewUser | null;
   profile: INewUser | null;
@@ -97,6 +99,8 @@ const reportsDataDefault: IReportsData = {
 export const store = createStore<Estado>({
   state: {
     auth: null,
+    currentBody: null,
+    currentEquipment: null,
     isLoadingReport: false,
     reportsData: reportsDataDefault,
     hydrographicBasinOptions: [
@@ -109,7 +113,9 @@ export const store = createStore<Estado>({
         value: 2,
       },
     ],
-    metereologicalBodies: [],
+    metereologicalBodies: {
+      data: [],
+    },
     cityOptions: [],
     users: {
       data: [],
@@ -164,6 +170,12 @@ export const store = createStore<Estado>({
       // const user = state.users.data.find((usr) => usr.id);
       state.currentUser = user;
     },
+    ["SET_CURRENT_BODY"](state, UPDATE_BODY) {
+      state.currentBody = UPDATE_BODY;
+    },
+    ["SET_CURRENT_EQUIPMENT"](state, equipment) {
+      state.currentEquipment = equipment;
+    },
     ["SET_CURRENT_PROFILE"](state, user) {
       // const user = state.users.data.find((usr) => usr.id == id);
       // const user = state.users.data.find((usr) => usr.id);
@@ -215,7 +227,6 @@ export const store = createStore<Estado>({
     async ["FETCH_CENSUS"]() {
       try {
         const { data } = await http.get(`/user`);
-        console.log({ data });
         return true;
       } catch (e) {
         console.error(e);
@@ -253,14 +264,22 @@ export const store = createStore<Estado>({
           {
             Id: 1,
             Name: "INMET",
+            Host: "127.0.0.1",
+            User: "root",
+            Password: "1234567",
           },
           {
             Id: 2,
             Name: "FUNCEME",
+            Host: "139.0.0.1",
+            User: "root",
+            Password: "7654321",
           },
         ];
 
-        commit("SET_BODIES_OPTIONS", data);
+        commit("SET_BODIES_OPTIONS", {
+          data,
+        });
 
         return true;
       } catch (e) {
@@ -442,6 +461,17 @@ export const store = createStore<Estado>({
         throw Error(e?.response?.data?.error);
       }
     },
+    async ["UPDATE_BODY"]({ state }, form) {
+      try {
+        // await http.put(`/user/${state.currentUser?.id}`, user);
+
+        toast.success(" com sucesso.");
+      } catch (e: any) {
+        toast.error("Falha ao atualizar usuário.");
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
     async ["UPDATE_PROFILE"]({ state, commit }, user: any) {
       try {
         await http.put(`/user/profile/`, {
@@ -487,6 +517,30 @@ export const store = createStore<Estado>({
       } = await http.get(`/user/list?userId=${id}`);
       commit("SET_CURRENT_USER", data);
     },
+    async ["GET_CURRENT_BODY"]({ state, commit, dispatch }, id: number) {
+      try {
+        await dispatch("FETCH_BODIES_OPTIONS");
+
+        const equipment = state.metereologicalBodies.data.find(
+          (c: { Id: number }) => c.Id == id
+        );
+        commit("SET_CURRENT_BODY", equipment);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["GET_CURRENT_EQUIPMENT"]({ state, commit, dispatch }, id: number) {
+      try {
+        await dispatch("GET_EQUIPMENTS");
+
+        const equipment = state.equipments.data.find(
+          (c: { id: number }) => c.id == id
+        );
+        commit("SET_CURRENT_EQUIPMENT", equipment);
+      } catch (e) {
+        console.error(e);
+      }
+    },
     async ["GET_PROFILE"]({ commit }, id: number) {
       const {
         data: { data },
@@ -522,15 +576,19 @@ export const store = createStore<Estado>({
             NomeTipoEquipamento: "Pluviômetro",
             NomeLocalização: "Mossoró",
             PossuiErrosDeLeituraPendentes: true,
+            x: 231923,
+            y: -32313,
           },
           {
-            id: 1,
+            id: 2,
             NomeEquipamento: "Estação Joaquim",
             IdExterno: "123Hfds",
             NomeOrgao: "FUNCEME",
             NomeTipoEquipamento: "Estação",
             NomeLocalização: "Fortaleza",
             PossuiErrosDeLeituraPendentes: false,
+            x: 23321323,
+            y: -355955,
           },
         ];
 
@@ -591,7 +649,7 @@ export const store = createStore<Estado>({
         value: null,
       };
 
-      return [defaultOption, ...bodiesDTO(state.metereologicalBodies)];
+      return [defaultOption, ...bodiesDTO(state.metereologicalBodies.data)];
     },
   },
 });
