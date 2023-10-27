@@ -9,15 +9,31 @@ export interface StationRead {
       Unit: string;
       Value: number;
     };
-    RelativeHumidity: {
+    AverageRelativeHumidity: {
       Unit: string;
       Value: number;
     };
-    AtmosphericTemperature: {
+    MinRelativeHumidity: {
       Unit: string;
       Value: number;
     };
-    WindVelocity: {
+    MaxRelativeHumidity: {
+      Unit: string;
+      Value: number;
+    };
+    AverageAtmosphericTemperature: {
+      Unit: string;
+      Value: number;
+    };
+    MaxAtmosphericTemperature: {
+      Unit: string;
+      Value: number;
+    };
+    MinAtmosphericTemperature: {
+      Unit: string;
+      Value: number;
+    };
+    AtmosphericPressure: {
       Unit: string;
       Value: number;
     };
@@ -47,15 +63,46 @@ export interface Equipment {
   Name: string;
   Type: string;
   Altitude: number;
+  IdType: number;
+  IdOrgan: number;
+  IdLocation: number;
   Organ: string;
   LocationPosition: string;
   LocationName: string;
   CreatedAt: string;
   UpdatedAt: string;
+  QtdRows: number;
 }
 
+export type CreateEquipmentParams = {
+  IdEquipmentExternal: number;
+  Name: string;
+  Altitude: number;
+  Fk_Organ: number;
+  Fk_Type: number;
+};
+export type UpdateEquipmentParams = CreateEquipmentParams & {
+  idEquipment: number;
+};
+
+export type GetMetereologicalOrgans = {
+  IdOrgan: number;
+  Name: string;
+  Host: string;
+  User: string;
+};
+
 export interface EquipmentsRepositoryProtocol {
-  getEquipments(): Promise<Array<Equipment> | null>;
-  getStationsReads(): Promise<Array<StationRead> | null>;
-  getPluviometersReads(): Promise<Array<PluviometerRead> | null>;
+  getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null>;
+  createEquipment(equipment: CreateEquipmentParams): Promise<number>;
+  updateEquipment(equipment: UpdateEquipmentParams): Promise<void>;
+  getEquipments(pageNumber: number): Promise<Array<Equipment> | null>;
+  getStationsReads(
+    idEquipment: number,
+    pageNumber: number
+  ): Promise<Array<StationRead> | null>;
+  getPluviometersReads(
+    idEquipment: number,
+    pageNumber: number
+  ): Promise<Array<PluviometerRead> | null>;
 }
