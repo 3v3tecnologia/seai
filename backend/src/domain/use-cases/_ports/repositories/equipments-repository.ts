@@ -71,7 +71,6 @@ export interface Equipment {
   LocationName: string;
   CreatedAt: string;
   UpdatedAt: string;
-  QtdRows: number;
 }
 
 export type CreateEquipmentParams = {

@@ -1,6 +1,9 @@
 import { Either, right } from "../../../shared/Either";
 
-import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import {
+  Equipment,
+  EquipmentsRepositoryProtocol,
+} from "../_ports/repositories/equipments-repository";
 
 export class FetchEquipments {
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
@@ -8,9 +11,29 @@ export class FetchEquipments {
   constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
     this.equipmentsRepository = equipmentsRepository;
   }
-  async execute(): Promise<Either<Error, Array<any> | null>> {
-    const data = await this.equipmentsRepository.getEquipments();
+  async execute(
+    request: FetchEquipmentsUseCaseProtocol.Request
+  ): Promise<Either<Error, FetchEquipmentsUseCaseProtocol.Response>> {
+    const { pageNumber } = request;
+    const data = await this.equipmentsRepository.getEquipments(pageNumber);
 
-    return right(data);
+    const result = {
+      Equipments: data || [],
+      PageNumber: Number(pageNumber),
+      QtdRows: data?.length || 0,
+    };
+
+    return right(result);
   }
+}
+
+export namespace FetchEquipmentsUseCaseProtocol {
+  export type Request = {
+    pageNumber: number;
+  };
+  export type Response = {
+    Equipments: Array<Equipment> | null;
+    PageNumber: number;
+    QtdRows: number;
+  } | null;
 }

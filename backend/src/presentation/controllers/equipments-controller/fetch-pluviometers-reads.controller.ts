@@ -6,7 +6,11 @@ import { ok } from "../helpers";
 import { FetchPluviometersReads } from "../../../domain/use-cases/equipments/fetch-pluviometers-reads";
 
 export class FetchPluviometersReadsController
-  implements Controller<void, HttpResponse>
+  implements
+    Controller<
+      FetchPluviometersMeasuresControllerProtocol.Request,
+      HttpResponse
+    >
 {
   private fetchPluviometersReads: FetchPluviometersReads;
 
@@ -14,9 +18,18 @@ export class FetchPluviometersReadsController
     this.fetchPluviometersReads = fetchPluviometersReads;
   }
 
-  async handle(): Promise<HttpResponse> {
-    const result = await this.fetchPluviometersReads.execute();
+  async handle(
+    request: FetchPluviometersMeasuresControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    const result = await this.fetchPluviometersReads.execute(request);
 
     return ok(result.value);
   }
+}
+
+export namespace FetchPluviometersMeasuresControllerProtocol {
+  export type Request = {
+    idEquipment: number;
+    pageNumber: number;
+  };
 }

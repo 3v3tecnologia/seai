@@ -6,7 +6,8 @@ import { FetchEquipments } from "../../../domain/use-cases/equipments/fetch-equi
 import { ok } from "../helpers";
 
 export class FetchEquipmentsController
-  implements Controller<void, HttpResponse>
+  implements
+    Controller<FetchEquipmentsControllerProtocol.Request, HttpResponse>
 {
   private fetchEquipments: FetchEquipments;
 
@@ -14,9 +15,17 @@ export class FetchEquipmentsController
     this.fetchEquipments = fetchEquipments;
   }
 
-  async handle(): Promise<HttpResponse> {
-    const result = await this.fetchEquipments.execute();
+  async handle(
+    request: FetchEquipmentsControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    const result = await this.fetchEquipments.execute(request);
 
     return ok(result.value);
   }
+}
+
+export namespace FetchEquipmentsControllerProtocol {
+  export type Request = {
+    pageNumber: number;
+  };
 }
