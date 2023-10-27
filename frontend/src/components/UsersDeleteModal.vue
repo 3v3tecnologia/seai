@@ -33,13 +33,14 @@
         </div>
         <div class="modal-body">
           <div v-if="props.users.length === 1">
-            Será deletado <span class="font-weight-bold">1</span> usuário
+            Será deletado <span class="font-weight-bold">1</span>
+            {{ actionText }}
             selecionado.
           </div>
           <div v-else>
             Serão deletados
             <span class="font-weight-bold">{{ props.users.length }}</span>
-            usuários selecionados.
+            {{ actionText }}s selecionados.
           </div>
           <div>Este processo não poderá ser desfeito.</div>
         </div>
@@ -73,6 +74,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  getDataKey: {
+    type: String,
+    required: true,
+  },
+  deleteDataKey: {
+    type: String,
+    required: true,
+  },
+  actionText: {
+    type: String,
+    required: true,
+  },
   users: {
     type: Array,
     default: () => [],
@@ -82,7 +95,7 @@ const props = defineProps({
 const usersIds = computed(() => props.users.map((u) => u.id));
 
 const deleteUsers = async () => {
-  await store.dispatch("DELETE_USERS", usersIds.value);
-  await store.dispatch("GET_USERS", usersIds.value);
+  await store.dispatch(props.deleteDataKey, usersIds.value);
+  await store.dispatch(props.getDataKey, usersIds.value);
 };
 </script>

@@ -26,7 +26,11 @@
       :store-data-key="storeDataKey"
       :columns="columns"
       :filters="filters"
+      :state-filters="stateFilters"
+      :search-filter="searchFilter"
       :action-routes="actionRoutes"
+      :get-data-key="getDataKey"
+      :delete-data-key="deleteDataKey"
     />
   </BasicContentWrapper>
 </template>
@@ -46,11 +50,19 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  stateFilters: {
+    type: Array,
+    default: () => [],
+  },
   storeDataKey: {
     type: String,
     required: true,
   },
   getDataKey: {
+    type: String,
+    required: true,
+  },
+  deleteDataKey: {
     type: String,
     required: true,
   },
@@ -63,6 +75,11 @@ const props = defineProps({
     required: true,
   },
   filters: {
+    type: Array,
+    required: false,
+    default: () => [],
+  },
+  searchFilter: {
     type: Array,
     required: true,
   },

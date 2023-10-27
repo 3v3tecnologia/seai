@@ -69,6 +69,7 @@ const ungroupData = (items: any) => {
 interface Estado {
   auth: IAuth | null;
   equipments: any;
+  metereologicalBodies: [];
   users: IUsersWrapper;
   currentUser: INewUser | null;
   profile: INewUser | null;
@@ -108,16 +109,8 @@ export const store = createStore<Estado>({
         value: 2,
       },
     ],
-    cityOptions: [
-      {
-        title: "Fortaleza",
-        value: 1,
-      },
-      {
-        title: "Crato",
-        value: 2,
-      },
-    ],
+    metereologicalBodies: [],
+    cityOptions: [],
     users: {
       data: [],
       totalAdmins: 0,
@@ -137,6 +130,9 @@ export const store = createStore<Estado>({
     profile: null,
   },
   mutations: {
+    ["SET_BODIES_OPTIONS"](state, options) {
+      state.metereologicalBodies = options;
+    },
     ["SET_EQUIPMENTS"](state, equipments: any) {
       state.equipments = equipments;
     },
@@ -244,6 +240,27 @@ export const store = createStore<Estado>({
           basins,
           cities,
         });
+
+        return true;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_BODIES_OPTIONS"]({ commit }) {
+      try {
+        // const { data } = await http.get(`/census/locations`);
+        const data = [
+          {
+            Id: 1,
+            Name: "INMET",
+          },
+          {
+            Id: 2,
+            Name: "FUNCEME",
+          },
+        ];
+
+        commit("SET_BODIES_OPTIONS", data);
 
         return true;
       } catch (e) {
@@ -502,7 +519,7 @@ export const store = createStore<Estado>({
             NomeEquipamento: "Pluviômetro Francisca",
             IdExterno: "12344222",
             NomeOrgao: "INMET",
-            NomeTipoEquipamento: "pluviometer",
+            NomeTipoEquipamento: "Pluviômetro",
             NomeLocalização: "Mossoró",
             PossuiErrosDeLeituraPendentes: true,
           },
@@ -511,7 +528,7 @@ export const store = createStore<Estado>({
             NomeEquipamento: "Estação Joaquim",
             IdExterno: "123Hfds",
             NomeOrgao: "FUNCEME",
-            NomeTipoEquipamento: "station",
+            NomeTipoEquipamento: "Estação",
             NomeLocalização: "Fortaleza",
             PossuiErrosDeLeituraPendentes: false,
           },
@@ -520,10 +537,10 @@ export const store = createStore<Estado>({
         commit("SET_EQUIPMENTS", {
           data,
           totalPluviometers: data.filter(
-            (d: any) => d.NomeTipoEquipamento === "pluviometer"
+            (d: any) => d.NomeTipoEquipamento === "Pluviômetro"
           ).length,
           totalStations: data.filter(
-            (d: any) => d.NomeTipoEquipamento === "station"
+            (d: any) => d.NomeTipoEquipamento === "Estação"
           ).length,
         });
       } catch (e) {
@@ -558,6 +575,23 @@ export const store = createStore<Estado>({
         toast.error(e?.response?.data?.error);
         throw Error(e?.response?.data?.error);
       }
+    },
+  },
+  getters: {
+    bodiesOptions(state) {
+      const bodiesDTO = (bodies: { Name: string; Id: number }[]) => {
+        return bodies.map((bodie) => ({
+          value: bodie["Id"],
+          title: bodie["Name"],
+        }));
+      };
+
+      const defaultOption = {
+        title: "Todos",
+        value: null,
+      };
+
+      return [defaultOption, ...bodiesDTO(state.metereologicalBodies)];
     },
   },
 });

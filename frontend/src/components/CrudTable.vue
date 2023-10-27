@@ -1,38 +1,34 @@
 <template>
   <div>
-    <UsersDeleteModal v-if="showConfirmModal" :users="selectedUsers" />
+    <UsersDeleteModal
+      :action-text="actionText"
+      v-if="showConfirmModal"
+      :users="selectedUsers"
+      :get-data-key="getDataKey"
+      :delete-data-key="deleteDataKey"
+    />
     <div>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center">
           <BaseInput
             remove-margin
             v-model="search"
-            placeholder="Busque por email ou nome"
+            placeholder="Buscar"
             input-type="text"
+            show-icon
           />
 
-          <div class="px-lg-4" />
-
-          <BaseDropdown
-            inline-label
-            remove-margin
-            v-model="userType"
-            :options="usersOptions.options"
-            :placeholder="usersOptions.label"
-          />
-
-          <div v-for="(filter, i) in filters" :key="i" class="d-flex">
-            <div class="px-lg-4" />
+          <div v-for="(filter, i) in allFiltersDrop" :key="i" class="d-flex">
+            <div class="px-lg-2" />
             <BaseDropdown
               inline-label
               remove-margin
-              v-model="userType"
+              v-model="filtersValue[i].selected"
               :options="filter.options"
               :placeholder="filter.label"
             />
           </div>
         </div>
-
         <div class="d-flex align-items-center">
           <primary-button @click="handleEditUser" class="btn btn-info">
             <span class="mr-lg-2"> Editar {{ actionText }} </span>
@@ -83,7 +79,6 @@
 
 <script setup>
 import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
-import { usersOptions } from "@/constants.js";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import UsersDeleteModal from "@/components/UsersDeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
@@ -91,6 +86,7 @@ import { useRouter } from "vue-router";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { toast } from "vue3-toastify";
+import { useStore } from "vuex";
 
 const router = useRouter();
 
@@ -98,19 +94,36 @@ const table = ref(null);
 const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
-const userType = ref(usersOptions.options[0]);
 const search = ref("");
 
 const setSelectedUsers = () => {
   selectedUsers.value = tabulator.value?.getSelectedData() || [];
 };
 
+const store = useStore();
+
 const props = defineProps({
   actionText: {
     type: String,
     required: true,
   },
+  stateFilters: {
+    type: Array,
+    required: true,
+  },
+  deleteDataKey: {
+    type: String,
+    required: true,
+  },
+  getDataKey: {
+    type: String,
+    required: true,
+  },
   filters: {
+    type: Array,
+    required: true,
+  },
+  searchFilter: {
     type: Array,
     required: true,
   },
@@ -135,6 +148,8 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const filtersValue = ref([]);
 
 const generateTabulatorLang = (key, text) => {
   const pageSize = `${text[0].toUpperCase() + text.slice(1)}s Por Página`;
@@ -194,28 +209,41 @@ onMounted(() => {
 
 defineEmits(["update:modelValue"]);
 
-const filtersTable = computed(() => {
-  const userTypeVal = userType.value.value ? userType.value?.title : "";
+const formatFilterTable = (f) => {
+  return {
+    field: f.field,
+    type: "like",
+    value: f?.selected?.value ? f?.selected?.title : "",
+  };
+};
+
+const formatSearchFilters = (f) => {
   const searchVal = search.value;
 
+  return {
+    field: f,
+    type: "like",
+    value: searchVal,
+  };
+};
+
+const formatStateFilter = (f) => {
+  const options = store.getters[f.getterKey];
+
+  return {
+    ...f,
+    options,
+  };
+};
+
+const allFiltersDrop = computed(() => {
+  return [...props.filters, ...props.stateFilters.map(formatStateFilter)];
+});
+
+const filtersTable = computed(() => {
   return [
-    {
-      field: "type",
-      type: "like",
-      value: userTypeVal,
-    },
-    [
-      {
-        field: "name",
-        type: "like",
-        value: searchVal,
-      },
-      {
-        field: "email",
-        type: "like",
-        value: searchVal,
-      },
-    ],
+    ...filtersValue.value.map(formatFilterTable),
+    props.searchFilter.map(formatSearchFilters),
   ];
 });
 
@@ -249,7 +277,18 @@ watch(
 watch(
   () => props.storeDataKey,
   (newValue) => {
+    search.value = "";
+    props.stateFilters.forEach((f) => store.dispatch(f.getListKey));
+
+    tabulator.value?.setFilter(filtersTable.value);
     tabulator.value?.setLocale(newValue);
+
+    filtersValue.value = allFiltersDrop.value.map((f) => {
+      return {
+        selected: f.options[0] || null,
+        field: f.field,
+      };
+    });
   },
   { immediate: true }
 );
@@ -259,7 +298,7 @@ const handleDeleteUsers = () => {
 
   if (!selectedUsers.value.length) {
     showConfirmModal.value = false;
-    return toast.warning("Não há usuários selecionados.");
+    return toast.warning(`Não há ${props.actionText} selecionado.`);
   }
 
   showConfirmModal.value = true;

@@ -1,21 +1,3 @@
-export const usersOptions = {
-  label: "Função",
-  options: [
-    {
-      title: "Todos",
-      value: null,
-    },
-    {
-      title: "Básico",
-      value: 1,
-    },
-    {
-      title: "Admin",
-      value: 2,
-    },
-  ],
-};
-
 export const itemsPerGraph = 20;
 
 export const reportsTitles = {

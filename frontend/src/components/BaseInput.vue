@@ -7,14 +7,28 @@
   >
     <slot />
     <label v-if="label">{{ label }}</label>
-    <input
-      :disabled="disabled"
-      v-model="inputValue"
-      :minlength="minLength"
-      :type="inputType"
-      class="form-control"
-      :placeholder="placeholder"
-    />
+    <div class="wrapper-input position-relative">
+      <input
+        :disabled="disabled"
+        v-model="inputValue"
+        :minlength="minLength"
+        :type="inputType"
+        class="form-control"
+        :placeholder="placeholder"
+      />
+      <i
+        v-if="showIcon"
+        class="pi pi-search pr-2 d-flex position-absolute"
+        :style="`
+          color: #708090;
+          right: 0; top: 0;
+          bottom: 0;
+          display: flex;
+          pointer-events: none;
+          align-items: center;
+        `"
+      ></i>
+    </div>
   </div>
 </template>
 
@@ -28,6 +42,10 @@ const props = defineProps({
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  showIcon: {
+    type: Boolean,
+    default: false,
   },
   disabled: {
     type: Boolean,
