@@ -178,8 +178,6 @@ export const store = createStore<Estado>({
       state.users = users;
     },
     ["SET_CURRENT_USER"](state, user) {
-      // const user = state.users.data.find((usr) => usr.id == id);
-      // const user = state.users.data.find((usr) => usr.id);
       state.currentUser = user;
     },
     ["SET_CURRENT_BODY"](state, UPDATE_BODY) {
@@ -189,8 +187,6 @@ export const store = createStore<Estado>({
       state.currentEquipment = equipment;
     },
     ["SET_CURRENT_PROFILE"](state, user) {
-      // const user = state.users.data.find((usr) => usr.id == id);
-      // const user = state.users.data.find((usr) => usr.id);
       state.profile = user;
     },
   },

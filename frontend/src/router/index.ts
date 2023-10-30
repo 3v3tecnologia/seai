@@ -7,7 +7,7 @@ import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
 import BaseCrudView from "../views/BaseCrudView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
-import CreateUserView from "../views/CreateUserView.vue";
+import CreateUserView from "../views/UserRegisterView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 import store from "../store";
 import routeProps from "./props";

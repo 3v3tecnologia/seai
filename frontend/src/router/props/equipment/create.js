@@ -1,4 +1,4 @@
-import { editEquipment } from "./editEquipment";
+import { editEquipment } from "./update";
 
 const headerLabel = "Cadastrando equipamento";
 

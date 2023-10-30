@@ -1,7 +1,8 @@
 <template>
   <div class="mb-5 pb-5">
+    {{ isCreating }} teste
     <FormWrapper :title="formTitle" @submit="handleSubmit">
-      <template v-if="!savedAccount" v-slot:content>
+      <template v-slot:content>
         <div class="py-2"></div>
         <BaseInput
           label="Email"
@@ -27,18 +28,6 @@
 
         <AccessModulesTable :user-type="form.type" v-model="acessData" />
       </template>
-      <template v-else v-slot:content>
-        <div class="pt-3 pb-5">
-          <div class="mb-2">Conta criada com sucesso.</div>
-          <div>
-            Email de login enviado para
-            <span class="font-weight-bold mr-1">{{
-              previewEmailCensured(form.email)
-            }}</span
-            >.
-          </div>
-        </div>
-      </template>
 
       <template v-slot:buttons>
         <PrimaryButton
@@ -52,8 +41,6 @@
 </template>
 
 <script setup>
-import LogoProject from "@/components/LogoProject.vue";
-import { previewEmailCensured } from "@/helpers/formatEmail";
 import AccessModulesTable from "@/components/AccessModulesTable.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
