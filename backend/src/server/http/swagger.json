@@ -2170,7 +2170,6 @@
         }
       }
     },
-
     "/api/v1/user": {
       "put": {
         "tags": [
@@ -6376,7 +6375,7 @@
                     "properties": {
                       "data": {
                         "type": "object",
-                        "items": {
+                        "Equipments": {
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -6384,46 +6383,473 @@
                               "Id": "number",
                               "Code": "number",
                               "Name": "string",
+                              "IdType": "number",
                               "Type": "string",
                               "Altitude": "number",
+                              "IdOrgan": "string",
                               "Organ": "string",
+                              "IdLocation": "number",
                               "LocationPosition": "string",
                               "LocationName": "string",
                               "CreatedAt": "string",
                               "UpdatedAt": "string"
                             }
                           }
+                        },
+                        "PageNumber": {
+                          "type": "number"
+                        },
+                        "QtdRows": {
+                          "type": "number"
                         }
                       }
                     }
                   },
                   "example": {
-                    "data": [
-                      {
-                        "Id": 2,
-                        "Code": 23978,
-                        "Name": "Fortaleza",
-                        "Type": "pluviometer",
-                        "Altitude": 30.4,
-                        "Organ": "FUNCEME",
-                        "LocationPosition": null,
-                        "LocationName": null,
-                        "CreatedAt": "2023-08-29T17:54:07.838Z",
-                        "UpdatedAt": "2023-08-29T17:54:07.838Z"
-                      },
-                      {
-                        "Id": 1,
-                        "Code": 32321,
-                        "Name": "Fortaleza - Itaperi",
-                        "Type": "station",
-                        "Altitude": 30.4,
-                        "Organ": "FUNCEME",
-                        "LocationPosition": null,
-                        "LocationName": null,
-                        "CreatedAt": "2023-08-29T17:54:07.838Z",
-                        "UpdatedAt": "2023-08-29T17:54:07.838Z"
+                    "data": {
+                      "Equipments": [
+                        {
+                          "Id": 1,
+                          "Code": 32321,
+                          "Name": "Fortaleza - Itaperi",
+                          "IdType": 1,
+                          "Type": "station",
+                          "Altitude": 30.4,
+                          "IdOrgan": 2,
+                          "Organ": "FUNCEME",
+                          "IdLocation": 0,
+                          "LocationPosition": null,
+                          "LocationName": null,
+                          "CreatedAt": "2023-10-30T12:22:10.469Z",
+                          "UpdatedAt": "2023-10-30T12:22:10.469Z"
+                        },
+                        {
+                          "Id": 2,
+                          "Code": 4455,
+                          "Name": "Pluviometro - Itaperi",
+                          "IdType": 2,
+                          "Type": "pluviometer",
+                          "Altitude": 44,
+                          "IdOrgan": 2,
+                          "Organ": "FUNCEME",
+                          "IdLocation": 0,
+                          "LocationPosition": null,
+                          "LocationName": null,
+                          "CreatedAt": "2023-10-30T13:51:14.467Z",
+                          "UpdatedAt": "2023-10-30T13:51:14.467Z"
+                        },
+                        {
+                          "Id": 4,
+                          "Code": null,
+                          "Name": "teste123",
+                          "IdType": 1,
+                          "Type": "station",
+                          "Altitude": 58,
+                          "IdOrgan": 2,
+                          "Organ": "FUNCEME",
+                          "IdLocation": 0,
+                          "LocationPosition": null,
+                          "LocationName": null,
+                          "CreatedAt": "2023-10-30T19:24:07.119Z",
+                          "UpdatedAt": "2023-10-30T20:52:34.275Z"
+                        }
+                      ],
+                      "PageNumber": 0,
+                      "QtdRows": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
                       }
-                    ]
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Equipments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Equipment Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "summary": "Create equipment",
+        "description": "Create meteorological equipment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "IdEquipmentExternal": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Altitude": {
+                    "type": "string"
+                  },
+                  "Fk_Organ": {
+                    "type": "string"
+                  },
+                  "Fk_Type": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "IdEquipmentExternal": "test123",
+                  "Name": "teste123",
+                  "Altitude": 58,
+                  "Fk_Organ": 2,
+                  "Fk_Type": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao criar equipamento 6."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Equipments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Equipment Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "summary": "Update equipments",
+        "description": "Update equipment by id",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "IdEquipmentExternal": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Altitude": {
+                    "type": "string"
+                  },
+                  "Fk_Organ": {
+                    "type": "string"
+                  },
+                  "Fk_Type": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "IdEquipmentExternal": "test123",
+                  "Name": "teste123",
+                  "Altitude": 58,
+                  "Fk_Organ": 2,
+                  "Fk_Type": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao atualizar equipamento x."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete":{
+        "tags": [
+          "Equipments"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Equipment Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "summary": "Update equipments",
+        "description": "Update equipment by id",
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Equipamento 4 deletado com sucesso."
                   }
                 }
               }
@@ -6524,11 +6950,13 @@
                           "items": {
                             "type": "object",
                             "properties": {
-                              "Date": "number",
                               "IdRead": "number",
+                              "Time": "string",
+                              "Hour": "number",
                               "IdEquipment": "number",
                               "Code": "number",
-                              "Name": "string",
+                              "OrganName": "string",
+                              "Altitude": "number",
                               "Measures": {
                                 "type": "object",
                                 "properties": {
@@ -6576,37 +7004,65 @@
                     }
                   },
                   "example": {
-                    "data": [
-                      {
-                        "Date": "2023-04-09T00:00:00.000Z",
-                        "IdRead": 8,
-                        "IdEquipment": 1,
-                        "Code": 32321,
-                        "Name": "Fortaleza - Itaperi",
-                        "Measures": {
-                          "TotalRadiation": {
-                            "Unit": "W/m",
-                            "Value": 137.29
-                          },
-                          "RelativeHumidity": {
-                            "Unit": "%",
-                            "Value": null
-                          },
-                          "AtmosphericTemperature": {
-                            "Unit": "°C",
-                            "Value": null
-                          },
-                          "WindVelocity": {
-                            "Unit": "m/s",
-                            "Value": null
-                          },
-                          "ETO": {
-                            "Unit": "mm",
-                            "Value": null
+                    "data": {
+                      "data": {
+                        "Measures": [
+                          {
+                            "IdRead": 2,
+                            "Time": "2023-10-30T00:00:00.000Z",
+                            "Hour": null,
+                            "IdEquipment": 1,
+                            "Code": 32321,
+                            "OrganName": "FUNCEME",
+                            "Altitude": 30.4,
+                            "Measures": {
+                              "TotalRadiation": {
+                                "Unit": "W/m",
+                                "Value": 4
+                              },
+                              "AverageRelativeHumidity": {
+                                "Unit": "%",
+                                "Value": 12
+                              },
+                              "MinRelativeHumidity": {
+                                "Unit": "%",
+                                "Value": 7
+                              },
+                              "MaxRelativeHumidity": {
+                                "Unit": "%",
+                                "Value": 5
+                              },
+                              "AverageAtmosphericTemperature": {
+                                "Unit": "°C",
+                                "Value": 77
+                              },
+                              "MaxAtmosphericTemperature": {
+                                "Unit": "°C",
+                                "Value": 13
+                              },
+                              "MinAtmosphericTemperature": {
+                                "Unit": "°C",
+                                "Value": 53
+                              },
+                              "AtmosphericPressure": {
+                                "Unit": "°C",
+                                "Value": 33
+                              },
+                              "WindVelocity": {
+                                "Unit": "m/s",
+                                "Value": 33
+                              },
+                              "ETO": {
+                                "Unit": "mm",
+                                "Value": null
+                              }
+                            }
                           }
-                        }
+                        ],
+                        "PageNumber": 0,
+                        "QtdRows": 1
                       }
-                    ]
+                    }
                   }
                 }
               }
@@ -6731,21 +7187,27 @@
                     }
                   },
                   "example": {
-                    "data": [
-                      {
-                        "Date": "2023-04-09T00:00:00.000Z",
-                        "IdRead": 8,
-                        "IdEquipment": 2,
-                        "Code": 23978,
-                        "Name": "Fortaleza",
-                        "Measures": {
-                          "Precipitation": {
-                            "Unit": "mm",
-                            "Value": null
+                    "data": {
+                      "Measures": [
+                        {
+                          "IdRead": 1,
+                          "Time": "2023-10-30T00:00:00.000Z",
+                          "Hour": null,
+                          "IdEquipment": 2,
+                          "Code": null,
+                          "Name": "Pluviometro - Itaperi",
+                          "Organ": "FUNCEME",
+                          "Measures": {
+                            "Precipitation": {
+                              "Unit": "mm",
+                              "Value": 33
+                            }
                           }
                         }
-                      }
-                    ]
+                      ],
+                      "PageNumber": 0,
+                      "QtdRows": 1
+                    }
                   }
                 }
               }

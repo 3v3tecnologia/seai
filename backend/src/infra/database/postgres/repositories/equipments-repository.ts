@@ -75,6 +75,18 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
     return exists ? true : false;
   }
 
+  async getEquipmentIdByExternalCode(
+    idEquipmentExternal: string
+  ): Promise<number | null> {
+    const rawResult = await equipments
+      .select("IdEquipment")
+      .from("MetereologicalEquipment")
+      .where({ IdEquipmentExternal: idEquipmentExternal })
+      .first();
+
+    return rawResult ? Number(rawResult.IdEquipment) : null;
+  }
+
   async checkIfEquipmentTypeExists(idType: number): Promise<boolean> {
     const exists = await equipments
       .select("IdType")
@@ -146,8 +158,6 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
       LocationName: row.LocationName,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
-      PageNumber: pageNumber,
-      QtdRows: data.rowCount,
     }));
   }
   async getStationsReads(
@@ -197,7 +207,7 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
 
     return data.rows.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
-      Time: row.Time,
+      Time: row.Date,
       Hour: row.Hour,
       IdEquipment: Number(row.IdEquipment) || null,
       Code: Number(row.EquipmentCode) || null,

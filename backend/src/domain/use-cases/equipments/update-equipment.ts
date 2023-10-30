@@ -13,6 +13,19 @@ export class UpdateEquipment extends Command {
   async execute(
     request: UpdateEquipmentUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateEquipmentUseCaseProtocol.Response>> {
+    const existingEquipmentId =
+      await this.equipmentsRepository.getEquipmentIdByExternalCode(
+        request.IdEquipmentExternal
+      );
+
+    const hasOtherEquipmentWithSameCode =
+      existingEquipmentId !== null &&
+      Number(request.IdEquipment) !== existingEquipmentId;
+
+    if (hasOtherEquipmentWithSameCode) {
+      return left(new Error(`Equipamento com código já existente.`));
+    }
+
     const isOrganAlreadyExists =
       await this.equipmentsRepository.checkIfOrganExists(request.Fk_Organ);
 

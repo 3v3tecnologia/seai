@@ -24,7 +24,7 @@ export class UpdateEquipmentsController
   ): Promise<HttpResponse> {
     try {
       const dto = {
-        IdEquipment: request.IdEquipment,
+        IdEquipment: request.id,
         IdEquipmentExternal: request.IdEquipmentExternal,
         Name: request.Name,
         Altitude: request.Altitude,
@@ -51,7 +51,7 @@ export class UpdateEquipmentsController
 export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
-    IdEquipment: number;
+    id: number;
     IdEquipmentExternal: string;
     Name: string;
     Altitude: number;

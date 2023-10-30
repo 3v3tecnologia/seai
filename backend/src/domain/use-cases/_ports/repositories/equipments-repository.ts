@@ -101,6 +101,9 @@ export interface EquipmentsRepositoryProtocol {
     idEquipmentExternal: string
   ): Promise<boolean>;
   checkIfEquipmentTypeExists(idType: number): Promise<boolean>;
+  getEquipmentIdByExternalCode(
+    idEquipmentExternal: string
+  ): Promise<number | null>;
   getEquipments(pageNumber: number): Promise<Array<Equipment> | null>;
   getStationsReads(
     idEquipment: number,

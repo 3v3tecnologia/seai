@@ -42,6 +42,7 @@ export class CreateEquipments extends Command {
       request
     );
 
+    // TO-DO : add actions and table name as global constants
     this.addLog({
       action: "create",
       table: "MetereologicalEquipment",
