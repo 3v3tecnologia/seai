@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok,badRequest } from "../helpers";
+import { ok,badRequest, serverError } from "../helpers";
 import { FetchStationsReads } from "../../../domain/use-cases/equipments/fetch-stations-reads";
 import { Notification } from "../../../shared/notification/notification";
 
@@ -18,7 +18,8 @@ export class FetchStationsReadsController
   async handle(
     request: FetchStationsMeasuresControllerProtocol.Request
   ): Promise<HttpResponse> {
-    const errors = new Notification()
+    try {
+      const errors = new Notification()
 
     if(request.idEquipment === undefined || request.idEquipment === null ){
       errors.addError(new Error("É necessário informar o Id do equipamento, e o valor deve ser numérico"))
@@ -31,6 +32,10 @@ export class FetchStationsReadsController
     const result = await this.fetchStationsReads.execute(request);
 
     return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
   }
 }
 

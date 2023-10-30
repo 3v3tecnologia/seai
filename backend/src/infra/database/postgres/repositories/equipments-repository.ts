@@ -47,6 +47,26 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
     console.log({ rawResult });
   }
 
+  async checkIfOrganExists(idOrgan:number): Promise<boolean>{
+    const exists = await equipments
+      .select("IdOrgan")
+        .from("MetereologicalOrgan")
+        .where({IdOrgan:idOrgan})
+        .first()
+
+    return exists ? true : false
+  }
+
+  async checkIfEquipmentTypeExists(idType:number): Promise<boolean>{
+    const exists = await equipments
+      .select("IdType")
+        .from("EquipmentType")
+        .where({IdType:idType})
+        .first()
+
+    return exists ? true : false
+  }
+
   async getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null> {
     const data = await equipments
       .select("IdOrgan", "Name", "Host", "User")

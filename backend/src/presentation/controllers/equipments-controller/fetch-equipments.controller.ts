@@ -3,7 +3,7 @@ import { Controller } from "../ports/controllers";
 
 import { FetchEquipments } from "../../../domain/use-cases/equipments/fetch-equipments";
 
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchEquipmentsController
   implements
@@ -18,9 +18,14 @@ export class FetchEquipmentsController
   async handle(
     request: FetchEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
-    const result = await this.fetchEquipments.execute(request);
+    try {
+      const result = await this.fetchEquipments.execute(request);
 
     return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
   }
 }
 
