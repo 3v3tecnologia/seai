@@ -15,11 +15,13 @@ export class FetchEquipments {
     request: FetchEquipmentsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchEquipmentsUseCaseProtocol.Response>> {
     const { pageNumber } = request;
-    const data = await this.equipmentsRepository.getEquipments(pageNumber);
+
+    const page =  pageNumber || 0
+    const data = await this.equipmentsRepository.getEquipments(page);
 
     const result = {
       Equipments: data || [],
-      PageNumber: Number(pageNumber),
+      PageNumber: Number(page),
       QtdRows: data?.length || 0,
     };
 

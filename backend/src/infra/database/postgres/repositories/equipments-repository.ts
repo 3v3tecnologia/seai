@@ -139,13 +139,13 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
           stations."AtmosphericPressure" ,
           stations."WindVelocity",
           eto."Value" AS "ETO"
-      FROM "Et0" AS eto
+      FROM "MetereologicalEquipment" AS equipment  
       LEFT JOIN "ReadStations" AS stations
+      ON equipment."IdEquipment"  = stations."FK_Equipment"
+      LEFT JOIN "Et0" AS eto
       ON stations."IdRead"  = eto."FK_Station_Read"
       INNER JOIN "MetereologicalOrgan" AS organ
       ON organ."IdOrgan" = stations."FK_Organ"
-      INNER JOIN "MetereologicalEquipment" AS equipment
-      ON equipment."IdEquipment"  = stations."FK_Equipment"
       WHERE stations."FK_Equipment" = ?
       ORDER BY "Time" ASC
       LIMIT ${this.measuresLimitRow} OFFSET ?;
@@ -207,8 +207,6 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
           Value: Number(row.ETO) || null,
         },
       },
-      PageNumber: pageNumber,
-      QtdRows: data.rowCount,
     }));
   }
   async getPluviometersReads(
@@ -260,8 +258,6 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
           Value: Number(row.Value) || null,
         },
       },
-      PageNumber: pageNumber,
-      QtdRows: data.rowCount,
     }));
   }
 }
