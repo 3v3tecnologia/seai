@@ -63,6 +63,18 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
     return exists ? true : false;
   }
 
+  async checkIfEquipmentCodeAlreadyExists(
+    idEquipmentExternal: string
+  ): Promise<boolean> {
+    const exists = await equipments
+      .select("IdEquipment")
+      .from("MetereologicalEquipment")
+      .where({ IdEquipmentExternal: idEquipmentExternal })
+      .first();
+
+    return exists ? true : false;
+  }
+
   async checkIfEquipmentTypeExists(idType: number): Promise<boolean> {
     const exists = await equipments
       .select("IdType")

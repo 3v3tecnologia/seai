@@ -13,6 +13,15 @@ export class CreateEquipments extends Command {
   async execute(
     request: CreateEquipmentUseCaseProtocol.Request
   ): Promise<Either<Error, CreateEquipmentUseCaseProtocol.Response>> {
+    const hasEquipmentWithSameCode =
+      await this.equipmentsRepository.checkIfEquipmentCodeAlreadyExists(
+        request.IdEquipmentExternal
+      );
+
+    if (hasEquipmentWithSameCode === true) {
+      return left(new Error(`Código de equipamento já existente.`));
+    }
+
     const isOrganAlreadyExists =
       await this.equipmentsRepository.checkIfOrganExists(request.Fk_Organ);
 
@@ -34,7 +43,7 @@ export class CreateEquipments extends Command {
     );
 
     this.addLog({
-      action: "CREATE",
+      action: "create",
       table: "MetereologicalEquipment",
       description: `Sucesso ao criar equipamento ${equipmentId}.`,
     });

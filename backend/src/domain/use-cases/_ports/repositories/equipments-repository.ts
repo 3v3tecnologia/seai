@@ -97,6 +97,9 @@ export interface EquipmentsRepositoryProtocol {
   updateEquipment(equipment: UpdateEquipmentParams): Promise<void>;
   deleteEquipment(idEquipment: number): Promise<number>;
   checkIfOrganExists(idOrgan: number): Promise<boolean>;
+  checkIfEquipmentCodeAlreadyExists(
+    idEquipmentExternal: string
+  ): Promise<boolean>;
   checkIfEquipmentTypeExists(idType: number): Promise<boolean>;
   getEquipments(pageNumber: number): Promise<Array<Equipment> | null>;
   getStationsReads(
