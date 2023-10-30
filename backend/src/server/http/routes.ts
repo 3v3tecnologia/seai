@@ -22,4 +22,9 @@ export function setRoutes(app: Express): void {
   });
 
   app.use("/api/v1", router);
+  app.use("*", (req, res) => {
+    res.status(404).json({
+      error: ":[ Ops ! recurso não encontrado, verifique a URL informada.",
+    });
+  });
 }
