@@ -1,28 +1,17 @@
-const filters = {
-  label: "Equipamento",
-  field: "NomeTipoEquipamento",
-  options: [
-    {
-      title: "Todos",
-      value: null,
-    },
-    {
-      title: "Pluviômetro",
-      value: 1,
-    },
-    {
-      title: "Estação",
-      value: 2,
-    },
-  ],
-};
-
-const stateOptionsFilter = {
-  label: "Órgão M.",
-  field: "NomeOrgao",
-  getListKey: "FETCH_BODIES_OPTIONS",
-  getterKey: "bodiesOptions",
-};
+const stateOptionsFilters = [
+  {
+    label: "Órgão M.",
+    field: "NomeOrgao",
+    getListKey: "FETCH_BODIES_OPTIONS",
+    getterKey: "bodiesOptions",
+  },
+  {
+    label: "Tipo de equipamento",
+    field: "NomeTipoEquipamento",
+    getListKey: "FETCH_EQUIPMENT_TYPE_OPTIONS",
+    getterKey: "equipmentTypeOptions",
+  },
+];
 
 const searchFilter = ["NomeEquipamento", "NomeLocalização"];
 
@@ -31,8 +20,8 @@ export const equipments = {
   getDataKey: "GET_EQUIPMENTS",
   deleteDataKey: "DELETE_EQUIPMENTS",
   storeDataKey: "equipments",
-  stateFilters: [stateOptionsFilter],
-  filters: [filters],
+  stateFilters: stateOptionsFilters,
+  filters: [],
   searchFilter: searchFilter,
   actionRoutes: {
     edit: "edit-equipment",

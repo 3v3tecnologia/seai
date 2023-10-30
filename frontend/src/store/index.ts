@@ -15,6 +15,11 @@ import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
 
+const defaultOption = {
+  title: "Todos",
+  value: null,
+};
+
 const formatTemporaryToken = (token: string) => ({
   headers: {
     Authorization: `Bearer ${token}`,
@@ -72,6 +77,7 @@ interface Estado {
   currentBody: any;
   currentEquipment: any;
   metereologicalBodies: any;
+  typesEquipments: any;
   users: IUsersWrapper;
   currentUser: INewUser | null;
   profile: INewUser | null;
@@ -116,6 +122,9 @@ export const store = createStore<Estado>({
     metereologicalBodies: {
       data: [],
     },
+    typesEquipments: {
+      data: [],
+    },
     cityOptions: [],
     users: {
       data: [],
@@ -138,6 +147,9 @@ export const store = createStore<Estado>({
   mutations: {
     ["SET_BODIES_OPTIONS"](state, options) {
       state.metereologicalBodies = options;
+    },
+    ["SET_TYPES_EQUIPMENTS_OPTIONS"](state, options) {
+      state.typesEquipments = options;
     },
     ["SET_EQUIPMENTS"](state, equipments: any) {
       state.equipments = equipments;
@@ -280,8 +292,29 @@ export const store = createStore<Estado>({
         commit("SET_BODIES_OPTIONS", {
           data,
         });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_EQUIPMENT_TYPE_OPTIONS"]({ commit }) {
+      try {
+        // const { data } = await http.get(`/census/locations`);
+        const data = [
+          {
+            Id: 1,
+            Name: "station",
+            Title: "Estação",
+          },
+          {
+            Id: 2,
+            Name: "pluviometer",
+            Title: "Pluviômetro",
+          },
+        ];
 
-        return true;
+        commit("SET_TYPES_EQUIPMENTS_OPTIONS", {
+          data,
+        });
       } catch (e) {
         console.error(e);
       }
@@ -496,6 +529,18 @@ export const store = createStore<Estado>({
         throw Error(e?.response?.data?.error);
       }
     },
+    async ["UPDATE_EQUIPMENT"]({ state, commit }, form: any) {
+      try {
+        console.log(form);
+
+        toast.success("Dados do equipamento atualizados com sucesso");
+      } catch (e: any) {
+        toast.error("Falha ao atualizar dados.");
+        toast.error(e?.response?.data?.error);
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
     async ["CHANGE_PASSWORD"](context, form) {
       try {
         await http.post(
@@ -644,12 +689,20 @@ export const store = createStore<Estado>({
         }));
       };
 
-      const defaultOption = {
-        title: "Todos",
-        value: null,
+      return [defaultOption, ...bodiesDTO(state.metereologicalBodies.data)];
+    },
+    equipmentTypeOptions(state) {
+      const typesEquips = (
+        typesEquips: { Name: string; Title: string; Id: number }[]
+      ) => {
+        return typesEquips.map((typeEquip) => ({
+          value: typeEquip["Id"],
+          title: typeEquip["Title"],
+          key: typeEquip["Name"],
+        }));
       };
 
-      return [defaultOption, ...bodiesDTO(state.metereologicalBodies.data)];
+      return [defaultOption, ...typesEquips(state.typesEquipments.data)];
     },
   },
 });

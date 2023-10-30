@@ -28,6 +28,8 @@ const fields = [
     label: "Tipo de equipamento",
     formKey: "NomeTipoEquipamento",
     type: "text",
+    getListKey: "FETCH_EQUIPMENT_TYPE_OPTIONS",
+    getterKey: "equipmentTypeOptions",
   },
   {
     label: "Nome da localização",
@@ -46,10 +48,16 @@ const fields = [
   },
 ];
 
+const finishedDataButton = {
+  text: "Retornar a listagem de equipamentos",
+  routeName: "equipments",
+};
+
 export const editEquipment = {
   getDataKey,
   storeDataKey,
   submitDataKey,
+  finishedDataButton,
   headerLabel,
   fields,
 };

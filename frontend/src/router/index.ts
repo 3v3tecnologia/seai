@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import AuthView from "../views/AuthView.vue";
 import ReportsView from "../views/ReportsView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
-import ProfileEditView from "../views/ProfileEditView.vue";
+import BaseForm from "../views/BaseForm.vue";
 import HomeView from "../views/HomeView.vue";
 import PageNotFoundView from "../views/PageNotFoundView.vue";
 import BaseCrudView from "../views/BaseCrudView.vue";
@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/profile",
     name: "profile",
-    component: ProfileEditView,
+    component: BaseForm,
     props: routeProps.profile,
   },
   {
@@ -43,13 +43,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/metereological-bodies/edit/:id",
     name: "edit-body",
-    component: ProfileEditView,
+    component: BaseForm,
     props: routeProps.editBody,
   },
   {
     path: "/metereological-bodies/create",
     name: "create-body",
-    component: ProfileEditView,
+    component: BaseForm,
     props: routeProps.createBody,
   },
   {
@@ -61,13 +61,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/equipments/edit/:id",
     name: "edit-equipment",
-    component: ProfileEditView,
+    component: BaseForm,
     props: routeProps.editEquipment,
   },
   {
     path: "/equipments/create",
     name: "create-equipment",
-    component: ProfileEditView,
+    component: BaseForm,
     props: routeProps.createEquipment,
   },
   {

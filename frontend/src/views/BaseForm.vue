@@ -2,53 +2,81 @@
   <div class="home">
     <FormWrapper :title="headerLabel" @submit="handleSubmit">
       <template v-slot:content>
-        <div class="py-2"></div>
+        <div class="py-2 mb-3"></div>
 
-        <br />
-        <br />
-        <BaseDropdown
-          v-model="form[field.formKey]"
-          class="mt-3"
-          v-for="field in drodpDowns"
-          :key="field.formKey"
-          inline-label
-          remove-margin
-          :options="field.options"
-          :placeholder="field.label"
-        />
+        <div class="row">
+          <div
+            class="col-lg-3"
+            v-for="field in drodpDowns"
+            :key="field.formKey"
+          >
+            <BaseDropdown
+              v-model="form[field.formKey]"
+              inline-label
+              remove-margin
+              class="w-100"
+              width="100%"
+              :options="field.options"
+              :placeholder="field.label"
+            />
+          </div>
+        </div>
 
-        <span
-          v-for="(field, i) in fieldsTmp.filter((f) => !f.getListKey)"
-          :key="field.formKey"
-          class="margin-inputs d-block p-input-icon-right p-float-label"
-          :class="{
-            'mb-4': i === fields.length - 1,
-          }"
-        >
-          <i
-            v-if="field.type === 'password'"
-            @click="() => clickEyePassword(field)"
-            :class="`pi ${field.tmp_pass ? 'pi-eye-slash' : 'pi-eye'}`"
-          />
-          <InputText
-            :minlength="field.nullable ? 0 : 5"
-            maxlength="25"
-            v-model="form[field.formKey]"
-            :type="field.type && field.tmp_pass ? field.type : 'text'"
-            class="w-100"
-            :input-id="field.formKey"
-          />
+        <div class="row">
+          <div
+            v-for="(field, i) in inputFields"
+            :key="field.formKey"
+            :class="`${
+              i === inputFields.length - 1 ? 'col-lg-12' : 'col-lg-6'
+            }`"
+          >
+            <span
+              class="margin-inputs d-block p-input-icon-right p-float-label"
+              :class="{
+                'mb-4': i === fields.length - 1,
+              }"
+            >
+              <i
+                v-if="field.type === 'password'"
+                @click="() => clickEyePassword(field)"
+                :class="`pi ${field.tmp_pass ? 'pi-eye-slash' : 'pi-eye'}`"
+              />
+              <InputText
+                v-model="form[field.formKey]"
+                :required="!field.nullable"
+                :type="field.type && field.tmp_pass ? field.type : 'text'"
+                :input-id="field.formKey"
+                minlength="5"
+                min="5"
+                maxlength="25"
+                max="25"
+                class="w-100"
+              />
 
-          <label class="font-weight-bold" :for="field.formKey"
-            >{{ field.label }}
-          </label>
-        </span>
+              <label class="font-weight-bold" :for="field.formKey"
+                >{{ field.label }}
+              </label>
+            </span>
+          </div>
+        </div>
 
         <div class="py-2"></div>
       </template>
 
       <template v-slot:buttons>
-        <PrimaryButton :disabled="!changedForm" text="Atualizar dados" />
+        <router-link
+          v-if="hasSaved"
+          :to="{ name: finishedDataButton.routeName }"
+          class="btn btn-success px-4 py-2 btn-block"
+        >
+          {{ finishedDataButton.text }}
+        </router-link>
+
+        <PrimaryButton
+          v-else
+          :disabled="!changedForm && !isNewForm"
+          :text="`${isNewForm ? 'Salvar dados' : 'Atualizar dados'}`"
+        />
       </template>
     </FormWrapper>
 
@@ -67,6 +95,7 @@ import BaseDropdown from "@/components/BaseDropdown.vue";
 
 const currentRoute = useRoute();
 const fieldsTmp = ref([]);
+const hasSaved = ref(false);
 
 const paramId = ref(currentRoute.params.id || "");
 
@@ -91,6 +120,10 @@ const props = defineProps({
   },
   headerLabel: {
     type: String,
+    required: true,
+  },
+  finishedDataButton: {
+    type: Object,
     required: true,
   },
   fields: {
@@ -135,6 +168,10 @@ const formData = computed(() =>
   props.storeDataKey ? store.state[props.storeDataKey] : {}
 );
 
+const inputFields = computed(() =>
+  fieldsTmp.value.filter((f) => !f.getListKey)
+);
+
 const drodpDowns = computed(() =>
   fieldsTmp.value
     .filter((f) => f.getListKey)
@@ -168,7 +205,9 @@ watch(
 );
 
 const getConcatValuesForms = (formToCheck) => {
-  return Object.values(formToCheck).join("");
+  return Object.values(formToCheck)
+    .map((field) => (field.title ? field.title : field))
+    .join("");
 };
 
 const changedForm = computed(() => {
@@ -176,27 +215,44 @@ const changedForm = computed(() => {
   const concatOldVal = getConcatValuesForms(oldForm.value);
   const concatNewVal = getConcatValuesForms(form.value);
 
-  if (hasOldVal && concatOldVal !== concatNewVal) {
-    return true;
-  }
-
-  return false;
+  return hasOldVal && concatOldVal !== concatNewVal;
 });
 
-watch(formData, (newVal) => {
+const isNewForm = computed(() => {
+  return !Object.keys(oldForm.value).length;
+});
+
+const setFormWatcher = () => {
   form.value = {
-    ...newVal,
+    ...formData.value,
   };
 
   oldForm.value = {
-    ...newVal,
+    ...formData.value,
   };
+};
+
+const updateOldForm = (hasSavedForm = false) => {
+  oldForm.value = {
+    ...form.value,
+  };
+
+  hasSaved.value = !!hasSavedForm;
+};
+
+watch(formData, () => {
+  setFormWatcher();
 });
 
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  await store.dispatch(props.submitDataKey, form.value).catch(console.error);
+  await store
+    .dispatch(props.submitDataKey, form.value)
+    .then(() => {
+      updateOldForm(true);
+    })
+    .catch(console.error);
 };
 </script>
 

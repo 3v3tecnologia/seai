@@ -1,7 +1,5 @@
 <template>
   <div class="mb-5 pb-5">
-    <div class="py-4" />
-    <div class="pb-3"></div>
     <FormWrapper :title="formTitle" @submit="handleSubmit">
       <template v-if="!savedAccount" v-slot:content>
         <div class="py-2"></div>
@@ -112,8 +110,8 @@ watch(
 
 const formTitle = computed(() => {
   return isCreating.value
-    ? "Criar novo usuário"
-    : "Atualizar permissões de usuário";
+    ? "Cadastrando usuário"
+    : "Editando permissões de usuário";
 });
 
 const formDTO = computed(() => {
