@@ -13,6 +13,12 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
   private measuresLimitRow = 30;
   private equipmentsLimitRow = 90;
 
+  async deleteEquipment(idEquipment: number): Promise<number> {
+    return await equipments("MetereologicalEquipment")
+      .where({ IdEquipment: idEquipment })
+      .del();
+  }
+
   async createEquipment(equipment: CreateEquipmentParams): Promise<number> {
     const rawResult = await equipments
       .insert({
@@ -42,29 +48,29 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
         UpdatedAt: equipments.fn.now(),
       })
       .returning("IdEquipment")
-      .where("IdEquipment", equipment.idEquipment);
+      .where("IdEquipment", equipment.IdEquipment);
 
-    console.log({ rawResult });
+    console.log("[updateEquipment] :: ", { rawResult });
   }
 
-  async checkIfOrganExists(idOrgan:number): Promise<boolean>{
+  async checkIfOrganExists(idOrgan: number): Promise<boolean> {
     const exists = await equipments
       .select("IdOrgan")
-        .from("MetereologicalOrgan")
-        .where({IdOrgan:idOrgan})
-        .first()
+      .from("MetereologicalOrgan")
+      .where({ IdOrgan: idOrgan })
+      .first();
 
-    return exists ? true : false
+    return exists ? true : false;
   }
 
-  async checkIfEquipmentTypeExists(idType:number): Promise<boolean>{
+  async checkIfEquipmentTypeExists(idType: number): Promise<boolean> {
     const exists = await equipments
       .select("IdType")
-        .from("EquipmentType")
-        .where({IdType:idType})
-        .first()
+      .from("EquipmentType")
+      .where({ IdType: idType })
+      .first();
 
-    return exists ? true : false
+    return exists ? true : false;
   }
 
   async getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null> {

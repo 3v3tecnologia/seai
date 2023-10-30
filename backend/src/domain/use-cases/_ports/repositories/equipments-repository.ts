@@ -81,7 +81,7 @@ export type CreateEquipmentParams = {
   Fk_Type: number;
 };
 export type UpdateEquipmentParams = CreateEquipmentParams & {
-  idEquipment: number;
+  IdEquipment: number;
 };
 
 export type GetMetereologicalOrgans = {
@@ -95,8 +95,9 @@ export interface EquipmentsRepositoryProtocol {
   getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null>;
   createEquipment(equipment: CreateEquipmentParams): Promise<number>;
   updateEquipment(equipment: UpdateEquipmentParams): Promise<void>;
-  checkIfOrganExists(idOrgan:number): Promise<boolean>;
-  checkIfEquipmentTypeExists(idType:number): Promise<boolean>;
+  deleteEquipment(idEquipment: number): Promise<number>;
+  checkIfOrganExists(idOrgan: number): Promise<boolean>;
+  checkIfEquipmentTypeExists(idType: number): Promise<boolean>;
   getEquipments(pageNumber: number): Promise<Array<Equipment> | null>;
   getStationsReads(
     idEquipment: number,

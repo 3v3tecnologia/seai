@@ -12,6 +12,8 @@ import {
   makeFetchPluviometersReadsController,
   makeFetchStationsReadsController,
   makeCreateEquipmentsController,
+  makeDeleteEquipmentController,
+  makeUpdateEquipmentController,
 } from "../factories/controllers/equipments";
 
 export const equipmentsRouter = (): Router => {
@@ -23,6 +25,21 @@ export const equipmentsRouter = (): Router => {
     registerManagerWriteAccessAuth,
     adaptRoute(makeCreateEquipmentsController())
   );
+
+  router.delete(
+    "/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeDeleteEquipmentController())
+  );
+
+  router.put(
+    "/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeUpdateEquipmentController())
+  );
+
   router.get("/", authorization, adaptRoute(makeFetchEquipmentsController()));
 
   router.get(

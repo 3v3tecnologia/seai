@@ -3,7 +3,7 @@ import { Command } from "../_ports/core/command";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class CreateEquipments extends Command {
+export class UpdateEquipment extends Command {
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
@@ -11,8 +11,8 @@ export class CreateEquipments extends Command {
     this.equipmentsRepository = equipmentsRepository;
   }
   async execute(
-    request: CreateEquipmentUseCaseProtocol.Request
-  ): Promise<Either<Error, CreateEquipmentUseCaseProtocol.Response>> {
+    request: UpdateEquipmentUseCaseProtocol.Request
+  ): Promise<Either<Error, UpdateEquipmentUseCaseProtocol.Response>> {
     const isOrganAlreadyExists =
       await this.equipmentsRepository.checkIfOrganExists(request.Fk_Organ);
 
@@ -29,22 +29,23 @@ export class CreateEquipments extends Command {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
 
-    const equipmentId = await this.equipmentsRepository.createEquipment(
+    const equipmentId = await this.equipmentsRepository.updateEquipment(
       request
     );
 
     this.addLog({
-      action: "CREATE",
+      action: "update",
       table: "MetereologicalEquipment",
-      description: `Sucesso ao criar equipamento ${equipmentId}.`,
+      description: `Sucesso ao atualizar equipamento ${equipmentId}.`,
     });
 
-    return right(`Sucesso ao criar equipamento ${equipmentId}.`);
+    return right(`Sucesso ao atualizar equipamento ${equipmentId}.`);
   }
 }
 
-export namespace CreateEquipmentUseCaseProtocol {
+export namespace UpdateEquipmentUseCaseProtocol {
   export type Request = {
+    IdEquipment: number;
     IdEquipmentExternal: string;
     Name: string;
     Altitude: number;
