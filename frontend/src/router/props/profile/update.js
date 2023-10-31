@@ -24,7 +24,7 @@ const fields = [
   },
 ];
 
-export const profile = {
+export default {
   getDataKey,
   storeDataKey,
   submitDataKey,

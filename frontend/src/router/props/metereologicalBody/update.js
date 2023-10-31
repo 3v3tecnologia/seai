@@ -26,7 +26,7 @@ const fields = [
   },
 ];
 
-export const editBody = {
+export default {
   getDataKey,
   storeDataKey,
   submitDataKey,

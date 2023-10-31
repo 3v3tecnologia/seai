@@ -22,7 +22,7 @@ const fields = [
   },
 ];
 
-export const createBody = {
+export default {
   getDataKey: "",
   storeDataKey: "",
   submitDataKey,

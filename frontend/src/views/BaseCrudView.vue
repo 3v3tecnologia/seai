@@ -41,6 +41,7 @@ import { useStore } from "vuex";
 import CrudTable from "@/components/CrudTable.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const props = defineProps({
   headerLabels: {
@@ -86,10 +87,13 @@ const props = defineProps({
   },
 });
 
+const currentRoute = useRoute();
+const paramId = computed(() => currentRoute.params.id || "");
 const store = useStore();
 const filtersUsers = ref({});
 
-const getData = async () => await store.dispatch(props.getDataKey);
+const getData = async () =>
+  await store.dispatch(props.getDataKey, paramId.value);
 
 watch(
   () => props.getDataKey,

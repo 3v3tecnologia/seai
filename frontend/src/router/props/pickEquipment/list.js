@@ -17,7 +17,7 @@ const searchFilter = ["NomeEquipamento", "NomeLocalização"];
 
 export default {
   actionText: "equipamento",
-  getDataKey: "GET_EQUIPMENTS",
+  getDataKey: "GET_CURRENT_EQUIPMENT_READS",
   deleteDataKey: "DELETE_EQUIPMENTS",
   storeDataKey: "equipments",
   stateFilters: stateOptionsFilters,

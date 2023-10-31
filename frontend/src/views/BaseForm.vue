@@ -65,8 +65,15 @@
 
       <template v-slot:buttons>
         <router-link
-          v-if="hasSaved"
-          :to="{ name: finishedDataButton.routeName }"
+          v-if="hasSaved || finishedDataButton.isRedirect"
+          :to="{
+            name: finishedDataButton.routeName,
+            params: {
+              id:
+                form?.[fields?.[finishedDataButton?.fieldIdIndex]?.formKey]
+                  ?.id || 1,
+            },
+          }"
           class="btn btn-success px-4 py-2 btn-block"
         >
           {{ finishedDataButton.text }}
@@ -186,23 +193,21 @@ const drodpDowns = computed(() =>
 const form = ref({});
 const oldForm = ref({});
 
-watch(
-  drodpDowns.value,
-  (newVal) => {
-    newVal.forEach((field) => {
-      const matchedResult = field.options.find((f) => f.title === field.value);
+const updateDropdownsValue = () => {
+  drodpDowns.value.forEach((field) => {
+    const matchedResult = field.options.find((f) => f.title === field.value);
 
-      const valueWasEmpty = !form.value[field.formKey];
+    const valueWasEmpty = !form.value[field.formKey];
 
-      if (valueWasEmpty) {
-        form.value[field.formKey] = field.options[0];
-      } else if (matchedResult) {
-        form.value[field.formKey] = matchedResult;
-      }
-    });
-  },
-  { immediate: true, deep: true }
-);
+    if (valueWasEmpty) {
+      form.value[field.formKey] = field.options[0];
+    } else if (matchedResult) {
+      form.value[field.formKey] = matchedResult;
+    }
+  });
+};
+
+watch(drodpDowns.value, updateDropdownsValue, { immediate: true, deep: true });
 
 const getConcatValuesForms = (formToCheck) => {
   return Object.values(formToCheck)
@@ -243,6 +248,18 @@ const updateOldForm = (hasSavedForm = false) => {
 watch(formData, () => {
   setFormWatcher();
 });
+
+watch(
+  () => currentRoute.name,
+  () => {
+    form.value = {};
+    updateOldForm();
+    updateDropdownsValue();
+  },
+  {
+    deep: true,
+  }
+);
 
 const handleSubmit = async (e) => {
   e.preventDefault();

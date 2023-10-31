@@ -21,7 +21,7 @@ const usersOptionsFilter = {
 
 const usersSearchFilter = ["name", "email"];
 
-export const user = {
+export default {
   actionText: "usuário",
   getDataKey: "GET_USERS",
   deleteDataKey: "DELETE_USERS",

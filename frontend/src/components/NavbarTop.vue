@@ -85,6 +85,10 @@ const itemsRoutesRaw = [
     route: "/equipments",
   },
   {
+    label: "Leituras de equipamentos",
+    route: "/equipments-pick",
+  },
+  {
     label: "Relatórios",
     route: "/reports",
   },

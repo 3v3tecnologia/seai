@@ -53,7 +53,7 @@ const finishedDataButton = {
   routeName: "equipments",
 };
 
-export const editEquipment = {
+export default {
   getDataKey,
   storeDataKey,
   submitDataKey,

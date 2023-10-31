@@ -1,8 +1,8 @@
-import { editEquipment } from "./update";
+import editEquipment from "./update";
 
 const headerLabel = "Cadastrando equipamento";
 
-export const createEquipment = {
+export default {
   fields: editEquipment.fields,
   getDataKey: "",
   storeDataKey: "",

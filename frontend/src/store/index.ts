@@ -582,6 +582,52 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
+    async ["GET_CURRENT_EQUIPMENT_READS"]({ state, dispatch }, id: number) {
+      try {
+        await dispatch("GET_CURRENT_EQUIPMENT", id);
+        const equipment = state.currentEquipment;
+
+        const isStation = equipment.NomeTipoEquipamento === "Estação";
+        let reads = [];
+
+        if (isStation) {
+          reads = [
+            {
+              IdRead: 1,
+              Time: "2023-06-03",
+              Hour: "08",
+              TotalRadiation: 23,
+              MaxRelativeHumidity: 5,
+              MinRelativeHumidity: 3,
+              AverageRelativeHumidity: 39,
+              MaxAtmosphericTemperature: 30,
+              MinAtmosphericTemperature: 15,
+              AverageAtmosphericTemperature: 27,
+              AtmosphericPressure: 153,
+              WindVelocity: 33,
+            },
+            {
+              IdRead: 2,
+              Time: "2023-06-03",
+              Hour: "09",
+              TotalRadiation: null,
+              MaxRelativeHumidity: null,
+              MinRelativeHumidity: 3,
+              AverageRelativeHumidity: 39,
+              MaxAtmosphericTemperature: 30,
+              MinAtmosphericTemperature: null,
+              AverageAtmosphericTemperature: 27,
+              AtmosphericPressure: 153,
+              WindVelocity: 33,
+            },
+          ];
+        } else {
+          reads = [];
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
     async ["GET_PROFILE"]({ commit }, id: number) {
       const {
         data: { data },
@@ -608,6 +654,11 @@ export const store = createStore<Estado>({
     },
     async ["GET_EQUIPMENTS"]({ commit }) {
       try {
+        const {
+          data: { data: response },
+        } = await http.get(`/equipments/`);
+
+        console.log("data dos equipamentos", response);
         const data = [
           {
             id: 1,
@@ -699,6 +750,23 @@ export const store = createStore<Estado>({
       };
 
       return [defaultOption, ...typesEquips(state.typesEquipments.data)];
+    },
+    equipmentOptions(state) {
+      const typesEquips = (typesEquips: any[]) => {
+        return typesEquips.map((equip) => {
+          const title = ["NomeEquipamento", "IdExterno"]
+            .map((c) => equip[c])
+            .join(" - ");
+
+          return {
+            value: equip["id"],
+            title,
+            id: equip["id"],
+          };
+        });
+      };
+
+      return typesEquips(state.equipments.data);
     },
   },
 });

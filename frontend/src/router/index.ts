@@ -59,6 +59,18 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.equipments,
   },
   {
+    path: "/equipments-reads/:id",
+    name: "equipments-reads",
+    component: BaseCrudView,
+    props: routeProps.equipmentReads,
+  },
+  {
+    path: "/equipments-pick",
+    name: "equipments-pick",
+    component: BaseForm,
+    props: routeProps.pickEquipment,
+  },
+  {
     path: "/equipments/edit/:id",
     name: "edit-equipment",
     component: BaseForm,
