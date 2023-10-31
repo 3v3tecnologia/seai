@@ -6401,6 +6401,9 @@
                         },
                         "QtdRows": {
                           "type": "number"
+                        },
+                        "PageLimitRows": {
+                          "type": "number"
                         }
                       }
                     }
@@ -6455,7 +6458,8 @@
                         }
                       ],
                       "PageNumber": 0,
-                      "QtdRows": 3
+                      "QtdRows": 3,
+                      "PageLimitRows": 90
                     }
                   }
                 }
@@ -7049,7 +7053,8 @@
                           }
                         ],
                         "PageNumber": 0,
-                        "QtdRows": 1
+                        "QtdRows": 1,
+                        "PageLimitRows": 30
                       }
                     }
                   }
@@ -7195,7 +7200,8 @@
                         }
                       ],
                       "PageNumber": 0,
-                      "QtdRows": 1
+                      "QtdRows": 1,
+                      "PageLimitRows": 30
                     }
                   }
                 }
