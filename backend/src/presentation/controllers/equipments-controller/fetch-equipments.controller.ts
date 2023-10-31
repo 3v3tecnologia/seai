@@ -3,10 +3,11 @@ import { Controller } from "../ports/controllers";
 
 import { FetchEquipments } from "../../../domain/use-cases/equipments/fetch-equipments";
 
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchEquipmentsController
-  implements Controller<void, HttpResponse>
+  implements
+    Controller<FetchEquipmentsControllerProtocol.Request, HttpResponse>
 {
   private fetchEquipments: FetchEquipments;
 
@@ -14,9 +15,22 @@ export class FetchEquipmentsController
     this.fetchEquipments = fetchEquipments;
   }
 
-  async handle(): Promise<HttpResponse> {
-    const result = await this.fetchEquipments.execute();
+  async handle(
+    request: FetchEquipmentsControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    try {
+      const result = await this.fetchEquipments.execute(request);
 
     return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
   }
+}
+
+export namespace FetchEquipmentsControllerProtocol {
+  export type Request = {
+    pageNumber: number;
+  };
 }
