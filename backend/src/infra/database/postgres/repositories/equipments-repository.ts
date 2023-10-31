@@ -137,7 +137,9 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
       INNER JOIN "MetereologicalOrgan" AS organ ON organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON eqpType."IdType"  = equipment."FK_Type"
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      LIMIT ${this.equipmentsLimitRow} OFFSET ${pageNumber}
+      LIMIT ${this.equipmentsLimitRow} OFFSET ${
+      this.equipmentsLimitRow * pageNumber
+    }
     `);
 
     if (!data.rowCount) {
@@ -198,7 +200,7 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
       ORDER BY "Time" ASC
       LIMIT ${this.measuresLimitRow} OFFSET ?;
   `,
-      [idEquipment, pageNumber]
+      [idEquipment, this.measuresLimitRow * pageNumber]
     );
 
     if (!data.rowCount) {
@@ -285,7 +287,7 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
       ORDER BY "Time" ASC
       LIMIT ${this.measuresLimitRow} OFFSET ?;
   `,
-      [idEquipment, pageNumber]
+      [idEquipment, this.measuresLimitRow * pageNumber]
     );
 
     if (!data.rowCount) {
