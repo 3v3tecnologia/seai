@@ -6536,17 +6536,6 @@
             "bearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Equipment Id",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
         "summary": "Create equipment",
         "description": "Create meteorological equipment",
         "requestBody": {
@@ -6584,7 +6573,7 @@
         },
         "responses": {
           "200": {
-            "description": "User created successfully",
+            "description": "Equipment created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -6726,7 +6715,7 @@
         },
         "responses": {
           "200": {
-            "description": "User created successfully",
+            "description": "Equipment created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -6831,11 +6820,11 @@
             }
           }
         ],
-        "summary": "Update equipments",
-        "description": "Update equipment by id",
+        "summary": "Delete equipment",
+        "description": "Delete equipment by id",
         "responses": {
           "200": {
-            "description": "User created successfully",
+            "description": "Equipment deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
