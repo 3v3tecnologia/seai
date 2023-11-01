@@ -27,7 +27,9 @@
             v-for="(field, i) in inputFields"
             :key="field.formKey"
             :class="`${
-              i === inputFields.length - 1 ? 'col-lg-12' : 'col-lg-6'
+              !inputFields.length % 0 && i === inputFields.length - 1
+                ? 'col-lg-12'
+                : 'col-lg-6'
             }`"
           >
             <span
@@ -47,9 +49,7 @@
                 :type="field.type && field.tmp_pass ? field.type : 'text'"
                 :input-id="field.formKey"
                 minlength="5"
-                min="5"
                 maxlength="25"
-                max="25"
                 class="w-100"
               />
 
@@ -65,7 +65,9 @@
 
       <template v-slot:buttons>
         <router-link
-          v-if="hasSaved || finishedDataButton.isRedirect"
+          v-if="
+            hasSaved || (finishedDataButton && finishedDataButton.isRedirect)
+          "
           :to="{
             name: finishedDataButton.routeName,
             params: {
@@ -211,7 +213,7 @@ watch(drodpDowns.value, updateDropdownsValue, { immediate: true, deep: true });
 
 const getConcatValuesForms = (formToCheck) => {
   return Object.values(formToCheck)
-    .map((field) => (field.title ? field.title : field))
+    .map((field) => field?.title ?? field)
     .join("");
 };
 

@@ -92,7 +92,7 @@ const props = defineProps({
   },
 });
 
-const usersIds = computed(() => props.users.map((u) => u.id));
+const usersIds = computed(() => props.users.map((u) => u.id || u.Id));
 
 const deleteUsers = async () => {
   await store.dispatch(props.deleteDataKey, usersIds.value);

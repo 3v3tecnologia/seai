@@ -9,17 +9,17 @@ const headerLabel = "Editando equipamento";
 const fields = [
   {
     label: "Nome",
-    formKey: "NomeEquipamento",
+    formKey: "Name",
     type: "text",
   },
   {
     label: "Id externo",
-    formKey: "IdExterno",
+    formKey: "Code",
     type: "text",
   },
   {
     label: "Nome do órgão",
-    formKey: "NomeOrgao",
+    formKey: "Organ",
     type: "text",
     getListKey: "FETCH_BODIES_OPTIONS",
     getterKey: "bodiesOptions",
@@ -33,18 +33,23 @@ const fields = [
   },
   {
     label: "Nome da localização",
-    formKey: "NomeLocalização",
+    formKey: "LocationName",
     type: "text",
+  },
+  {
+    label: "Altitude",
+    formKey: "Altitude",
+    type: "number",
   },
   {
     label: "Latitude",
     formKey: "x",
-    type: "text",
+    type: "number",
   },
   {
     label: "Longitude",
     formKey: "y",
-    type: "text",
+    type: "number",
   },
 ];
 

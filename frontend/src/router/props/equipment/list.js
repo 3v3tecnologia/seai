@@ -1,7 +1,7 @@
 const stateOptionsFilters = [
   {
     label: "Órgão M.",
-    field: "NomeOrgao",
+    field: "Organ",
     getListKey: "FETCH_BODIES_OPTIONS",
     getterKey: "bodiesOptions",
   },
@@ -13,7 +13,7 @@ const stateOptionsFilters = [
   },
 ];
 
-const searchFilter = ["NomeEquipamento", "NomeLocalização"];
+const searchFilter = ["Name", "LocationName"];
 
 export default {
   actionText: "equipamento",
@@ -47,28 +47,23 @@ export default {
     },
     {
       title: "Nome",
-      field: "NomeEquipamento",
+      field: "Name",
     },
     {
       title: "Identificador único externo",
-      field: "IdExterno",
+      field: "Code",
     },
     {
       title: "Órgão metereológico",
-      field: "NomeOrgao",
+      field: "Organ",
     },
     {
       title: "Localização",
-      field: "NomeLocalização",
+      field: "LocationName",
     },
     {
       title: "Tipo",
       field: "NomeTipoEquipamento",
-    },
-    {
-      title: "Status",
-      field: "PossuiErrosDeLeituraPendentes",
-      formatter: "tickCross",
     },
   ],
 };

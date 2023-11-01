@@ -6,6 +6,7 @@ export default {
   fields: editEquipment.fields,
   getDataKey: "",
   storeDataKey: "",
-  submitDataKey: "create-equipment",
+  submitDataKey: "CREATE_EQUIPMENT",
   headerLabel,
+  finishedDataButton: editEquipment.finishedDataButton,
 };

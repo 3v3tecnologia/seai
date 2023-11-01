@@ -26,6 +26,18 @@ const formatTemporaryToken = (token: string) => ({
   },
 });
 
+const equipmentFormDTO = (form: any) => {
+  return {
+    ...form,
+    Id: form.Id,
+    IdEquipmentExternal: form.Code,
+    Name: form.Name,
+    Altitude: form.Altitude,
+    Fk_Organ: form.Organ.value,
+    Fk_Type: form.NomeTipoEquipamento.value,
+  };
+};
+
 const dataFormatUrl = {
   1: "basin",
   2: "county",
@@ -467,6 +479,19 @@ export const store = createStore<Estado>({
         throw Error(e?.response?.data?.error);
       }
     },
+    async ["CREATE_EQUIPMENT"]({ commit }, form: any) {
+      try {
+        const equipment = equipmentFormDTO(form);
+
+        await http.post(`/equipments/`, equipment);
+
+        toast.success("Equipamento criado com sucesso.");
+      } catch (e: any) {
+        toast.error("Falha ao criar equipamento.");
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
     async ["DELETE_USERS"]({ commit }, ids: number[]) {
       try {
         await Promise.allSettled(
@@ -476,6 +501,18 @@ export const store = createStore<Estado>({
         toast.success("Sucesso ao deletar usuário(s)");
       } catch (e) {
         toast.error("Falha ao deletar usuário(s).");
+        console.error(e);
+      }
+    },
+    async ["DELETE_EQUIPMENTS"]({ commit }, ids: number[]) {
+      try {
+        await Promise.allSettled(
+          ids.map(async (id) => await http.delete(`/equipments/${id}`))
+        );
+
+        toast.success("Sucesso ao deletar equipamento(s)");
+      } catch (e) {
+        toast.error("Falha ao deletar equipamento(s).");
         console.error(e);
       }
     },
@@ -527,7 +564,9 @@ export const store = createStore<Estado>({
     },
     async ["UPDATE_EQUIPMENT"]({ state, commit }, form: any) {
       try {
-        console.log(form);
+        const equipment = equipmentFormDTO(form);
+
+        await http.put(`/equipments/${equipment.Id}`, equipment);
 
         toast.success("Dados do equipamento atualizados com sucesso");
       } catch (e: any) {
@@ -575,7 +614,7 @@ export const store = createStore<Estado>({
         await dispatch("GET_EQUIPMENTS");
 
         const equipment = state.equipments.data.find(
-          (c: { id: number }) => c.id == id
+          (c: { Id: number }) => c.Id == id
         );
         commit("SET_CURRENT_EQUIPMENT", equipment);
       } catch (e) {
@@ -655,41 +694,30 @@ export const store = createStore<Estado>({
     async ["GET_EQUIPMENTS"]({ commit }) {
       try {
         const {
-          data: { data: response },
+          data: {
+            data: { Equipments: equipments },
+          },
         } = await http.get(`/equipments/`);
 
-        console.log("data dos equipamentos", response);
-        const data = [
-          {
-            id: 1,
-            NomeEquipamento: "Pluviômetro Francisca",
-            IdExterno: "12344222",
-            NomeOrgao: "INMET",
-            NomeTipoEquipamento: "Pluviômetro",
-            NomeLocalização: "Mossoró",
-            PossuiErrosDeLeituraPendentes: true,
-            x: 231923,
-            y: -32313,
-          },
-          {
-            id: 2,
-            NomeEquipamento: "Estação Joaquim",
-            IdExterno: "123Hfds",
-            NomeOrgao: "FUNCEME",
-            NomeTipoEquipamento: "Estação",
-            NomeLocalização: "Fortaleza",
-            PossuiErrosDeLeituraPendentes: false,
-            x: 23321323,
-            y: -355955,
-          },
-        ];
+        const equipmentTypeHash = {
+          station: "Estação",
+          pluviometer: "Pluviômetro",
+        };
+
+        equipments.map(
+          (equip: { [x: string]: string; Type: "station" | "pluviometer" }) => {
+            equip.NomeTipoEquipamento = equipmentTypeHash[equip.Type];
+
+            return equip;
+          }
+        );
 
         commit("SET_EQUIPMENTS", {
-          data,
-          totalPluviometers: data.filter(
+          data: equipments,
+          totalPluviometers: equipments.filter(
             (d: any) => d.NomeTipoEquipamento === "Pluviômetro"
           ).length,
-          totalStations: data.filter(
+          totalStations: equipments.filter(
             (d: any) => d.NomeTipoEquipamento === "Estação"
           ).length,
         });
@@ -754,9 +782,7 @@ export const store = createStore<Estado>({
     equipmentOptions(state) {
       const typesEquips = (typesEquips: any[]) => {
         return typesEquips.map((equip) => {
-          const title = ["NomeEquipamento", "IdExterno"]
-            .map((c) => equip[c])
-            .join(" - ");
+          const title = ["Name", "Code"].map((c) => equip[c]).join(" - ");
 
           return {
             value: equip["id"],
