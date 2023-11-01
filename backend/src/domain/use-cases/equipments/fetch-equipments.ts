@@ -16,13 +16,14 @@ export class FetchEquipments {
   ): Promise<Either<Error, FetchEquipmentsUseCaseProtocol.Response>> {
     const { pageNumber } = request;
 
-    const page =  pageNumber || 0
+    const page = pageNumber || 0;
     const data = await this.equipmentsRepository.getEquipments(page);
 
     const result = {
       Equipments: data || [],
       PageNumber: Number(page),
       QtdRows: data?.length || 0,
+      PageLimitRows: 90,
     };
 
     return right(result);
@@ -37,5 +38,6 @@ export namespace FetchEquipmentsUseCaseProtocol {
     Equipments: Array<Equipment> | null;
     PageNumber: number;
     QtdRows: number;
+    PageLimitRows: number;
   } | null;
 }

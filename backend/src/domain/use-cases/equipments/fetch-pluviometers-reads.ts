@@ -15,7 +15,7 @@ export class FetchPluviometersReads {
   ): Promise<Either<Error, FetchPluviometersReadsUseCaseProtocol.Response>> {
     const { idEquipment, pageNumber } = request;
 
-    const page =  pageNumber || 0
+    const page = pageNumber || 0;
 
     const data = await this.equipmentsRepository.getPluviometersReads(
       idEquipment,
@@ -26,6 +26,7 @@ export class FetchPluviometersReads {
       Measures: data || [],
       PageNumber: Number(page),
       QtdRows: data?.length || 0,
+      PageLimitRows: 30,
     };
 
     return right(result);
@@ -41,5 +42,6 @@ export namespace FetchPluviometersReadsUseCaseProtocol {
     Measures: Array<PluviometerRead> | null;
     PageNumber: number;
     QtdRows: number;
+    PageLimitRows: number;
   } | null;
 }

@@ -48,7 +48,7 @@ CREATE TABLE "ReadPluviometers" (
 	"Time" DATE NOT NULL,
 	"Hour" SMALLINT DEFAULT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
-	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
+	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment") ON DELETE CASCADE,
 	PRIMARY KEY("IdRead")
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE "ReadStations" (
 	"AtmosphericPressure" REAL DEFAULT NULL,
 	"WindVelocity" REAL DEFAULT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
-	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
+	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment") ON DELETE CASCADE,
 	PRIMARY KEY("IdRead")
 );
 
