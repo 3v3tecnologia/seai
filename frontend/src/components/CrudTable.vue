@@ -71,6 +71,7 @@
       <div class="wrapper-table">
         <div ref="table" />
       </div>
+      <BasePagination v-model="currentPage" />
 
       <div class="py-4 py-lg-5" />
     </div>
@@ -82,6 +83,7 @@ import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
+import BasePagination from "@/components/BasePagination.vue";
 import { useRouter } from "vue-router";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
@@ -95,6 +97,7 @@ const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
 const search = ref("");
+const currentPage = ref(0);
 
 const setSelectedUsers = () => {
   selectedUsers.value = tabulator.value?.getSelectedData() || [];
