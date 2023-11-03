@@ -14,11 +14,40 @@ import {
   makeCreateEquipmentsController,
   makeDeleteEquipmentController,
   makeUpdateEquipmentController,
+  makeCreateMeteorologicalOrganController,
+  makeDeleteEquipmentsController,
+  makeFetchMeteorologicalOrganController,
+  makeUpdateEquipmentsController,
 } from "../factories/controllers/equipments";
 
 export const equipmentsRouter = (): Router => {
   const router = Router();
 
+  router.post(
+    "/organ",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeCreateMeteorologicalOrganController())
+  );
+
+  router.delete(
+    "/organ/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeDeleteEquipmentsController())
+  );
+
+  router.put(
+    "/organ/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(makeUpdateEquipmentsController())
+  );
+  router.get(
+    "/organ",
+    authorization,
+    adaptRoute(makeFetchMeteorologicalOrganController())
+  );
   router.post(
     "/",
     authorization,

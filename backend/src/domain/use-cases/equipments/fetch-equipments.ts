@@ -1,9 +1,7 @@
 import { Either, right } from "../../../shared/Either";
+import { EquipmentEntity } from "../../entities/equipments/Equipment";
 
-import {
-  Equipment,
-  EquipmentsRepositoryProtocol,
-} from "../_ports/repositories/equipments-repository";
+import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
 export class FetchEquipments {
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
@@ -35,7 +33,7 @@ export namespace FetchEquipmentsUseCaseProtocol {
     pageNumber: number;
   };
   export type Response = {
-    Equipments: Array<Equipment> | null;
+    Equipments: Array<EquipmentEntity> | null;
     PageNumber: number;
     QtdRows: number;
     PageLimitRows: number;

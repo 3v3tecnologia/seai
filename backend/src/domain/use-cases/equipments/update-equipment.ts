@@ -42,9 +42,14 @@ export class UpdateEquipment extends Command {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
 
-    const equipmentId = await this.equipmentsRepository.updateEquipment(
-      request
-    );
+    const equipmentId = await this.equipmentsRepository.updateEquipment({
+      Fk_Organ: request.Fk_Organ,
+      Fk_Type: request.Fk_Type,
+      IdEquipment: request.IdEquipment,
+      IdEquipmentExternal: request.IdEquipmentExternal,
+      Location: request.Location,
+      Name: request.Name,
+    });
 
     this.addLog({
       action: "update",
@@ -61,9 +66,14 @@ export namespace UpdateEquipmentUseCaseProtocol {
     IdEquipment: number;
     IdEquipmentExternal: string;
     Name: string;
-    Altitude: number;
     Fk_Organ: number;
     Fk_Type: number;
+    Location: {
+      Name: string;
+      Altitude: number;
+      Longitude: number;
+      Latitude: number;
+    };
   };
   export type Response = string;
 }

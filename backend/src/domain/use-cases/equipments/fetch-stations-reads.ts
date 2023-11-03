@@ -1,14 +1,15 @@
 import { Either, right } from "../../../shared/Either";
-import {
-  EquipmentsRepositoryProtocol,
-  StationRead,
-} from "../_ports/repositories/equipments-repository";
+import { StationReadEntity } from "../../entities/equipments/StationRead";
+
+import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
 export class FetchStationsReads {
-  private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
+  private readonly equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol;
 
-  constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
-    this.equipmentsRepository = equipmentsRepository;
+  constructor(
+    equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol
+  ) {
+    this.equipmentMeasuresRepository = equipmentMeasuresRepository;
   }
   async execute(
     request: FetchStationsReadsUseCaseProtocol.Request
@@ -17,10 +18,10 @@ export class FetchStationsReads {
 
     const page = pageNumber || 0;
 
-    const data = await this.equipmentsRepository.getStationsReads(
+    const data = await this.equipmentMeasuresRepository.getStationsReads({
       idEquipment,
-      page
-    );
+      pageNumber: page,
+    });
 
     const result = {
       Measures: data || [],
@@ -39,7 +40,7 @@ export namespace FetchStationsReadsUseCaseProtocol {
     pageNumber: number;
   };
   export type Response = {
-    Measures: Array<StationRead> | null;
+    Measures: Array<StationReadEntity> | null;
     PageNumber: number;
     QtdRows: number;
     PageLimitRows: number;

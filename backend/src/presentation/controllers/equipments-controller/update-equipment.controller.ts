@@ -27,9 +27,9 @@ export class UpdateEquipmentsController
         IdEquipment: request.id,
         IdEquipmentExternal: request.IdEquipmentExternal,
         Name: request.Name,
-        Altitude: request.Altitude,
         Fk_Organ: request.Fk_Organ,
         Fk_Type: request.Fk_Type,
+        Location: request.Location,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -54,8 +54,13 @@ export namespace UpdateEquipmentsControllerProtocol {
     id: number;
     IdEquipmentExternal: string;
     Name: string;
-    Altitude: number;
     Fk_Organ: number;
     Fk_Type: number;
+    Location: {
+      Name: string;
+      Altitude: number;
+      Longitude: number;
+      Latitude: number;
+    };
   };
 }

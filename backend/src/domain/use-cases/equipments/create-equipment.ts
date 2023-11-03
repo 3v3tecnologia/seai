@@ -38,9 +38,13 @@ export class CreateEquipments extends Command {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
 
-    const equipmentId = await this.equipmentsRepository.createEquipment(
-      request
-    );
+    const equipmentId = await this.equipmentsRepository.createEquipment({
+      Fk_Organ: request.Fk_Organ,
+      IdEquipmentExternal: request.IdEquipmentExternal,
+      Fk_Type: request.Fk_Type,
+      Location: request.Location,
+      Name: request.Name,
+    });
 
     // TO-DO : add actions and table name as global constants
     this.addLog({
@@ -57,9 +61,15 @@ export namespace CreateEquipmentUseCaseProtocol {
   export type Request = {
     IdEquipmentExternal: string;
     Name: string;
-    Altitude: number;
     Fk_Organ: number;
     Fk_Type: number;
+    Location: {
+      Name: string;
+      Altitude: number;
+      Longitude: number;
+      Latitude: number;
+    };
   };
+
   export type Response = string;
 }

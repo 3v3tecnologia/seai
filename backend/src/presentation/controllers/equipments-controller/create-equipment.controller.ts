@@ -22,7 +22,13 @@ export class CreateEquipmentsController
     request: CreateEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const resultOrError = await this.createEquipments.execute(request);
+      const resultOrError = await this.createEquipments.execute({
+        Name: request.Name,
+        Fk_Organ: request.Fk_Organ,
+        Fk_Type: request.Fk_Type,
+        IdEquipmentExternal: request.IdEquipmentExternal,
+        Location: request.Location,
+      });
 
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
@@ -43,7 +49,12 @@ export namespace CreateEquipmentsControllerProtocol {
     accountId: number;
     IdEquipmentExternal: string;
     Name: string;
-    Altitude: number;
+    Location: {
+      Name: string;
+      Altitude: number;
+      Longitude: number;
+      Latitude: number;
+    };
     Fk_Organ: number;
     Fk_Type: number;
   };

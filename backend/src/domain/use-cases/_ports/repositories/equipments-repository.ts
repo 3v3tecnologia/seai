@@ -1,116 +1,150 @@
-export interface StationRead {
-  Date: string;
-  IdRead: number;
-  IdEquipment: number;
-  Code: number;
-  Name: string;
-  Measures: {
-    TotalRadiation: {
-      Unit: string;
-      Value: number;
+import { EquipmentEntity } from "../../../entities/equipments/Equipment";
+import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
+import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
+import { StationReadEntity } from "../../../entities/equipments/StationRead";
+
+export namespace MeteorologicalOrganRepositoryDTOProtocol {
+  export namespace Get {
+    export type Params = void;
+    export type Result = Promise<Array<
+      Omit<MeteorologicalOrganEntity, "Password">
+    > | null>;
+  }
+
+  export namespace Create {
+    export type Params = Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+    export type Result = Promise<number | null>;
+  }
+
+  export namespace Update {
+    export type Params = Required<MeteorologicalOrganEntity>;
+    export type Result = Promise<number>;
+  }
+  export namespace Delete {
+    export type Params = Required<MeteorologicalOrganEntity>["IdOrgan"];
+    export type Result = Promise<number>;
+  }
+
+  export namespace CheckIfOrganExists {
+    export type Params = number;
+    export type Result = Promise<boolean>;
+  }
+  export namespace CheckIfOrganNameAlreadyExists {
+    export type Params = string;
+    export type Result = Promise<boolean>;
+  }
+}
+export namespace EquipmentRepositoryDTOProtocol {
+  export namespace Create {
+    export type Params = {
+      IdEquipmentExternal: string;
+      Name: string;
+      Fk_Organ: number;
+      Fk_Type: number;
+      Location: {
+        Name: string;
+        Altitude: number;
+        Longitude: number;
+        Latitude: number;
+      };
     };
-    AverageRelativeHumidity: {
-      Unit: string;
-      Value: number;
+
+    export type Result = Promise<number | null>;
+  }
+
+  export namespace Update {
+    export type Params = Create.Params & {
+      IdEquipment: number;
     };
-    MinRelativeHumidity: {
-      Unit: string;
-      Value: number;
+    export type Result = Promise<void>;
+  }
+  export namespace Delete {
+    export type Params = number;
+    export type Result = Promise<number>;
+  }
+  export namespace CheckIfTypeExists {
+    export type Params = number;
+    export type Result = Promise<boolean>;
+  }
+
+  export namespace CheckIfCodeExists {
+    export type Params = string;
+    export type Result = Promise<boolean>;
+  }
+  export namespace GetIdByExternalCode {
+    export type Params = string;
+    export type Result = Promise<number | null>;
+  }
+  export namespace GetByPageNumber {
+    export type Params = number;
+    export type Result = Promise<Array<EquipmentEntity> | null>;
+  }
+}
+export namespace MeasuresRepositoryDTOProtocol {
+  export namespace GetStations {
+    export type Params = {
+      idEquipment: number;
+      pageNumber: number;
     };
-    MaxRelativeHumidity: {
-      Unit: string;
-      Value: number;
+    export type Result = Promise<Array<StationReadEntity> | null>;
+  }
+  export namespace GetPluviometers {
+    export type Params = {
+      idEquipment: number;
+      pageNumber: number;
     };
-    AverageAtmosphericTemperature: {
-      Unit: string;
-      Value: number;
-    };
-    MaxAtmosphericTemperature: {
-      Unit: string;
-      Value: number;
-    };
-    MinAtmosphericTemperature: {
-      Unit: string;
-      Value: number;
-    };
-    AtmosphericPressure: {
-      Unit: string;
-      Value: number;
-    };
-    ETO: {
-      Unit: string;
-      Value: number;
-    };
-  };
+    export type Result = Promise<Array<PluviometerReadEntity> | null>;
+  }
 }
 
-export interface PluviometerRead {
-  Date: string;
-  IdRead: number;
-  IdEquipment: number;
-  Code: number;
-  Name: string;
-  Measures: {
-    Precipitation: {
-      Unit: string;
-      Value: number;
-    };
-  };
+export interface MeteorologicalOrganRepositoryProtocol {
+  checkIfOrganNameAlreadyExists(
+    organName: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Result;
+  checkIfOrganExists(
+    idOrgan: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Result;
+  getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result;
+  createMeteorologicalOrgan(
+    param: MeteorologicalOrganRepositoryDTOProtocol.Create.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Create.Result;
+  updateMeteorologicalOrgan(
+    params: MeteorologicalOrganRepositoryDTOProtocol.Update.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Update.Result;
+  deleteMeteorologicalOrgan(
+    params: MeteorologicalOrganRepositoryDTOProtocol.Delete.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Delete.Result;
 }
-export interface Equipment {
-  Id: number;
-  Code: number;
-  Name: string;
-  Type: string;
-  Altitude: number;
-  IdType: number;
-  IdOrgan: number;
-  IdLocation: number;
-  Organ: string;
-  LocationPosition: string;
-  LocationName: string;
-  CreatedAt: string;
-  UpdatedAt: string;
-}
-
-export type CreateEquipmentParams = {
-  IdEquipmentExternal: string;
-  Name: string;
-  Altitude: number;
-  Fk_Organ: number;
-  Fk_Type: number;
-};
-export type UpdateEquipmentParams = CreateEquipmentParams & {
-  IdEquipment: number;
-};
-
-export type GetMetereologicalOrgans = {
-  IdOrgan: number;
-  Name: string;
-  Host: string;
-  User: string;
-};
-
-export interface EquipmentsRepositoryProtocol {
-  getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null>;
-  createEquipment(equipment: CreateEquipmentParams): Promise<number>;
-  updateEquipment(equipment: UpdateEquipmentParams): Promise<void>;
-  deleteEquipment(idEquipment: number): Promise<number>;
-  checkIfOrganExists(idOrgan: number): Promise<boolean>;
-  checkIfEquipmentCodeAlreadyExists(
-    idEquipmentExternal: string
-  ): Promise<boolean>;
-  checkIfEquipmentTypeExists(idType: number): Promise<boolean>;
-  getEquipmentIdByExternalCode(
-    idEquipmentExternal: string
-  ): Promise<number | null>;
-  getEquipments(pageNumber: number): Promise<Array<Equipment> | null>;
+export interface EquipmentsMeasuresRepositoryProtocol {
   getStationsReads(
-    idEquipment: number,
-    pageNumber: number
-  ): Promise<Array<StationRead> | null>;
+    params: MeasuresRepositoryDTOProtocol.GetStations.Params
+  ): MeasuresRepositoryDTOProtocol.GetStations.Result;
   getPluviometersReads(
-    idEquipment: number,
-    pageNumber: number
-  ): Promise<Array<PluviometerRead> | null>;
+    params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
+  ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result;
+}
+
+export interface EquipmentsRepositoryProtocol
+  extends MeteorologicalOrganRepositoryProtocol {
+  createEquipment(
+    equipment: EquipmentRepositoryDTOProtocol.Create.Params
+  ): EquipmentRepositoryDTOProtocol.Create.Result;
+  updateEquipment(
+    equipment: EquipmentRepositoryDTOProtocol.Update.Params
+  ): EquipmentRepositoryDTOProtocol.Update.Result;
+  deleteEquipment(
+    idEquipment: EquipmentRepositoryDTOProtocol.Delete.Params
+  ): EquipmentRepositoryDTOProtocol.Delete.Result;
+  checkIfEquipmentCodeAlreadyExists(
+    idEquipmentExternal: EquipmentRepositoryDTOProtocol.CheckIfCodeExists.Params
+  ): EquipmentRepositoryDTOProtocol.CheckIfCodeExists.Result;
+  checkIfEquipmentTypeExists(
+    idType: EquipmentRepositoryDTOProtocol.CheckIfTypeExists.Params
+  ): EquipmentRepositoryDTOProtocol.CheckIfTypeExists.Result;
+  getEquipmentIdByExternalCode(
+    idEquipmentExternal: EquipmentRepositoryDTOProtocol.GetIdByExternalCode.Params
+  ): Promise<number | null>;
+  getEquipments(
+    pageNumber: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
+  ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result;
 }

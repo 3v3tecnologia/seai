@@ -1,14 +1,14 @@
 import { Either, right } from "../../../shared/Either";
-import {
-  EquipmentsRepositoryProtocol,
-  PluviometerRead,
-} from "../_ports/repositories/equipments-repository";
+
+import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead";
+
+import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
 export class FetchPluviometersReads {
-  private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
+  private readonly measuresRepository: EquipmentsMeasuresRepositoryProtocol;
 
-  constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
-    this.equipmentsRepository = equipmentsRepository;
+  constructor(measuresRepository: EquipmentsMeasuresRepositoryProtocol) {
+    this.measuresRepository = measuresRepository;
   }
   async execute(
     request: FetchPluviometersReadsUseCaseProtocol.Request
@@ -17,10 +17,10 @@ export class FetchPluviometersReads {
 
     const page = pageNumber || 0;
 
-    const data = await this.equipmentsRepository.getPluviometersReads(
+    const data = await this.measuresRepository.getPluviometersReads({
       idEquipment,
-      page
-    );
+      pageNumber: page,
+    });
 
     const result = {
       Measures: data || [],
@@ -39,7 +39,7 @@ export namespace FetchPluviometersReadsUseCaseProtocol {
     pageNumber: number;
   };
   export type Response = {
-    Measures: Array<PluviometerRead> | null;
+    Measures: Array<PluviometerReadEntity> | null;
     PageNumber: number;
     QtdRows: number;
     PageLimitRows: number;

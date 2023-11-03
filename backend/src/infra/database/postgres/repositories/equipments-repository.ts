@@ -1,63 +1,194 @@
 import {
-  CreateEquipmentParams,
-  Equipment,
+  EquipmentsMeasuresRepositoryProtocol,
   EquipmentsRepositoryProtocol,
-  GetMetereologicalOrgans,
-  PluviometerRead,
-  StationRead,
-  UpdateEquipmentParams,
+  MeteorologicalOrganRepositoryProtocol,
+  MeasuresRepositoryDTOProtocol,
+  MeteorologicalOrganRepositoryDTOProtocol,
+  EquipmentRepositoryDTOProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { equipments } from "../connection/knexfile";
 
-export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
+/*
+  TO-DO : Create domain layer
+*/
+export class KnexEquipmentsRepository
+  implements
+    EquipmentsRepositoryProtocol,
+    EquipmentsMeasuresRepositoryProtocol,
+    MeteorologicalOrganRepositoryProtocol
+{
   private measuresLimitRow = 30;
   private equipmentsLimitRow = 90;
 
-  async deleteEquipment(idEquipment: number): Promise<number> {
+  async getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result {
+    const data = await equipments
+      .select("IdOrgan", "Name", "Host", "User")
+      .from("MetereologicalOrgan");
+
+    if (data.length === 0) {
+      return null;
+    }
+
+    return data.map((raw) => {
+      const { IdOrgan, Name, Host, User } = raw;
+
+      return {
+        IdOrgan: Number(IdOrgan),
+        Name,
+        Host,
+        User,
+      };
+    });
+  }
+
+  async createMeteorologicalOrgan(
+    params: MeteorologicalOrganRepositoryDTOProtocol.Create.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Create.Result {
+    const rawResult = await equipments
+      .insert({
+        Name: params.Name,
+        Host: params.Host,
+        User: params.User,
+        Password: params.Password,
+      })
+      .returning("IdOrgan")
+      .into("MetereologicalOrgan");
+
+    const IdOrgan = rawResult[0].IdOrgan;
+
+    return IdOrgan ? Number(IdOrgan) : null;
+  }
+
+  async updateMeteorologicalOrgan(
+    organ: MeteorologicalOrganRepositoryDTOProtocol.Update.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Update.Result {
+    return await equipments("MetereologicalOrgan")
+      .update({
+        Name: organ.Name,
+        Host: organ.Host,
+        User: organ.User,
+        Password: organ.Password,
+      })
+      .where({ IdOrgan: organ.IdOrgan });
+  }
+
+  async deleteMeteorologicalOrgan(
+    idOrgan: MeteorologicalOrganRepositoryDTOProtocol.Delete.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.Delete.Result {
+    return await equipments("MetereologicalOrgan")
+      .where({ IdOrgan: idOrgan })
+      .del();
+  }
+
+  async deleteEquipment(
+    idEquipment: EquipmentRepositoryDTOProtocol.Delete.Params
+  ): EquipmentRepositoryDTOProtocol.Delete.Result {
     return await equipments("MetereologicalEquipment")
       .where({ IdEquipment: idEquipment })
       .del();
   }
 
-  async createEquipment(equipment: CreateEquipmentParams): Promise<number> {
-    const rawResult = await equipments
-      .insert({
-        IdEquipmentExternal: equipment.IdEquipmentExternal,
-        Name: equipment.Name,
-        Altitude: equipment.Altitude,
-        FK_Organ: equipment.Fk_Organ,
-        FK_Type: equipment.Fk_Type,
-        CreatedAt: equipments.fn.now(),
-      })
-      .returning("IdEquipment")
-      .into("MetereologicalEquipment");
+  async createEquipment(
+    equipment: EquipmentRepositoryDTOProtocol.Create.Params
+  ): EquipmentRepositoryDTOProtocol.Create.Result {
+    let idEquipment = null;
 
-    const idEquipment = rawResult[0].IdEquipment;
+    await equipments.transaction(async (trx) => {
+      const rawResult = await trx
+        .insert({
+          IdEquipmentExternal: equipment.IdEquipmentExternal,
+          Name: equipment.Name,
+          Altitude: equipment.Location.Altitude,
+          FK_Organ: equipment.Fk_Organ,
+          FK_Type: equipment.Fk_Type,
+          CreatedAt: equipments.fn.now(),
+        })
+        .returning("IdEquipment")
+        .into("MetereologicalEquipment")
+        .transacting(trx);
 
-    return Number(idEquipment);
+      idEquipment = rawResult[0].IdEquipment;
+
+      await trx
+        .raw(
+          `INSERT INTO "EquipmentLocation" ("Location","Name","FK_Equipment") 
+        VALUES ('POINT(? ?)'::geometry,?,?)`,
+          [
+            equipment.Location.Longitude,
+            equipment.Location.Latitude,
+            equipment.Location.Name,
+            idEquipment,
+          ]
+        )
+        .transacting(trx);
+
+      console.log(`Equipamento ${idEquipment} cadastrado com sucesso`);
+    });
+
+    return idEquipment ? Number(idEquipment) : null;
   }
 
-  async updateEquipment(equipment: UpdateEquipmentParams): Promise<void> {
-    const rawResult = await equipments("MetereologicalEquipment")
-      .update({
-        IdEquipmentExternal: equipment.IdEquipmentExternal,
-        Name: equipment.Name,
-        Altitude: equipment.Altitude,
-        FK_Organ: equipment.Fk_Organ,
-        FK_Type: equipment.Fk_Type,
-        UpdatedAt: equipments.fn.now(),
-      })
-      .returning("IdEquipment")
-      .where("IdEquipment", equipment.IdEquipment);
+  async updateEquipment(
+    equipment: EquipmentRepositoryDTOProtocol.Update.Params
+  ): EquipmentRepositoryDTOProtocol.Update.Result {
+    await equipments.transaction(async (trx) => {
+      const rawResult = await trx("MetereologicalEquipment")
+        .update({
+          IdEquipmentExternal: equipment.IdEquipmentExternal,
+          Name: equipment.Name,
+          Altitude: equipment.Location.Altitude,
+          FK_Organ: equipment.Fk_Organ,
+          FK_Type: equipment.Fk_Type,
+          UpdatedAt: equipments.fn.now(),
+        })
+        .returning("IdEquipment")
+        .where("IdEquipment", equipment.IdEquipment);
 
-    console.log("[updateEquipment] :: ", { rawResult });
+      await trx.raw(
+        `
+        UPDATE "EquipmentLocation" 
+        SET "Location" = 'POINT(? ?)'::geometry,
+        "Name" = ?
+        WHERE "FK_Equipment" = ?
+      `,
+        [
+          equipment.Location.Longitude,
+          equipment.Location.Latitude,
+          equipment.Location.Name,
+          equipment.IdEquipment,
+        ]
+      );
+
+      console.log(
+        "[EQUIPMENT] :: Repository :: updateEquipment() > ",
+        rawResult
+      );
+      console.log(
+        "[EQUIPMENT] :: Repository :: updateEquipment() > ",
+        `Equipamento ${equipment.IdEquipment} atualizado com sucesso`
+      );
+    });
   }
 
-  async checkIfOrganExists(idOrgan: number): Promise<boolean> {
+  async checkIfOrganExists(
+    idOrgan: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Result {
     const exists = await equipments
       .select("IdOrgan")
       .from("MetereologicalOrgan")
       .where({ IdOrgan: idOrgan })
+      .first();
+
+    return exists ? true : false;
+  }
+
+  async checkIfOrganNameAlreadyExists(
+    organName: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Params
+  ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Result {
+    const exists = await equipments
+      .select("IdOrgan")
+      .from("MetereologicalOrgan")
+      .where({ Name: organName })
       .first();
 
     return exists ? true : false;
@@ -97,27 +228,9 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
     return exists ? true : false;
   }
 
-  async getMetereologicalOrgans(): Promise<Array<GetMetereologicalOrgans> | null> {
-    const data = await equipments
-      .select("IdOrgan", "Name", "Host", "User")
-      .from("MetereologicalOrgan");
-
-    if (data.length === 0) {
-      return null;
-    }
-
-    return data.map((raw) => {
-      const { IdOrgan, Name, Host, User } = raw;
-
-      return {
-        IdOrgan: Number(IdOrgan),
-        Name,
-        Host,
-        User,
-      };
-    });
-  }
-  async getEquipments(pageNumber: number): Promise<Array<Equipment> | null> {
+  async getEquipments(
+    pageNumber: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
+  ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
     const data = await equipments.raw(`
       SELECT
           equipment."IdEquipment" AS "Id",
@@ -150,23 +263,28 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
       Id: Number(row.Id),
       Code: Number(row.EqpCode) || null,
       Name: row.Name,
-      IdType: Number(row.IdType),
-      Type: row.EqpType,
-      Altitude: Number(row.Altitude) || null,
-      IdOrgan: Number(row.IdOrgan),
-      Organ: row.OrganName,
-      IdLocation: Number(row.IdLocation),
-      LocationPosition: row.Coordinates,
-      LocationName: row.LocationName,
+      Type: {
+        Id: Number(row.IdType),
+        Name: row.EqpType,
+      },
+      Organ: {
+        Id: Number(row.IdOrgan),
+        Name: row.OrganName,
+      },
+      Location: {
+        Id: Number(row.IdLocation),
+        Name: row.LocationName,
+        Coordinates: row.Coordinates,
+        Altitude: Number(row.Altitude) || null,
+      },
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
     }));
   }
   async getStationsReads(
-    idEquipment: number,
-    pageNumber: number
-  ): Promise<Array<StationRead> | null> {
-    const limitRow = 60;
+    params: MeasuresRepositoryDTOProtocol.GetStations.Params
+  ): MeasuresRepositoryDTOProtocol.GetStations.Result {
+    const { idEquipment, pageNumber } = params;
 
     const data = await equipments.raw(
       `
@@ -260,9 +378,10 @@ export class KnexEquipmentsRepository implements EquipmentsRepositoryProtocol {
     }));
   }
   async getPluviometersReads(
-    idEquipment: number,
-    pageNumber: number
-  ): Promise<Array<PluviometerRead> | null> {
+    params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
+  ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result {
+    const { idEquipment, pageNumber } = params;
+
     const data = await equipments.raw(
       `
       SELECT
