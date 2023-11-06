@@ -98,7 +98,7 @@ export class KnexEquipmentsRepository
         .insert({
           IdEquipmentExternal: equipment.IdEquipmentExternal,
           Name: equipment.Name,
-          Altitude: equipment.Location.Altitude,
+          Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
           CreatedAt: equipments.fn.now(),
@@ -109,7 +109,7 @@ export class KnexEquipmentsRepository
 
       idEquipment = rawResult[0].IdEquipment;
 
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
 
       await trx
         .raw(
@@ -133,7 +133,7 @@ export class KnexEquipmentsRepository
         .update({
           IdEquipmentExternal: equipment.IdEquipmentExternal,
           Name: equipment.Name,
-          Altitude: equipment.Location.Altitude,
+          Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
           UpdatedAt: equipments.fn.now(),
@@ -141,7 +141,7 @@ export class KnexEquipmentsRepository
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
 
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
 
       await trx.raw(
         `
@@ -229,7 +229,7 @@ export class KnexEquipmentsRepository
           eqpType."IdType" AS "IdType",
           eqpType."Name" AS "EqpType",
           eqpLocation."IdLocation" ,
-          eqpLocation."Location" AS "Coordinates",
+          ST_AsGeoJSON(eqpLocation."Location"::geometry)::json AS "GeoLocation",
           eqpLocation."Name" AS "LocationName"
       FROM "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON organ."IdOrgan" = equipment."FK_Organ"
@@ -259,7 +259,7 @@ export class KnexEquipmentsRepository
       Location: {
         Id: Number(row.IdLocation) || null,
         Name: row.LocationName,
-        Coordinates: row.Coordinates,
+        Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
         Altitude: Number(row.Altitude) || null,
       },
       CreatedAt: row.CreatedAt,

@@ -41,11 +41,10 @@ export namespace EquipmentRepositoryDTOProtocol {
       Name: string;
       Fk_Organ: number;
       Fk_Type: number;
+      Altitude: number;
       Location: {
         Name: string;
-        Altitude: number;
-        Longitude: number;
-        Latitude: number;
+        Coordinates: Array<number>;
       };
     };
 

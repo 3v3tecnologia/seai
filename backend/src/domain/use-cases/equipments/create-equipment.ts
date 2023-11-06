@@ -43,6 +43,7 @@ export class CreateEquipments extends Command {
       IdEquipmentExternal: request.IdEquipmentExternal,
       Fk_Type: request.Fk_Type,
       Location: request.Location,
+      Altitude: request.Altitude,
       Name: request.Name,
     });
 
@@ -63,11 +64,10 @@ export namespace CreateEquipmentUseCaseProtocol {
     Name: string;
     Fk_Organ: number;
     Fk_Type: number;
+    Altitude: number;
     Location: {
       Name: string;
-      Altitude: number;
-      Longitude: number;
-      Latitude: number;
+      Coordinates: Array<number>;
     };
   };
 

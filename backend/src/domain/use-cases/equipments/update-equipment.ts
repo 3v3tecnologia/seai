@@ -48,6 +48,7 @@ export class UpdateEquipment extends Command {
       IdEquipment: request.IdEquipment,
       IdEquipmentExternal: request.IdEquipmentExternal,
       Location: request.Location,
+      Altitude: request.Altitude,
       Name: request.Name,
     });
 
@@ -68,11 +69,10 @@ export namespace UpdateEquipmentUseCaseProtocol {
     Name: string;
     Fk_Organ: number;
     Fk_Type: number;
+    Altitude: number;
     Location: {
       Name: string;
-      Altitude: number;
-      Longitude: number;
-      Latitude: number;
+      Coordinates: Array<number>;
     };
   };
   export type Response = string;

@@ -1,8 +1,6 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { CreateEquipments } from "../../../domain/use-cases/equipments/create-equipment";
-
 import { ok, badRequest, serverError } from "../helpers";
 import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { UpdateEquipment } from "../../../domain/use-cases/equipments/update-equipment";
@@ -29,6 +27,7 @@ export class UpdateEquipmentsController
         Name: request.Name,
         Fk_Organ: request.Fk_Organ,
         Fk_Type: request.Fk_Type,
+        Altitude: request.Altitude,
         Location: request.Location,
       };
 
@@ -56,11 +55,10 @@ export namespace UpdateEquipmentsControllerProtocol {
     Name: string;
     Fk_Organ: number;
     Fk_Type: number;
+    Altitude: number;
     Location: {
       Name: string;
-      Altitude: number;
-      Longitude: number;
-      Latitude: number;
+      Coordinates: Array<number>;
     };
   };
 }
