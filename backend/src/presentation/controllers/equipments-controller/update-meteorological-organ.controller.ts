@@ -31,7 +31,7 @@ export class UpdateMeteorologicalOrganController
     try {
       const errors = new Notification();
 
-      if (Reflect.has(request, "IdOrgan") && typeof request.Host !== "string") {
+      if (Reflect.has(request, "id") && typeof request.Host !== "string") {
         errors.addError(
           new Error('"id" do órgão é obrigatório e deve ser um número.')
         );
@@ -46,7 +46,7 @@ export class UpdateMeteorologicalOrganController
       }
 
       const resultOrError = await this.updateMeteorologicalOrgan.execute({
-        IdOrgan: request.IdOrgan,
+        IdOrgan: request.id,
         Host: request.Host,
         Name: request.Name,
         Password: request.Password || null,
@@ -73,5 +73,6 @@ export class UpdateMeteorologicalOrganController
 export namespace UpdateMeteorologicalOrganControllerProtocol {
   export type Request = {
     accountId: number;
-  } & Required<MeteorologicalOrganEntity>;
+    id: number;
+  } & Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
 }

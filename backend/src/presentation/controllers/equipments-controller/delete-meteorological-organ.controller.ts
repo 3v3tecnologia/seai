@@ -27,8 +27,10 @@ export class DeleteMeteorologicalOrganController
     request: DeleteMeteorologicalOrganControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      if (Reflect.has(request, "id") && typeof request.id !== "number") {
-        return badRequest(new Error("'id' deve ser um número inteiro."));
+      if (Reflect.has(request, "id") === false) {
+        return badRequest(
+          new Error("'id' é obrigatório e deve ser um número inteiro.")
+        );
       }
       const resultOrError = await this.deleteMetereologicalOrgan.execute({
         IdOrgan: request.id,

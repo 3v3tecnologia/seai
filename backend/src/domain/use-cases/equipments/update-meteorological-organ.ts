@@ -25,8 +25,6 @@ export class UpdateMeteorologicalOrgan extends Command {
       request
     );
 
-    console.log("[UpdateMeteorologicalOragan] > ", organId);
-
     // TO-DO : add actions and table name as global constants
     this.addLog({
       action: "update",

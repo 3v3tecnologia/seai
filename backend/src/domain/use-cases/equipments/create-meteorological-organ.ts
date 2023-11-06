@@ -19,8 +19,8 @@ export class CreateMeteorologicalOrgan extends Command {
         request.Name
       );
 
-    if (isOrganAlreadyExists === false) {
-      return left(new Error(`Órgão não existe.`));
+    if (isOrganAlreadyExists === true) {
+      return left(new Error(`Órgão já existe.`));
     }
 
     const organId = await this.equipmentsRepository.createMeteorologicalOrgan(
