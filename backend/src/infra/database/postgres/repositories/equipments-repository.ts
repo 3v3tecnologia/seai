@@ -257,7 +257,7 @@ export class KnexEquipmentsRepository
         Name: row.OrganName,
       },
       Location: {
-        Id: Number(row.IdLocation),
+        Id: Number(row.IdLocation) || null,
         Name: row.LocationName,
         Coordinates: row.Coordinates,
         Altitude: Number(row.Altitude) || null,
