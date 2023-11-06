@@ -109,16 +109,13 @@ export class KnexEquipmentsRepository
 
       idEquipment = rawResult[0].IdEquipment;
 
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+
       await trx
         .raw(
           `INSERT INTO "EquipmentLocation" ("Location","Name","FK_Equipment") 
-        VALUES ('POINT(? ?)'::geometry,?,?)`,
-          [
-            equipment.Location.Longitude,
-            equipment.Location.Latitude,
-            equipment.Location.Name,
-            idEquipment,
-          ]
+        VALUES (${toGeometryPointSQL},?,?)`,
+          [equipment.Location.Name, idEquipment]
         )
         .transacting(trx);
 
@@ -144,28 +141,16 @@ export class KnexEquipmentsRepository
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
 
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+
       await trx.raw(
         `
         UPDATE "EquipmentLocation" 
-        SET "Location" = 'POINT(? ?)'::geometry,
+        SET "Location" = ${toGeometryPointSQL},
         "Name" = ?
         WHERE "FK_Equipment" = ?
       `,
-        [
-          equipment.Location.Longitude,
-          equipment.Location.Latitude,
-          equipment.Location.Name,
-          equipment.IdEquipment,
-        ]
-      );
-
-      console.log(
-        "[EQUIPMENT] :: Repository :: updateEquipment() > ",
-        rawResult
-      );
-      console.log(
-        "[EQUIPMENT] :: Repository :: updateEquipment() > ",
-        `Equipamento ${equipment.IdEquipment} atualizado com sucesso`
+        [equipment.Location.Name, equipment.IdEquipment]
       );
     });
   }

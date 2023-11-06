@@ -54,10 +54,10 @@ export class UpdateEquipment extends Command {
     this.addLog({
       action: "update",
       table: "MetereologicalEquipment",
-      description: `Sucesso ao atualizar equipamento ${equipmentId}.`,
+      description: `Sucesso ao atualizar equipamento ${request.IdEquipment}.`,
     });
 
-    return right(`Sucesso ao atualizar equipamento ${equipmentId}.`);
+    return right(`Sucesso ao atualizar equipamento ${request.IdEquipment}.`);
   }
 }
 
