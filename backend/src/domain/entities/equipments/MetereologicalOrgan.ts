@@ -1,5 +1,5 @@
 export type MeteorologicalOrganEntity = {
-  IdOrgan?: number;
+  Id?: number;
   Name: string;
   Host: string | null;
   User: string | null;

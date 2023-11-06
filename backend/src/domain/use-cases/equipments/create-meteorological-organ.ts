@@ -39,7 +39,7 @@ export class CreateMeteorologicalOrgan extends Command {
 }
 
 export namespace CreateMeteorologicalOrganUseCaseProtocol {
-  export type Request = Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+  export type Request = Required<Omit<MeteorologicalOrganEntity, "Id">>;
 
   export type Response = string;
 }

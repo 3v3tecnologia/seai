@@ -12,7 +12,7 @@ export namespace MeteorologicalOrganRepositoryDTOProtocol {
   }
 
   export namespace Create {
-    export type Params = Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+    export type Params = Required<Omit<MeteorologicalOrganEntity, "Id">>;
     export type Result = Promise<number | null>;
   }
 
@@ -21,7 +21,7 @@ export namespace MeteorologicalOrganRepositoryDTOProtocol {
     export type Result = Promise<number>;
   }
   export namespace Delete {
-    export type Params = Required<MeteorologicalOrganEntity>["IdOrgan"];
+    export type Params = Required<MeteorologicalOrganEntity>["Id"];
     export type Result = Promise<number>;
   }
 

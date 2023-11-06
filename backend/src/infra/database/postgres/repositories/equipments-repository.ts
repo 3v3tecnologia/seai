@@ -33,7 +33,7 @@ export class KnexEquipmentsRepository
       const { IdOrgan, Name, Host, User } = raw;
 
       return {
-        IdOrgan: Number(IdOrgan),
+        Id: Number(IdOrgan),
         Name,
         Host,
         User,
@@ -69,7 +69,7 @@ export class KnexEquipmentsRepository
         User: organ.User,
         Password: organ.Password,
       })
-      .where({ IdOrgan: organ.IdOrgan });
+      .where({ IdOrgan: organ.Id });
   }
 
   async deleteMeteorologicalOrgan(
@@ -246,7 +246,7 @@ export class KnexEquipmentsRepository
 
     return data.rows.map((row: any) => ({
       Id: Number(row.Id),
-      Code: Number(row.EqpCode) || null,
+      Code: row.EqpCode || null,
       Name: row.Name,
       Type: {
         Id: Number(row.IdType),
@@ -256,11 +256,11 @@ export class KnexEquipmentsRepository
         Id: Number(row.IdOrgan),
         Name: row.OrganName,
       },
+      Altitude: Number(row.Altitude) || null,
       Location: {
         Id: Number(row.IdLocation) || null,
         Name: row.LocationName,
         Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
-        Altitude: Number(row.Altitude) || null,
       },
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
@@ -315,7 +315,7 @@ export class KnexEquipmentsRepository
       Time: row.Date,
       Hour: row.Hour,
       IdEquipment: Number(row.IdEquipment) || null,
-      Code: Number(row.EquipmentCode) || null,
+      Code: row.EquipmentCode || null,
       OrganName: row.OrganName,
       Altitude: row.Altitude,
       Measures: {
@@ -403,7 +403,7 @@ export class KnexEquipmentsRepository
       Time: row.Time,
       Hour: row.Hour,
       IdEquipment: Number(row.IdEquipment) || null,
-      Code: Number(row.Code) || null,
+      Code: row.EquipmentCode || null,
       Name: row.Name,
       Organ: row.OrganName,
       Measures: {
