@@ -38,7 +38,7 @@ CREATE TABLE "EquipmentLocation" (
 	"IdLocation" INT GENERATED ALWAYS AS IDENTITY,
 	"Location" geometry(point),
 	"Name" VARCHAR(50) NOT NULL,
-	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment"),
+	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment") ON DELETE CASCADE,
 	PRIMARY KEY("IdLocation")
 );
 
