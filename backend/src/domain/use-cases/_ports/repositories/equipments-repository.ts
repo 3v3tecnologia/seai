@@ -75,8 +75,17 @@ export namespace EquipmentRepositoryDTOProtocol {
     export type Result = Promise<number | null>;
   }
   export namespace GetByPageNumber {
-    export type Params = number;
-    export type Result = Promise<Array<EquipmentEntity> | null>;
+    export type Params = {
+      pageNumber: number;
+      limit: number;
+      idOrgan?: number;
+      idType?: number;
+      name?: string;
+    };
+    export type Result = Promise<{
+      count: number;
+      data: Promise<Array<EquipmentEntity> | null>;
+    } | null>;
   }
 }
 export namespace MeasuresRepositoryDTOProtocol {
@@ -84,15 +93,32 @@ export namespace MeasuresRepositoryDTOProtocol {
     export type Params = {
       idEquipment: number;
       pageNumber: number;
+      limit: number;
+      time: {
+        start: string;
+        end: string | null;
+      } | null;
     };
-    export type Result = Promise<Array<StationReadEntity> | null>;
+    export type Result = Promise<{
+      count: number;
+      data: Array<StationReadEntity> | null;
+    } | null>;
   }
   export namespace GetPluviometers {
     export type Params = {
       idEquipment: number;
       pageNumber: number;
+      limit: number;
+      time: {
+        start: string;
+        end: string | null;
+      } | null;
     };
-    export type Result = Promise<Array<PluviometerReadEntity> | null>;
+
+    export type Result = Promise<{
+      count: number;
+      data: Array<PluviometerReadEntity> | null;
+    } | null>;
   }
 }
 

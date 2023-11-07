@@ -214,37 +214,86 @@ export class KnexEquipmentsRepository
   }
 
   async getEquipments(
-    pageNumber: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
+    params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
-    const data = await equipments.raw(`
-      SELECT
-          equipment."IdEquipment" AS "Id",
-          equipment."IdEquipmentExternal"  AS "EqpCode",
-          equipment."Name",
-          equipment."Altitude" ,
-          equipment."CreatedAt",
-          equipment."UpdatedAt" ,
-          organ."IdOrgan" AS "IdOrgan",
-          organ."Name" AS "OrganName",
-          eqpType."IdType" AS "IdType",
-          eqpType."Name" AS "EqpType",
-          eqpLocation."IdLocation" ,
-          ST_AsGeoJSON(eqpLocation."Location"::geometry)::json AS "GeoLocation",
-          eqpLocation."Name" AS "LocationName"
-      FROM "MetereologicalEquipment" AS equipment
-      INNER JOIN "MetereologicalOrgan" AS organ ON organ."IdOrgan" = equipment."FK_Organ"
-      INNER JOIN "EquipmentType" eqpType ON eqpType."IdType"  = equipment."FK_Type"
-      LEFT JOIN "EquipmentLocation" AS eqpLocation ON eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      LIMIT ${this.equipmentsLimitRow} OFFSET ${
-      this.equipmentsLimitRow * pageNumber
+    const { idOrgan, idType, pageNumber, limit, name } = params;
+
+    const binding = [];
+    const queries: Array<any> = [];
+
+    if (idOrgan) {
+      queries.push(`WHERE
+        organ."IdOrgan" = ?`);
+      binding.push(idOrgan);
     }
-    `);
+
+    if (idType) {
+      queries.push(`
+        AND eqptype."IdType" = ?`);
+      binding.push(idType);
+    }
+
+    if (name) {
+      queries.push(`AND (
+          to_tsvector('simple', coalesce(equipment."Name", ''))      || 
+          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))         || 
+          to_tsvector('simple', coalesce(eqpLocation."Name", '')) 
+          ) @@ to_tsquery('simple', '?:*')`);
+      binding.push(name);
+    }
+
+    queries.push(`LIMIT ? OFFSET ?`);
+    binding.push(limit || 100);
+    binding.push(pageNumber ? limit * pageNumber : 0);
+
+    const sql = `
+    SELECT
+          (
+        SELECT
+            reltuples::bigint AS estimate
+        FROM
+            pg_class
+        WHERE
+            oid = 'public."MetereologicalEquipment"'::regclass
+    ) AS total_registers, 
+          (
+        SELECT
+            json_agg(t.*)
+        FROM
+            (
+                SELECT
+                    equipment."IdEquipment" AS "Id",
+                    equipment."IdEquipmentExternal" AS "EqpCode",
+                    equipment."Name",
+                    equipment."Altitude" ,
+                    equipment."CreatedAt",
+                    equipment."UpdatedAt" ,
+                    organ."IdOrgan" AS "IdOrgan",
+                    organ."Name" AS "OrganName",
+                    eqpType."IdType" AS "IdType",
+                    eqpType."Name" AS "EqpType",
+                    eqpLocation."IdLocation" ,
+                    ST_AsGeoJSON(
+                        eqpLocation."Location"::geometry
+                    )::json AS "GeoLocation",
+                    eqpLocation."Name" AS "LocationName"
+                FROM
+                    "MetereologicalEquipment" AS equipment
+                INNER JOIN "MetereologicalOrgan" AS organ ON
+                    organ."IdOrgan" = equipment."FK_Organ"
+                INNER JOIN "EquipmentType" eqpType ON
+                    eqpType."IdType" = equipment."FK_Type"
+                LEFT JOIN "EquipmentLocation" AS eqpLocation ON
+                    eqpLocation."FK_Equipment" = equipment."IdEquipment"
+               ${queries.join(" ").concat(") AS t) AS equipments")}`;
+
+    const data = await equipments.raw(sql, binding);
 
     if (!data.rowCount) {
       return null;
     }
 
-    return data.rows.map((row: any) => ({
+    const toDomain = data.rows.equipments.map((row: any) => ({
       Id: Number(row.Id),
       Code: row.EqpCode || null,
       Name: row.Name,
@@ -265,52 +314,85 @@ export class KnexEquipmentsRepository
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
     }));
+
+    return {
+      count: data.rows[0].total_registers,
+      data: toDomain,
+    };
   }
+
   async getStationsReads(
     params: MeasuresRepositoryDTOProtocol.GetStations.Params
   ): MeasuresRepositoryDTOProtocol.GetStations.Result {
-    const { idEquipment, pageNumber } = params;
+    const { idEquipment, pageNumber, limit, time } = params;
 
-    const data = await equipments.raw(
-      `
+    const binding = [];
+    const queries: Array<any> = [];
+
+    queries.push(`WHERE stations."FK_Equipment" = ?`);
+    binding.push(idEquipment);
+
+    if (time !== null) {
+      queries.push(`AND stations."Time" >= ?`);
+      binding.push(time.start);
+
+      if (time.end !== null) {
+        queries.push(`AND stations."Time" <= ?`);
+        binding.push(time.end);
+      }
+    }
+    queries.push('ORDER BY stations."Time" ASC');
+    queries.push(`LIMIT ? OFFSET ?`);
+    binding.push(limit || 100);
+    binding.push(pageNumber ? limit * pageNumber : 0);
+
+    const sqlQuery = `
       SELECT
-          stations."IdRead",
-          stations."Time" AS "Date",
-          stations."Hour",
-          equipment."IdEquipment",
-          equipment."IdEquipmentExternal" AS "EquipmentCode",
-          organ."IdOrgan",
-          organ."Name" AS "OrganName",
-          equipment."Altitude",
-          stations."TotalRadiation",
-          stations."MaxRelativeHumidity",
-          stations."MinRelativeHumidity",
-          stations."AverageRelativeHumidity",
-          stations."MaxAtmosphericTemperature",
-          stations."MinAtmosphericTemperature",
-          stations."AverageAtmosphericTemperature" ,
-          stations."AtmosphericPressure" ,
-          stations."WindVelocity",
-          eto."Value" AS "ETO"
-      FROM "MetereologicalEquipment" AS equipment  
-      LEFT JOIN "ReadStations" AS stations
-      ON equipment."IdEquipment"  = stations."FK_Equipment"
-      LEFT JOIN "Et0" AS eto
-      ON stations."IdRead"  = eto."FK_Station_Read"
-      INNER JOIN "MetereologicalOrgan" AS organ
-      ON organ."IdOrgan" = stations."FK_Organ"
-      WHERE stations."FK_Equipment" = ?
-      ORDER BY "Time" ASC
-      LIMIT ${this.measuresLimitRow} OFFSET ?;
-  `,
-      [idEquipment, this.measuresLimitRow * pageNumber]
-    );
+          (SELECT reltuples::bigint AS estimate
+      FROM   pg_class
+      WHERE  oid = 'public."MetereologicalEquipment"'::regclass
+          ) as total_registers, 
+          (SELECT json_agg(t.*) FROM (
+              SELECT
+                stations."IdRead",
+                stations."Time" AS "Date",
+                stations."Hour",
+                equipment."IdEquipment",
+                equipment."IdEquipmentExternal" AS "EquipmentCode",
+                organ."IdOrgan",
+                organ."Name" AS "OrganName",
+                equipment."Altitude",
+                stations."TotalRadiation",
+                stations."MaxRelativeHumidity",
+                stations."MinRelativeHumidity",
+                stations."AverageRelativeHumidity",
+                stations."MaxAtmosphericTemperature",
+                stations."MinAtmosphericTemperature",
+                stations."AverageAtmosphericTemperature" ,
+                stations."AtmosphericPressure" ,
+                stations."WindVelocity",
+                eto."Value" AS "ETO"
+            FROM "MetereologicalEquipment" AS equipment  
+            LEFT JOIN "ReadStations" AS stations
+            ON equipment."IdEquipment"  = stations."FK_Equipment"
+            LEFT JOIN "Et0" AS eto
+            ON stations."IdRead"  = eto."FK_Station_Read"
+            INNER JOIN "MetereologicalOrgan" AS organ
+            ON organ."IdOrgan" = stations."FK_Organ"
+            ${queries.join(" ").concat(") AS t) AS measures")}
+    `;
+
+    const data = await equipments.raw(sqlQuery, binding);
+
+    console.log("[READ STATIONS] :: ", data.rows);
 
     if (!data.rowCount) {
       return null;
     }
 
-    return data.rows.map((row: any) => ({
+    console.log("[READ STATIONS] [MEASURES]:: ", data.rows.measures);
+
+    const measuresToDomain = data.rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Date,
       Hour: row.Hour,
@@ -361,14 +443,44 @@ export class KnexEquipmentsRepository
         },
       },
     }));
+
+    return {
+      count: data.rows[0].total_registers,
+      data: measuresToDomain,
+    };
   }
   async getPluviometersReads(
     params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
   ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result {
-    const { idEquipment, pageNumber } = params;
+    const { idEquipment, pageNumber, limit, time } = params;
 
-    const data = await equipments.raw(
-      `
+    const binding = [];
+    const queries: Array<any> = [];
+
+    queries.push(`WHERE pluviometer."FK_Equipment" = ?`);
+    binding.push(idEquipment);
+
+    if (time !== null) {
+      queries.push(`AND pluviometer."Time" >= ?`);
+      binding.push(time.start);
+
+      if (time.end !== null) {
+        queries.push(`AND pluviometer."Time" <= ?`);
+        binding.push(time.end);
+      }
+    }
+
+    queries.push('ORDER BY pluviometer."Time" ASC');
+    queries.push(`LIMIT ? OFFSET ?`);
+    binding.push(limit || 100);
+    binding.push(pageNumber ? limit * pageNumber : 0);
+
+    const sql = `
+      (SELECT reltuples::bigint AS estimate
+      FROM   pg_class
+      WHERE  oid = 'public."MetereologicalEquipment"'::regclass
+          ) as total_registers,
+          (SELECT json_agg(t.*) FROM (
       SELECT
           pluviometer."IdRead",
           pluviometer."Time" ,
@@ -380,25 +492,21 @@ export class KnexEquipmentsRepository
           organ."IdOrgan",
           pluviometer."Value"
       FROM
-          "ReadPluviometers" AS pluviometer
+        "MetereologicalEquipment" AS equipment 
+      LEFT JOIN "ReadPluviometers" AS pluviometer
+        ON equipment."IdEquipment" = pluviometer."FK_Equipment"
       INNER JOIN "MetereologicalOrgan" AS organ
-          ON
-          organ."IdOrgan" = pluviometer."FK_Organ"
-      INNER JOIN "MetereologicalEquipment" AS equipment
-          ON
-          equipment."IdEquipment" = pluviometer."FK_Equipment"
-      WHERE pluviometer."FK_Equipment" = ?
-      ORDER BY "Time" ASC
-      LIMIT ${this.measuresLimitRow} OFFSET ?;
-  `,
-      [idEquipment, this.measuresLimitRow * pageNumber]
-    );
+          ON organ."IdOrgan" = pluviometer."FK_Organ"
+      ${queries.join(" ").concat(") AS t) AS measures")};
+  `;
+
+    const data = await equipments.raw(sql, binding);
 
     if (!data.rowCount) {
       return null;
     }
 
-    return data.rows.map((row: any) => ({
+    const toDomain = data.rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Time,
       Hour: row.Hour,
@@ -413,5 +521,10 @@ export class KnexEquipmentsRepository
         },
       },
     }));
+
+    return {
+      count: data.rows[0].total_registers,
+      data: toDomain,
+    };
   }
 }
