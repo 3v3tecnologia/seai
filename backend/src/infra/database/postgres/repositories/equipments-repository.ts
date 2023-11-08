@@ -287,13 +287,19 @@ export class KnexEquipmentsRepository
                     eqpLocation."FK_Equipment" = equipment."IdEquipment"
                ${queries.join(" ").concat(") AS t) AS equipments")}`;
 
-    const data = await equipments.raw(sql, binding);
+    console.log("SQL :: ",sql,binding)
 
-    if (!data.rowCount) {
+    const data = await equipments.raw(sql, binding);
+    
+    const rows = data.rows[0]
+    if (!rows.equipments) {
       return null;
     }
+    
+    // [ { total_registers: 'number', equipments: [ [Object] ] } ]
+    console.log("DATA :: ",data.rows)
 
-    const toDomain = data.rows.equipments.map((row: any) => ({
+    const toDomain = rows.equipments.map((row: any) => ({
       Id: Number(row.Id),
       Code: row.EqpCode || null,
       Name: row.Name,
@@ -316,7 +322,7 @@ export class KnexEquipmentsRepository
     }));
 
     return {
-      count: data.rows[0].total_registers,
+      count: rows.total_registers,
       data: toDomain,
     };
   }
@@ -386,13 +392,16 @@ export class KnexEquipmentsRepository
 
     console.log("[READ STATIONS] :: ", data.rows);
 
-    if (!data.rowCount) {
+    const rows = data.rows[0]
+
+    if (!rows.measures) {
       return null;
     }
 
-    console.log("[READ STATIONS] [MEASURES]:: ", data.rows.measures);
 
-    const measuresToDomain = data.rows.measures.map((row: any) => ({
+    console.log("[READ STATIONS] [MEASURES]:: ", rows);
+
+    const measuresToDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Date,
       Hour: row.Hour,
@@ -445,7 +454,7 @@ export class KnexEquipmentsRepository
     }));
 
     return {
-      count: data.rows[0].total_registers,
+      count: rows.total_registers,
       data: measuresToDomain,
     };
   }
@@ -502,11 +511,14 @@ export class KnexEquipmentsRepository
 
     const data = await equipments.raw(sql, binding);
 
-    if (!data.rowCount) {
+    const rows = data.rows[0]    
+
+    if (!rows.measures) {
       return null;
     }
 
-    const toDomain = data.rows.measures.map((row: any) => ({
+
+    const toDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Time,
       Hour: row.Hour,
@@ -523,7 +535,7 @@ export class KnexEquipmentsRepository
     }));
 
     return {
-      count: data.rows[0].total_registers,
+      count: rows.total_registers,
       data: toDomain,
     };
   }

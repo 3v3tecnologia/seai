@@ -84,7 +84,7 @@ export namespace EquipmentRepositoryDTOProtocol {
     };
     export type Result = Promise<{
       count: number;
-      data: Promise<Array<EquipmentEntity> | null>;
+      data: Array<EquipmentEntity> | null;
     } | null>;
   }
 }

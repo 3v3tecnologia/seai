@@ -46,5 +46,10 @@ export namespace FetchPluviometersMeasuresControllerProtocol {
   export type Request = {
     idEquipment: number;
     pageNumber: number;
+    limit:number;
+    time?:{
+      start: string;
+      end: string | null;
+    } | null
   };
 }
