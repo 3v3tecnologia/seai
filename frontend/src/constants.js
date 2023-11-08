@@ -15,3 +15,7 @@ export const reportsTitles = {
   secSocial: "Segurança social (Emprego/ha)",
   secHydro: "Segurança hídrica (m³/ha)",
 };
+
+export const defaultPagination = {
+  itemPerPage: 5,
+};

@@ -699,18 +699,16 @@ export const store = createStore<Estado>({
           },
         } = await http.get(`/equipments/`);
 
-        const equipmentTypeHash = {
-          station: "Estação",
-          pluviometer: "Pluviômetro",
-        };
+        const equipmentType = ["Estação", "Pluviômetro"];
 
-        equipments.map(
-          (equip: { [x: string]: string; Type: "station" | "pluviometer" }) => {
-            equip.NomeTipoEquipamento = equipmentTypeHash[equip.Type];
-
-            return equip;
-          }
-        );
+        equipments.map((equip: any) => {
+          equip.Location = equip.Location.Name;
+          equip.Organ = equip.Organ.Name;
+          equip.Type = equip.Type.Name || "station";
+          equip.NomeTipoEquipamento =
+            equip.Type === "pluviometer" ? equipmentType[1] : equipmentType[0];
+          return equip;
+        });
 
         commit("SET_EQUIPMENTS", {
           data: equipments,

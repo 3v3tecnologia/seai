@@ -68,11 +68,12 @@
         </div>
       </div>
 
-      <div class="wrapper-table">
-        <div ref="table" />
-      </div>
-      <BasePagination v-model="currentPage" />
-
+      <BaseTable
+        @selected="setSelectedUsers"
+        :filters-table="filtersTable"
+        :data="data"
+        :columns="columns"
+      />
       <div class="py-4 py-lg-5" />
     </div>
   </div>
@@ -83,7 +84,7 @@ import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
-import BasePagination from "@/components/BasePagination.vue";
+import BaseTable from "@/components/BaseTable.vue";
 import { useRouter } from "vue-router";
 
 import { TabulatorFull as Tabulator } from "tabulator-tables";
@@ -97,10 +98,11 @@ const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
 const search = ref("");
-const currentPage = ref(0);
+const currentPage = ref(1);
 
-const setSelectedUsers = () => {
-  selectedUsers.value = tabulator.value?.getSelectedData() || [];
+const setSelectedUsers = (selecteds) => {
+  console.log("setando selcionados", selecteds);
+  selectedUsers.value = selecteds || [];
 };
 
 const store = useStore();
@@ -154,63 +156,6 @@ const props = defineProps({
 
 const filtersValue = ref([]);
 
-const generateTabulatorLang = (key, text) => {
-  const pageSize = `${text[0].toUpperCase() + text.slice(1)}s Por Página`;
-  const rows = `${text}s`;
-
-  return {
-    [key]: {
-      pagination: {
-        page_size: pageSize,
-        page_title: "Selecionar Páginas",
-        first: "Primeira",
-        first_title: "Primeira Página",
-        last: "Última",
-        last_title: "Última Página",
-        prev: "Anterior",
-        prev_title: "Página Anterior",
-        next: "Próxima",
-        next_title: "Página Próxima",
-        all: "Todas",
-        counter: {
-          showing: "Mostrando",
-          of: "de",
-          rows,
-          page: "páginas",
-        },
-      },
-    },
-  };
-};
-
-const langs = {
-  ...generateTabulatorLang("users", "usuário"),
-  ...generateTabulatorLang("equipments", "equipamento"),
-  ...generateTabulatorLang("metereologicalBodies", "órg. metereológico"),
-};
-
-onMounted(() => {
-  //instantiate Tabulator when element is mounted
-  tabulator.value = new Tabulator(table.value, {
-    data: props.data,
-    reactiveData: false,
-    columns: props.columns,
-    layout: "fitColumns",
-    pagination: "local",
-    paginationSize: 20,
-    paginationSizeSelector: [...new Set([5, 10, 15, 20, 25, 30, 50, 100])].sort(
-      (a, b) => a - b
-    ),
-    paginationCounter: "rows",
-    locale: true,
-    langs,
-  });
-
-  tabulator.value.on("tableBuilt", () => {
-    tabulator.value?.setLocale?.(props.storeDataKey);
-  });
-});
-
 defineEmits(["update:modelValue"]);
 
 const formatFilterTable = (f) => {
@@ -252,40 +197,10 @@ const filtersTable = computed(() => {
 });
 
 watch(
-  () => filtersTable.value,
-  (val) => {
-    tabulator.value?.setFilter(val);
-  },
-  { immediate: true }
-);
-
-// Redraw data;
-watch(
-  () => props.data,
-  (val) => {
-    if (tabulator.value?.initialized) {
-      tabulator.value?.setData(val);
-    }
-  },
-  { immediate: true }
-);
-
-// Redraw columns;
-watch(
-  () => props.columns,
-  (newValue) => {
-    tabulator.value?.setColumns(newValue);
-  }
-);
-
-watch(
   () => props.storeDataKey,
   (newValue) => {
     search.value = "";
     props.stateFilters.forEach((f) => store.dispatch(f.getListKey));
-
-    tabulator.value?.setFilter(filtersTable.value);
-    tabulator.value?.setLocale(newValue);
 
     filtersValue.value = allFiltersDrop.value.map((f) => {
       return {
@@ -298,8 +213,6 @@ watch(
 );
 
 const handleDeleteUsers = () => {
-  setSelectedUsers();
-
   if (!selectedUsers.value.length) {
     showConfirmModal.value = false;
     return toast.warning(`Não há ${props.actionText} selecionado.`);
@@ -309,7 +222,6 @@ const handleDeleteUsers = () => {
 };
 
 const handleEditUser = () => {
-  setSelectedUsers();
   const id = selectedUsers.value[0]?.id ?? selectedUsers.value[0]?.Id;
 
   if (!selectedUsers.value.length) {
@@ -330,6 +242,6 @@ const handleEditUser = () => {
 
 .wrapper-table {
   border: 1px solid #4b4b4b59;
-  border-radius: 5px;
+  border-radius: 5px 5px 0 0;
 }
 </style>

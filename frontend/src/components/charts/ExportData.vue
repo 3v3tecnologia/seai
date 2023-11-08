@@ -8,6 +8,7 @@
         :data="report.data"
         :title="report.title"
         :columns="report.columns"
+        is-report
       />
     </div>
     <div class="col-lg-12">
@@ -19,7 +20,7 @@
 </template>
 
 <script setup>
-import TableReport from "../TableReport.vue";
+import TableReport from "../BaseTable.vue";
 import { toast } from "vue3-toastify";
 import { ref, defineProps, computed } from "vue";
 

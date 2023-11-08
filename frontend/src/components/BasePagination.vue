@@ -1,63 +1,123 @@
 <template>
   <div
-    class="base-pagination d-flex align-items-center justify-content-between px-2"
+    class="base-pagination d-flex align-items-center justify-content-between px-2 py-2"
   >
     <div>
-      Mostrando {{ currentShowingItems }} de {{ totalItems }}
+      Mostrando {{ currentShowingItems.length }} de {{ totalItems }}
       {{ loweredCollectionText }}s
     </div>
     <div>
-      <!-- <div class="font-weight-bold">
-        {{ capitalizedCollectionText }}s Por Página: {{ perPage }}
-      </div> -->
       <div class="navigation-items">
-        <button>Primeira</button>
-        <button>Anterior</button>
-        <button>Próxima</button>
-        <button>Última</button>
+        <button class="bg-white p-2" @click="setFirstPage">Primeira</button>
+        <button class="bg-white p-2 mx-2" @click="setBeforePage">
+          Anterior
+        </button>
+        <button
+          v-for="page in pagesShowing"
+          :key="page"
+          class="btn-page p-2"
+          :class="{
+            'is-current': currentPage === page,
+          }"
+          @click="setPage(page)"
+        >
+          {{ page }}
+        </button>
+        <button class="bg-white p-2 mx-2" @click="setNextPage">Próxima</button>
+        <button class="bg-white p-2" @click="setLastPage">Última</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, defineProps } from "vue";
+import { computed, defineProps, defineEmits, ref } from "vue";
 
 const props = defineProps({
-  currentPage: {
-    type: Number,
-    default: 0,
-  },
   totalItems: {
     type: Number,
-    default: 50,
+    default: 1,
   },
   currentShowingItems: {
-    type: Number,
-    default: 30,
+    type: Array,
+    default: () => [],
   },
   collectionText: {
     type: String,
-    default: "Usuário",
+    default: "",
   },
   perPage: {
     type: Number,
-    default: 50,
+    default: 1,
   },
 });
 
-const capitalizedCollectionText = computed(
-  () =>
-    props.collectionText[0].toUpperCase() +
-    props.collectionText.substring(1).toLowerCase()
+const pagesButtonsMax = 5;
+
+const totalPages = computed(() => Math.ceil(props.totalItems / props.perPage));
+const currentPage = ref(1);
+const pages = computed(() =>
+  [...Array(totalPages.value).keys()].map((c) => c + 1)
+);
+
+const pagesShowing = computed(() =>
+  pages.value.filter((page) => {
+    let finalPage = currentPage.value + pagesButtonsMax - 1;
+    let leftPagesGap = -(finalPage - pages.value.length);
+    let initialPage = leftPagesGap + currentPage.value;
+
+    if (leftPagesGap > 0) {
+      leftPagesGap = 0;
+    }
+
+    initialPage = leftPagesGap + currentPage.value;
+    finalPage = initialPage + pagesButtonsMax - 1;
+
+    return page >= initialPage && page <= finalPage;
+  })
 );
 
 const loweredCollectionText = computed(() =>
   props.collectionText.toLowerCase()
 );
+
+const emit = defineEmits(["update:modelValue"]);
+
+const setPage = (page) => {
+  const lastPage = pages.value[pages.value.length - 1];
+  const firstPage = pages.value[0];
+  let pageToSet = null;
+
+  if (page > lastPage) {
+    pageToSet = lastPage;
+  } else if (page < firstPage) {
+    pageToSet = firstPage;
+  } else {
+    pageToSet = page;
+  }
+
+  emit("update:modelValue", pageToSet);
+  currentPage.value = pageToSet;
+};
+
+const setFirstPage = () => {
+  setPage(pages.value[0]);
+};
+
+const setLastPage = () => {
+  setPage(pages.value[pages.value.length - 1]);
+};
+
+const setBeforePage = () => {
+  setPage(currentPage.value - 1);
+};
+
+const setNextPage = () => {
+  setPage(currentPage.value + 1);
+};
 </script>
 
-<style>
+<style lang="scss" scoped>
 .base-pagination {
   height: 57px;
   background-color: #e6e6e6;
@@ -67,11 +127,37 @@ const loweredCollectionText = computed(() =>
 }
 
 .navigation-items > * {
+  $filter-hover: brightness(0.8);
+  $active-bg: #007bff;
+  $active-color: white;
+
   border-color: #dee2e6;
   background: #e9ecef;
   color: #0056b3;
   border: 1px solid #dee2e6;
   border-radius: 3px;
   background: hsla(0, 0%, 100%, 0.2);
+  border-radius: 5px;
+
+  &:hover,
+  &.is-current {
+    background-color: $active-bg !important;
+    color: $active-color !important;
+  }
+
+  &:not(.btn-page) {
+    width: 77px;
+  }
+
+  &.btn-page {
+    width: 45px;
+    transition: all 0.3s;
+
+    &.is-current {
+      &:hover {
+        filter: $filter-hover;
+      }
+    }
+  }
 }
 </style>
