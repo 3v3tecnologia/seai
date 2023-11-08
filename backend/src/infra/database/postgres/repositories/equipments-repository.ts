@@ -33,7 +33,7 @@ export class KnexEquipmentsRepository
       const { IdOrgan, Name, Host, User } = raw;
 
       return {
-        IdOrgan: Number(IdOrgan),
+        Id: Number(IdOrgan),
         Name,
         Host,
         User,
@@ -69,7 +69,7 @@ export class KnexEquipmentsRepository
         User: organ.User,
         Password: organ.Password,
       })
-      .where({ IdOrgan: organ.IdOrgan });
+      .where({ IdOrgan: organ.Id });
   }
 
   async deleteMeteorologicalOrgan(
@@ -98,7 +98,7 @@ export class KnexEquipmentsRepository
         .insert({
           IdEquipmentExternal: equipment.IdEquipmentExternal,
           Name: equipment.Name,
-          Altitude: equipment.Location.Altitude,
+          Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
           CreatedAt: equipments.fn.now(),
@@ -109,7 +109,7 @@ export class KnexEquipmentsRepository
 
       idEquipment = rawResult[0].IdEquipment;
 
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
 
       await trx
         .raw(
@@ -133,7 +133,7 @@ export class KnexEquipmentsRepository
         .update({
           IdEquipmentExternal: equipment.IdEquipmentExternal,
           Name: equipment.Name,
-          Altitude: equipment.Location.Altitude,
+          Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
           UpdatedAt: equipments.fn.now(),
@@ -141,7 +141,7 @@ export class KnexEquipmentsRepository
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
 
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Longitude} ${equipment.Location.Latitude})'::geometry`;
+      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
 
       await trx.raw(
         `
@@ -229,7 +229,7 @@ export class KnexEquipmentsRepository
           eqpType."IdType" AS "IdType",
           eqpType."Name" AS "EqpType",
           eqpLocation."IdLocation" ,
-          eqpLocation."Location" AS "Coordinates",
+          ST_AsGeoJSON(eqpLocation."Location"::geometry)::json AS "GeoLocation",
           eqpLocation."Name" AS "LocationName"
       FROM "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON organ."IdOrgan" = equipment."FK_Organ"
@@ -246,7 +246,7 @@ export class KnexEquipmentsRepository
 
     return data.rows.map((row: any) => ({
       Id: Number(row.Id),
-      Code: Number(row.EqpCode) || null,
+      Code: row.EqpCode || null,
       Name: row.Name,
       Type: {
         Id: Number(row.IdType),
@@ -256,11 +256,11 @@ export class KnexEquipmentsRepository
         Id: Number(row.IdOrgan),
         Name: row.OrganName,
       },
+      Altitude: Number(row.Altitude) || null,
       Location: {
-        Id: Number(row.IdLocation),
+        Id: Number(row.IdLocation) || null,
         Name: row.LocationName,
-        Coordinates: row.Coordinates,
-        Altitude: Number(row.Altitude) || null,
+        Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
       },
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
@@ -315,7 +315,7 @@ export class KnexEquipmentsRepository
       Time: row.Date,
       Hour: row.Hour,
       IdEquipment: Number(row.IdEquipment) || null,
-      Code: Number(row.EquipmentCode) || null,
+      Code: row.EquipmentCode || null,
       OrganName: row.OrganName,
       Altitude: row.Altitude,
       Measures: {
@@ -403,7 +403,7 @@ export class KnexEquipmentsRepository
       Time: row.Time,
       Hour: row.Hour,
       IdEquipment: Number(row.IdEquipment) || null,
-      Code: Number(row.Code) || null,
+      Code: row.EquipmentCode || null,
       Name: row.Name,
       Organ: row.OrganName,
       Measures: {

@@ -12,7 +12,7 @@ export namespace MeteorologicalOrganRepositoryDTOProtocol {
   }
 
   export namespace Create {
-    export type Params = Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+    export type Params = Required<Omit<MeteorologicalOrganEntity, "Id">>;
     export type Result = Promise<number | null>;
   }
 
@@ -21,7 +21,7 @@ export namespace MeteorologicalOrganRepositoryDTOProtocol {
     export type Result = Promise<number>;
   }
   export namespace Delete {
-    export type Params = Required<MeteorologicalOrganEntity>["IdOrgan"];
+    export type Params = Required<MeteorologicalOrganEntity>["Id"];
     export type Result = Promise<number>;
   }
 
@@ -41,11 +41,10 @@ export namespace EquipmentRepositoryDTOProtocol {
       Name: string;
       Fk_Organ: number;
       Fk_Type: number;
+      Altitude: number;
       Location: {
         Name: string;
-        Altitude: number;
-        Longitude: number;
-        Latitude: number;
+        Coordinates: Array<number>;
       };
     };
 

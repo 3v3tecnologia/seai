@@ -6383,14 +6383,34 @@
                               "Id": "number",
                               "Code": "number",
                               "Name": "string",
-                              "IdType": "number",
-                              "Type": "string",
+                              "Type": {
+                                "type":"object",
+                                "properties":{
+                                  "Id": "number",
+                                  "Name": "string"
+                                }
+                              },
                               "Altitude": "number",
-                              "IdOrgan": "string",
-                              "Organ": "string",
-                              "IdLocation": "number",
-                              "LocationPosition": "string",
-                              "LocationName": "string",
+                              "Organ": {
+                                "type":"object",
+                                "properties":{
+                                  "Id": "number",
+                                  "Name": "string"
+                                }
+                              },
+                              "Location": {
+                                "type":"object",
+                                "properties":{
+                                  "Id": "number",
+                                  "Name": "string",
+                                  "Coordinates": {
+                                    "type":"array",
+                                    "items":{
+                                      "type":"number"
+                                    }
+                                  }
+                                }
+                              },
                               "CreatedAt": "string",
                               "UpdatedAt": "string"
                             }
@@ -6412,53 +6432,32 @@
                     "data": {
                       "Equipments": [
                         {
-                          "Id": 1,
-                          "Code": 32321,
-                          "Name": "Fortaleza - Itaperi",
-                          "IdType": 1,
-                          "Type": "station",
-                          "Altitude": 30.4,
-                          "IdOrgan": 2,
-                          "Organ": "FUNCEME",
-                          "IdLocation": 0,
-                          "LocationPosition": null,
-                          "LocationName": null,
-                          "CreatedAt": "2023-10-30T12:22:10.469Z",
-                          "UpdatedAt": "2023-10-30T12:22:10.469Z"
-                        },
-                        {
-                          "Id": 2,
-                          "Code": 4455,
-                          "Name": "Pluviometro - Itaperi",
-                          "IdType": 2,
-                          "Type": "pluviometer",
-                          "Altitude": 44,
-                          "IdOrgan": 2,
-                          "Organ": "FUNCEME",
-                          "IdLocation": 0,
-                          "LocationPosition": null,
-                          "LocationName": null,
-                          "CreatedAt": "2023-10-30T13:51:14.467Z",
-                          "UpdatedAt": "2023-10-30T13:51:14.467Z"
-                        },
-                        {
-                          "Id": 4,
-                          "Code": null,
-                          "Name": "teste123",
-                          "IdType": 1,
-                          "Type": "station",
-                          "Altitude": 58,
-                          "IdOrgan": 2,
-                          "Organ": "FUNCEME",
-                          "IdLocation": 0,
-                          "LocationPosition": null,
-                          "LocationName": null,
-                          "CreatedAt": "2023-10-30T19:24:07.119Z",
-                          "UpdatedAt": "2023-10-30T20:52:34.275Z"
+                          "Id": 17,
+                          "Code": "B8524E9A",
+                          "Name": "Alto Santo - Castanhão",
+                          "Type": {
+                            "Id": 1,
+                            "Name": "station"
+                          },
+                          "Organ": {
+                            "Id": 2,
+                            "Name": "FUNCEME"
+                          },
+                          "Altitude": 4,
+                          "Location": {
+                            "Id": 3,
+                            "Name": "Test3",
+                            "Coordinates": [
+                              -30.1162,
+                              -8.9124
+                            ]
+                          },
+                          "CreatedAt": "2023-11-06T12:52:23.953Z",
+                          "UpdatedAt": "2023-11-06T12:55:17.233Z"
                         }
                       ],
                       "PageNumber": 0,
-                      "QtdRows": 3,
+                      "QtdRows": 1,
                       "PageLimitRows": 90
                     }
                   }
@@ -6557,6 +6556,20 @@
                   "Altitude": {
                     "type": "string"
                   },
+                  "Location": {
+                    "type": "object",
+                    "properties":{
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Coordinates":{
+                        "type":"array",
+                        "items":{
+                          "type":"number"
+                        }
+                      }
+                    }
+                  },
                   "Fk_Organ": {
                     "type": "string"
                   },
@@ -6565,11 +6578,15 @@
                   }
                 },
                 "example": {
-                  "IdEquipmentExternal": "test123",
-                  "Name": "teste123",
-                  "Altitude": 58,
-                  "Fk_Organ": 2,
-                  "Fk_Type": 1
+                  "IdEquipmentExternal":"TESTE1",
+                  "Name":"teste123",
+                  "Altitude":54,
+                  "Location":{
+                    "Name":"Test3",
+                    "Coordinates":[-38.5162,-4.1124]
+                  },
+                  "Fk_Organ":2,
+                  "Fk_Type":1
                 }
               }
             }
@@ -6697,7 +6714,21 @@
                     "type": "string"
                   },
                   "Altitude": {
-                    "type": "string"
+                    "type": "number"
+                  },
+                  "Location": {
+                    "type": "object",
+                    "properties":{
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Coordinates":{
+                        "type":"array",
+                        "items":{
+                          "type":"number"
+                        }
+                      }
+                    }
                   },
                   "Fk_Organ": {
                     "type": "string"
@@ -6707,11 +6738,15 @@
                   }
                 },
                 "example": {
-                  "IdEquipmentExternal": "test123",
-                  "Name": "teste123",
-                  "Altitude": 58,
-                  "Fk_Organ": 2,
-                  "Fk_Type": 1
+                  "IdEquipmentExternal":"TESTE1",
+                  "Name":"teste12",
+                  "Altitude":4,
+                  "Location":{
+                    "Name":"Test3",
+                    "Coordinates":[-38.5162,-4.1124]
+                  },
+                  "Fk_Organ":2,
+                  "Fk_Type":1
                 }
               }
             }
@@ -6719,7 +6754,7 @@
         },
         "responses": {
           "200": {
-            "description": "Equipment created successfully",
+            "description": "Equipment updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -6843,6 +6878,500 @@
                   },
                   "example": {
                     "data": "Equipamento 4 deletado com sucesso."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipments/organ": {
+      "get": {
+        "tags": [
+          "Meteorological Organ"
+        ],
+        "summary": "Get all meteorological organ",
+        "description": "List all meteorological organ",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meteorological organs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type":"array",
+                        "items":{
+                          "Id": "number",
+                          "Name": "string",
+                          "Host": "string",
+                          "User": "string"
+                        }
+                        
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": [
+                      {
+                        "Id": 1,
+                        "Name": "INMET",
+                        "Host": null,
+                        "User": null
+                      },
+                      {
+                        "Id": 2,
+                        "Name": "FUNCEME",
+                        "Host": null,
+                        "User": null
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Meteorological Organ"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create meteorological organ",
+        "description": "Create meteorological organ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Host": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Password": {
+                    "type": "string"
+                  },
+                  "User": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "Host":"test1.fpt.test",
+                  "Name":"Test1",
+                  "Password":"1234",
+                  "User":"root"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Meteorological organ created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao criar órgão 6."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Meteorological Organ"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Organ Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "summary": "Update equipments",
+        "description": "Update equipment by id",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Host": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Password": {
+                    "type": "string"
+                  },
+                  "User": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "Host":"test1.fpt.test",
+                  "Name":"Test1",
+                  "Password":"1234",
+                  "User":"root"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Equipment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao atualizar órgão x."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Internal server error"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "Forbidden access"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "error": "No authorization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete":{
+        "tags": [
+          "Meteorological Organ"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Organ Id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "summary": "Delete meteorological organ",
+        "description": "Delete meteorological organ by id",
+        "responses": {
+          "200": {
+            "description": "Meteorological organ deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "data": "Sucesso ao deletar órgão x."
                   }
                 }
               }

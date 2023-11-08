@@ -46,7 +46,7 @@ export class UpdateMeteorologicalOrganController
       }
 
       const resultOrError = await this.updateMeteorologicalOrgan.execute({
-        IdOrgan: request.id,
+        Id: request.id,
         Host: request.Host,
         Name: request.Name,
         Password: request.Password || null,
@@ -74,5 +74,5 @@ export namespace UpdateMeteorologicalOrganControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-  } & Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+  } & Required<Omit<MeteorologicalOrganEntity, "Id">>;
 }

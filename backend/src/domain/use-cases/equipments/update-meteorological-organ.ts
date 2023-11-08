@@ -15,7 +15,7 @@ export class UpdateMeteorologicalOrgan extends Command {
     request: UpdateMeteorologicalOrganUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateMeteorologicalOrganUseCaseProtocol.Response>> {
     const isOrganAlreadyExists =
-      await this.equipmentsRepository.checkIfOrganExists(request.IdOrgan);
+      await this.equipmentsRepository.checkIfOrganExists(request.Id);
 
     if (isOrganAlreadyExists === false) {
       return left(new Error(`Órgão não existe.`));
@@ -29,10 +29,10 @@ export class UpdateMeteorologicalOrgan extends Command {
     this.addLog({
       action: "update",
       table: "MetereologicalOrganEquipment",
-      description: `Sucesso ao atualizar órgão ${request.IdOrgan}.`,
+      description: `Sucesso ao atualizar órgão ${request.Id}.`,
     });
 
-    return right(`Sucesso ao criar órgão ${request.IdOrgan}.`);
+    return right(`Sucesso ao criar órgão ${request.Id}.`);
   }
 }
 

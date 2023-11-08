@@ -27,6 +27,7 @@ export class CreateEquipmentsController
         Fk_Organ: request.Fk_Organ,
         Fk_Type: request.Fk_Type,
         IdEquipmentExternal: request.IdEquipmentExternal,
+        Altitude: request.Altitude,
         Location: request.Location,
       });
 
@@ -49,11 +50,10 @@ export namespace CreateEquipmentsControllerProtocol {
     accountId: number;
     IdEquipmentExternal: string;
     Name: string;
+    Altitude: number;
     Location: {
       Name: string;
-      Altitude: number;
-      Longitude: number;
-      Latitude: number;
+      Coordinates: Array<number>;
     };
     Fk_Organ: number;
     Fk_Type: number;

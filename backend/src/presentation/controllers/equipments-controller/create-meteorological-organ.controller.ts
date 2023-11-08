@@ -58,5 +58,5 @@ export class CreateMeteorologicalOrganController
 export namespace CreateMeteorologicalOrganControllerProtocol {
   export type Request = {
     accountId: number;
-  } & Required<Omit<MeteorologicalOrganEntity, "IdOrgan">>;
+  } & Required<Omit<MeteorologicalOrganEntity, "Id">>;
 }
