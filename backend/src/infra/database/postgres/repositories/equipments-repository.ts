@@ -348,7 +348,7 @@ export class KnexEquipmentsRepository
     const binding = [];
     const queries: Array<any> = [];
 
-    queries.push(`WHERE stations."FK_Equipment" = ?`);
+    queries.push(`WHERE equipment."IdEquipment" = ?`);
     binding.push(idEquipment);
 
     if (time !== null) {
@@ -478,7 +478,7 @@ export class KnexEquipmentsRepository
     const binding = [];
     const queries: Array<any> = [];
 
-    queries.push(`WHERE pluviometer."FK_Equipment" = ?`);
+    queries.push(`WHERE equipment."IdEquipment" = ?`);
     binding.push(idEquipment);
 
     if (time !== null) {
@@ -517,9 +517,11 @@ export class KnexEquipmentsRepository
       LEFT JOIN "ReadPluviometers" AS pluviometer
         ON equipment."IdEquipment" = pluviometer."FK_Equipment"
       INNER JOIN "MetereologicalOrgan" AS organ
-          ON organ."IdOrgan" = pluviometer."FK_Organ"
+          ON organ."IdOrgan" = equipment."FK_Organ"
       ${queries.join(" ").concat(") AS t) AS measures")};
   `;
+
+    console.log(sql, binding);
 
     const data = await equipments.raw(sql, binding);
 
