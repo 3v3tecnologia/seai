@@ -25,8 +25,6 @@ export class FetchPluviometersReadsController
     try {
       const errors = new Notification();
 
-      console.log(request);
-
       if (request.idEquipment === undefined || request.idEquipment === null) {
         errors.addError(
           new Error(

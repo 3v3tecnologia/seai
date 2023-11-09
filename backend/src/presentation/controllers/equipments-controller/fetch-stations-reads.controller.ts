@@ -48,8 +48,6 @@ export class FetchStationsReadsController
         });
       }
 
-      console.log(dto);
-
       const result = await this.fetchStationsReads.execute(dto);
 
       return ok(result.value);

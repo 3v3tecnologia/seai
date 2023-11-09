@@ -19,10 +19,9 @@ export class FetchEquipmentsController
     request: FetchEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      console.log(request)
       const result = await this.fetchEquipments.execute(request);
 
-    return ok(result.value);
+      return ok(result.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -33,7 +32,7 @@ export class FetchEquipmentsController
 export namespace FetchEquipmentsControllerProtocol {
   export type Request = {
     pageNumber: number;
-    limit:number;
+    limit: number;
     idOrgan?: number;
     idType?: number;
     name?: string;
