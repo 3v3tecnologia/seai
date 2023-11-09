@@ -228,23 +228,36 @@ export class KnexEquipmentsRepository
     }
 
     if (idType) {
-      queries.push(`
+      if (queries.length) {
+        queries.push(`
         AND eqptype."IdType" = ?`);
+      } else {
+        queries.push(`
+        WHERE eqptype."IdType" = ?`);
+      }
       binding.push(idType);
     }
 
     if (name) {
-      queries.push(`AND (
+      if (queries.length) {
+        queries.push(`AND (
           to_tsvector('simple', coalesce(equipment."Name", ''))      || 
           to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))         || 
           to_tsvector('simple', coalesce(eqpLocation."Name", '')) 
-          ) @@ to_tsquery('simple', '?:*')`);
-      binding.push(name);
+          ) @@ to_tsquery('simple', '${name}:*')`);
+      } else {
+        queries.push(`WHERE (
+          to_tsvector('simple', coalesce(equipment."Name", ''))      || 
+          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))         || 
+          to_tsvector('simple', coalesce(eqpLocation."Name", '')) 
+          ) @@ to_tsquery('simple', '${name}:*')`);
+      }
+      // binding.push(name);
     }
 
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
-    binding.push(pageNumber ? limit * pageNumber : 0);
+    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
 
     const sql = `
     SELECT
@@ -287,17 +300,17 @@ export class KnexEquipmentsRepository
                     eqpLocation."FK_Equipment" = equipment."IdEquipment"
                ${queries.join(" ").concat(") AS t) AS equipments")}`;
 
-    console.log("SQL :: ",sql,binding)
+    console.log("SQL :: ", sql, binding);
 
     const data = await equipments.raw(sql, binding);
-    
-    const rows = data.rows[0]
+
+    const rows = data.rows[0];
     if (!rows.equipments) {
       return null;
     }
-    
+
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
-    console.log("DATA :: ",data.rows)
+    console.log("DATA :: ", data.rows);
 
     const toDomain = rows.equipments.map((row: any) => ({
       Id: Number(row.Id),
@@ -322,7 +335,7 @@ export class KnexEquipmentsRepository
     }));
 
     return {
-      count: rows.total_registers,
+      count: Number(rows.total_registers) || 0,
       data: toDomain,
     };
   }
@@ -392,12 +405,11 @@ export class KnexEquipmentsRepository
 
     console.log("[READ STATIONS] :: ", data.rows);
 
-    const rows = data.rows[0]
+    const rows = data.rows[0];
 
     if (!rows.measures) {
       return null;
     }
-
 
     console.log("[READ STATIONS] [MEASURES]:: ", rows);
 
@@ -511,12 +523,11 @@ export class KnexEquipmentsRepository
 
     const data = await equipments.raw(sql, binding);
 
-    const rows = data.rows[0]    
+    const rows = data.rows[0];
 
     if (!rows.measures) {
       return null;
     }
-
 
     const toDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
