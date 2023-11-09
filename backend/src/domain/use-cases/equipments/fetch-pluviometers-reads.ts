@@ -33,7 +33,7 @@ export class FetchPluviometersReads {
     return right({
       Measures: result?.data || [],
       PageNumber: pageNumber,
-      QtdRows: result?.count || 0,
+      QtdRows: Number(result?.count) || 0,
       PageLimitRows: limit,
       QtdPages: pages,
     });

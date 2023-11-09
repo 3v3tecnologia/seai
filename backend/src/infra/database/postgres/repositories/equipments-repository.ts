@@ -417,51 +417,49 @@ export class KnexEquipmentsRepository
       IdRead: Number(row.IdRead) || null,
       Time: row.Date,
       Hour: row.Hour,
-      IdEquipment: Number(row.IdEquipment) || null,
-      Code: row.EquipmentCode || null,
-      OrganName: row.OrganName,
-      Altitude: row.Altitude,
-      Measures: {
-        TotalRadiation: {
-          Unit: "W/m",
-          Value: Number(row.TotalRadiation) || null,
-        },
-        AverageRelativeHumidity: {
-          Unit: "%",
-          Value: Number(row.AverageRelativeHumidity) || null,
-        },
-        MinRelativeHumidity: {
-          Unit: "%",
-          Value: Number(row.MinRelativeHumidity) || null,
-        },
-        MaxRelativeHumidity: {
-          Unit: "%",
-          Value: Number(row.MaxRelativeHumidity) || null,
-        },
-        AverageAtmosphericTemperature: {
-          Unit: "°C",
-          Value: Number(row.AverageAtmosphericTemperature) || null,
-        },
-        MaxAtmosphericTemperature: {
-          Unit: "°C",
-          Value: Number(row.MaxAtmosphericTemperature) || null,
-        },
-        MinAtmosphericTemperature: {
-          Unit: "°C",
-          Value: Number(row.MinAtmosphericTemperature) || null,
-        },
-        AtmosphericPressure: {
-          Unit: "°C",
-          Value: Number(row.AtmosphericPressure) || null,
-        },
-        WindVelocity: {
-          Unit: "m/s",
-          Value: Number(row.WindVelocity) || null,
-        },
-        ETO: {
-          Unit: "mm",
-          Value: Number(row.ETO) || null,
-        },
+      Altitude: {
+        Unit: "m",
+        Value: Number(row.Altitude) || null,
+      },
+      TotalRadiation: {
+        Unit: "W/m",
+        Value: Number(row.TotalRadiation) || null,
+      },
+      AverageRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.AverageRelativeHumidity) || null,
+      },
+      MinRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MinRelativeHumidity) || null,
+      },
+      MaxRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MaxRelativeHumidity) || null,
+      },
+      AverageAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.AverageAtmosphericTemperature) || null,
+      },
+      MaxAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MaxAtmosphericTemperature) || null,
+      },
+      MinAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MinAtmosphericTemperature) || null,
+      },
+      AtmosphericPressure: {
+        Unit: "°C",
+        Value: Number(row.AtmosphericPressure) || null,
+      },
+      WindVelocity: {
+        Unit: "m/s",
+        Value: Number(row.WindVelocity) || null,
+      },
+      ETO: {
+        Unit: "mm",
+        Value: Number(row.ETO) || null,
       },
     }));
 
@@ -499,29 +497,24 @@ export class KnexEquipmentsRepository
     const sql = `
       SELECT (SELECT reltuples::bigint AS estimate
       FROM   pg_class
-      WHERE  oid = 'public."MetereologicalEquipment"'::regclass
+      WHERE  oid = 'public."ReadPluviometers"'::regclass
           ) as total_registers,
           (SELECT json_agg(t.*) FROM (
       SELECT
           pluviometer."IdRead",
           pluviometer."Time" ,
           pluviometer."Hour" ,
-          equipment."IdEquipment",
-          equipment."IdEquipmentExternal" AS "EquipmentCode",
-          equipment."Name",
           organ."Name" AS "OrganName",
           organ."IdOrgan",
           pluviometer."Value"
       FROM
         "MetereologicalEquipment" AS equipment 
-      LEFT JOIN "ReadPluviometers" AS pluviometer
+      INNER JOIN "ReadPluviometers" AS pluviometer
         ON equipment."IdEquipment" = pluviometer."FK_Equipment"
       INNER JOIN "MetereologicalOrgan" AS organ
           ON organ."IdOrgan" = equipment."FK_Organ"
       ${queries.join(" ").concat(") AS t) AS measures")};
   `;
-
-    console.log(sql, binding);
 
     const data = await equipments.raw(sql, binding);
 
@@ -531,19 +524,14 @@ export class KnexEquipmentsRepository
       return null;
     }
 
+    console.log(rows.measures);
     const toDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Time,
       Hour: row.Hour,
-      IdEquipment: Number(row.IdEquipment) || null,
-      Code: row.EquipmentCode || null,
-      Name: row.Name,
-      Organ: row.OrganName,
-      Measures: {
-        Precipitation: {
-          Unit: "mm",
-          Value: Number(row.Value) || null,
-        },
+      Precipitation: {
+        Unit: "mm",
+        Value: Number(row.Value) || null,
       },
     }));
 
