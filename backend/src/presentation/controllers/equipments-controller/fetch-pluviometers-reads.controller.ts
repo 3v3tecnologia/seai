@@ -38,7 +38,23 @@ export class FetchPluviometersReadsController
       if (errors.hasErrors()) {
         return badRequest(new Error(errors.messages()));
       }
-      const result = await this.fetchPluviometersReads.execute(request);
+
+      const dto = {
+        idEquipment: request.idEquipment,
+        pageNumber: request.pageNumber || 1,
+        limit: request.limit,
+      };
+
+      if (request.start) {
+        Object.assign(dto, {
+          time: {
+            start: request.start,
+            end: request.end || null,
+          },
+        });
+      }
+
+      const result = await this.fetchPluviometersReads.execute(dto);
 
       return ok(result.value);
     } catch (error) {
@@ -53,9 +69,7 @@ export namespace FetchPluviometersMeasuresControllerProtocol {
     idEquipment: number;
     pageNumber: number;
     limit: number;
-    time?: {
-      start: string;
-      end: string | null;
-    } | null;
+    start?: string;
+    end?: string | null;
   };
 }

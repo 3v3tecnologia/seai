@@ -94,7 +94,7 @@ export namespace MeasuresRepositoryDTOProtocol {
       idEquipment: number;
       pageNumber: number;
       limit: number;
-      time: {
+      time?: {
         start: string;
         end: string | null;
       } | null;
@@ -109,7 +109,7 @@ export namespace MeasuresRepositoryDTOProtocol {
       idEquipment: number;
       pageNumber: number;
       limit: number;
-      time: {
+      time?: {
         start: string;
         end: string | null;
       } | null;

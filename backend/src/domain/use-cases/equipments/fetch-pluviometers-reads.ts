@@ -19,14 +19,23 @@ export class FetchPluviometersReads {
       ? Number(request.pageNumber)
       : this.PAGE_NUMBER;
     const limit = request.limit ? Number(request.limit) : this.LIMIT;
-    const time = Reflect.has(request, "time") ? request.time! : null;
 
-    const result = await this.measuresRepository.getPluviometersReads({
+    const dto = {
       idEquipment: request.idEquipment,
-      pageNumber,
+      pageNumber: request.pageNumber || 1,
       limit,
-      time,
-    });
+    };
+
+    if (request.start) {
+      Object.assign(dto, {
+        time: {
+          start: request.start,
+          end: request.end || null,
+        },
+      });
+    }
+
+    const result = await this.measuresRepository.getPluviometersReads(dto);
 
     let pages = result?.count ? Math.ceil(result.count / limit) : 0;
 
@@ -45,10 +54,8 @@ export namespace FetchPluviometersReadsUseCaseProtocol {
     idEquipment: number;
     pageNumber: number;
     limit: number;
-    time?: {
-      start: string;
-      end: string | null;
-    } | null;
+    start?: string | null;
+    end?: string | null;
   };
   export type Response = {
     Measures: Array<PluviometerReadEntity> | null;

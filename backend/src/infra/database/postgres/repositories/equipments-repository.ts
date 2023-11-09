@@ -351,7 +351,7 @@ export class KnexEquipmentsRepository
     queries.push(`WHERE equipment."IdEquipment" = ?`);
     binding.push(idEquipment);
 
-    if (time !== null) {
+    if (time) {
       queries.push(`AND stations."Time" >= ?`);
       binding.push(time.start);
 
@@ -403,15 +403,11 @@ export class KnexEquipmentsRepository
 
     const data = await equipments.raw(sqlQuery, binding);
 
-    console.log("[READ STATIONS] :: ", data.rows);
-
     const rows = data.rows[0];
 
     if (!rows.measures) {
       return null;
     }
-
-    console.log("[READ STATIONS] [MEASURES]:: ", rows);
 
     const measuresToDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
@@ -479,7 +475,7 @@ export class KnexEquipmentsRepository
     queries.push(`WHERE equipment."IdEquipment" = ?`);
     binding.push(idEquipment);
 
-    if (time !== null) {
+    if (time) {
       queries.push(`AND pluviometer."Time" >= ?`);
       binding.push(time.start);
 
@@ -524,7 +520,6 @@ export class KnexEquipmentsRepository
       return null;
     }
 
-    console.log(rows.measures);
     const toDomain = rows.measures.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Time,
