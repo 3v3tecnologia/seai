@@ -497,7 +497,7 @@ export class KnexEquipmentsRepository
     binding.push(pageNumber ? limit * pageNumber : 0);
 
     const sql = `
-      (SELECT reltuples::bigint AS estimate
+      SELECT (SELECT reltuples::bigint AS estimate
       FROM   pg_class
       WHERE  oid = 'public."MetereologicalEquipment"'::regclass
           ) as total_registers,
