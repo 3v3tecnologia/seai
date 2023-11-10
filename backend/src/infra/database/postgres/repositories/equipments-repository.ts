@@ -300,17 +300,14 @@ export class KnexEquipmentsRepository
                     eqpLocation."FK_Equipment" = equipment."IdEquipment"
                ${queries.join(" ").concat(") AS t) AS equipments")}`;
 
-    console.log("SQL :: ", sql, binding);
-
     const data = await equipments.raw(sql, binding);
 
+    // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
+
     if (!rows.equipments) {
       return null;
     }
-
-    // [ { total_registers: 'number', equipments: [ [Object] ] } ]
-    console.log("DATA :: ", data.rows);
 
     const toDomain = rows.equipments.map((row: any) => ({
       Id: Number(row.Id),
@@ -325,11 +322,15 @@ export class KnexEquipmentsRepository
         Name: row.OrganName,
       },
       Altitude: Number(row.Altitude) || null,
-      Location: {
-        Id: Number(row.IdLocation) || null,
-        Name: row.LocationName,
-        Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
-      },
+      Location: row.LocationName
+        ? {
+            Id: Number(row.IdLocation) || null,
+            Name: row.LocationName,
+            Coordinates: row.GeoLocation
+              ? row.GeoLocation["coordinates"]
+              : null,
+          }
+        : null,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
     }));
@@ -363,7 +364,7 @@ export class KnexEquipmentsRepository
     queries.push('ORDER BY stations."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
-    binding.push(pageNumber ? limit * pageNumber : 0);
+    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
 
     const sqlQuery = `
       SELECT
@@ -488,7 +489,7 @@ export class KnexEquipmentsRepository
     queries.push('ORDER BY pluviometer."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
-    binding.push(pageNumber ? limit * pageNumber : 0);
+    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
 
     const sql = `
       SELECT (SELECT reltuples::bigint AS estimate

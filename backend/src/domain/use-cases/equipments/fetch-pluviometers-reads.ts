@@ -18,6 +18,7 @@ export class FetchPluviometersReads {
     const pageNumber = request.pageNumber
       ? Number(request.pageNumber)
       : this.PAGE_NUMBER;
+
     const limit = request.limit ? Number(request.limit) : this.LIMIT;
 
     const dto = {
