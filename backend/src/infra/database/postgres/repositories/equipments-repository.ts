@@ -364,7 +364,7 @@ export class KnexEquipmentsRepository
     queries.push('ORDER BY stations."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
-    binding.push(pageNumber ? limit * pageNumber : 0);
+    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
 
     const sqlQuery = `
       SELECT
@@ -489,7 +489,7 @@ export class KnexEquipmentsRepository
     queries.push('ORDER BY pluviometer."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
-    binding.push(pageNumber ? limit * pageNumber : 0);
+    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
 
     const sql = `
       SELECT (SELECT reltuples::bigint AS estimate
