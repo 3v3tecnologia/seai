@@ -5,3 +5,4 @@ export * from "./login";
 export * from "./measures";
 export * from "./meteorologicalOrgan";
 export * from "./user";
+export * from "./system-logs";

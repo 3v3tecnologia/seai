@@ -85,7 +85,7 @@ export const equipmentsRouter = (): Router => {
   );
 
   router.get(
-    "/log/:id",
+    "/logs/:id",
     authorization,
     adaptRoute(makeFetchEquipmentMeasuresLogsController())
   );
