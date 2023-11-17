@@ -1,7 +1,7 @@
 import { RegisterUserLogs } from "../../../../../domain/use-cases/use-cases-logs/register-user-logs";
-import { LogOperationsRepository } from "../../../../../infra/database/postgres/repositories/log-operations-repository";
+import { KnexLogOperationsRepository } from "../../../../../infra/database/postgres/repositories/log-operations-repository";
 
 export const makeRegisterUserLogs = (): RegisterUserLogs => {
-  const accountRepository = new LogOperationsRepository();
+  const accountRepository = new KnexLogOperationsRepository();
   return new RegisterUserLogs(accountRepository);
 };

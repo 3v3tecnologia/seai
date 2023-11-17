@@ -11,7 +11,7 @@ import helmet from "helmet";
 export const setupApp = async (): Promise<Express> => {
   const app = express();
 
-  // app.use(helmet())
+  // app.use(helmet());
   app.use(morgan("tiny"));
 
   setApiDocs(app);
