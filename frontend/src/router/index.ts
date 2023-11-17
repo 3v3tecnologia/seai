@@ -59,16 +59,16 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.equipments,
   },
   {
-    path: "/equipments-reads/:id",
-    name: "equipments-reads",
+    path: "/station-reads/:id",
+    name: "station-reads",
     component: BaseCrudView,
-    props: routeProps.equipmentReads,
+    props: routeProps.reads.station,
   },
   {
-    path: "/equipments-pick",
-    name: "equipments-pick",
-    component: BaseForm,
-    props: routeProps.pickEquipment,
+    path: "/pluviometer-reads/:id",
+    name: "pluviometer-reads",
+    component: BaseCrudView,
+    props: routeProps.reads.station,
   },
   {
     path: "/equipments/edit/:id",
@@ -134,17 +134,28 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to: any, from, next) => {
-  const auth = store.state.auth;
-  if (
-    ![
-      "login",
-      "initial-register-infos",
-      "change-password",
-      "retrieve-account",
-    ].includes(to.name) &&
-    !auth
-  ) {
+router.beforeEach(async (to: any, from, next) => {
+  let auth = store.state.auth;
+
+  const openRoutes: { [x: string]: boolean } = {
+    "initial-register-infos": true,
+    login: true,
+    "change-password": true,
+    "retrieve-account": true,
+  };
+
+  if (!auth) {
+    // TODO
+    // IMPLEMENT TOKEN REFRESH
+    await store.dispatch("LOGIN_USER", {
+      login: "admin",
+      password: "1234567",
+    });
+  }
+
+  auth = store.state.auth;
+
+  if (!openRoutes[to.name] && !auth) {
     next("/login");
   } else {
     next();

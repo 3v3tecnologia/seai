@@ -7,6 +7,7 @@
       :get-data-key="getDataKey"
       :delete-data-key="deleteDataKey"
     />
+
     <div>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center">
@@ -35,25 +36,22 @@
             <font-awesome-icon class="text-white" icon="fa-solid fa-pen" />
           </primary-button>
 
-          <div class="px-lg-2" />
-
           <button
+            v-if="deleteDataKey"
             type="button"
             data-toggle="modal"
             data-target="#exampleModal"
             @click="handleDeleteUsers"
-            class="btn btn-danger"
+            class="ml-4 btn btn-danger"
           >
             <span class="mr-lg-2"> Excluir {{ actionText }}(s) </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-trash" />
           </button>
 
-          <div class="px-lg-2" />
-
-          <div class="d-flex justify-content-end">
+          <div v-if="actionRoutes.create" class="d-flex justify-content-end">
             <router-link
               :to="{ name: actionRoutes.create }"
-              class="btn btn-success text-white"
+              class="ml-4 btn btn-success text-white"
             >
               <span class="mr-lg-2"> Adicionar novo {{ actionText }} </span>
               <font-awesome-icon class="text-white" icon="fa-solid fa-plus" />
@@ -73,6 +71,7 @@
         :filters-table="filtersTable"
         :data="data"
         :columns="columns"
+        :action-text="actionText"
       />
       <div class="py-4 py-lg-5" />
     </div>
@@ -101,7 +100,6 @@ const search = ref("");
 const currentPage = ref(1);
 
 const setSelectedUsers = (selecteds) => {
-  console.log("setando selcionados", selecteds);
   selectedUsers.value = selecteds || [];
 };
 

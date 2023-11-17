@@ -65,5 +65,19 @@ export default {
       title: "Tipo",
       field: "NomeTipoEquipamento",
     },
+    {
+      title: "Leituras",
+      field: "Id",
+      formatter: "link",
+      formatterParams: {
+        label: "Acessar leituras",
+        target: "_blank",
+        url: function urlFormat(col) {
+          const equipRoute =
+            col._cell.row.data.Type === "station" ? "station" : "pluviometer";
+          return `/${equipRoute}-reads/${col._cell.value}`;
+        },
+      },
+    },
   ],
 };

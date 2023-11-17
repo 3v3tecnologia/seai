@@ -6,17 +6,17 @@ import editBody from "./metereologicalBody/update";
 import createBody from "./metereologicalBody/create";
 import editEquipment from "./equipment/update";
 import createEquipment from "./equipment/create";
-import pickEquipment from "./pickEquipment/pick";
-import equipmentReads from "./pickEquipment/list";
+import stationReads from "./stationReads/list";
 
 export default {
   user,
-  equipmentReads,
+  reads: {
+    station: stationReads,
+  },
   equipments,
   metereologicalBodies,
   profile,
   editBody,
-  pickEquipment,
   createBody,
   editEquipment,
   createEquipment,

@@ -29,10 +29,14 @@ const formatTemporaryToken = (token: string) => ({
 const equipmentFormDTO = (form: any) => {
   return {
     ...form,
+    Location: {
+      Name: form.LocationName,
+      Coordinates: [form.x, form.y],
+    },
     Id: form.Id,
     IdEquipmentExternal: form.Code,
     Name: form.Name,
-    Altitude: form.Altitude,
+    Altitude: Number(form.Altitude),
     Fk_Organ: form.Organ.value,
     Fk_Type: form.NomeTipoEquipamento.value,
   };
@@ -233,7 +237,6 @@ export const store = createStore<Estado>({
 
           commit("SET_USER", userLogged);
 
-          toast.success("Logado com sucesso.");
           return true;
         }
       } catch (e) {
@@ -702,7 +705,7 @@ export const store = createStore<Estado>({
         const equipmentType = ["Estação", "Pluviômetro"];
 
         equipments.map((equip: any) => {
-          equip.Location = equip.Location.Name;
+          equip.Location = equip.Location?.Name;
           equip.Organ = equip.Organ.Name;
           equip.Type = equip.Type.Name || "station";
           equip.NomeTipoEquipamento =
@@ -720,7 +723,93 @@ export const store = createStore<Estado>({
           ).length,
         });
       } catch (e) {
-        toast.error("Erro ao buscar usuários.");
+        console.error(e);
+        toast.error("Erro ao buscar equipamentos.");
+      }
+    },
+    async ["GET_EQUIPMENTS_READS"]({ commit }, id: number) {
+      try {
+        const {
+          data: {
+            data: { Measures: reads },
+          },
+        } = await http.get(`/equipments/measures/stations?idEquipment=${id}`);
+
+        const mockedRead = [
+          {
+            IdRead: 78,
+            Time: "2023-11-05",
+            Hour: null,
+            Altitude: {
+              Unit: "m",
+              Value: 103,
+            },
+            TotalRadiation: {
+              Unit: "W/m",
+              Value: 274.48,
+            },
+            AverageRelativeHumidity: {
+              Unit: "%",
+              Value: 63.69,
+            },
+            MinRelativeHumidity: {
+              Unit: "%",
+              Value: 37.4,
+            },
+            MaxRelativeHumidity: {
+              Unit: "%",
+              Value: 83.9,
+            },
+            AverageAtmosphericTemperature: {
+              Unit: "°C",
+              Value: 30.16,
+            },
+            MaxAtmosphericTemperature: {
+              Unit: "°C",
+              Value: 37.97,
+            },
+            MinAtmosphericTemperature: {
+              Unit: "°C",
+              Value: 25.74,
+            },
+            AtmosphericPressure: {
+              Unit: "°C",
+              Value: 994.56,
+            },
+            WindVelocity: {
+              Unit: "m/s",
+              Value: 4.45,
+            },
+            ETO: {
+              Unit: "mm",
+              Value: 8.067457,
+            },
+          },
+        ];
+
+        const equipmentType = ["Estação", "Pluviômetro"];
+        console.log("testando", id, mockedRead);
+        // equipments.map((equip: any) => {
+        //   equip.Location = equip.Location.Name;
+        //   equip.Organ = equip.Organ.Name;
+        //   equip.Type = equip.Type.Name || "station";
+        //   equip.NomeTipoEquipamento =
+        //     equip.Type === "pluviometer" ? equipmentType[1] : equipmentType[0];
+        //   return equip;
+        // });
+
+        commit("SET_EQUIPMENTS", {
+          data: mockedRead,
+          // totalPluviometers: equipments.filter(
+          //   (d: any) => d.NomeTipoEquipamento === "Pluviômetro"
+          // ).length,
+          // totalStations: equipments.filter(
+          //   (d: any) => d.NomeTipoEquipamento === "Estação"
+          // ).length,
+        });
+      } catch (e) {
+        console.error(e);
+        toast.error("Erro ao buscar dados de leitura");
       }
     },
     async ["INITIAL_REGISTER"]({ commit }, params) {
@@ -778,14 +867,15 @@ export const store = createStore<Estado>({
       return [defaultOption, ...typesEquips(state.typesEquipments.data)];
     },
     equipmentOptions(state) {
+      console.log("testezim", state.equipments.data);
       const typesEquips = (typesEquips: any[]) => {
         return typesEquips.map((equip) => {
           const title = ["Name", "Code"].map((c) => equip[c]).join(" - ");
 
           return {
-            value: equip["id"],
+            value: equip["Id"],
             title,
-            id: equip["id"],
+            id: equip["Id"],
           };
         });
       };

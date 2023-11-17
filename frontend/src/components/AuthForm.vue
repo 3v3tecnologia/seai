@@ -35,8 +35,8 @@ const props = defineProps({
 const store = useStore();
 
 const form: Ref = ref({
-  login: "admin",
-  password: "1234567",
+  login: "",
+  password: "",
 });
 
 const handleSubmit = (e) => {

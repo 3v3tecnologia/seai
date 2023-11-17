@@ -81,13 +81,13 @@ const itemsRoutesRaw = [
     route: "/metereological-bodies",
   },
   {
-    label: "Equipamentos",
+    label: "Equipamentos e leituras",
     route: "/equipments",
   },
-  {
-    label: "Leituras de equipamentos",
-    route: "/equipments-pick",
-  },
+  // {
+  //   label: "Leituras de equipamentos",
+  //   route: "/equipments-pick",
+  // },
   {
     label: "Relatórios",
     route: "/reports",
