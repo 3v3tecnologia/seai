@@ -38,6 +38,8 @@ import { onMounted, ref, defineProps, watch, computed, defineEmits } from "vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import BasePagination from "@/components/BasePagination.vue";
 import { defaultPagination } from "@/constants";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 
 const currentPage = ref(1);
 
@@ -62,6 +64,14 @@ const props = defineProps({
   title: {
     type: String,
     default: "",
+  },
+  hasApiFilters: {
+    type: Boolean,
+    default: false,
+  },
+  getDataKey: {
+    type: String,
+    required: false,
   },
   filtersTable: {
     type: Array,
@@ -93,6 +103,11 @@ const props = defineProps({
   },
 });
 
+const currentRoute = useRoute();
+const paramId = computed(() => currentRoute.params.id || "");
+const store = useStore();
+const baseTimeout = ref(null);
+
 const currentPagination = computed(() => {
   let { itemPerPage } = defaultPagination;
   let totalItems = props.data.length;
@@ -121,8 +136,25 @@ watch(
 
 watch(
   () => props.filtersTable,
-  (val) => {
-    tabulator.value?.setFilter(val);
+  async (val) => {
+    tabulator.value?.clearFilter();
+    const filteredVal = val ? val.filter((f) => f.type) : [];
+    console.log("filtros", filteredVal);
+
+    tabulator.value?.setFilter(filteredVal);
+
+    if (props.hasApiFilters && baseTimeout.value) {
+      clearTimeout(baseTimeout.value);
+    }
+
+    if (props.hasApiFilters) {
+      baseTimeout.value = setTimeout(async () => {
+        await store.dispatch(props.getDataKey, {
+          _itemId: paramId,
+          ...filteredVal,
+        });
+      }, 300);
+    }
   },
   { immediate: true }
 );

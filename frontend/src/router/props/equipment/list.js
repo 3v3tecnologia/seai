@@ -18,6 +18,7 @@ const searchFilter = ["Name", "LocationName"];
 export default {
   actionText: "equipamento",
   getDataKey: "GET_EQUIPMENTS",
+  hasApiFilters: true,
   deleteDataKey: "DELETE_EQUIPMENTS",
   storeDataKey: "equipments",
   stateFilters: stateOptionsFilters,

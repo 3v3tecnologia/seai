@@ -1,20 +1,5 @@
 import moment from "moment";
 
-const stateOptionsFilters = [
-  {
-    label: "Órgão M.",
-    field: "Organ",
-    getListKey: "FETCH_BODIES_OPTIONS",
-    getterKey: "bodiesOptions",
-  },
-  {
-    label: "Tipo de equipamento",
-    field: "NomeTipoEquipamento",
-    getListKey: "FETCH_EQUIPMENT_TYPE_OPTIONS",
-    getterKey: "equipmentTypeOptions",
-  },
-];
-
 const searchFilter = ["Name", "LocationName"];
 
 export default {
@@ -22,7 +7,9 @@ export default {
   getDataKey: "GET_EQUIPMENTS_READS",
   deleteDataKey: "",
   storeDataKey: "equipments",
-  stateFilters: stateOptionsFilters,
+  hideSearch: true,
+  showDateRangeFilter: true,
+  stateFilters: [],
   filters: [],
   searchFilter: searchFilter,
   actionRoutes: {

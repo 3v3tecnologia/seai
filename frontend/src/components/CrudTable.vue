@@ -17,17 +17,27 @@
             placeholder="Buscar"
             input-type="text"
             show-icon
+            v-if="!hideSearch"
           />
 
-          <div v-for="(filter, i) in allFiltersDrop" :key="i" class="d-flex">
-            <div class="px-lg-2" />
-            <BaseDropdown
-              inline-label
-              remove-margin
-              v-model="filtersValue[i].selected"
-              :options="filter.options"
-              :placeholder="filter.label"
-            />
+          <div v-if="showDateRangeFilter" class="d-flex">
+            <FilterDate v-model="dates" />
+          </div>
+
+          <div
+            class="d-flex"
+            v-if="allFiltersDrop.length == filtersValue.length"
+          >
+            <div v-for="(filter, i) in allFiltersDrop" :key="i" class="d-flex">
+              <div class="px-lg-2" />
+              <BaseDropdown
+                inline-label
+                remove-margin
+                v-model="filtersValue[i].selected"
+                :options="filter.options"
+                :placeholder="filter.label"
+              />
+            </div>
           </div>
         </div>
         <div class="d-flex align-items-center">
@@ -69,6 +79,8 @@
       <BaseTable
         @selected="setSelectedUsers"
         :filters-table="filtersTable"
+        :has-api-filters="hasApiFilters"
+        :get-data-key="getDataKey"
         :data="data"
         :columns="columns"
         :action-text="actionText"
@@ -83,21 +95,19 @@ import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
+import FilterDate from "@/components/FilterDate.vue";
 import BaseTable from "@/components/BaseTable.vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
-import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { toast } from "vue3-toastify";
 import { useStore } from "vuex";
 
 const router = useRouter();
 
-const table = ref(null);
-const tabulator = ref(null);
 const selectedUsers = ref([]);
 const showConfirmModal = ref(false);
 const search = ref("");
-const currentPage = ref(1);
+const dates = ref([]);
 
 const setSelectedUsers = (selecteds) => {
   selectedUsers.value = selecteds || [];
@@ -106,9 +116,21 @@ const setSelectedUsers = (selecteds) => {
 const store = useStore();
 
 const props = defineProps({
+  hideSearch: {
+    type: Boolean,
+    default: false,
+  },
+  showDateRangeFilter: {
+    type: Boolean,
+    default: false,
+  },
   actionText: {
     type: String,
     required: true,
+  },
+  hasApiFilters: {
+    type: Boolean,
+    default: false,
   },
   stateFilters: {
     type: Array,
@@ -153,6 +175,8 @@ const props = defineProps({
 });
 
 const filtersValue = ref([]);
+const route = useRoute();
+const currentRoute = computed(() => route.name);
 
 defineEmits(["update:modelValue"]);
 
@@ -187,25 +211,48 @@ const allFiltersDrop = computed(() => {
   return [...props.filters, ...props.stateFilters.map(formatStateFilter)];
 });
 
+const allFiltersDropFields = computed(() => {
+  return allFiltersDrop.value.map((f) => f.field);
+});
+
+const formatDateFilter = computed(() => {
+  return [
+    { field: "start", value: dates.value[0] || null },
+    { field: "end", value: dates.value[1] || null },
+  ];
+});
+
 const filtersTable = computed(() => {
   return [
+    ...formatDateFilter.value,
     ...filtersValue.value.map(formatFilterTable),
     props.searchFilter.map(formatSearchFilters),
   ];
 });
 
 watch(
-  () => props.storeDataKey,
-  (newValue) => {
+  () => currentRoute.value,
+  () => {
     search.value = "";
     props.stateFilters.forEach((f) => store.dispatch(f.getListKey));
+  }
+);
 
-    filtersValue.value = allFiltersDrop.value.map((f) => {
-      return {
-        selected: f.options[0] || null,
-        field: f.field,
-      };
-    });
+watch(
+  () => allFiltersDropFields.value,
+  (newValue, oldValue) => {
+    const isFirstTime = newValue && !oldValue;
+    const tempOldVal = oldValue || [];
+    const areDifferent = tempOldVal.join("") !== newValue.join("");
+
+    if (isFirstTime || areDifferent) {
+      filtersValue.value = allFiltersDrop.value.map((f) => {
+        return {
+          selected: f.options[0] || null,
+          field: f.field,
+        };
+      });
+    }
   },
   { immediate: true }
 );

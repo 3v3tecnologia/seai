@@ -20,8 +20,11 @@
 
     <CrudTable
       v-model="filtersUsers"
+      :hide-search="hideSearch"
       v-if="data.data.length"
       :action-text="actionText"
+      :show-date-range-filter="showDateRangeFilter"
+      :has-api-filters="hasApiFilters"
       :get-data="getData"
       :data="data.data"
       :store-data-key="storeDataKey"
@@ -52,9 +55,21 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  hasApiFilters: {
+    type: Boolean,
+    default: false,
+  },
   stateFilters: {
     type: Array,
     default: () => [],
+  },
+  hideSearch: {
+    type: Boolean,
+    default: false,
+  },
+  showDateRangeFilter: {
+    type: Boolean,
+    default: false,
   },
   storeDataKey: {
     type: String,
