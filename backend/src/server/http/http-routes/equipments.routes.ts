@@ -19,6 +19,7 @@ import {
   makeFetchMeteorologicalOrganController,
   makeUpdateEquipmentsController,
 } from "../factories/controllers/equipments";
+import { makeFetchEquipmentMeasuresLogsController } from "../factories/controllers";
 
 export const equipmentsRouter = (): Router => {
   const router = Router();
@@ -81,6 +82,12 @@ export const equipmentsRouter = (): Router => {
     "/measures/stations",
     authorization,
     adaptRoute(makeFetchStationsReadsController())
+  );
+
+  router.get(
+    "/logs/:id",
+    authorization,
+    adaptRoute(makeFetchEquipmentMeasuresLogsController())
   );
 
   return router;
