@@ -62,13 +62,25 @@ const routes: Array<RouteRecordRaw> = [
     path: "/station-reads/:id",
     name: "station-reads",
     component: BaseCrudView,
-    props: routeProps.reads.station,
+    props: routeProps.reads.station.list,
+  },
+  {
+    path: "/station-reads-edit/:id",
+    name: "station-reads-edit",
+    component: BaseForm,
+    props: routeProps.reads.station.update,
   },
   {
     path: "/pluviometer-reads/:id",
     name: "pluviometer-reads",
     component: BaseCrudView,
-    props: routeProps.reads.station,
+    props: routeProps.reads.pluviometer.list,
+  },
+  {
+    path: "/pluviometer-reads-edit/:id",
+    name: "pluviometer-reads-edit",
+    component: BaseForm,
+    props: routeProps.reads.pluviometer.update,
   },
   {
     path: "/equipments/edit/:id",

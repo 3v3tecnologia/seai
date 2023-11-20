@@ -4,16 +4,16 @@ const searchFilter = ["Name", "LocationName"];
 
 export default {
   actionText: "leitura",
-  getDataKey: "GET_EQUIPMENTS_READS",
+  getDataKey: "GET_STATION_READS",
   deleteDataKey: "",
-  storeDataKey: "equipments",
+  storeDataKey: "readsStation",
   hideSearch: true,
   showDateRangeFilter: true,
   stateFilters: [],
   filters: [],
   searchFilter: searchFilter,
   actionRoutes: {
-    edit: "edit-equipment",
+    edit: "station-reads-edit",
     create: "",
   },
   headerLabels: [],

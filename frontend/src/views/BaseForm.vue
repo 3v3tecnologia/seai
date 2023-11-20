@@ -4,7 +4,20 @@
       <template v-slot:content>
         <div class="py-2 mb-3"></div>
 
-        <div class="row">
+        <div class="row align-items-end">
+          <div
+            class="col-lg-6"
+            v-for="field in prebuiltComponentsFields"
+            :key="field.formKey"
+          >
+            <!-- v-model="form[field.formKey]" -->
+            <component
+              v-model="form[field.formKey]"
+              v-bind="field.component.props"
+              :is="preBuiltComponents[field.component.name]"
+            />
+          </div>
+
           <div
             class="col-lg-3"
             v-for="field in drodpDowns"
@@ -20,9 +33,7 @@
               :placeholder="field.label"
             />
           </div>
-        </div>
 
-        <div class="row">
           <div
             v-for="(field, i) in inputFields"
             :key="field.formKey"
@@ -101,6 +112,11 @@ import { useStore } from "vuex";
 import InputText from "primevue/inputtext";
 import { useRoute } from "vue-router";
 import BaseDropdown from "@/components/BaseDropdown.vue";
+import FilterDate from "@/components/FilterDate.vue";
+
+const preBuiltComponents = {
+  FilterDate,
+};
 
 const currentRoute = useRoute();
 const fieldsTmp = ref([]);
@@ -178,12 +194,21 @@ const formData = computed(() =>
 );
 
 const inputFields = computed(() =>
-  fieldsTmp.value.filter((f) => !f.getListKey)
+  fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
+);
+
+const prebuiltComponentsFields = computed(() =>
+  fieldsTmp.value
+    .filter((f) => f.component)
+    .map((field) => {
+      field.value = form.value[field.formKey];
+      return field;
+    })
 );
 
 const drodpDowns = computed(() =>
   fieldsTmp.value
-    .filter((f) => f.getListKey)
+    .filter((f) => f.getListKey && !f.component)
     .map((field) => {
       field.value = form.value[field.formKey];
       field.options = store.getters[field.getterKey].filter((f) => f.value);

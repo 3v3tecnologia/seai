@@ -51,15 +51,20 @@ const dataFormatUrl = {
 const setAxiosHeader = (token: string) =>
   (http.defaults.headers.common["Authorization"] = `Bearer ${token}`);
 
-const getValor = (item: any) => {
+const getValue = (item: any, keyValOpt: string) => {
+  const keyValue = keyValOpt ?? "valor";
   const keys = Object.keys(item);
 
   keys.forEach((key) => {
-    if (item[key].valor) {
-      item[key] = item[key]["valor"];
+    if (item[key]?.[keyValue]) {
+      item[key] = item[key][keyValue];
     }
   });
 
+  return item;
+};
+
+const formatLocation = (item: any) => {
   if (item.Tipo === "bacia") {
     item["Bacia"] = item["Nome"];
   } else {
@@ -90,6 +95,10 @@ const ungroupData = (items: any) => {
 interface Estado {
   auth: IAuth | null;
   equipments: any;
+  currentStationRead: any;
+  currentPluviometerRead: any;
+  readsStation: any;
+  readsPluviometer: any;
   currentBody: any;
   currentEquipment: any;
   metereologicalBodies: any;
@@ -154,6 +163,14 @@ export const store = createStore<Estado>({
       totalStations: 0,
       totalPluviometers: 0,
     },
+    currentStationRead: null,
+    currentPluviometerRead: null,
+    readsStation: {
+      data: [],
+    },
+    readsPluviometer: {
+      data: [],
+    },
     reportsFilters: {
       showPerBasin: true,
     },
@@ -169,6 +186,12 @@ export const store = createStore<Estado>({
     },
     ["SET_EQUIPMENTS"](state, equipments: any) {
       state.equipments = equipments;
+    },
+    ["SET_STATION_READS"](state, reads: any) {
+      state.readsStation = reads;
+    },
+    ["SET_PLUVIOMETER_READS"](state, reads: any) {
+      state.readsPluviometer = reads;
     },
     ["SET_USER"](state, user: IAuth) {
       state.auth = user;
@@ -201,6 +224,12 @@ export const store = createStore<Estado>({
     },
     ["SET_CURRENT_EQUIPMENT"](state, equipment) {
       state.currentEquipment = equipment;
+    },
+    ["SET_CURRENT_STATION_READ"](state, read) {
+      state.currentStationRead = read;
+    },
+    ["SET_CURRENT_PLUVIOMETER_READ"](state, read) {
+      state.currentPluviometerRead = read;
     },
     ["SET_CURRENT_PROFILE"](state, user) {
       state.profile = user;
@@ -425,9 +454,9 @@ export const store = createStore<Estado>({
         );
 
         commit("SET_REPORTS_DATA", {
-          securityWater: securityWater.map(getValor),
-          securitySocial: securitySocial.map(getValor),
-          securityEconomic: securityEconomic.map(getValor),
+          securityWater: securityWater.map(getValue).map(formatLocation),
+          securitySocial: securitySocial.map(getValue).map(formatLocation),
+          securityEconomic: securityEconomic.map(getValue).map(formatLocation),
           securityProductive: [],
         });
       } catch (e) {
@@ -619,53 +648,45 @@ export const store = createStore<Estado>({
         const equipment = state.equipments.data.find(
           (c: { Id: number }) => c.Id == id
         );
+
+        console.log({ equipment });
         commit("SET_CURRENT_EQUIPMENT", equipment);
       } catch (e) {
         console.error(e);
       }
     },
-    async ["GET_CURRENT_EQUIPMENT_READS"]({ state, dispatch }, id: number) {
+    async ["GET_CURRENT_STATION_READ"](
+      { state, commit, dispatch },
+      id: number
+    ) {
       try {
-        await dispatch("GET_CURRENT_EQUIPMENT", id);
-        const equipment = state.currentEquipment;
+        await dispatch("GET_STATION_READS");
 
-        const isStation = equipment.NomeTipoEquipamento === "Estação";
-        let reads = [];
+        const read = state.readsStation.data.find(
+          (c: { id: number }) => c.id == id
+        );
 
-        if (isStation) {
-          reads = [
-            {
-              IdRead: 1,
-              Time: "2023-06-03",
-              Hour: "08",
-              TotalRadiation: 23,
-              MaxRelativeHumidity: 5,
-              MinRelativeHumidity: 3,
-              AverageRelativeHumidity: 39,
-              MaxAtmosphericTemperature: 30,
-              MinAtmosphericTemperature: 15,
-              AverageAtmosphericTemperature: 27,
-              AtmosphericPressure: 153,
-              WindVelocity: 33,
-            },
-            {
-              IdRead: 2,
-              Time: "2023-06-03",
-              Hour: "09",
-              TotalRadiation: null,
-              MaxRelativeHumidity: null,
-              MinRelativeHumidity: 3,
-              AverageRelativeHumidity: 39,
-              MaxAtmosphericTemperature: 30,
-              MinAtmosphericTemperature: null,
-              AverageAtmosphericTemperature: 27,
-              AtmosphericPressure: 153,
-              WindVelocity: 33,
-            },
-          ];
-        } else {
-          reads = [];
-        }
+        const unWrappedValue = getValue(read, "Value");
+
+        commit("SET_CURRENT_STATION_READ", unWrappedValue);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["GET_CURRENT_PLUVIOMETER_READ"](
+      { state, commit, dispatch },
+      id: number
+    ) {
+      try {
+        await dispatch("GET_PLUVIOMETER_READS");
+
+        const read = state.readsPluviometer.data.find(
+          (c: { id: number }) => c.id == id
+        );
+
+        const unWrappedValue = getValue(read, "Value");
+
+        commit("SET_CURRENT_PLUVIOMETER_READ", unWrappedValue);
       } catch (e) {
         console.error(e);
       }
@@ -727,7 +748,7 @@ export const store = createStore<Estado>({
         toast.error("Erro ao buscar equipamentos.");
       }
     },
-    async ["GET_EQUIPMENTS_READS"]({ commit }, id: number) {
+    async ["GET_STATION_READS"]({ commit }, id: number) {
       try {
         const {
           data: {
@@ -737,6 +758,7 @@ export const store = createStore<Estado>({
 
         const mockedRead = [
           {
+            id: 78,
             IdRead: 78,
             Time: "2023-11-05",
             Hour: null,
@@ -787,25 +809,39 @@ export const store = createStore<Estado>({
           },
         ];
 
-        const equipmentType = ["Estação", "Pluviômetro"];
-        console.log("testando", id, mockedRead);
-        // equipments.map((equip: any) => {
-        //   equip.Location = equip.Location.Name;
-        //   equip.Organ = equip.Organ.Name;
-        //   equip.Type = equip.Type.Name || "station";
-        //   equip.NomeTipoEquipamento =
-        //     equip.Type === "pluviometer" ? equipmentType[1] : equipmentType[0];
-        //   return equip;
-        // });
-
-        commit("SET_EQUIPMENTS", {
+        commit("SET_STATION_READS", {
           data: mockedRead,
-          // totalPluviometers: equipments.filter(
-          //   (d: any) => d.NomeTipoEquipamento === "Pluviômetro"
-          // ).length,
-          // totalStations: equipments.filter(
-          //   (d: any) => d.NomeTipoEquipamento === "Estação"
-          // ).length,
+        });
+      } catch (e) {
+        console.error(e);
+        toast.error("Erro ao buscar dados de leitura");
+      }
+    },
+    async ["GET_PLUVIOMETER_READS"]({ commit }, id: number) {
+      try {
+        const {
+          data: {
+            data: { Measures: reads },
+          },
+        } = await http.get(
+          `/equipments/measures/pluviometers?idEquipment=${id}`
+        );
+
+        const mockedRead = [
+          {
+            id: 3,
+            IdRead: 3,
+            Time: "2023-09-11",
+            Hour: null,
+            Precipitation: {
+              Unit: "mm",
+              Value: 12,
+            },
+          },
+        ];
+
+        commit("SET_PLUVIOMETER_READS", {
+          data: mockedRead,
         });
       } catch (e) {
         console.error(e);

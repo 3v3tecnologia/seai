@@ -7,11 +7,21 @@ import createBody from "./metereologicalBody/create";
 import editEquipment from "./equipment/update";
 import createEquipment from "./equipment/create";
 import stationReads from "./stationReads/list";
+import stationReadsUpdate from "./stationReads/update";
+import pluviometerReads from "./pluviometerReads/list";
+import pluviometerReadsUpdate from "./pluviometerReads/update";
 
 export default {
   user,
   reads: {
-    station: stationReads,
+    station: {
+      list: stationReads,
+      update: stationReadsUpdate,
+    },
+    pluviometer: {
+      list: pluviometerReads,
+      update: pluviometerReadsUpdate,
+    },
   },
   equipments,
   metereologicalBodies,
