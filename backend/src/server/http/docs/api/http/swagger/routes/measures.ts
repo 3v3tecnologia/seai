@@ -186,6 +186,141 @@ export const MEASURES = {
       },
     },
   },
+  [`${BASE_URL.V1}/equipments/measures/station/{id}`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get station measures",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Id read",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Daily stations measures",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      properties: {
+                        IdRead: "number",
+                        Time: "string",
+                        Hour: "number",
+                        IdEquipment: "number",
+                        Code: "number",
+                        OrganName: "string",
+                        Altitude: "number",
+                        TotalRadiation: {
+                          type: "object",
+                          properties: {
+                            Unit: "string",
+                            Value: "number",
+                          },
+                        },
+                        RelativeHumidity: {
+                          type: "object",
+                          properties: {
+                            Unit: "string",
+                            Value: "number",
+                          },
+                        },
+                        AtmosphericTemperature: {
+                          type: "object",
+                          properties: {
+                            Unit: "string",
+                            Value: "number",
+                          },
+                        },
+                        WindVelocity: {
+                          type: "object",
+                          properties: {
+                            Unit: "string",
+                            Value: "number",
+                          },
+                        },
+                        ETO: {
+                          type: "object",
+                          properties: {
+                            Unit: "string",
+                            Value: "number",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    IdRead: 1,
+                    IdEquipment: 1,
+                    Time: "2023-11-20T00:00:00.000Z",
+                    Hour: null,
+                    Altitude: {
+                      Unit: "m",
+                      Value: 30.4,
+                    },
+                    TotalRadiation: {
+                      Unit: "W/m",
+                      Value: 255.68,
+                    },
+                    AverageRelativeHumidity: {
+                      Unit: "%",
+                      Value: 74.87,
+                    },
+                    MinRelativeHumidity: {
+                      Unit: "%",
+                      Value: 52.41,
+                    },
+                    MaxRelativeHumidity: {
+                      Unit: "%",
+                      Value: 87.5,
+                    },
+                    AverageAtmosphericTemperature: {
+                      Unit: "°C",
+                      Value: 28.31,
+                    },
+                    MaxAtmosphericTemperature: {
+                      Unit: "°C",
+                      Value: 32.97,
+                    },
+                    MinAtmosphericTemperature: {
+                      Unit: "°C",
+                      Value: 25.29,
+                    },
+                    AtmosphericPressure: {
+                      Unit: "°C",
+                      Value: 1008.94,
+                    },
+                    WindVelocity: {
+                      Unit: "m/s",
+                      Value: 3.5,
+                    },
+                    ETO: {
+                      Unit: "mm",
+                      Value: 4.911332,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${BASE_URL.V1}/equipments/measures/pluviometers`]: {
     get: {
       tags: TAGS,
@@ -287,6 +422,77 @@ export const MEASURES = {
                     QtdRows: 1,
                     PageLimitRows: 40,
                     QtdPages: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${BASE_URL.V1}/equipments/measures/pluviometer/{id}`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get pluviometer measures",
+      parameters: [
+        {
+          name: "id",
+          in: "query",
+          description: "Id read",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Daily pluviometers measures",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      items: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            Date: "number",
+                            IdRead: "number",
+                            IdEquipment: "number",
+                            Code: "number",
+                            Name: "string",
+                            Precipitation: {
+                              type: "object",
+                              properties: {
+                                Unit: "string",
+                                Value: "number",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    IdRead: 1,
+                    IdEquipment: 5,
+                    Time: "2023-11-20T00:00:00.000Z",
+                    Hour: null,
+                    Precipitation: {
+                      Unit: "mm",
+                      Value: 0,
+                    },
                   },
                 },
               },

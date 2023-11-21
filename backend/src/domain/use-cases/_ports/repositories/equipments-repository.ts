@@ -104,6 +104,12 @@ export namespace MeasuresRepositoryDTOProtocol {
       data: Array<StationReadEntity> | null;
     } | null>;
   }
+  export namespace GetStationMeasuresByIdRead {
+    export type Params = {
+      idRead: number;
+    };
+    export type Result = Promise<StationReadEntity | null>;
+  }
   export namespace GetPluviometers {
     export type Params = {
       idEquipment: number;
@@ -119,6 +125,13 @@ export namespace MeasuresRepositoryDTOProtocol {
       count: number;
       data: Array<PluviometerReadEntity> | null;
     } | null>;
+  }
+  export namespace GetPluviometersByIdPluviometer {
+    export type Params = {
+      idRead: number;
+    };
+
+    export type Result = Promise<PluviometerReadEntity | null>;
   }
 }
 
@@ -144,6 +157,12 @@ export interface EquipmentsMeasuresRepositoryProtocol {
   getStationsReads(
     params: MeasuresRepositoryDTOProtocol.GetStations.Params
   ): MeasuresRepositoryDTOProtocol.GetStations.Result;
+  getStationReadsByIdRead(
+    params: MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Params
+  ): MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Result;
+  getPluviometerReadsByIdRead(
+    params: MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Params
+  ): MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Result;
   getPluviometersReads(
     params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
   ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result;

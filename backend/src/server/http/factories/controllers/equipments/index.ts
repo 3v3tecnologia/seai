@@ -8,3 +8,5 @@ export * from "./update-meteorological-organ-controller.factory";
 export * from "./create-meteorological-organ-controller.factory";
 export * from "./delete-meteorological-organ-controller.factory";
 export * from "./fetch-meteorological-organ-controller.factory";
+export * from "./fetch-station-reads-by-id-read-controller.factory";
+export * from "./fetch-pluviometer-reads-by-id-read-controller.factory";
