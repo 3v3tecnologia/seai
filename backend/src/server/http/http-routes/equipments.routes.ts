@@ -18,6 +18,8 @@ import {
   makeDeleteEquipmentsController,
   makeFetchMeteorologicalOrganController,
   makeUpdateEquipmentsController,
+  makeFetchPluviometerReadsByIdReadController,
+  makeFetchStationReadsByIdReadController,
 } from "../factories/controllers/equipments";
 import { makeFetchEquipmentMeasuresLogsController } from "../factories/controllers";
 
@@ -79,9 +81,21 @@ export const equipmentsRouter = (): Router => {
   );
 
   router.get(
+    "/measures/pluviometer/:id",
+    authorization,
+    adaptRoute(makeFetchPluviometerReadsByIdReadController())
+  );
+
+  router.get(
     "/measures/stations",
     authorization,
     adaptRoute(makeFetchStationsReadsController())
+  );
+
+  router.get(
+    "/measures/station/:id",
+    authorization,
+    adaptRoute(makeFetchStationReadsByIdReadController())
   );
 
   router.get(

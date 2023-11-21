@@ -1,13 +1,10 @@
 export interface PluviometerReadEntity {
-  Date: string;
   IdRead: number;
   IdEquipment: number;
-  Code: number;
-  Name: string;
-  Measures: {
-    Precipitation: {
-      Unit: string;
-      Value: number;
-    };
+  Time: string;
+  Hour: string;
+  Precipitation: {
+    Unit: string;
+    Value: number | null;
   };
 }
