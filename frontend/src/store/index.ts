@@ -14,6 +14,7 @@ import { previewEmailCensured } from "@/helpers/formatEmail";
 import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
+import moment from "moment";
 
 const defaultOption = {
   title: "Todos",
@@ -25,6 +26,25 @@ const formatTemporaryToken = (token: string) => ({
     Authorization: `Bearer ${token}`,
   },
 });
+
+function formatDate(time: string) {
+  return moment(time).format("YYYY-MM-DD");
+}
+
+function objectToParams(obj: { [x: number | string]: any }): string {
+  const validParams: string[] = [];
+
+  Object.keys(obj).forEach((item) => {
+    if (obj[item]) {
+      const tempValue = ["start", "end"].includes(item)
+        ? formatDate(obj[item])
+        : obj[item];
+      validParams.push(`${item}=${tempValue}`);
+    }
+  });
+
+  return validParams.length ? `?${validParams.join("&")}` : "";
+}
 
 const equipmentFormDTO = (form: any) => {
   return {
@@ -748,13 +768,24 @@ export const store = createStore<Estado>({
         toast.error("Erro ao buscar equipamentos.");
       }
     },
-    async ["GET_STATION_READS"]({ commit }, id: number) {
+    async ["GET_STATION_READS"](
+      { commit },
+      { _itemId, start, end }: { _itemId: number; start: string; end: string }
+    ) {
       try {
+        const params = {
+          idEquipment: _itemId,
+          start,
+          end,
+        };
+
+        const paramsUrl = objectToParams(params);
+
         const {
           data: {
             data: { Measures: reads },
           },
-        } = await http.get(`/equipments/measures/stations?idEquipment=${id}`);
+        } = await http.get(`/equipments/measures/stations${paramsUrl}`);
 
         const mockedRead = [
           {

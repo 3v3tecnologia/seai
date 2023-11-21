@@ -21,11 +21,9 @@
     <CrudTable
       v-model="filtersUsers"
       :hide-search="hideSearch"
-      v-if="data.data.length"
       :action-text="actionText"
       :show-date-range-filter="showDateRangeFilter"
       :has-api-filters="hasApiFilters"
-      :get-data="getData"
       :data="data.data"
       :store-data-key="storeDataKey"
       :columns="columns"
@@ -102,23 +100,26 @@ const props = defineProps({
   },
 });
 
-const currentRoute = useRoute();
-const paramId = computed(() => currentRoute.params.id || "");
+// const currentRoute = useRoute();
+// const paramId = computed(() => currentRoute.params.id || "");
 const store = useStore();
 const filtersUsers = ref({});
 
-const getData = async () =>
-  await store.dispatch(props.getDataKey, paramId.value);
+// const getData = async () => {
+//   return await store.dispatch(props.getDataKey, {
+//     id: paramId.value,
+//   });
+// };
 
-watch(
-  () => props.getDataKey,
-  async (newVal) => {
-    await getData();
-  },
-  { immediate: true }
-);
+// watch(
+//   () => props.getDataKey,
+//   async (newVal) => {
+//     await getData();
+//   },
+//   { immediate: true }
+// );
 
-getData();
+// getData();
 
 const data = computed(() => store.state[props.storeDataKey]);
 </script>

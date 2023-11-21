@@ -7,6 +7,7 @@ export default {
   getDataKey: "GET_STATION_READS",
   deleteDataKey: "",
   storeDataKey: "readsStation",
+  hasApiFilters: true,
   hideSearch: true,
   showDateRangeFilter: true,
   stateFilters: [],

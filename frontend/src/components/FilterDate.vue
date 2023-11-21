@@ -1,12 +1,9 @@
 <template>
   <span class="p-float-label w-100">
-    <!-- TODO  
-    IMPLEMENTAR POSSIBILIDADE DO COMPONENT RECEBER DATA E HORA E ASSIM FORMATAR A HORA,
-    FOCANDO NA HORA DE EDITAR A LEITURA-->
     <Calendar
       v-model="dates"
-      dateFormat="dd/mm/y"
       inputId="date-range-read"
+      dateFormat="dd/mm/yy"
       :selectionMode="selectionMode"
       :manualInput="false"
       showIcon
@@ -29,6 +26,10 @@ const props = defineProps({
   label: {
     default: "Período",
     type: String,
+  },
+  modelValue: {
+    type: Object,
+    required: true,
   },
   selectionMode: {
     default: "range",
@@ -60,4 +61,16 @@ const emit = defineEmits(["update:modelValue"]);
 watch(dates, (val) => {
   emit("update:modelValue", val);
 });
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (typeof val === "string" && val != dates.value) {
+      const formattedDate = moment(val).format("DD/MM/YYYY hh:00");
+
+      dates.value = formattedDate;
+    }
+  },
+  { immediate: true }
+);
 </script>

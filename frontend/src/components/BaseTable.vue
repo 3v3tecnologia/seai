@@ -18,6 +18,8 @@
       </div>
     </div>
 
+    {{ filtersTable }}
+
     <div class="wrapper-table w-100 mt-3">
       <div ref="table" />
     </div>
@@ -138,8 +140,15 @@ watch(
   () => props.filtersTable,
   async (val) => {
     tabulator.value?.clearFilter();
-    const filteredVal = val ? val.filter((f) => f.type) : [];
-    console.log("filtros", filteredVal);
+    // const filteredVal = val ? val.filter((f) => f.type) : [];
+    const filteredVal = val || [];
+    const mapedFiltersTable = {};
+
+    console.log("vai rodar os filter", filteredVal, val);
+    filteredVal.forEach((filter) => {
+      console.log("filter", filter);
+      mapedFiltersTable[filter.field] = filter.value;
+    });
 
     tabulator.value?.setFilter(filteredVal);
 
@@ -150,8 +159,8 @@ watch(
     if (props.hasApiFilters) {
       baseTimeout.value = setTimeout(async () => {
         await store.dispatch(props.getDataKey, {
-          _itemId: paramId,
-          ...filteredVal,
+          _itemId: paramId.value,
+          ...mapedFiltersTable,
         });
       }, 300);
     }
