@@ -17,9 +17,6 @@ export class KnexEquipmentsRepository
     EquipmentsMeasuresRepositoryProtocol,
     MeteorologicalOrganRepositoryProtocol
 {
-  private measuresLimitRow = 30;
-  private equipmentsLimitRow = 90;
-
   async getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result {
     const data = await equipments
       .select("IdOrgan", "Name", "Host", "User")
@@ -464,6 +461,149 @@ export class KnexEquipmentsRepository
       count: rows.total_registers,
       data: measuresToDomain,
     };
+  }
+  async getStationReadsByIdRead(
+    params: MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Params
+  ): MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Result {
+    const { idRead } = params;
+
+    const sqlQuery = `
+      SELECT
+                stations."IdRead",
+                stations."Time" AS "Date",
+                stations."Hour",
+                equipment."IdEquipment",
+                equipment."IdEquipmentExternal" AS "EquipmentCode",
+                organ."IdOrgan",
+                organ."Name" AS "OrganName",
+                equipment."Altitude",
+                stations."TotalRadiation",
+                stations."MaxRelativeHumidity",
+                stations."MinRelativeHumidity",
+                stations."AverageRelativeHumidity",
+                stations."MaxAtmosphericTemperature",
+                stations."MinAtmosphericTemperature",
+                stations."AverageAtmosphericTemperature" ,
+                stations."AtmosphericPressure" ,
+                stations."WindVelocity",
+                eto."Value" AS "ETO"
+            FROM "MetereologicalEquipment" AS equipment  
+            LEFT JOIN "ReadStations" AS stations
+            ON equipment."IdEquipment"  = stations."FK_Equipment"
+            LEFT JOIN "Et0" AS eto
+            ON stations."IdRead"  = eto."FK_Station_Read"
+            INNER JOIN "MetereologicalOrgan" AS organ
+            ON organ."IdOrgan" = stations."FK_Organ"
+            WHERE stations."IdRead" = ?;
+    `;
+
+    const data = await equipments.raw(sqlQuery, [idRead]);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const row = data.rows[0];
+
+    const toDomain = {
+      IdRead: Number(row.IdRead),
+      IdEquipment: Number(row.IdEquipment),
+      Time: row.Date,
+      Hour: row.Hour,
+      Altitude: {
+        Unit: "m",
+        Value: Number(row.Altitude) || null,
+      },
+      TotalRadiation: {
+        Unit: "W/m",
+        Value: Number(row.TotalRadiation) || null,
+      },
+      AverageRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.AverageRelativeHumidity) || null,
+      },
+      MinRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MinRelativeHumidity) || null,
+      },
+      MaxRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MaxRelativeHumidity) || null,
+      },
+      AverageAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.AverageAtmosphericTemperature) || null,
+      },
+      MaxAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MaxAtmosphericTemperature) || null,
+      },
+      MinAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MinAtmosphericTemperature) || null,
+      },
+      AtmosphericPressure: {
+        Unit: "°C",
+        Value: Number(row.AtmosphericPressure) || null,
+      },
+      WindVelocity: {
+        Unit: "m/s",
+        Value: Number(row.WindVelocity) || null,
+      },
+      ETO: {
+        Unit: "mm",
+        Value: Number(row.ETO) || null,
+      },
+    };
+
+    return toDomain;
+  }
+  async getPluviometerReadsByIdRead(
+    params: MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Params
+  ): MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Result {
+    const { idRead } = params;
+
+    const sqlQuery = `
+      SELECT
+          pluviometer."IdRead",
+          pluviometer."Time" ,
+          pluviometer."Hour" ,
+          organ."Name" AS "OrganName",
+          organ."IdOrgan",
+          pluviometer."Value",
+          pluviometer."FK_Equipment"
+      FROM
+              "MetereologicalEquipment" AS equipment
+      INNER JOIN "ReadPluviometers" AS pluviometer
+              ON
+          equipment."IdEquipment" = pluviometer."FK_Equipment"
+      INNER JOIN "MetereologicalOrgan" AS organ
+                ON
+          organ."IdOrgan" = equipment."FK_Organ"
+      WHERE
+          pluviometer."IdRead" = ?
+    `;
+
+    const data = await equipments.raw(sqlQuery, [idRead]);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const row = data.rows[0];
+
+    const toDomain = {
+      IdRead: Number(row.IdRead),
+      IdEquipment: Number(row.FK_Equipment),
+      Time: row.Time,
+      Hour: row.Hour,
+      Precipitation: {
+        Unit: "mm",
+        Value: Number(row.Value),
+      },
+    };
+
+    return toDomain;
   }
   async getPluviometersReads(
     params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
