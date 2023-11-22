@@ -78,6 +78,7 @@
 
       <BaseTable
         @selected="setSelectedUsers"
+        :api-pagination="apiPagination"
         :filters-table="filtersTable"
         :has-api-filters="hasApiFilters"
         :get-data-key="getDataKey"
@@ -119,6 +120,10 @@ const props = defineProps({
   hideSearch: {
     type: Boolean,
     default: false,
+  },
+  apiPagination: {
+    type: Object,
+    required: false,
   },
   showDateRangeFilter: {
     type: Boolean,

@@ -72,11 +72,15 @@ const setAxiosHeader = (token: string) =>
   (http.defaults.headers.common["Authorization"] = `Bearer ${token}`);
 
 const getValue = (item: any, keyValOpt: string) => {
+  if (!item) {
+    return item;
+  }
+
   const keyValue = keyValOpt ?? "valor";
   const keys = Object.keys(item);
 
   keys.forEach((key) => {
-    if (item[key]?.[keyValue]) {
+    if (item[key]?.[keyValue] || item[key]?.[keyValue] === null) {
       item[key] = item[key][keyValue];
     }
   });
@@ -182,14 +186,26 @@ export const store = createStore<Estado>({
       data: [],
       totalStations: 0,
       totalPluviometers: 0,
+      apiPagination: {
+        pages: 1,
+        total: 0,
+      },
     },
     currentStationRead: null,
     currentPluviometerRead: null,
     readsStation: {
       data: [],
+      apiPagination: {
+        pages: 1,
+        total: 0,
+      },
     },
     readsPluviometer: {
       data: [],
+      apiPagination: {
+        pages: 1,
+        total: 0,
+      },
     },
     reportsFilters: {
       showPerBasin: true,
@@ -680,11 +696,9 @@ export const store = createStore<Estado>({
       id: number
     ) {
       try {
-        await dispatch("GET_STATION_READS");
-
-        const read = state.readsStation.data.find(
-          (c: { id: number }) => c.id == id
-        );
+        const {
+          data: { data: read },
+        } = await http.get(`/equipments/measures/station/${id}`);
 
         const unWrappedValue = getValue(read, "Value");
 
@@ -768,15 +782,13 @@ export const store = createStore<Estado>({
         toast.error("Erro ao buscar equipamentos.");
       }
     },
-    async ["GET_STATION_READS"](
-      { commit },
-      { _itemId, start, end }: { _itemId: number; start: string; end: string }
-    ) {
+    async ["GET_STATION_READS"]({ commit }, filters = {}) {
       try {
         const params = {
-          idEquipment: _itemId,
-          start,
-          end,
+          idEquipment: filters._itemId,
+          start: filters.start,
+          end: filters.end,
+          pageNumber: filters.pageNumber,
         };
 
         const paramsUrl = objectToParams(params);
@@ -787,92 +799,36 @@ export const store = createStore<Estado>({
           },
         } = await http.get(`/equipments/measures/stations${paramsUrl}`);
 
-        const mockedRead = [
-          {
-            id: 78,
-            IdRead: 78,
-            Time: "2023-11-05",
-            Hour: null,
-            Altitude: {
-              Unit: "m",
-              Value: 103,
-            },
-            TotalRadiation: {
-              Unit: "W/m",
-              Value: 274.48,
-            },
-            AverageRelativeHumidity: {
-              Unit: "%",
-              Value: 63.69,
-            },
-            MinRelativeHumidity: {
-              Unit: "%",
-              Value: 37.4,
-            },
-            MaxRelativeHumidity: {
-              Unit: "%",
-              Value: 83.9,
-            },
-            AverageAtmosphericTemperature: {
-              Unit: "°C",
-              Value: 30.16,
-            },
-            MaxAtmosphericTemperature: {
-              Unit: "°C",
-              Value: 37.97,
-            },
-            MinAtmosphericTemperature: {
-              Unit: "°C",
-              Value: 25.74,
-            },
-            AtmosphericPressure: {
-              Unit: "°C",
-              Value: 994.56,
-            },
-            WindVelocity: {
-              Unit: "m/s",
-              Value: 4.45,
-            },
-            ETO: {
-              Unit: "mm",
-              Value: 8.067457,
-            },
-          },
-        ];
-
         commit("SET_STATION_READS", {
-          data: mockedRead,
+          data: reads,
+          apiPagination: {
+            pages: 20,
+            total: 100,
+          },
         });
       } catch (e) {
         console.error(e);
         toast.error("Erro ao buscar dados de leitura");
       }
     },
-    async ["GET_PLUVIOMETER_READS"]({ commit }, id: number) {
+    async ["GET_PLUVIOMETER_READS"]({ commit }, filters = {}) {
       try {
+        console.log("passando params", filters);
+        const params = {
+          ...filters,
+          idEquipment: filters._itemId,
+        };
+
         const {
           data: {
             data: { Measures: reads },
           },
         } = await http.get(
-          `/equipments/measures/pluviometers?idEquipment=${id}`
+          `/equipments/measures/pluviometers${objectToParams(params)}`
         );
 
-        const mockedRead = [
-          {
-            id: 3,
-            IdRead: 3,
-            Time: "2023-09-11",
-            Hour: null,
-            Precipitation: {
-              Unit: "mm",
-              Value: 12,
-            },
-          },
-        ];
-
         commit("SET_PLUVIOMETER_READS", {
-          data: mockedRead,
+          data: reads,
         });
       } catch (e) {
         console.error(e);

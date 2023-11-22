@@ -9,6 +9,7 @@ export default {
   storeDataKey: "readsPluviometer",
   hideSearch: true,
   showDateRangeFilter: true,
+  hasApiFilters: true,
   stateFilters: [],
   filters: [],
   searchFilter: searchFilter,

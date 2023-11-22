@@ -33,6 +33,7 @@
       :action-routes="actionRoutes"
       :get-data-key="getDataKey"
       :delete-data-key="deleteDataKey"
+      :api-pagination="apiPagination"
     />
   </BasicContentWrapper>
 </template>
@@ -122,6 +123,9 @@ const filtersUsers = ref({});
 // getData();
 
 const data = computed(() => store.state[props.storeDataKey]);
+const apiPagination = computed(
+  () => store.state[props.storeDataKey].apiPagination
+);
 </script>
 
 <style lang="scss" scoped>

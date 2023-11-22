@@ -18,14 +18,12 @@
       </div>
     </div>
 
-    {{ filtersTable }}
-
     <div class="wrapper-table w-100 mt-3">
       <div ref="table" />
     </div>
 
     <BasePagination
-      v-model="currentPage"
+      v-model="pageNumber"
       class="w-100"
       :total-items="currentPagination.totalItems"
       :current-showing-items="dataShowing"
@@ -43,7 +41,7 @@ import { defaultPagination } from "@/constants";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 
-const currentPage = ref(1);
+const pageNumber = ref(1);
 
 const table = ref(null);
 const tabulator = ref(null);
@@ -67,9 +65,9 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  hasApiFilters: {
-    type: Boolean,
-    default: false,
+  apiPagination: {
+    type: Object,
+    required: false,
   },
   getDataKey: {
     type: String,
@@ -79,17 +77,9 @@ const props = defineProps({
     type: Array,
     default: null,
   },
-  isPaginatedRequest: {
-    type: Boolean,
-    default: false,
-  },
   isReport: {
     type: Boolean,
     default: false,
-  },
-  pagination: {
-    type: Object,
-    default: null,
   },
   actionText: {
     type: String,
@@ -107,12 +97,13 @@ const props = defineProps({
 
 const currentRoute = useRoute();
 const paramId = computed(() => currentRoute.params.id || "");
+const currentRouteName = computed(() => currentRoute.name || "");
 const store = useStore();
 const baseTimeout = ref(null);
 
 const currentPagination = computed(() => {
   let { itemPerPage } = defaultPagination;
-  let totalItems = props.data.length;
+  let totalItems = props.apiPagination?.total || props.data.length;
 
   return {
     itemPerPage,
@@ -121,7 +112,11 @@ const currentPagination = computed(() => {
 });
 
 const dataShowing = computed(() => {
-  const currentEnd = currentPagination.value.itemPerPage * currentPage.value;
+  if (props.apiPagination) {
+    return props.data;
+  }
+
+  const currentEnd = currentPagination.value.itemPerPage * pageNumber.value;
   const currentStart = currentEnd - currentPagination.value.itemPerPage;
 
   return props.data.slice(currentStart, currentEnd);
@@ -136,36 +131,51 @@ watch(
   }
 );
 
+const mapedFiltersTable = computed(() => {
+  const mapedFiltersTable = {};
+
+  if (props.filtersTable && props.filtersTable.length) {
+    props.filtersTable.forEach((filter) => {
+      mapedFiltersTable[filter.field] = filter.value;
+    });
+  }
+
+  return mapedFiltersTable;
+});
+
 watch(
   () => props.filtersTable,
   async (val) => {
     tabulator.value?.clearFilter();
-    // const filteredVal = val ? val.filter((f) => f.type) : [];
-    const filteredVal = val || [];
-    const mapedFiltersTable = {};
-
-    console.log("vai rodar os filter", filteredVal, val);
-    filteredVal.forEach((filter) => {
-      console.log("filter", filter);
-      mapedFiltersTable[filter.field] = filter.value;
-    });
+    const filteredVal = val ? val.filter((f) => f.type) : [];
 
     tabulator.value?.setFilter(filteredVal);
+  },
+  { immediate: true }
+);
 
-    if (props.hasApiFilters && baseTimeout.value) {
+watch(
+  () => [props.filtersTable, currentRouteName.value, pageNumber.value],
+  async () => {
+    if (baseTimeout.value) {
       clearTimeout(baseTimeout.value);
     }
 
-    if (props.hasApiFilters) {
+    // TODO
+    // FAZER COM QUE MUDAR PAGINAÇÃO ATUALIZE A BUSCA DE DADOS
+    // NÃO TA RODANDO AQUI PQ FALTA ELE DAR WATCH NELE TAMBÉM
+
+    if (props.getDataKey) {
       baseTimeout.value = setTimeout(async () => {
         await store.dispatch(props.getDataKey, {
           _itemId: paramId.value,
-          ...mapedFiltersTable,
+          pageNumber: pageNumber.value,
+          ...mapedFiltersTable.value,
         });
       }, 300);
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 // Redraw columns;
