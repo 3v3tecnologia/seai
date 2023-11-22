@@ -22,16 +22,27 @@ export class UpdateStationMeasures extends Command {
     // TO-DO : add actions and table name as global constants
     this.addLog({
       action: "update",
-      table: "MetereologicalOrganEquipment",
-      description: `Sucesso ao atualizar órgão ${request.Id}.`,
+      table: "ReadStations",
+      description: `Sucesso ao atualizar leitura de estação ${request.IdRead}.`,
     });
 
-    return right(`Sucesso ao criar órgão ${request.Id}.`);
+    return right(`Sucesso ao atualizar leitura de estação ${request.IdRead}.`);
   }
 }
 
 export namespace UpdateMeteorologicalOrganUseCaseProtocol {
-  export type Request = Required<MeteorologicalOrganEntity>;
+  export type Request = {
+    IdRead: number;
+      TotalRadiation: number | null;
+      AverageRelativeHumidity: number | null;
+      MinRelativeHumidity: number | null;
+      MaxRelativeHumidity: number | null;
+      AverageAtmosphericTemperature: number | null;
+      MaxAtmosphericTemperature: number | null;
+      MinAtmosphericTemperature: number | null;
+      AtmosphericPressure: number | null;
+      ETO: number | null;
+  };
 
   export type Response = string;
 }
