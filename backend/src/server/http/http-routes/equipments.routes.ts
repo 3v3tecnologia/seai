@@ -22,6 +22,8 @@ import {
   makeFetchStationReadsByIdReadController,
 } from "../factories/controllers/equipments";
 import { makeFetchEquipmentMeasuresLogsController } from "../factories/controllers";
+import { makeUpdatePluviometerMeasuresController } from "../factories/controllers/equipments/update-pluviometer-measures-controller.factory";
+import { makeUpdateStationMeasuresController } from "../factories/controllers/equipments/update-station-measures-controller.factory";
 
 export const equipmentsRouter = (): Router => {
   const router = Router();
@@ -84,6 +86,18 @@ export const equipmentsRouter = (): Router => {
     "/measures/pluviometer/:id",
     authorization,
     adaptRoute(makeFetchPluviometerReadsByIdReadController())
+  );
+
+  router.put(
+    "/measures/pluviometer/:id",
+    authorization,
+    adaptRoute(makeUpdatePluviometerMeasuresController())
+  );
+
+  router.put(
+    "/measures/station/:id",
+    authorization,
+    adaptRoute(makeUpdateStationMeasuresController())
   );
 
   router.get(

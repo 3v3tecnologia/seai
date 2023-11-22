@@ -133,6 +133,30 @@ export namespace MeasuresRepositoryDTOProtocol {
 
     export type Result = Promise<PluviometerReadEntity | null>;
   }
+  export namespace UpdateStationMeasures {
+    export type Params = {
+      IdRead: number;
+      TotalRadiation: number | null;
+      AverageRelativeHumidity: number | null;
+      MinRelativeHumidity: number | null;
+      MaxRelativeHumidity: number | null;
+      AverageAtmosphericTemperature: number | null;
+      MaxAtmosphericTemperature: number | null;
+      MinAtmosphericTemperature: number | null;
+      AtmosphericPressure: number | null;
+      ETO: number | null;
+    };
+
+    export type Result = Promise<void>;
+  }
+  export namespace UpdatePluviometerMeasures {
+    export type Params = {
+      IdRead: number;
+      Value: number | null;
+    };
+
+    export type Result = Promise<void>;
+  }
 }
 
 export interface MeteorologicalOrganRepositoryProtocol {
@@ -166,6 +190,12 @@ export interface EquipmentsMeasuresRepositoryProtocol {
   getPluviometersReads(
     params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
   ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result;
+  updateStationMeasures(
+    request: MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Params
+  ): MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Result;
+  updatePluviometerMeasures(
+    request: MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Params
+  ): MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Result;
 }
 
 export interface EquipmentsRepositoryProtocol

@@ -320,6 +320,75 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
+    put:{
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Equipment Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                TotalRadiation: "number",
+                AverageRelativeHumidity: "number",
+                MinRelativeHumidity: "number",
+                MaxRelativeHumidity: "number",
+                AverageAtmosphericTemperature:"number",
+                MaxAtmosphericTemperature:"number",
+                MinAtmosphericTemperature:"number",
+                AtmosphericPressure:"number",
+                ETO:"number",
+              },
+              example: {
+                "TotalRadiation": 1,
+                "AverageRelativeHumidity": 11.4,
+                "MinRelativeHumidity": 11.4,
+                "MaxRelativeHumidity": 11.4,
+                "AverageAtmosphericTemperature": 11.4,
+                "MaxAtmosphericTemperature": 11.4,
+                "MinAtmosphericTemperature": 11.4,
+                "AtmosphericPressure": 11.4,
+                "ETO": 11.4
+              }
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao atualizar leitura de estação 5."
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    }
   },
   [`${BASE_URL.V1}/equipments/measures/pluviometers`]: {
     get: {
@@ -502,5 +571,44 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
+    put:{
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Update pluviometer measures",
+      parameters: [
+        {
+          name: "id",
+          in: "query",
+          description: "Id read",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao atualizar leitura de pluviômetro 1.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    }
   },
 };
