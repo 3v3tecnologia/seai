@@ -32,7 +32,7 @@ INSERT INTO "ReadStations"
 VALUES('2023-11-20', NULL, 255.68, 87.5, 52.41, 74.87, 32.97, 25.29, 28.31, 1008.94, 3.5, 2, 1);
 INSERT INTO "ReadStations"
 ("Time", "Hour", "TotalRadiation", "MaxRelativeHumidity", "MinRelativeHumidity", "AverageRelativeHumidity", "MaxAtmosphericTemperature", "MinAtmosphericTemperature", "AverageAtmosphericTemperature", "AtmosphericPressure", "WindVelocity", "FK_Organ", "FK_Equipment")
-VALUES('2023-11-20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 6);
+VALUES('2023-11-20', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1);
 
 INSERT INTO "Et0"
 ("Value", "FK_Station_Read")
