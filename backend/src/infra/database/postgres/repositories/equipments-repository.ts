@@ -152,6 +152,41 @@ export class KnexEquipmentsRepository
     });
   }
 
+  async updateStationMeasures(
+    request: MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Params
+  ): MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Result {
+    await equipments.transaction(async (trx) => {
+      await trx("ReadStations")
+        .update({
+          TotalRadiation: request.TotalRadiation,
+          AverageRelativeHumidity: request.AverageRelativeHumidity,
+          MinRelativeHumidity: request.MinRelativeHumidity,
+          MaxRelativeHumidity: request.MaxRelativeHumidity,
+          AverageAtmosphericTemperature: request.AverageAtmosphericTemperature,
+          MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
+          MinAtmosphericTemperature: request.MinAtmosphericTemperature,
+          AtmosphericPressure: request.AtmosphericPressure,
+        })
+        .where("IdRead", request.IdRead);
+
+      await trx("Et0")
+        .update({
+          Value: request.ETO,
+        })
+        .where({ FK_Station_Read: request.IdRead });
+    });
+  }
+
+  async updatePluviometerMeasures(
+    request: MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Params
+  ): MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Result {
+    await equipments("ReadPluviometers")
+      .update({
+        Value: request.Value,
+      })
+      .where("IdRead", request.IdRead);
+  }
+
   async checkIfOrganExists(
     idOrgan: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Result {
@@ -337,7 +372,6 @@ export class KnexEquipmentsRepository
       data: toDomain,
     };
   }
-
   async getStationsReads(
     params: MeasuresRepositoryDTOProtocol.GetStations.Params
   ): MeasuresRepositoryDTOProtocol.GetStations.Result {
