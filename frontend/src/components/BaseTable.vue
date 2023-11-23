@@ -29,6 +29,7 @@
       :current-showing-items="dataShowing"
       :collection-text="actionText"
       :per-page="currentPagination.itemPerPage"
+      :api-pagination="apiPagination"
     />
   </div>
 </template>

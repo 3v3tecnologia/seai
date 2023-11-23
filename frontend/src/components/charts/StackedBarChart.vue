@@ -20,7 +20,7 @@ import {
   formatterPlot,
   formatterXTooltip,
   formatterLabels,
-} from "./helpers";
+} from "../../helpers/charts";
 
 const props = defineProps({
   data: {

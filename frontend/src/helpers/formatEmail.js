@@ -1,4 +1,4 @@
-export const previewEmailCensured = (email: string) => {
+export const previewEmailCensured = (email) => {
   const startCharHidden = 5;
   const endCharHidden = email.length - 4;
 

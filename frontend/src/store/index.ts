@@ -8,112 +8,27 @@ import IUser from "@/interfaces/IUser";
 import IUsersWrapper from "@/interfaces/IUsersWrapper";
 import ICityOption from "@/interfaces/ICityOption";
 import IHydrographicBasinOption from "@/interfaces/IHydrographicBasinOption";
-import http from "@/http";
 
 import { previewEmailCensured } from "@/helpers/formatEmail";
 import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
-import moment from "moment";
+import {
+  equipmentFormDTO,
+  formatLocation,
+  formatTemporaryToken,
+  getValue,
+  objectToParams,
+  setAxiosHeader,
+  ungroupData,
+} from "@/helpers/dto";
+import { dataFormatUrl } from "@/constants";
+import http from "@/http";
+import { extractDate, extractHour, formatDateWithHour } from "@/helpers/date";
 
 const defaultOption = {
   title: "Todos",
   value: null,
-};
-
-const formatTemporaryToken = (token: string) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
-function formatDate(time: string) {
-  return moment(time).format("YYYY-MM-DD");
-}
-
-function objectToParams(obj: { [x: number | string]: any }): string {
-  const validParams: string[] = [];
-
-  Object.keys(obj).forEach((item) => {
-    if (obj[item]) {
-      const tempValue = ["start", "end"].includes(item)
-        ? formatDate(obj[item])
-        : obj[item];
-      validParams.push(`${item}=${tempValue}`);
-    }
-  });
-
-  return validParams.length ? `?${validParams.join("&")}` : "";
-}
-
-const equipmentFormDTO = (form: any) => {
-  return {
-    ...form,
-    Location: {
-      Name: form.LocationName,
-      Coordinates: [form.x, form.y],
-    },
-    Id: form.Id,
-    IdEquipmentExternal: form.Code,
-    Name: form.Name,
-    Altitude: Number(form.Altitude),
-    Fk_Organ: form.Organ.value,
-    Fk_Type: form.NomeTipoEquipamento.value,
-  };
-};
-
-const dataFormatUrl = {
-  1: "basin",
-  2: "county",
-  3: "consumption",
-};
-
-const setAxiosHeader = (token: string) =>
-  (http.defaults.headers.common["Authorization"] = `Bearer ${token}`);
-
-const getValue = (item: any, keyValOpt: string) => {
-  if (!item) {
-    return item;
-  }
-
-  const keyValue = keyValOpt ?? "valor";
-  const keys = Object.keys(item);
-
-  keys.forEach((key) => {
-    if (item[key]?.[keyValue] || item[key]?.[keyValue] === null) {
-      item[key] = item[key][keyValue];
-    }
-  });
-
-  return item;
-};
-
-const formatLocation = (item: any) => {
-  if (item.Tipo === "bacia") {
-    item["Bacia"] = item["Nome"];
-  } else {
-    item["Municipio"] = item["Nome"];
-  }
-
-  return item;
-};
-
-const ungroupData = (items: any) => {
-  const keys = Object.keys(items);
-  const totalData: { [x: string]: number | string }[] = [];
-
-  keys.forEach((key) => {
-    const data = items[key].map((i: any) => {
-      i.Bacia = key;
-      i.Municipio = key;
-
-      return i;
-    });
-
-    totalData.push(...data);
-  });
-
-  return totalData;
 };
 
 interface Estado {
@@ -595,6 +510,46 @@ export const store = createStore<Estado>({
         throw Error(e?.response?.data?.error);
       }
     },
+    async ["UPDATE_STATION_READ"]({ state }, read: any) {
+      try {
+        const formattedRead = {
+          ...read,
+          Time: extractDate(read.Time),
+          Hour: extractHour(read.Time),
+        };
+
+        await http.put(
+          `/equipments/measures/station/${read?.IdRead}`,
+          formattedRead
+        );
+
+        toast.success("Dados de leitura atualizados com sucesso.");
+      } catch (e: any) {
+        toast.error("Falha ao atualizar dados de leitura.");
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
+    async ["UPDATE_PLUVIOMETER_READ"]({ state }, read: any) {
+      try {
+        const formattedRead = {
+          ...read,
+          Time: extractDate(read.Time),
+          Hour: extractHour(read.Time),
+        };
+
+        await http.put(
+          `/equipments/measures/pluviometer/${read?.IdRead}`,
+          formattedRead
+        );
+
+        toast.success("Dados de leitura atualizados com sucesso.");
+      } catch (e: any) {
+        toast.error("Falha ao atualizar dados de leitura.");
+        console.error(e);
+        throw Error(e?.response?.data?.error);
+      }
+    },
     async ["UPDATE_BODY"]({ state }, form) {
       try {
         // await http.put(`/user/${state.currentUser?.id}`, user);
@@ -691,18 +646,19 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["GET_CURRENT_STATION_READ"](
-      { state, commit, dispatch },
-      id: number
-    ) {
+    async ["GET_CURRENT_STATION_READ"]({ commit }, id: number) {
       try {
         const {
           data: { data: read },
         } = await http.get(`/equipments/measures/station/${id}`);
 
         const unWrappedValue = getValue(read, "Value");
+        const formattedDateValue = {
+          ...unWrappedValue,
+          Time: formatDateWithHour(unWrappedValue.Time, unWrappedValue.Hour),
+        };
 
-        commit("SET_CURRENT_STATION_READ", unWrappedValue);
+        commit("SET_CURRENT_STATION_READ", formattedDateValue);
       } catch (e) {
         console.error(e);
       }
@@ -712,15 +668,17 @@ export const store = createStore<Estado>({
       id: number
     ) {
       try {
-        await dispatch("GET_PLUVIOMETER_READS");
-
-        const read = state.readsPluviometer.data.find(
-          (c: { id: number }) => c.id == id
-        );
+        const {
+          data: { data: read },
+        } = await http.get(`/equipments/measures/pluviometer/${id}`);
 
         const unWrappedValue = getValue(read, "Value");
+        const formattedDateValue = {
+          ...unWrappedValue,
+          Time: formatDateWithHour(unWrappedValue.Time, unWrappedValue.Hour),
+        };
 
-        commit("SET_CURRENT_PLUVIOMETER_READ", unWrappedValue);
+        commit("SET_CURRENT_PLUVIOMETER_READ", formattedDateValue);
       } catch (e) {
         console.error(e);
       }
@@ -791,19 +749,28 @@ export const store = createStore<Estado>({
           pageNumber: filters.pageNumber,
         };
 
-        const paramsUrl = objectToParams(params);
-
         const {
           data: {
-            data: { Measures: reads },
+            data: {
+              Measures: reads,
+              QtdPages: pages,
+              QtdRows: total,
+              PageLimitRows: pageLimit,
+            },
           },
-        } = await http.get(`/equipments/measures/stations${paramsUrl}`);
+        } = await http.get(
+          `/equipments/measures/stations${objectToParams(params)}`
+        );
 
         commit("SET_STATION_READS", {
-          data: reads,
+          data: reads.map((c: any) => {
+            c.id = c.IdRead;
+            return c;
+          }),
           apiPagination: {
-            pages: 20,
-            total: 100,
+            pages,
+            total,
+            pageLimit,
           },
         });
       } catch (e) {
@@ -813,22 +780,36 @@ export const store = createStore<Estado>({
     },
     async ["GET_PLUVIOMETER_READS"]({ commit }, filters = {}) {
       try {
-        console.log("passando params", filters);
         const params = {
-          ...filters,
           idEquipment: filters._itemId,
+          start: filters.start,
+          end: filters.end,
+          pageNumber: filters.pageNumber,
         };
 
         const {
           data: {
-            data: { Measures: reads },
+            data: {
+              Measures: reads,
+              QtdPages: pages,
+              QtdRows: total,
+              PageLimitRows: pageLimit,
+            },
           },
         } = await http.get(
           `/equipments/measures/pluviometers${objectToParams(params)}`
         );
 
         commit("SET_PLUVIOMETER_READS", {
-          data: reads,
+          data: reads.map((c: any) => {
+            c.id = c.IdRead;
+            return c;
+          }),
+          apiPagination: {
+            pages,
+            total,
+            pageLimit,
+          },
         });
       } catch (e) {
         console.error(e);

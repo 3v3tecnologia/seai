@@ -1,6 +1,6 @@
 const getDataKey = "GET_CURRENT_STATION_READ";
 
-const submitDataKey = "UPDATE_EQUIPMENT";
+const submitDataKey = "UPDATE_STATION_READ";
 
 const storeDataKey = "currentStationRead";
 

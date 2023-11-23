@@ -19,3 +19,9 @@ export const reportsTitles = {
 export const defaultPagination = {
   itemPerPage: 5,
 };
+
+export const dataFormatUrl = {
+  1: "basin",
+  2: "county",
+  3: "consumption",
+};

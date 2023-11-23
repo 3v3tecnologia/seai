@@ -1,6 +1,6 @@
 const getDataKey = "GET_CURRENT_PLUVIOMETER_READ";
 
-const submitDataKey = "UPDATE_EQUIPMENT";
+const submitDataKey = "UPDATE_PLUVIOMETER_READ";
 
 const storeDataKey = "currentPluviometerRead";
 

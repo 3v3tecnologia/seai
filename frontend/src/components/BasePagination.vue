@@ -3,7 +3,7 @@
     class="base-pagination d-flex align-items-center justify-content-between px-2 py-2"
   >
     <div>
-      Mostrando {{ currentShowingItems.length }} de {{ totalItems }}
+      Exibindo {{ currentShowingItems.length }} de {{ totalItems }}
       {{ loweredCollectionText }}s
     </div>
     <div>
@@ -34,6 +34,10 @@
 import { computed, defineProps, defineEmits, ref } from "vue";
 
 const props = defineProps({
+  apiPagination: {
+    type: Object,
+    required: false,
+  },
   totalItems: {
     type: Number,
     default: 1,
@@ -54,7 +58,13 @@ const props = defineProps({
 
 const pagesButtonsMax = 5;
 
-const totalPages = computed(() => Math.ceil(props.totalItems / props.perPage));
+const totalPages = computed(() => {
+  const basePagination = props.apiPagination
+    ? props.apiPagination.pages
+    : Math.ceil(props.totalItems / props.perPage);
+
+  return basePagination || 1;
+});
 const currentPage = ref(1);
 const pages = computed(() =>
   [...Array(totalPages.value).keys()].map((c) => c + 1)

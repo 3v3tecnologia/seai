@@ -55,7 +55,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
-import { validatePasswords } from "@/components/charts/helpers";
+import { validatePasswords } from "@/helpers/charts";
 
 const router = useRouter();
 const currentRoute = useRoute();

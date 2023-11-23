@@ -1,5 +1,5 @@
 import { toast } from "vue3-toastify";
-import { itemsPerGraph } from "../../constants";
+import { itemsPerGraph } from "../constants";
 
 export const validatePasswords = ({ password, confirmPassword }) => {
   const isPasswordsUnMatching = password != confirmPassword;
@@ -61,3 +61,5 @@ export const formatterXTooltip = (seriesName) => `${seriesName}`;
 export const formatterLabels = (val, opt) => {
   return val.length > 10 ? `${val.slice(0, 7)}...` : val;
 };
+
+export const fixPointsFloat = (val) => (val ? Number(val.toFixed(2)) : 0);

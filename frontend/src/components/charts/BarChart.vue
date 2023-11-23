@@ -18,7 +18,7 @@ import {
   formatterXTooltip,
   groupByKeyData,
   labelsCharts,
-} from "./helpers";
+} from "../../helpers/charts";
 
 const props = defineProps({
   data: {

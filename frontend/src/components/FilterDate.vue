@@ -13,6 +13,7 @@
       :hour-format="hourFormat"
       stepMinute="60"
     />
+    <!-- show-button-bar="true" -->
     <label for="date-range-read">{{ label }}</label>
   </span>
 </template>
@@ -66,7 +67,7 @@ watch(
   () => props.modelValue,
   (val) => {
     if (typeof val === "string" && val != dates.value) {
-      const formattedDate = moment(val).format("DD/MM/YYYY hh:00");
+      const formattedDate = moment(val).format("DD/MM/YYYY HH:00");
 
       dates.value = formattedDate;
     }
