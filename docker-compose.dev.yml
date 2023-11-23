@@ -5,15 +5,15 @@ services:
       container_name: "seai-database-dev"
       volumes:
         - ./db/ddl/equipments.sql:/docker-entrypoint-initdb.d/ddl-equipments.sql
-        - ./db/seeds/equipments.sql:/docker-entrypoint-initdb.d/seeds-equipments.sql
-        - ./db/seeds/government.sql:/docker-entrypoint-initdb.d/seeds-government.sql
-        - ./db/seeds/logs.sql:/docker-entrypoint-initdb.d/seeds-logs.sql
         - ./db/ddl/government.sql:/docker-entrypoint-initdb.d/ddl-government.sql
         - ./db/ddl/management.sql:/docker-entrypoint-initdb.d/ddl-management.sql
         - ./db/ddl/newsletter.sql:/docker-entrypoint-initdb.d/ddl-newsletter.sql
         - ./db/ddl/logs.sql:/docker-entrypoint-initdb.d/ddl-logs.sql
         - ./db/ddl/census.sql:/docker-entrypoint-initdb.d/ddl-census.sql
-        - db-data:/var/lib/postgresql/data
+        - ./db/seeds/equipments.sql:/docker-entrypoint-initdb.d/seeds-equipments.sql
+        - ./db/seeds/government.sql:/docker-entrypoint-initdb.d/seeds-government.sql
+        - ./db/seeds/logs.sql:/docker-entrypoint-initdb.d/seeds-logs.sql
+        - ./db-data:/var/lib/postgresql/data
         - ./db/csv/Bacias.csv:/var/lib/postgres/data/Bacias.csv
         - ./db/csv/Municipios.csv:/var/lib/postgres/data/Municipios.csv
         - ./db/csv/Contatos.csv:/var/lib/postgres/data/Contatos.csv
