@@ -4,8 +4,6 @@ CREATE DATABASE government;
 
 CREATE TYPE user_types AS ENUM ('admin', 'standard');
 
-
-
 CREATE TABLE "User"(
    "Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
    "Name" VARCHAR(30) DEFAULT NULL,
