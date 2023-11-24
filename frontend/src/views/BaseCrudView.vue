@@ -1,7 +1,7 @@
 <template>
   <BasicContentWrapper>
     <div
-      v-if="headerLabels.length"
+      v-if="headerLabels.length && false"
       class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-5"
     >
       <div
@@ -43,12 +43,27 @@ import { useStore } from "vuex";
 import CrudTable from "@/components/CrudTable.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
-import { useRoute } from "vue-router";
+
+const store = useStore();
+
+watch(
+  () => props.navBarTab,
+  (val) => {
+    if (val || val === 0) {
+      store.commit("SET_CURRENT_TAB", val);
+    }
+  },
+  { immediate: true }
+);
 
 const props = defineProps({
   headerLabels: {
     type: Array,
     required: true,
+  },
+  navBarTab: {
+    type: Number,
+    default: null,
   },
   actionText: {
     type: String,
@@ -103,7 +118,6 @@ const props = defineProps({
 
 // const currentRoute = useRoute();
 // const paramId = computed(() => currentRoute.params.id || "");
-const store = useStore();
 const filtersUsers = ref({});
 
 // const getData = async () => {

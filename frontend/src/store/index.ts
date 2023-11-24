@@ -14,6 +14,7 @@ import INewUser from "@/interfaces/INewUser";
 import IReportsFilters from "@/interfaces/IReportsFilters";
 import IReportsData from "@/interfaces/IReportsData";
 import {
+  checkMissingColumn,
   equipmentFormDTO,
   formatLocation,
   formatTemporaryToken,
@@ -40,6 +41,7 @@ interface Estado {
   readsPluviometer: any;
   currentBody: any;
   currentEquipment: any;
+  currentTab: number;
   metereologicalBodies: any;
   typesEquipments: any;
   users: IUsersWrapper;
@@ -69,6 +71,7 @@ const reportsDataDefault: IReportsData = {
 export const store = createStore<Estado>({
   state: {
     auth: null,
+    currentTab: 0,
     currentBody: null,
     currentEquipment: null,
     isLoadingReport: false,
@@ -131,6 +134,9 @@ export const store = createStore<Estado>({
   mutations: {
     ["SET_BODIES_OPTIONS"](state, options) {
       state.metereologicalBodies = options;
+    },
+    ["SET_CURRENT_TAB"](state, tab) {
+      state.currentTab = tab;
     },
     ["SET_TYPES_EQUIPMENTS_OPTIONS"](state, options) {
       state.typesEquipments = options;
@@ -518,6 +524,12 @@ export const store = createStore<Estado>({
           Hour: extractHour(read.Time),
         };
 
+        console.log(
+          "tentando muito ta extrair as coisa",
+          formattedRead.Time,
+          formattedRead.Hour
+        );
+
         await http.put(
           `/equipments/measures/station/${read?.IdRead}`,
           formattedRead
@@ -764,6 +776,7 @@ export const store = createStore<Estado>({
 
         commit("SET_STATION_READS", {
           data: reads.map((c: any) => {
+            c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
             c.id = c.IdRead;
             return c;
           }),
@@ -803,6 +816,8 @@ export const store = createStore<Estado>({
         commit("SET_PLUVIOMETER_READS", {
           data: reads.map((c: any) => {
             c.id = c.IdRead;
+            c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
+
             return c;
           }),
           apiPagination: {

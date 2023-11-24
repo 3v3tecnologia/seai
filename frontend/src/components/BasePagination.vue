@@ -31,9 +31,10 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits, ref } from "vue";
+import { computed, defineProps, defineEmits, ref, watch } from "vue";
 
 const props = defineProps({
+  modelValue: Number,
   apiPagination: {
     type: Object,
     required: false,
@@ -125,6 +126,13 @@ const setBeforePage = () => {
 const setNextPage = () => {
   setPage(currentPage.value + 1);
 };
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    setPage(val);
+  }
+);
 </script>
 
 <style lang="scss" scoped>

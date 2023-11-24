@@ -32,4 +32,5 @@ export default {
   submitDataKey,
   headerLabel,
   fields,
+  navBarTab: 1,
 };

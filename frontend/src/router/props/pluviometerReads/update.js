@@ -22,7 +22,8 @@ const fields = [
   {
     label: "Precipitação",
     formKey: "Precipitation",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
 ];
 
@@ -38,4 +39,5 @@ export default {
   finishedDataButton,
   headerLabel,
   fields,
+  navBarTab: 2,
 };

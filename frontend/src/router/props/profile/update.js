@@ -24,10 +24,17 @@ const fields = [
   },
 ];
 
+const finishedDataButton = {
+  text: "Retornar a listagem de usuários",
+  routeName: "users",
+};
+
 export default {
   getDataKey,
+  navBarTab: 5,
   storeDataKey,
   submitDataKey,
   headerLabel,
   fields,
+  finishedDataButton,
 };

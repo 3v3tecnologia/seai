@@ -157,14 +157,16 @@ watch(
 
 watch(
   () => [props.filtersTable, currentRouteName.value, pageNumber.value],
-  async () => {
+  async (newVal, oldVal) => {
+    if (oldVal && newVal[2] === oldVal[2] && newVal[2] !== 1) {
+      console.log("tem que resetar a paginação");
+      pageNumber.value = 1;
+      return;
+    }
+
     if (baseTimeout.value) {
       clearTimeout(baseTimeout.value);
     }
-
-    // TODO
-    // FAZER COM QUE MUDAR PAGINAÇÃO ATUALIZE A BUSCA DE DADOS
-    // NÃO TA RODANDO AQUI PQ FALTA ELE DAR WATCH NELE TAMBÉM
 
     if (props.getDataKey) {
       baseTimeout.value = setTimeout(async () => {
@@ -179,9 +181,19 @@ watch(
   { immediate: true, deep: true }
 );
 
+const columnsDTO = computed(() => {
+  return props.columns.map((c) => {
+    c.headerSort = false;
+    c.hozAlign = "center";
+    c.headerHozAlign = "center";
+
+    return c;
+  });
+});
+
 // Redraw columns;
 watch(
-  () => props.columns,
+  () => columnsDTO.value,
   (newValue) => {
     tabulator.value?.setColumns(newValue);
   }
@@ -197,8 +209,9 @@ onMounted(() => {
   tabulator.value = new Tabulator(table.value, {
     data: dataShowing.value,
     reactiveData: false,
-    columns: props.columns,
+    columns: columnsDTO.value,
     layout: "fitColumns",
+    validationMode: "highlight",
   });
 
   tabulator.value.on(

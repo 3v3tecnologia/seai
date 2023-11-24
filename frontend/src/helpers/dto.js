@@ -7,6 +7,15 @@ export const formatTemporaryToken = (token) => ({
   },
 });
 
+export function checkMissingColumn(row, valueKey) {
+  const rowData = getValue(row, valueKey);
+
+  const rowValues = Object.values(rowData);
+  const value = rowValues.some((c) => c === null);
+
+  return !value;
+}
+
 export function objectToParams(obj) {
   const validParams = [];
 

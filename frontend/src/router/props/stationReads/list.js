@@ -18,6 +18,7 @@ export default {
     create: "",
   },
   headerLabels: [],
+  navBarTab: 2,
   columns: [
     {
       formatter: "rowSelection",
@@ -25,6 +26,11 @@ export default {
       align: "center",
       headerSort: false,
       width: 80,
+    },
+    {
+      title: "Integridade de dados",
+      field: "hasMissingColumn",
+      formatter: "tickCross",
     },
     {
       title: "Dia",
@@ -64,20 +70,6 @@ export default {
           : col._cell.value?.Value;
       },
     },
-    // {
-    //   title: "Humidade relativa mínima",
-    //   field: "MinRelativeHumidity",
-    // formatter: (col) => {
-    //   return col._cell.value?.Value ? +col._cell.value?.Value.toFixed(2) : col._cell.value?.Value
-    // },
-    // },
-    // {
-    //   title: "Humidade relativa máxima",
-    //   field: "MaxRelativeHumidity",
-    // formatter: (col) => {
-    //   return col._cell.value?.Value ? +col._cell.value?.Value.toFixed(2) : col._cell.value?.Value
-    // },
-    // },
     {
       title: "Temperatura atmosférica média",
       field: "AverageAtmosphericTemperature",
@@ -87,20 +79,6 @@ export default {
           : col._cell.value?.Value;
       },
     },
-    // {
-    //   title: "Temperatura atmosférica máxima",
-    //   field: "MaxAtmosphericTemperature",
-    // formatter: (col) => {
-    //   return col._cell.value?.Value ? +col._cell.value?.Value.toFixed(2) : col._cell.value?.Value
-    // },
-    // },
-    // {
-    //   title: "Temperatura atmosférica mínima",
-    //   field: "MinAtmosphericTemperature",
-    // formatter: (col) => {
-    //   return col._cell.value?.Value ? +col._cell.value?.Value.toFixed(2) : col._cell.value?.Value
-    // },
-    // },
     {
       title: "Pressão atmosférica",
       field: "AtmosphericPressure",
@@ -122,6 +100,7 @@ export default {
     {
       title: "ETO",
       field: "ETO",
+      validator: ["required", "min:0", "max:5"],
       formatter: (col) => {
         return col._cell.value?.Value
           ? +col._cell.value?.Value.toFixed(2)

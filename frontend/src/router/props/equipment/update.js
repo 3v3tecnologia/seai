@@ -65,4 +65,5 @@ export default {
   finishedDataButton,
   headerLabel,
   fields,
+  navBarTab: 2,
 };

@@ -11,7 +11,7 @@
       :time-only="timeOnly"
       :show-time="showTime"
       :hour-format="hourFormat"
-      stepMinute="60"
+      :stepMinute="60"
     />
     <!-- show-button-bar="true" -->
     <label for="date-range-read">{{ label }}</label>

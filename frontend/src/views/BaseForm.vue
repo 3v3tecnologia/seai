@@ -54,13 +54,29 @@
                 @click="() => clickEyePassword(field)"
                 :class="`pi ${field.tmp_pass ? 'pi-eye-slash' : 'pi-eye'}`"
               />
-              <InputText
+              <InputNumber
+                v-if="field.type === 'number'"
                 v-model="form[field.formKey]"
                 :required="!field.nullable"
-                :type="field.type && field.tmp_pass ? field.type : 'text'"
                 :input-id="field.formKey"
-                minlength="5"
-                maxlength="25"
+                class="w-100"
+                :maxFractionDigits="5"
+                locale="en-US"
+                showButtons
+                :class="{
+                  'p-invalid': [null, undefined, ''].includes(
+                    form[field.formKey]
+                  ),
+                }"
+              />
+              <InputText
+                v-else
+                v-model="form[field.formKey]"
+                :required="!field.nullable"
+                type="text"
+                :input-id="field.formKey"
+                :minlength="requireMinMax ? 5 : null"
+                :maxlength="requireMinMax ? 25 : null"
                 class="w-100"
               />
 
@@ -110,6 +126,7 @@ import FormWrapper from "@/components/FormWrapper.vue";
 import { computed, ref, watch, defineProps } from "vue";
 import { useStore } from "vuex";
 import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
 import { useRoute } from "vue-router";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import FilterDate from "@/components/FilterDate.vue";
@@ -139,6 +156,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  requireMinMax: {
+    type: Boolean,
+    default: false,
+  },
   submitDataKey: {
     type: String,
     required: true,
@@ -155,7 +176,21 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  navBarTab: {
+    type: Number,
+    default: null,
+  },
 });
+
+watch(
+  () => props.navBarTab,
+  (val) => {
+    if (val || val === 0) {
+      store.commit("SET_CURRENT_TAB", val);
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   currentRoute,

@@ -70,7 +70,14 @@ const auth = computed(() => store.state.auth);
 
 const signOut = () => store.dispatch("SIGN_OUT");
 
-const active = ref(0);
+const active = computed({
+  set(val) {
+    store.commit("SET_CURRENT_TAB", val);
+  },
+  get() {
+    return store.state.currentTab;
+  },
+});
 const itemsRoutesRaw = [
   {
     label: "Usuários",

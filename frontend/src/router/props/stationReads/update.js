@@ -1,3 +1,5 @@
+import { inputsFormattersHtml } from "@/constants";
+
 const getDataKey = "GET_CURRENT_STATION_READ";
 
 const submitDataKey = "UPDATE_STATION_READ";
@@ -12,57 +14,79 @@ const fields = [
     component: {
       name: "FilterDate",
       props: {
-        selectionMode: "single",
         label: "Data",
         showTime: true,
         hourFormat: "24",
+        selectionMode: "single",
       },
     },
   },
-  // {
-  //   formKey: "Hour",
-  //   component: {
-  //     name: "FilterDate",
-  //     props: {
-  //       timeOnly: true,
-  //       label: "Hora",
-  //     },
-  //   },
-  // },
   {
     label: "Altitude",
     formKey: "Altitude",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "Radiação total",
     formKey: "TotalRadiation",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "Umidade relativa média",
     formKey: "AverageRelativeHumidity",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "Temperatura atmosférica média",
     formKey: "AverageAtmosphericTemperature",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "Pressão atmosférica",
     formKey: "AtmosphericPressure",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "Velocidade do vento",
     formKey: "WindVelocity",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
   },
   {
     label: "ETO",
     formKey: "ETO",
-    type: "text",
+    type: "number",
+    requireMinMax: false,
+    validator: "required",
+  },
+  {
+    label: "Temperatura atmosférica máxima",
+    formKey: "MaxAtmosphericTemperature",
+    type: "number",
+    requireMinMax: false,
+  },
+  {
+    label: "Temperatura atmosférica mínima",
+    formKey: "MinAtmosphericTemperature",
+    type: "number",
+    requireMinMax: false,
+  },
+  {
+    label: "Humidade relativa mínima",
+    formKey: "MinRelativeHumidity",
+    type: "number",
+    requireMinMax: false,
+  },
+  {
+    label: "Humidade relativa máxima",
+    formKey: "MaxRelativeHumidity",
+    type: "number",
+    requireMinMax: false,
   },
 ];
 
@@ -78,4 +102,5 @@ export default {
   finishedDataButton,
   headerLabel,
   fields,
+  navBarTab: 2,
 };

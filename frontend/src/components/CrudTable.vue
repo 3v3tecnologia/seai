@@ -236,11 +236,13 @@ const filtersTable = computed(() => {
 });
 
 watch(
-  () => currentRoute.value,
+  () => props.stateFilters,
   () => {
+    console.log("ta mudando de rota", currentRoute.value, props.stateFilters);
     search.value = "";
     props.stateFilters.forEach((f) => store.dispatch(f.getListKey));
-  }
+  },
+  { immediate: true }
 );
 
 watch(

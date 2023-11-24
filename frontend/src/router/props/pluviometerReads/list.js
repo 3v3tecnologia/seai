@@ -7,6 +7,7 @@ export default {
   getDataKey: "GET_PLUVIOMETER_READS",
   deleteDataKey: "",
   storeDataKey: "readsPluviometer",
+  navBarTab: 2,
   hideSearch: true,
   showDateRangeFilter: true,
   hasApiFilters: true,
@@ -25,6 +26,11 @@ export default {
       align: "center",
       headerSort: false,
       width: 80,
+    },
+    {
+      title: "Integridade de dados",
+      field: "hasMissingColumn",
+      formatter: "tickCross",
     },
     {
       title: "Dia",

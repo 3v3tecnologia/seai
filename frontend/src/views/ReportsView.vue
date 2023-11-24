@@ -149,11 +149,23 @@ const showCities = computed(() => showingDataFormat.value.value === 2);
 
 store.dispatch("FETCH_PLACES_OPTIONS");
 
-defineProps({
+const props = defineProps({
   showingTab: {
     type: String,
   },
 });
+
+watch(
+  () => props.showingTab,
+  (val) => {
+    if (val === "charts") {
+      store.commit("SET_CURRENT_TAB", 4);
+    } else {
+      store.commit("SET_CURRENT_TAB", 3);
+    }
+  },
+  { immediate: true }
+);
 
 const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },
