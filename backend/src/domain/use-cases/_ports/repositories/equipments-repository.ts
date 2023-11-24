@@ -145,6 +145,7 @@ export namespace MeasuresRepositoryDTOProtocol {
       MinAtmosphericTemperature: number | null;
       AtmosphericPressure: number | null;
       ETO: number | null;
+      WindVelocity: number | null;
     };
 
     export type Result = Promise<void>;

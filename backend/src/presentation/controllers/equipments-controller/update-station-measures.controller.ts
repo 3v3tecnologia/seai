@@ -12,7 +12,10 @@ export class UpdateStationMeasuresController
   private updateEquipment: UpdateStationMeasures;
   private userLogs: RegisterUserLogs;
 
-  constructor(updateEquipment: UpdateStationMeasures, userLogs: RegisterUserLogs) {
+  constructor(
+    updateEquipment: UpdateStationMeasures,
+    userLogs: RegisterUserLogs
+  ) {
     this.updateEquipment = updateEquipment;
     this.userLogs = userLogs;
   }
@@ -20,7 +23,7 @@ export class UpdateStationMeasuresController
   async handle(
     request: UpdateStationMeasuresControllerProtocol.Request
   ): Promise<HttpResponse> {
-    try { 
+    try {
       const dto = {
         IdRead: request.id,
         TotalRadiation: request.TotalRadiation,
@@ -30,9 +33,10 @@ export class UpdateStationMeasuresController
         AverageAtmosphericTemperature: request.AverageAtmosphericTemperature,
         MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: request.MinAtmosphericTemperature,
-        AtmosphericPressure:request.AtmosphericPressure,
-        ETO: request.ETO
-      }
+        AtmosphericPressure: request.AtmosphericPressure,
+        ETO: request.ETO,
+        WindVelocity: request.WindVelocity,
+      };
 
       const resultOrError = await this.updateEquipment.execute(dto);
 
@@ -63,5 +67,6 @@ export namespace UpdateStationMeasuresControllerProtocol {
     MinAtmosphericTemperature: number | null;
     AtmosphericPressure: number | null;
     ETO: number | null;
+    WindVelocity: number | null;
   };
 }

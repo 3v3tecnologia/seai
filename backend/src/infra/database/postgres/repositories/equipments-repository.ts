@@ -166,6 +166,7 @@ export class KnexEquipmentsRepository
           MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
           MinAtmosphericTemperature: request.MinAtmosphericTemperature,
           AtmosphericPressure: request.AtmosphericPressure,
+          WindVelocity: request.WindVelocity,
         })
         .where("IdRead", request.IdRead);
 
