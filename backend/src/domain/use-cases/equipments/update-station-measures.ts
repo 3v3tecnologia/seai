@@ -33,15 +33,16 @@ export class UpdateStationMeasures extends Command {
 export namespace UpdateMeteorologicalOrganUseCaseProtocol {
   export type Request = {
     IdRead: number;
-      TotalRadiation: number | null;
-      AverageRelativeHumidity: number | null;
-      MinRelativeHumidity: number | null;
-      MaxRelativeHumidity: number | null;
-      AverageAtmosphericTemperature: number | null;
-      MaxAtmosphericTemperature: number | null;
-      MinAtmosphericTemperature: number | null;
-      AtmosphericPressure: number | null;
-      ETO: number | null;
+    TotalRadiation: number | null;
+    AverageRelativeHumidity: number | null;
+    MinRelativeHumidity: number | null;
+    MaxRelativeHumidity: number | null;
+    AverageAtmosphericTemperature: number | null;
+    MaxAtmosphericTemperature: number | null;
+    MinAtmosphericTemperature: number | null;
+    AtmosphericPressure: number | null;
+    ETO: number | null;
+    WindVelocity: number | null;
   };
 
   export type Response = string;
