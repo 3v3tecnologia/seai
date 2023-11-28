@@ -84,17 +84,13 @@ const itemsRoutesRaw = [
     route: "/users",
   },
   {
-    label: "Órgãos Metereológicos",
-    route: "/metereological-bodies",
+    label: "Órgãos Meteorológicas",
+    route: "/meteorological-bodies",
   },
   {
     label: "Equipamentos e leituras",
     route: "/equipments",
   },
-  // {
-  //   label: "Leituras de equipamentos",
-  //   route: "/equipments-pick",
-  // },
   {
     label: "Relatórios",
     route: "/reports",
@@ -106,6 +102,10 @@ const itemsRoutesRaw = [
   {
     label: "Perfil",
     route: "/profile",
+  },
+  {
+    label: "Notícias",
+    route: "/newsletter",
   },
 ];
 

@@ -77,13 +77,13 @@ const fields = [
     requireMinMax: false,
   },
   {
-    label: "Humidade relativa mínima",
+    label: "Umidade relativa mínima",
     formKey: "MinRelativeHumidity",
     type: "number",
     requireMinMax: false,
   },
   {
-    label: "Humidade relativa máxima",
+    label: "Umidade relativa máxima",
     formKey: "MaxRelativeHumidity",
     type: "number",
     requireMinMax: false,

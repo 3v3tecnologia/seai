@@ -25,7 +25,6 @@
       :show-date-range-filter="showDateRangeFilter"
       :has-api-filters="hasApiFilters"
       :data="data.data"
-      :store-data-key="storeDataKey"
       :columns="columns"
       :filters="filters"
       :state-filters="stateFilters"
@@ -43,6 +42,7 @@ import { useStore } from "vuex";
 import CrudTable from "@/components/CrudTable.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
+import { accessStoreKey } from "@/helpers/dto";
 
 const store = useStore();
 
@@ -86,7 +86,7 @@ const props = defineProps({
     default: false,
   },
   storeDataKey: {
-    type: String,
+    type: [String, Array],
     required: true,
   },
   getDataKey: {
@@ -136,10 +136,8 @@ const filtersUsers = ref({});
 
 // getData();
 
-const data = computed(() => store.state[props.storeDataKey]);
-const apiPagination = computed(
-  () => store.state[props.storeDataKey].apiPagination
-);
+const data = computed(() => accessStoreKey(store.state, props.storeDataKey));
+const apiPagination = computed(() => data.value.apiPagination);
 </script>
 
 <style lang="scss" scoped>

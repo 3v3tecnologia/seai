@@ -10,6 +10,8 @@ import stationReads from "./stationReads/list";
 import stationReadsUpdate from "./stationReads/update";
 import pluviometerReads from "./pluviometerReads/list";
 import pluviometerReadsUpdate from "./pluviometerReads/update";
+import newsletter from "./newsletter/list";
+import newsletterUpdate from "./newsletter/update";
 
 export default {
   user,
@@ -24,6 +26,10 @@ export default {
     },
   },
   equipments,
+  newsletter: {
+    list: newsletter,
+    update: newsletterUpdate,
+  },
   metereologicalBodies,
   profile,
   editBody,

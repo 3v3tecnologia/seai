@@ -35,7 +35,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/helpers/*.js", 
+    "src/helpers/*.js", "src/store/modules/newsletter.js", 
 ],
   "exclude": [
     "node_modules"

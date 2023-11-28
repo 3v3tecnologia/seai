@@ -4,7 +4,7 @@ const submitDataKey = "UPDATE_BODY";
 
 const storeDataKey = "currentBody";
 
-const headerLabel = "Editando órgão metereológico";
+const headerLabel = "Editando órgão meteorológico";
 
 const fields = [
   {

@@ -157,10 +157,6 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  storeDataKey: {
-    type: String,
-    required: true,
-  },
   actionRoutes: {
     type: Object,
     required: true,

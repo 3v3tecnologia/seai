@@ -1,4 +1,5 @@
 import "vue3-toastify/dist/index.css";
+import newsletter from "./modules/newsletter";
 import { createStore, Store, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
 import { InjectionKey } from "vue";
@@ -69,6 +70,9 @@ const reportsDataDefault: IReportsData = {
 };
 
 export const store = createStore<Estado>({
+  modules: {
+    newsletter,
+  },
   state: {
     auth: null,
     currentTab: 0,
@@ -523,12 +527,6 @@ export const store = createStore<Estado>({
           Time: extractDate(read.Time),
           Hour: extractHour(read.Time),
         };
-
-        console.log(
-          "tentando muito ta extrair as coisa",
-          formattedRead.Time,
-          formattedRead.Hour
-        );
 
         await http.put(
           `/equipments/measures/station/${read?.IdRead}`,

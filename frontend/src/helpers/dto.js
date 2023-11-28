@@ -7,6 +7,21 @@ export const formatTemporaryToken = (token) => ({
   },
 });
 
+export const accessStoreKey = (store, keys) => {
+  console.log("noa ccess", keys, typeof keys, store);
+  let tempStore = store;
+
+  if (typeof keys == "string") {
+    return tempStore[keys];
+  }
+
+  keys.forEach((key) => {
+    tempStore = tempStore[key];
+    console.log("acessando", tempStore, key);
+  });
+  return tempStore;
+};
+
 export function checkMissingColumn(row, valueKey) {
   const rowData = getValue(row, valueKey);
 

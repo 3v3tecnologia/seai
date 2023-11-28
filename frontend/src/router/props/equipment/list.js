@@ -17,6 +17,7 @@ const searchFilter = ["Name", "LocationName"];
 
 export default {
   actionText: "equipamento",
+  navBarTab: 2,
   getDataKey: "GET_EQUIPMENTS",
   hasApiFilters: true,
   deleteDataKey: "DELETE_EQUIPMENTS",
@@ -55,7 +56,7 @@ export default {
       field: "Code",
     },
     {
-      title: "Órgão metereológico",
+      title: "Órgão Meteorológico",
       field: "Organ",
     },
     {

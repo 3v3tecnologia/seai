@@ -1,6 +1,6 @@
 const submitDataKey = "CREATE_BODY";
 
-const headerLabel = "Criando órgão metereológico";
+const headerLabel = "Criando órgão meteorológico";
 
 const fields = [
   {

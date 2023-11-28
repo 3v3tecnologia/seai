@@ -35,19 +35,19 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.profile,
   },
   {
-    path: "/metereological-bodies",
-    name: "metereological-bodies",
+    path: "/meteorological-bodies",
+    name: "meteorological-bodies",
     component: BaseCrudView,
     props: routeProps.metereologicalBodies,
   },
   {
-    path: "/metereological-bodies/edit/:id",
+    path: "/meteorological-bodies/edit/:id",
     name: "edit-body",
     component: BaseForm,
     props: routeProps.editBody,
   },
   {
-    path: "/metereological-bodies/create",
+    path: "/meteorological-bodies/create",
     name: "create-body",
     component: BaseForm,
     props: routeProps.createBody,
@@ -77,10 +77,16 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.reads.pluviometer.list,
   },
   {
-    path: "/pluviometer-reads-edit/:id",
-    name: "pluviometer-reads-edit",
+    path: "/newsletter/edit/:id",
+    name: "edit-newsletter",
     component: BaseForm,
-    props: routeProps.reads.pluviometer.update,
+    props: routeProps.newsletter.update,
+  },
+  {
+    path: "/newsletter",
+    name: "newsletter",
+    component: BaseCrudView,
+    props: routeProps.newsletter.list,
   },
   {
     path: "/equipments/edit/:id",

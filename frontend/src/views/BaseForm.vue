@@ -130,9 +130,11 @@ import InputNumber from "primevue/inputnumber";
 import { useRoute } from "vue-router";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import FilterDate from "@/components/FilterDate.vue";
+import FieldEditor from "@/components/FilterDate.vue";
 
 const preBuiltComponents = {
   FilterDate,
+  FieldEditor,
 };
 
 const currentRoute = useRoute();

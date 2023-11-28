@@ -1,7 +1,7 @@
 const searchFilter = ["Name"];
 
 export default {
-  actionText: "Órg. Metereológico",
+  actionText: "Órg. Meteorológico",
   getDataKey: "FETCH_BODIES_OPTIONS",
   deleteDataKey: "DELETE_BODIES",
   storeDataKey: "metereologicalBodies",
