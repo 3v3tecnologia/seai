@@ -1,27 +1,13 @@
 <template>
-  <span class="p-float-label w-100">
-    <Calendar
-      v-model="dates"
-      inputId="date-range-read"
-      dateFormat="dd/mm/yy"
-      :selectionMode="selectionMode"
-      :manualInput="false"
-      showIcon
-      class="w-100"
-      :time-only="timeOnly"
-      :show-time="showTime"
-      :hour-format="hourFormat"
-      :stepMinute="60"
-    />
-    <!-- show-button-bar="true" -->
-    <label for="date-range-read">{{ label }}</label>
-  </span>
+  <div class="w-100 mt-4">
+    <label class="font-weight-bold label">{{ label }} </label>
+    <Editor v-model="textValue" editorStyle="height: 320px" />
+  </div>
 </template>
 
 <script setup>
-import moment from "moment";
-import Calendar from "primevue/calendar";
-import { ref, watch, defineEmits, defineProps, computed } from "vue";
+import { ref, watch, defineEmits, defineProps } from "vue";
+import Editor from "primevue/editor";
 
 const props = defineProps({
   label: {
@@ -54,24 +40,26 @@ const props = defineProps({
   },
 });
 
-// const valFormated = computed(() => moment(dates.value).format(props.dateFormat));
-const dates = ref();
+const textValue = ref();
 
 const emit = defineEmits(["update:modelValue"]);
 
-watch(dates, (val) => {
+watch(textValue, (val) => {
   emit("update:modelValue", val);
 });
 
 watch(
   () => props.modelValue,
   (val) => {
-    if (typeof val === "string" && val != dates.value) {
-      const formattedDate = moment(val).format("DD/MM/YYYY HH:00");
-
-      dates.value = formattedDate;
-    }
+    textValue.value = val;
   },
   { immediate: true }
 );
 </script>
+
+<style lang="scss" scoped>
+.label {
+  font-size: 1rem;
+  color: #495057;
+}
+</style>

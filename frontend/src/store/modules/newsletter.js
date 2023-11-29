@@ -23,7 +23,7 @@ export default {
             {
               id: 1,
               Title: "Alerta de custo de água",
-              Text: "oie",
+              Text: '<p>dasdsadasdas<strong style="background-color: rgb(230, 0, 0);">dasdasdas</strong></p>',
               Auth: "Lucas",
               LocationName: "Fortaleza-CE",
               Time: "2023-08-22",
@@ -43,17 +43,10 @@ export default {
       },
     },
     GET_CURRENT_NEWSLETTER: {
-      async handler({ state, commit, dispatch }, filters = {}) {
+      async handler({ state, commit, dispatch }, id) {
         try {
-          const params = {
-            id: filters._itemId,
-            start: filters.start,
-            end: filters.end,
-            pageNumber: filters.pageNumber,
-          };
-
           await dispatch("GET_NEWSLETTERS");
-          const newsletter = state.list.data.find((c) => c.id == params.id);
+          const newsletter = state.list.data.find((c) => c.id == id);
 
           commit("SET_CURRENT", newsletter);
         } catch (e) {

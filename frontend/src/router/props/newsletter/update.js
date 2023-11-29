@@ -34,15 +34,16 @@ const fields = [
     formKey: "LocationName",
     type: "text",
   },
-  // {
-  //   formKey: "Text",
-  //   component: {
-  //     name: "FieldEditor",
-  //     props: {
-  //       label: "Mensagem",
-  //     },
-  //   },
-  // },
+  {
+    formKey: "Text",
+    colSize: 12,
+    component: {
+      name: "FieldEditor",
+      props: {
+        label: "Mensagem",
+      },
+    },
+  },
 ];
 
 const finishedDataButton = {

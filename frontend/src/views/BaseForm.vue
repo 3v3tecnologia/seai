@@ -2,28 +2,21 @@
   <div class="home">
     <FormWrapper :title="headerLabel" @submit="handleSubmit">
       <template v-slot:content>
-        <div class="py-2 mb-3"></div>
-
         <div class="row align-items-end">
           <div
-            class="col-lg-6"
-            v-for="field in prebuiltComponentsFields"
-            :key="field.formKey"
+            v-for="(field, i) in fieldsTotal"
+            :class="field.colSize ? `col-lg-${field.colSize}` : 'col-lg-6'"
+            :key="i"
           >
-            <!-- v-model="form[field.formKey]" -->
             <component
+              v-if="field._typeComponent == 'component'"
               v-model="form[field.formKey]"
               v-bind="field.component.props"
               :is="preBuiltComponents[field.component.name]"
             />
-          </div>
 
-          <div
-            class="col-lg-3"
-            v-for="field in drodpDowns"
-            :key="field.formKey"
-          >
             <BaseDropdown
+              v-else-if="field._typeComponent == 'dropdown'"
               v-model="form[field.formKey]"
               inline-label
               remove-margin
@@ -32,18 +25,9 @@
               :options="field.options"
               :placeholder="field.label"
             />
-          </div>
 
-          <div
-            v-for="(field, i) in inputFields"
-            :key="field.formKey"
-            :class="`${
-              !inputFields.length % 0 && i === inputFields.length - 1
-                ? 'col-lg-12'
-                : 'col-lg-6'
-            }`"
-          >
             <span
+              v-else
               class="margin-inputs d-block p-input-icon-right p-float-label"
               :class="{
                 'mb-4': i === fields.length - 1,
@@ -130,7 +114,8 @@ import InputNumber from "primevue/inputnumber";
 import { useRoute } from "vue-router";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import FilterDate from "@/components/FilterDate.vue";
-import FieldEditor from "@/components/FilterDate.vue";
+import FieldEditor from "@/components/FieldEditor.vue";
+import { accessStoreKey } from "@/helpers/dto";
 
 const preBuiltComponents = {
   FilterDate,
@@ -155,7 +140,7 @@ const props = defineProps({
     required: true,
   },
   storeDataKey: {
-    type: String,
+    type: [String, Array],
     required: true,
   },
   requireMinMax: {
@@ -211,7 +196,8 @@ watch(
   async (newVal) => {
     fieldsTmp.value = newVal
       .map((c) => ({ ...c }))
-      .map((c) => {
+      .map((c, index) => {
+        c.index = index;
         c.tmp_pass = true;
 
         return c;
@@ -227,8 +213,27 @@ watch(
 );
 
 const formData = computed(() =>
-  props.storeDataKey ? store.state[props.storeDataKey] : {}
+  props.storeDataKey ? accessStoreKey(store.state, props.storeDataKey) : {}
 );
+
+const labelTypeField = (fields, type) =>
+  fields.map((field) => {
+    field._typeComponent = type;
+    return field;
+  });
+
+const fieldsTotal = computed(() => {
+  const tempComponents = labelTypeField(
+    prebuiltComponentsFields.value,
+    "component"
+  );
+  const tempDropdowns = labelTypeField(drodpDowns.value, "dropdown");
+  const tempInputFields = labelTypeField(inputFields.value, "input");
+
+  return [...tempComponents, ...tempDropdowns, ...tempInputFields].sort(
+    (a, b) => a.index - b.index
+  );
+});
 
 const inputFields = computed(() =>
   fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
