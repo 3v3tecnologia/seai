@@ -76,10 +76,23 @@ services:
         condition: service_healthy
     networks:
       - private
-
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: "seai-client"
+    restart: always
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./frontend:/usr/src/app
+      - frontend_node_modules:/usr/src/app/node_modules
+    networks:
+      - private
 volumes:
   db-data: {}
   backend_node_modules: {}
+  frontend_node_modules: {}
 
 secrets:
   db-password:
