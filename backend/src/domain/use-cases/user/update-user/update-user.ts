@@ -54,7 +54,7 @@ export class UpdateUser extends Command {
         request.login
       );
 
-      if (userWithLogin) {
+      /*if (userWithLogin) {
         // Se login não for do mesmo usuário então é sinal que já existe um login
         // cadastrado e o sistema deve bloquear a edição.
         const hasOtherAccountWithSameLogin =
@@ -65,7 +65,7 @@ export class UpdateUser extends Command {
             new Error(`Usuário com login ${request.login} já existe.`)
           );
         }
-      }
+      }*/
     }
 
     if (request.email !== null) {
