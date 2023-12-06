@@ -14,6 +14,11 @@ export class FetchEquipments {
   async execute(
     request: FetchEquipmentsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchEquipmentsUseCaseProtocol.Response>> {
+    if(request.equipmentId){
+      const equipment = await this.equipmentsRepository.getEquipmentId(request.equipmentId)
+      return right(equipment)
+    }
+
     const dto = {
       limit: Number(request.limit) || this.LIMIT,
       pageNumber: Number(request.pageNumber) || this.PAGE_NUMBER,
@@ -52,6 +57,7 @@ export class FetchEquipments {
 }
 export namespace FetchEquipmentsUseCaseProtocol {
   export type Request = {
+    equipmentId?:number;
     pageNumber: number;
     limit: number;
     idOrgan?: number;
@@ -64,5 +70,5 @@ export namespace FetchEquipmentsUseCaseProtocol {
     QtdRows: number;
     PageLimitRows: number;
     QtdPages: number;
-  } | null;
+  } | EquipmentEntity | null;
 }

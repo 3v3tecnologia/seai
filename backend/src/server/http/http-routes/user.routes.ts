@@ -44,7 +44,7 @@ export const userRouter = (): Router => {
     "/get/:id",
     authorization,
     userReadAccessAuth,
-    adaptRoute(makeCreateUserController())
+    adaptRoute(makeGetUsersController())
   );
 
   router.get(

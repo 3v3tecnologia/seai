@@ -31,6 +31,7 @@ export class FetchEquipmentsController
 
 export namespace FetchEquipmentsControllerProtocol {
   export type Request = {
+    equipmentId?:number;
     pageNumber: number;
     limit: number;
     idOrgan?: number;

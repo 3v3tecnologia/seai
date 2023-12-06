@@ -6,15 +6,15 @@ export interface EquipmentEntity {
     Id: number;
     Name: string;
   };
+  Altitude: number| null;
   Location: {
-    Id: number;
-    Altitude: number;
-    Position: string;
+    Id: number | null;
+    Coordinates:Array<number> | null;
     Name: string;
-  };
+  } | null;
   Organ: {
-    IdOrgan: number;
-    Organ: string;
+    Id: number;
+    Name: string;
   };
   CreatedAt: string;
   UpdatedAt: string;

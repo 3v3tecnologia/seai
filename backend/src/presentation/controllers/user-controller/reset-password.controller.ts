@@ -19,7 +19,6 @@ export class ResetPasswordController extends CommandController<
     request: ResetPasswordController.Request
   ): Promise<HttpResponse> {
     try {
-      console.log({ request });
       const createdOrError = await this.resetPassword.execute(
         request.accessToken,
         request.password,

@@ -235,6 +235,72 @@ export class KnexEquipmentsRepository
 
     return rawResult ? Number(rawResult.IdEquipment) : null;
   }
+  async getEquipmentId(
+    id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
+  ):EquipmentRepositoryDTOProtocol.GetIdBy.Result {
+    const result = await equipments.raw(`
+    SELECT
+          equipment."IdEquipment" AS "Id",
+          equipment."IdEquipmentExternal" AS "EqpCode",
+          equipment."Name",
+          equipment."Altitude" ,
+          equipment."CreatedAt",
+          equipment."UpdatedAt" ,
+          organ."IdOrgan" AS "IdOrgan",
+          organ."Name" AS "OrganName",
+          eqpType."IdType" AS "IdType",
+          eqpType."Name" AS "EqpType",
+          eqpLocation."IdLocation" ,
+          ST_AsGeoJSON(
+              eqpLocation."Location"::geometry
+          )::json AS "GeoLocation",
+          eqpLocation."Name" AS "LocationName"
+      FROM
+          "MetereologicalEquipment" AS equipment
+      INNER JOIN "MetereologicalOrgan" AS organ ON
+          organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN "EquipmentType" eqpType ON
+          eqpType."IdType" = equipment."FK_Type"
+      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
+          eqpLocation."FK_Equipment" = equipment."IdEquipment"
+      WHERE "IdEquipment" = ?
+    `,id)
+    
+    const data = result.rows[0]
+
+    if(!data){
+      return null
+    }
+
+
+    console.log(data)
+
+    return {
+      Id: Number(data.Id),
+      Code: data.EqpCode || null,
+      Name: data.Name,
+      Type: {
+        Id: Number(data.IdType),
+        Name: data.EqpType,
+      },
+      Organ: {
+        Id: Number(data.IdOrgan),
+        Name: data.OrganName,
+      },
+      Altitude: Number(data.Altitude) || null,
+      Location: data.LocationName
+        ? {
+            Id: Number(data.IdLocation) || null,
+            Name: data.LocationName,
+            Coordinates: data.GeoLocation
+              ? data.GeoLocation["coordinates"]
+              : null,
+          }
+        : null,
+      CreatedAt: data.CreatedAt,
+      UpdatedAt: data.UpdatedAt,
+    };
+  }
 
   async checkIfEquipmentTypeExists(idType: number): Promise<boolean> {
     const exists = await equipments

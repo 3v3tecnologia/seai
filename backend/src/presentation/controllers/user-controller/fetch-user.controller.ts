@@ -14,7 +14,9 @@ export class FetchUserController
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
-    const result = await this.fetchUser.execute(request);
+    const result = await this.fetchUser.execute({
+      userId:request.userId
+    });
 
     return ok(result.value);
   }

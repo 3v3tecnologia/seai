@@ -74,6 +74,10 @@ export namespace EquipmentRepositoryDTOProtocol {
     export type Params = string;
     export type Result = Promise<number | null>;
   }
+  export namespace GetIdBy {
+    export type Params = number;
+    export type Result = Promise<EquipmentEntity | null>;
+  }
   export namespace GetByPageNumber {
     export type Params = {
       pageNumber: number;
@@ -222,4 +226,7 @@ export interface EquipmentsRepositoryProtocol
   getEquipments(
     pageNumber: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result;
+  getEquipmentId(
+    id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
+  ): EquipmentRepositoryDTOProtocol.GetIdBy.Result;
 }
