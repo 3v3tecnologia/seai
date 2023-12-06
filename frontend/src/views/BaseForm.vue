@@ -2,10 +2,11 @@
   <div class="home">
     <FormWrapper :title="headerLabel" @submit="handleSubmit">
       <template v-slot:content>
-        <div class="row align-items-end">
+        <div class="row">
           <div
             v-for="(field, i) in fieldsTotal"
             :class="field.colSize ? `col-lg-${field.colSize}` : 'col-lg-6'"
+            class="align-items-end d-flex"
             :key="i"
           >
             <component
@@ -21,6 +22,7 @@
               inline-label
               remove-margin
               class="w-100"
+              :class="{ 'mt-5': i > 1 }"
               width="100%"
               :options="field.options"
               :placeholder="field.label"
@@ -29,9 +31,6 @@
             <span
               v-else
               class="margin-inputs d-block p-input-icon-right p-float-label"
-              :class="{
-                'mb-4': i === fields.length - 1,
-              }"
             >
               <i
                 v-if="field.type === 'password'"
@@ -345,5 +344,9 @@ const handleSubmit = async (e) => {
 <style>
 .margin-inputs {
   margin-top: 2rem;
+}
+
+.row > * > * {
+  width: 100%;
 }
 </style>
