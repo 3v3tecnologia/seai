@@ -12,6 +12,7 @@ import pluviometerReads from "./pluviometerReads/list";
 import pluviometerReadsUpdate from "./pluviometerReads/update";
 import newsletter from "./newsletter/list";
 import newsletterUpdate from "./newsletter/update";
+import newsletterCreate from "./newsletter/create";
 
 export default {
   user,
@@ -29,6 +30,7 @@ export default {
   newsletter: {
     list: newsletter,
     update: newsletterUpdate,
+    create: newsletterCreate,
   },
   metereologicalBodies,
   profile,

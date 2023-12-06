@@ -13,7 +13,7 @@ export default {
   searchFilter: searchFilter,
   actionRoutes: {
     edit: "edit-newsletter",
-    create: "create-equipment",
+    create: "create-newsletter",
   },
   headerLabels: [],
   columns: [

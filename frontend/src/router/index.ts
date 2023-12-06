@@ -89,6 +89,12 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.newsletter.list,
   },
   {
+    path: "/newsletter/create",
+    name: "create-newsletter",
+    component: BaseForm,
+    props: routeProps.newsletter.create,
+  },
+  {
     path: "/equipments/edit/:id",
     name: "edit-equipment",
     component: BaseForm,

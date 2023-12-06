@@ -31,8 +31,6 @@ export default {
             },
           ];
 
-          console.log("pedindo dado de newsletters", newsletters);
-
           commit("SET_LIST", {
             data: newsletters,
           });
