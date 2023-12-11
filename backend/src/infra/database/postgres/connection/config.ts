@@ -1,4 +1,5 @@
 import env from "../../../../server/http/env";
+import { DATABASES_NAMES } from "../../../../shared/db/tableNames";
 
 export const db_config: { [index: string]: any } = {
   census: {
@@ -126,6 +127,40 @@ export const db_config: { [index: string]: any } = {
         host: env.database.host,
         port: env.database.port,
         database: "equipments",
+        user: env.database.user,
+        password: env.database.password,
+        charset: "utf8",
+        timezone: "Brazil/East",
+      },
+      pool: {
+        min: 2,
+        max: 10,
+      },
+    },
+  },
+  [DATABASES_NAMES.NEWSLETTER.DATABASE]: {
+    development: {
+      client: "pg",
+      connection: {
+        host: env.database.host,
+        port: env.database.port,
+        user: env.database.user,
+        password: env.database.password,
+        database: DATABASES_NAMES.NEWSLETTER.DATABASE,
+        charset: "utf8",
+        timezone: "Brazil/East",
+      },
+      pool: {
+        min: 2,
+        max: 10,
+      },
+    },
+    production: {
+      client: "pg",
+      connection: {
+        host: env.database.host,
+        port: env.database.port,
+        database: DATABASES_NAMES.NEWSLETTER.DATABASE,
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
