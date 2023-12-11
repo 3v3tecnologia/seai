@@ -1,59 +1,65 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <div class="d-flex flex-column flex-lg-row align-items-center">
-        <div class="pt-3 pb-2"></div>
+      <div
+        class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center"
+      >
+        <div class="d-flex justify-content-between">
+          <!-- <div class="pt-3 pb-2"></div> -->
+          <BaseDropdown
+            v-model="groupReportsTemp"
+            :options="groupReportsOptions"
+            placeholder="Tipo de relatório"
+          />
 
-        <BaseDropdown
-          v-model="groupReportsTemp"
-          :options="groupReportsOptions"
-          placeholder="Tipo de relatório"
-          width="200px"
-        />
+          <div class="px-2"></div>
 
-        <div class="px-4"></div>
+          <BaseDropdown
+            v-model="showingDataFormatTemp"
+            :options="showingDataOptions"
+            placeholder="Agrupamento"
+          />
+        </div>
 
-        <BaseDropdown
-          v-model="showingDataFormatTemp"
-          :options="showingDataOptions"
-          placeholder="Agrupamento"
-        />
+        <div class="d-flex flex-lg-row flex-column mt-3 mb-4 my-lg-0">
+          <div class="px-lg-2"></div>
 
-        <div class="pr-md-5"></div>
+          <BaseCheckBox
+            inline-label
+            remove-margin
+            v-model="hydrographicBasinTemp"
+            :options="hydrographicBasinOptions"
+            label="Bacias hidrográficas"
+            placeholder="Bacias hidrográficas"
+          />
 
-        <BaseCheckBox
-          inline-label
-          remove-margin
-          v-model="hydrographicBasinTemp"
-          :options="hydrographicBasinOptions"
-          label="Bacias hidrográficas"
-          placeholder="Bacias hidrográficas"
-        />
+          <div class="mt-3 my-lg-0 px-lg-2" />
 
-        <div class="px-4 py-3" />
+          <BaseCheckBox
+            inline-labe
+            remove-margin
+            v-model="cityTemp"
+            :disabled="showingDataFormatTemp.value === 1"
+            :options="cityOptions"
+            label="Municípios"
+            placeholder="Municípios"
+          />
+        </div>
 
-        <BaseCheckBox
-          inline-labe
-          remove-margin
-          v-model="cityTemp"
-          :disabled="showingDataFormatTemp.value === 1"
-          :options="cityOptions"
-          label="Municípios"
-          placeholder="Municípios"
-        />
+        <div class="d-flex">
+          <div class="px-lg-4" />
 
-        <div class="px-4 py-3" />
-
-        <button
-          @click="applyFilters"
-          :disabled="isLoadingReport"
-          class="btn btn-success px-4 py-2"
-        >
-          Gerar relatório
-        </button>
+          <button
+            @click="applyFilters"
+            :disabled="isLoadingReport"
+            class="btn btn-success px-2 py-2"
+          >
+            Gerar relatório
+          </button>
+        </div>
       </div>
 
-      <div class="mt-5 mb-2">
+      <div class="my-5 mb-lg-4">
         <router-link :to="showingTab === 'charts' ? 'reports' : 'charts'">
           {{
             showingTab === "charts"

@@ -9,8 +9,12 @@
     />
 
     <div>
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="d-flex align-items-center">
+      <div
+        class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between mb-4 mb-lg-0"
+      >
+        <div
+          class="wrapper-filters d-flex flex-column flex-lg-row align-items-lg-center"
+        >
           <BaseInput
             remove-margin
             v-model="search"
@@ -18,18 +22,22 @@
             input-type="text"
             show-icon
             v-if="!hideSearch"
+            class="w-100 mb-3 mb-lg-0"
           />
 
           <div v-if="showDateRangeFilter" class="d-flex">
-            <FilterDate v-model="dates" />
+            <FilterDate class="mt-0 mb-3 mb-lg-0" v-model="dates" />
           </div>
 
           <div
-            class="d-flex"
-            v-if="allFiltersDrop.length == filtersValue.length"
+            class="d-flex justify-content-between justify-content-lg-start my-4 my-lg-0"
+            v-if="
+              allFiltersDrop.length == filtersValue.length &&
+              allFiltersDrop.length
+            "
           >
             <div v-for="(filter, i) in allFiltersDrop" :key="i" class="d-flex">
-              <div class="px-lg-2" />
+              <div class="px-lg-2" :class="{ 'px-1': i }" />
               <BaseDropdown
                 inline-label
                 remove-margin
@@ -40,9 +48,13 @@
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center">
+        <div
+          class="d-flex justify-content-center justify-content-lg-start align-items-center"
+        >
           <primary-button @click="handleEditUser" class="btn btn-info">
-            <span class="mr-lg-2"> Editar {{ actionText }} </span>
+            <span class="mr-lg-2 d-none d-lg-inline-block">
+              Editar {{ actionText }}
+            </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-pen" />
           </primary-button>
 
@@ -54,7 +66,9 @@
             @click="handleDeleteUsers"
             class="ml-4 btn btn-danger"
           >
-            <span class="mr-lg-2"> Excluir {{ actionText }}(s) </span>
+            <span class="mr-lg-2 d-none d-lg-inline-block">
+              Excluir {{ actionText }}(s)
+            </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-trash" />
           </button>
 
@@ -63,14 +77,14 @@
               :to="{ name: actionRoutes.create }"
               class="ml-4 btn btn-success text-white"
             >
-              <span class="mr-lg-2"> Adicionar novo {{ actionText }} </span>
+              <span class="mr-lg-2 d-none d-lg-inline-block">
+                Adicionar novo {{ actionText }}
+              </span>
               <font-awesome-icon class="text-white" icon="fa-solid fa-plus" />
             </router-link>
           </div>
 
-          <div class="px-2 px-lg-2" />
-
-          <button @click="getData" class="btn btn-primary">
+          <button @click="getData" class="ml-4 btn btn-primary">
             <font-awesome-icon class="text-white" icon="fa-solid fa-refresh" />
           </button>
         </div>
@@ -85,6 +99,7 @@
         :data="data"
         :columns="columns"
         :action-text="actionText"
+        class=""
       />
       <div class="py-4 py-lg-5" />
     </div>
@@ -291,5 +306,12 @@ const handleEditUser = () => {
 .wrapper-table {
   border: 1px solid #4b4b4b59;
   border-radius: 5px 5px 0 0;
+}
+
+.wrapper-filters {
+  width: 100%;
+  @media (min-width: 992px) {
+    width: auto;
+  }
 }
 </style>

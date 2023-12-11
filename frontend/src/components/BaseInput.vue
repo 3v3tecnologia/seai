@@ -9,6 +9,7 @@
     <label v-if="label">{{ label }}</label>
     <div class="wrapper-input position-relative">
       <input
+        style="height: 49.6px"
         :disabled="disabled"
         v-model="inputValue"
         :minlength="minLength"

@@ -14,7 +14,7 @@
           <div class="mr-2 mr-lg-3 text-decoration-none">
             {{ auth.login }}
           </div>
-          <div @click="signOut">
+          <div @click="signOut" class="wrapper-sign-out">
             <router-link to="/login">
               <font-awesome-icon
                 class="text-danger"
@@ -170,5 +170,9 @@ const itemsRoutes = computed(() =>
       color: white !important;
     }
   }
+}
+
+.p-menuitem-link {
+  height: 100%;
 }
 </style>

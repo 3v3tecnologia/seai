@@ -1,12 +1,12 @@
 <template>
   <div
-    class="base-pagination d-flex align-items-center justify-content-between px-2 py-2"
+    class="base-pagination d-flex flex-column flex-lg-row align-items-center justify-content-between px-2 py-2 w-100"
   >
-    <div>
+    <div class="mt-2 mb-3">
       Exibindo {{ currentShowingItems.length }} de {{ totalItems }}
       {{ loweredCollectionText }}s
     </div>
-    <div>
+    <div class="mb-1">
       <div class="navigation-items">
         <button class="bg-white p-2" @click="setFirstPage">Primeira</button>
         <button class="bg-white p-2 mx-2" @click="setBeforePage">
@@ -137,7 +137,10 @@ watch(
 
 <style lang="scss" scoped>
 .base-pagination {
-  height: 57px;
+  @media (min-width: 992px) {
+    height: 57px;
+  }
+
   background-color: #e6e6e6;
   border: 1px solid rgba(75, 75, 75, 0.3490196078);
   border-radius: 5px;

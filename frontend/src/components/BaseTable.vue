@@ -2,9 +2,9 @@
   <div class="w-100 d-flex flex-column align-items-start">
     <div
       v-if="isReport"
-      class="w-100 d-flex justify-content-between align-items-center"
+      class="w-100 d-flex flex-lg-row flex-column justify-content-lg-between align-items-lg-center"
     >
-      <h4 class="mb-0 font-weight-bold">
+      <h4 class="text-left mb-2 mb-lg-0 font-weight-bold">
         {{ title }}
       </h4>
 

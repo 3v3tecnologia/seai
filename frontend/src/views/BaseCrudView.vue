@@ -2,7 +2,7 @@
   <BasicContentWrapper>
     <div
       v-if="headerLabels.length && false"
-      class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-5"
+      class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-4 mb-lg-5"
     >
       <div
         class="wrapper-counter"
