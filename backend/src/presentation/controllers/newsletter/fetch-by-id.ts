@@ -15,7 +15,7 @@ export class FetchNewsByIdController {
   ): Promise<HttpResponse> {
     try {
       const createdOrError = await this.useCase.create({
-        Id: request.Id,
+        Id: request.id,
       });
 
       if (createdOrError.isLeft()) {
@@ -33,6 +33,6 @@ export class FetchNewsByIdController {
 export namespace FetchNewsByIdController {
   export type Request = {
     accountId: number;
-    Id: number;
+    id: number;
   };
 }

@@ -70,11 +70,11 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       [request.Id]
     );
 
-    if (!result) {
+    if (!result.rows.length) {
       return null;
     }
 
-    return NewsMapper.toDomain(result);
+    return NewsMapper.toDomain(result.rows[0]);
   }
   async getAll(
     request: InputWithPagination
@@ -85,7 +85,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           n."Fk_Sender" ,
           n."Title" ,
           n."Description" ,
-          n."Content" ,
           n."CreatedAt" ,
           n."UpdatedAt",
           s."Email" ,

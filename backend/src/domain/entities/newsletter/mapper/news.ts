@@ -2,7 +2,7 @@ import { Content } from "../news";
 
 export class NewsMapper {
   static toDomain(row: any): Content {
-    return {
+    const domain = {
       Id: row.Id,
       Author: {
         Id: row.Fk_Sender,
@@ -11,9 +11,16 @@ export class NewsMapper {
       },
       Title: row.Title,
       Description: row.Description,
-      Data: row.Content,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
     };
+
+    if(row.Content){
+      Object.assign(domain, {
+        Data: row.Content ,
+      });
+    }
+
+    return domain
   }
 }

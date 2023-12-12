@@ -19,7 +19,7 @@ export class DeleteNewsController extends CommandController<
   async handle(request: DeleteNewsController.Request): Promise<HttpResponse> {
     try {
       const createdOrError = await this.useCase.create({
-        Id: request.Id,
+        Id: request.id,
       });
 
       if (createdOrError.isLeft()) {
@@ -39,6 +39,6 @@ export class DeleteNewsController extends CommandController<
 export namespace DeleteNewsController {
   export type Request = {
     accountId: number;
-    Id: number;
+    id: number;
   };
 }

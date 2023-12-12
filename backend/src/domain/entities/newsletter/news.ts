@@ -9,7 +9,7 @@ export type Content = {
   // SendDate: string;
   Description: string | null;
   // LocationName: string;
-  Data: any;
+  Data?: any;
   CreatedAt?: string;
   UpdatedAt?: string;
 };
