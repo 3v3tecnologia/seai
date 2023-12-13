@@ -1,5 +1,6 @@
 import http from "@/http";
 import { formatDate } from "./date";
+import moment from "moment";
 
 export const formatTemporaryToken = (token) => ({
   headers: {
@@ -106,4 +107,8 @@ export const ungroupData = (items) => {
   });
 
   return totalData;
+};
+
+export const columnFullDateFormat = (col) => {
+  return moment(col._cell.value).format("DD/MM/YYYY HH:ss");
 };

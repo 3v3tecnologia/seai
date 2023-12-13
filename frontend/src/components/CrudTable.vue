@@ -7,7 +7,6 @@
       :get-data-key="getDataKey"
       :delete-data-key="deleteDataKey"
     />
-
     <div>
       <div
         class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between mb-4 mb-lg-0"
@@ -51,12 +50,12 @@
         <div
           class="d-flex justify-content-center justify-content-lg-start align-items-center"
         >
-          <primary-button @click="handleEditUser" class="btn btn-info">
+          <button @click="handleEditUser" class="btn btn-info">
             <span class="mr-lg-2 d-none d-lg-inline-block">
               Editar {{ actionText }}
             </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-pen" />
-          </primary-button>
+          </button>
 
           <button
             v-if="deleteDataKey"
@@ -99,7 +98,6 @@
         :data="data"
         :columns="columns"
         :action-text="actionText"
-        class=""
       />
       <div class="py-4 py-lg-5" />
     </div>

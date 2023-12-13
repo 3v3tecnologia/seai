@@ -1,3 +1,4 @@
+import { formatDateWithHour } from "@/helpers/date";
 import http from "@/http";
 import { toast } from "vue3-toastify";
 
@@ -22,8 +23,6 @@ export default {
         try {
           const { data } = await http.get(`/news`);
 
-          console.log(`data do newsletter`, data);
-
           const newsletters = [
             {
               id: 1,
@@ -37,7 +36,11 @@ export default {
           ];
 
           commit("SET_LIST", {
-            data: newsletters,
+            data: newsletters.map((n) => {
+              n.FullTime = formatDateWithHour(n.Time, n.Hour);
+
+              return n;
+            }),
           });
         } catch (e) {
           console.error(e);

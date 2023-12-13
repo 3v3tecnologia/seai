@@ -1,3 +1,5 @@
+import { columnFullDateFormat } from "@/helpers/dto";
+
 const stateOptionsFilters = [];
 
 const searchFilter = ["Name", "LocationName"];
@@ -30,11 +32,8 @@ export default {
     },
     {
       title: "Data de envio",
-      field: "Time",
-    },
-    {
-      title: "Hora",
-      field: "Hour",
+      field: "FullTime",
+      formatter: columnFullDateFormat,
     },
     {
       title: "Autor",

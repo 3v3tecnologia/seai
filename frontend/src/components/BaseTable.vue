@@ -137,7 +137,11 @@ const mapedFiltersTable = computed(() => {
 
   if (props.filtersTable && props.filtersTable.length) {
     props.filtersTable.forEach((filter) => {
-      mapedFiltersTable[filter.field] = filter.value;
+      if (filter.length) {
+        mapedFiltersTable["search"] = filter[0].value;
+      } else {
+        mapedFiltersTable[filter.field] = filter.value;
+      }
     });
   }
 
@@ -148,7 +152,7 @@ watch(
   () => props.filtersTable,
   async (val) => {
     tabulator.value?.clearFilter();
-    const filteredVal = val ? val.filter((f) => f.type) : [];
+    const filteredVal = val ? val.filter((f) => f.type || f.length) : [];
 
     tabulator.value?.setFilter(filteredVal);
   },
@@ -159,7 +163,6 @@ watch(
   () => [props.filtersTable, currentRouteName.value, pageNumber.value],
   async (newVal, oldVal) => {
     if (oldVal && newVal[2] === oldVal[2] && newVal[2] !== 1) {
-      console.log("tem que resetar a paginação");
       pageNumber.value = 1;
       return;
     }

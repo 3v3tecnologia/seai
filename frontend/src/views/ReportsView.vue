@@ -4,7 +4,7 @@
       <div
         class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center"
       >
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between w-100-mob">
           <!-- <div class="pt-3 pb-2"></div> -->
           <BaseDropdown
             v-model="groupReportsTemp"

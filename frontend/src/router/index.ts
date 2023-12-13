@@ -77,6 +77,12 @@ const routes: Array<RouteRecordRaw> = [
     props: routeProps.reads.pluviometer.list,
   },
   {
+    path: "/pluviometer-reads/edit/:id",
+    name: "pluviometer-reads-edit",
+    component: BaseForm,
+    props: routeProps.reads.pluviometer.update,
+  },
+  {
     path: "/newsletter/edit/:id",
     name: "edit-newsletter",
     component: BaseForm,

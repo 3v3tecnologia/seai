@@ -646,6 +646,14 @@ export const store = createStore<Estado>({
       try {
         await dispatch("GET_EQUIPMENTS");
 
+        const {
+          data: {
+            data: { Equipments: equipments },
+          },
+        } = await http.get(`/equipments/${id}`);
+
+        console.log("tentando buscar dado aqui", equipments);
+
         const equipment = state.equipments.data.find(
           (c: { Id: number }) => c.Id == id
         );
@@ -776,6 +784,8 @@ export const store = createStore<Estado>({
           data: reads.map((c: any) => {
             c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
             c.id = c.IdRead;
+            c.FullTime = formatDateWithHour(c.Time, c.Hour);
+
             return c;
           }),
           apiPagination: {
@@ -815,6 +825,7 @@ export const store = createStore<Estado>({
           data: reads.map((c: any) => {
             c.id = c.IdRead;
             c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
+            c.FullTime = formatDateWithHour(c.Time, c.Hour);
 
             return c;
           }),

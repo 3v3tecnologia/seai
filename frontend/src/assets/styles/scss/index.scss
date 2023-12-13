@@ -6,3 +6,9 @@
     margin-top: 32px;
   }
 }
+
+.w-100-mob {
+  @media (max-width: 991px) {
+    width: 100%;
+  }
+}

@@ -188,38 +188,6 @@ const options = computed(() => ({
       formatter: formatterXTooltip,
     },
   },
-  // tooltip: {
-  //   y: {
-  //     formatter: function (val, b) {
-  //       let formattedVal = props.data[b.dataPointIndex].toFixed(2);
-
-  //       if (props.formatter == "money") {
-  //         formattedVal = props.data[b.dataPointIndex].toLocaleString("pt-br", {
-  //           style: "currency",
-  //           currency: "BRL",
-  //         });
-  //       }
-
-  //       const sufix = props.tooltipSufix ? ` ${props.tooltipSufix}` : "";
-  //       const prefix = props.tooltipPrefix ? `${props.tooltipPrefix} ` : "";
-
-  //       return `${prefix}${formattedVal}${sufix}`;
-  //     },
-  //   },
-  // },
   title: title.value,
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: "bottom",
-        },
-      },
-    },
-  ],
 }));
 </script>

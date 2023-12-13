@@ -1,3 +1,4 @@
+import { columnFullDateFormat } from "@/helpers/dto";
 import moment from "moment";
 
 const searchFilter = ["Name", "LocationName"];
@@ -33,15 +34,9 @@ export default {
       formatter: "tickCross",
     },
     {
-      title: "Dia",
-      field: "Time",
-      formatter: (col) => {
-        return moment(col._cell.value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      title: "Hora",
-      field: "Hour",
+      title: "Data de envio",
+      field: "FullTime",
+      formatter: columnFullDateFormat,
     },
     {
       title: "Altitude",
@@ -98,8 +93,8 @@ export default {
       },
     },
     {
-      title: "ETO",
-      field: "ETO",
+      title: "ET0",
+      field: "ET0",
       validator: ["required", "min:0", "max:5"],
       formatter: (col) => {
         return col._cell.value?.Value

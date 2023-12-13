@@ -92,6 +92,10 @@ const itemsRoutesRaw = [
     route: "/equipments",
   },
   {
+    label: "Notícias",
+    route: "/newsletter",
+  },
+  {
     label: "Relatórios",
     route: "/reports",
   },
@@ -102,10 +106,6 @@ const itemsRoutesRaw = [
   {
     label: "Perfil",
     route: "/profile",
-  },
-  {
-    label: "Notícias",
-    route: "/newsletter",
   },
 ];
 
