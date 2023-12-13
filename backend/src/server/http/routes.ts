@@ -6,6 +6,7 @@ import {
   faqRouter,
   censusRouter,
   equipmentsRouter,
+  newsRouter,
 } from "./http-routes";
 
 export function setRoutes(app: Express): void {
@@ -16,11 +17,12 @@ export function setRoutes(app: Express): void {
   router.use("/faq", faqRouter());
   router.use("/census", censusRouter());
   router.use("/equipments", equipmentsRouter());
+  router.use("/news", newsRouter());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });
   });
-  
+
   app.use("/api/v1", router);
 
   app.use("*", (req, res) => {
