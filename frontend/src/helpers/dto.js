@@ -8,7 +8,6 @@ export const formatTemporaryToken = (token) => ({
 });
 
 export const accessStoreKey = (store, keys) => {
-  console.log("noa ccess", keys, typeof keys, store);
   let tempStore = store;
 
   if (typeof keys == "string") {
@@ -17,7 +16,6 @@ export const accessStoreKey = (store, keys) => {
 
   keys.forEach((key) => {
     tempStore = tempStore[key];
-    console.log("acessando", tempStore, key);
   });
   return tempStore;
 };

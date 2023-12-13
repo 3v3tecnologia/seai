@@ -1,3 +1,4 @@
+import http from "@/http";
 import { toast } from "vue3-toastify";
 
 export default {
@@ -19,6 +20,10 @@ export default {
     GET_NEWSLETTERS: {
       async handler({ commit }) {
         try {
+          const { data } = await http.get(`/news`);
+
+          console.log(`data do newsletter`, data);
+
           const newsletters = [
             {
               id: 1,

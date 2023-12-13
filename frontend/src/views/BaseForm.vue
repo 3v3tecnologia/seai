@@ -56,7 +56,7 @@
                 v-else
                 v-model="form[field.formKey]"
                 :required="!field.nullable"
-                type="text"
+                :type="field.type || 'text'"
                 :input-id="field.formKey"
                 :minlength="requireMinMax ? 5 : null"
                 :maxlength="requireMinMax ? 25 : null"
