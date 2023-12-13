@@ -17,6 +17,14 @@ export class UpdateStationMeasures extends Command {
   async execute(
     request: UpdateMeteorologicalOrganUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateMeteorologicalOrganUseCaseProtocol.Response>> {
+    const hasMeasuresWithSameTime =
+      await this.equipmentsRepository.checkIfStationMeasureTimeAlreadyExists(
+        request.Time
+      );
+    if (hasMeasuresWithSameTime) {
+      return left(new Error("Foi encontrado uma medição com o mesmo tempo."));
+    }
+
     await this.equipmentsRepository.updateStationMeasures(request);
 
     // TO-DO : add actions and table name as global constants

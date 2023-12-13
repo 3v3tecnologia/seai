@@ -227,6 +227,28 @@ export class KnexEquipmentsRepository
 
     return exists ? true : false;
   }
+  async checkIfStationMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result {
+    const exists = await equipments
+      .select("IdRead")
+      .from("ReadStations")
+      .where({ Time: params })
+      .first();
+
+    return exists ? true : false;
+  }
+  async checkIfPluviometerMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
+    const exists = await equipments
+      .select("IdRead")
+      .from("ReadPluviometers")
+      .where({ Time: params })
+      .first();
+
+    return exists ? true : false;
+  }
 
   async getEquipmentIdByExternalCode(
     idEquipmentExternal: string
