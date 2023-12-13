@@ -114,6 +114,14 @@ export namespace MeasuresRepositoryDTOProtocol {
     };
     export type Result = Promise<StationReadEntity | null>;
   }
+  export namespace CheckIfStationMeasureTimeAlreadyExists {
+    export type Params = string;
+    export type Result = Promise<boolean>;
+  }
+  export namespace CheckIfPluviometerMeasureTimeAlreadyExists {
+    export type Params = string;
+    export type Result = Promise<boolean>;
+  }
   export namespace GetPluviometers {
     export type Params = {
       idEquipment: number;
@@ -140,6 +148,8 @@ export namespace MeasuresRepositoryDTOProtocol {
   export namespace UpdateStationMeasures {
     export type Params = {
       IdRead: number;
+      Time: string;
+      Hour: number | null;
       TotalRadiation: number | null;
       AverageRelativeHumidity: number | null;
       MinRelativeHumidity: number | null;
@@ -157,6 +167,8 @@ export namespace MeasuresRepositoryDTOProtocol {
   export namespace UpdatePluviometerMeasures {
     export type Params = {
       IdRead: number;
+      Time: string;
+      Hour: number | null;
       Value: number | null;
     };
 
@@ -186,6 +198,12 @@ export interface EquipmentsMeasuresRepositoryProtocol {
   getStationsReads(
     params: MeasuresRepositoryDTOProtocol.GetStations.Params
   ): MeasuresRepositoryDTOProtocol.GetStations.Result;
+  checkIfStationMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result;
+  checkIfPluviometerMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result;
   getStationReadsByIdRead(
     params: MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Params
   ): MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Result;

@@ -158,6 +158,8 @@ export class KnexEquipmentsRepository
     await equipments.transaction(async (trx) => {
       await trx("ReadStations")
         .update({
+          Time: request.Time,
+          Hour: request.Hour,
           TotalRadiation: request.TotalRadiation,
           AverageRelativeHumidity: request.AverageRelativeHumidity,
           MinRelativeHumidity: request.MinRelativeHumidity,
@@ -184,6 +186,8 @@ export class KnexEquipmentsRepository
     await equipments("ReadPluviometers")
       .update({
         Value: request.Value,
+        Time: request.Time,
+        Hour: request.Hour,
       })
       .where("IdRead", request.IdRead);
   }
@@ -223,6 +227,28 @@ export class KnexEquipmentsRepository
 
     return exists ? true : false;
   }
+  async checkIfStationMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result {
+    const exists = await equipments
+      .select("IdRead")
+      .from("ReadStations")
+      .where({ Time: params })
+      .first();
+
+    return exists ? true : false;
+  }
+  async checkIfPluviometerMeasureTimeAlreadyExists(
+    params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
+  ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
+    const exists = await equipments
+      .select("IdRead")
+      .from("ReadPluviometers")
+      .where({ Time: params })
+      .first();
+
+    return exists ? true : false;
+  }
 
   async getEquipmentIdByExternalCode(
     idEquipmentExternal: string
@@ -237,8 +263,9 @@ export class KnexEquipmentsRepository
   }
   async getEquipmentId(
     id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
-  ):EquipmentRepositoryDTOProtocol.GetIdBy.Result {
-    const result = await equipments.raw(`
+  ): EquipmentRepositoryDTOProtocol.GetIdBy.Result {
+    const result = await equipments.raw(
+      `
     SELECT
           equipment."IdEquipment" AS "Id",
           equipment."IdEquipmentExternal" AS "EqpCode",
@@ -264,16 +291,17 @@ export class KnexEquipmentsRepository
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON
           eqpLocation."FK_Equipment" = equipment."IdEquipment"
       WHERE "IdEquipment" = ?
-    `,id)
-    
-    const data = result.rows[0]
+    `,
+      id
+    );
 
-    if(!data){
-      return null
+    const data = result.rows[0];
+
+    if (!data) {
+      return null;
     }
 
-
-    console.log(data)
+    console.log(data);
 
     return {
       Id: Number(data.Id),

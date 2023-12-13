@@ -26,6 +26,8 @@ export class UpdateStationMeasuresController
     try {
       const dto = {
         IdRead: request.id,
+        Time: request.Time,
+        Hour: request.Hour,
         TotalRadiation: request.TotalRadiation,
         AverageRelativeHumidity: request.AverageRelativeHumidity,
         MinRelativeHumidity: request.MinRelativeHumidity,
@@ -58,6 +60,8 @@ export namespace UpdateStationMeasuresControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
+    Time: string;
+    Hour: number | null;
     TotalRadiation: number | null;
     AverageRelativeHumidity: number | null;
     MinRelativeHumidity: number | null;

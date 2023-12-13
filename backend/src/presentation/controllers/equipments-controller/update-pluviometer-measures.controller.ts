@@ -12,7 +12,10 @@ export class UpdatePluviometerController
   private updateEquipment: UpdatePluviometerMeasures;
   private userLogs: RegisterUserLogs;
 
-  constructor(updateEquipment: UpdatePluviometerMeasures, userLogs: RegisterUserLogs) {
+  constructor(
+    updateEquipment: UpdatePluviometerMeasures,
+    userLogs: RegisterUserLogs
+  ) {
     this.updateEquipment = updateEquipment;
     this.userLogs = userLogs;
   }
@@ -22,8 +25,10 @@ export class UpdatePluviometerController
   ): Promise<HttpResponse> {
     try {
       const dto = {
-        IdRead:request.id,
-        Value: request.Value
+        IdRead: request.id,
+        Time: request.Time,
+        Hour: request.Hour,
+        Value: request.Value,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -46,6 +51,8 @@ export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
+    Time: string;
+    Hour: number | null;
     Value: number | null;
   };
 }
