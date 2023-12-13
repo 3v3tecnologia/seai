@@ -2,9 +2,7 @@ import { Either, left, right } from "../../../shared/Either";
 import { MeteorologicalOrganEntity } from "../../entities/equipments/MetereologicalOrgan";
 import { Command } from "../_ports/core/command";
 
-import {
-  EquipmentsMeasuresRepositoryProtocol
-} from "../_ports/repositories/equipments-repository";
+import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
 export class UpdatePluviometerMeasures extends Command {
   private readonly equipmentsRepository: EquipmentsMeasuresRepositoryProtocol;
@@ -25,13 +23,17 @@ export class UpdatePluviometerMeasures extends Command {
       description: `Sucesso ao atualizar leitura de pluviômetro ${request.IdRead}.`,
     });
 
-    return right(`Sucesso ao atualizar leitura de pluviômetro ${request.IdRead}.`);
+    return right(
+      `Sucesso ao atualizar leitura de pluviômetro ${request.IdRead}.`
+    );
   }
 }
 
 export namespace UpdatePluviometerMeasuresUseCaseProtocol {
   export type Request = {
     IdRead: number;
+    Time: string;
+    Hour: number | null;
     Value: number | null;
   };
 

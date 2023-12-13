@@ -33,6 +33,8 @@ export class UpdateStationMeasures extends Command {
 export namespace UpdateMeteorologicalOrganUseCaseProtocol {
   export type Request = {
     IdRead: number;
+    Time: string;
+    Hour: number | null;
     TotalRadiation: number | null;
     AverageRelativeHumidity: number | null;
     MinRelativeHumidity: number | null;

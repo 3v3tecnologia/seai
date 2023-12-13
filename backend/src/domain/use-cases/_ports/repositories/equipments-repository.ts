@@ -140,6 +140,8 @@ export namespace MeasuresRepositoryDTOProtocol {
   export namespace UpdateStationMeasures {
     export type Params = {
       IdRead: number;
+      Time: string;
+      Hour: number | null;
       TotalRadiation: number | null;
       AverageRelativeHumidity: number | null;
       MinRelativeHumidity: number | null;
@@ -157,6 +159,8 @@ export namespace MeasuresRepositoryDTOProtocol {
   export namespace UpdatePluviometerMeasures {
     export type Params = {
       IdRead: number;
+      Time: string;
+      Hour: number | null;
       Value: number | null;
     };
 
