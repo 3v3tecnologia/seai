@@ -115,11 +115,17 @@ export namespace MeasuresRepositoryDTOProtocol {
     export type Result = Promise<StationReadEntity | null>;
   }
   export namespace CheckIfStationMeasureTimeAlreadyExists {
-    export type Params = string;
+    export type Params = {
+      idRead: number;
+      time: string;
+    };
     export type Result = Promise<boolean>;
   }
   export namespace CheckIfPluviometerMeasureTimeAlreadyExists {
-    export type Params = string;
+    export type Params = {
+      idRead: number;
+      time: string;
+    };
     export type Result = Promise<boolean>;
   }
   export namespace GetPluviometers {

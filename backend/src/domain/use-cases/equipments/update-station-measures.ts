@@ -15,12 +15,21 @@ export class UpdateStationMeasures extends Command {
     this.equipmentsRepository = equipmentsRepository;
   }
   async execute(
-    request: UpdateMeteorologicalOrganUseCaseProtocol.Request
-  ): Promise<Either<Error, UpdateMeteorologicalOrganUseCaseProtocol.Response>> {
+    request: UpdateStationMeasuresUseCaseProtocol.Request
+  ): Promise<Either<Error, UpdateStationMeasuresUseCaseProtocol.Response>> {
+    const measureExists =
+      await this.equipmentsRepository.getStationReadsByIdRead({
+        idRead: request.IdRead,
+      });
+
+    if (measureExists === null) {
+      return left(new Error("Medição não encontrada"));
+    }
     const hasMeasuresWithSameTime =
-      await this.equipmentsRepository.checkIfStationMeasureTimeAlreadyExists(
-        request.Time
-      );
+      await this.equipmentsRepository.checkIfStationMeasureTimeAlreadyExists({
+        idRead: request.IdRead,
+        time: request.Time,
+      });
     if (hasMeasuresWithSameTime) {
       return left(new Error("Foi encontrado uma medição com o mesmo tempo."));
     }
@@ -38,7 +47,7 @@ export class UpdateStationMeasures extends Command {
   }
 }
 
-export namespace UpdateMeteorologicalOrganUseCaseProtocol {
+export namespace UpdateStationMeasuresUseCaseProtocol {
   export type Request = {
     IdRead: number;
     Time: string;
