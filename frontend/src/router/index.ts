@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import AuthView from "../views/AuthView.vue";
 import ReportsView from "../views/ReportsView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
@@ -21,7 +21,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/home",
     name: "home",
     component: HomeView,
-    // redirect: { path: "/login" },
   },
   {
     path: "/login",
@@ -160,7 +159,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(),
   routes,
 });
 

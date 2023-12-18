@@ -1,6 +1,6 @@
 const getDataKey = "GET_CURRENT_NEWSLETTER";
 
-const submitDataKey = "UPDATE_EQUIPMENT";
+const submitDataKey = "UPDATE_NEWSLETTER";
 
 const storeDataKey = ["newsletter", "update"];
 
@@ -25,13 +25,8 @@ const fields = [
     },
   },
   {
-    label: "Autor",
-    formKey: "Auth",
-    type: "text",
-  },
-  {
-    label: "Nome da localização",
-    formKey: "LocationName",
+    label: "Descrição",
+    formKey: "Description",
     type: "text",
   },
   {
@@ -47,8 +42,8 @@ const fields = [
 ];
 
 const finishedDataButton = {
-  text: "Retornar a listagem de equipamentos",
-  routeName: "equipments",
+  text: "Retornar a listagem de notícias",
+  routeName: "newsletter",
 };
 
 export default {
@@ -58,5 +53,5 @@ export default {
   finishedDataButton,
   headerLabel,
   fields,
-  navBarTab: 6,
+  navBarTab: 3,
 };

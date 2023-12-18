@@ -1,4 +1,10 @@
 import { formatDateWithHour } from "@/helpers/date";
+import {
+  decodeBin,
+  encodeBin,
+  getUnixTime,
+  unwrapNewsLetter,
+} from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
 
@@ -21,22 +27,14 @@ export default {
     GET_NEWSLETTERS: {
       async handler({ commit }) {
         try {
-          const { data } = await http.get(`/news`);
+          const {
+            data: { data },
+          } = await http.get(`/news`);
 
-          const newsletters = [
-            {
-              id: 1,
-              Title: "Alerta de custo de água",
-              Text: '<p>dasdsadasdas<strong style="background-color: rgb(230, 0, 0);">dasdasdas</strong></p>',
-              Auth: "Lucas",
-              LocationName: "Fortaleza-CE",
-              Time: "2023-08-22",
-              Hour: "23",
-            },
-          ];
+          const newsletters = data?.Data || [];
 
           commit("SET_LIST", {
-            data: newsletters.map((n) => {
+            data: newsletters.map(unwrapNewsLetter).map((n) => {
               n.FullTime = formatDateWithHour(n.Time, n.Hour);
 
               return n;
@@ -48,15 +46,84 @@ export default {
         }
       },
     },
-    GET_CURRENT_NEWSLETTER: {
-      async handler({ state, commit, dispatch }, id) {
+    CREATE_NEWSLETTER: {
+      async handler(_, form) {
         try {
-          await dispatch("GET_NEWSLETTERS");
-          const newsletter = state.list.data.find((c) => c.id == id);
+          const newsletter = {
+            FK_Author: 1,
+            Title: form.Title,
+            Description: form.Description,
+            Data: encodeBin(form.Text),
+            SendDate: getUnixTime(form.Time),
+          };
+
+          await http.post(`/news/`, newsletter);
+          toast.success("Notícia criada com sucesso.");
+        } catch (e) {
+          console.error(e);
+          toast.error("Falha ao criar notícia.");
+          throw Error(e?.response?.data?.error);
+        }
+      },
+    },
+    UPDATE_NEWSLETTER: {
+      async handler(_, form) {
+        try {
+          const newsletter = {
+            FK_Author: 1,
+            Title: form.Title,
+            Description: form.Description,
+            Data: encodeBin(form.Text),
+            SendDate: getUnixTime(form.Time),
+          };
+
+          await http.put(`/news/${form.Id}`, newsletter);
+          toast.success("Notícia atualizada com sucesso.");
+        } catch (e) {
+          console.error(e);
+          toast.error("Falha ao atualizar notícia.");
+          throw Error(e?.response?.data?.error);
+        }
+      },
+    },
+    DELETE_NEWSLETTER: {
+      async handler(_, ids) {
+        try {
+          await Promise.allSettled(
+            ids.map(async (id) => await http.delete(`/news/${id}`))
+          );
+          toast.success("Sucesso ao deletar notícia(s)");
+        } catch (e) {
+          console.error(e);
+          toast.success("Falha ao deletar notícia(s)");
+          throw Error(e?.response?.data?.error);
+        }
+      },
+    },
+    GET_CURRENT_NEWSLETTER: {
+      async handler({ commit }, id) {
+        try {
+          let {
+            data: { data: newsletter },
+          } = await http.get(`/news/${id}`);
+
+          if (!newsletter) {
+            throw new Error("Erro ao encontrar notícia.");
+          }
+
+          newsletter = unwrapNewsLetter(newsletter);
+          newsletter.FullTime = formatDateWithHour(
+            newsletter.Time,
+            newsletter.Hour
+          );
+
+          newsletter.Text = decodeBin(newsletter.Data);
 
           commit("SET_CURRENT", newsletter);
         } catch (e) {
+          commit("SET_CURRENT", {});
           console.error(e);
+          toast.error(e);
         }
       },
     },

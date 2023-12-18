@@ -91,8 +91,8 @@ const fields = [
 ];
 
 const finishedDataButton = {
-  text: "Retornar a listagem de equipamentos",
-  routeName: "equipments",
+  text: "Retornar a listagem de leituras de estações",
+  routeName: "station-reads",
 };
 
 export default {

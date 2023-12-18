@@ -2,11 +2,11 @@ import { columnFullDateFormat } from "@/helpers/dto";
 
 const stateOptionsFilters = [];
 
-const searchFilter = ["Name", "LocationName"];
+const searchFilter = ["Auth", "Title"];
 
 export default {
   actionText: "notícia",
-  navBarTab: 6,
+  navBarTab: 3,
   getDataKey: "GET_NEWSLETTERS",
   hasApiFilters: true,
   deleteDataKey: "DELETE_NEWSLETTER",
@@ -39,9 +39,9 @@ export default {
       title: "Autor",
       field: "Auth",
     },
-    {
-      title: "Localização de envio",
-      field: "LocationName",
-    },
+    // {
+    //   title: "Localização de envio",
+    //   field: "LocationName",
+    // },
   ],
 };

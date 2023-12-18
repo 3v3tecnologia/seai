@@ -112,3 +112,40 @@ export const ungroupData = (items) => {
 export const columnFullDateFormat = (col) => {
   return moment(col._cell.value).format("DD/MM/YYYY HH:ss");
 };
+
+export const unwrapNewsLetter = (newsletterFromApi) => {
+  return {
+    ...newsletterFromApi,
+    id: newsletterFromApi.Id,
+    Title: newsletterFromApi.Title,
+    Description: newsletterFromApi.Description,
+    Auth: newsletterFromApi.Author.Organ,
+    Time: "2023-08-22",
+    Hour: "23",
+  };
+};
+
+export const decodeBin = (encoded) => {
+  // Remover o prefixo "data:text/html;charset=utf-8;base64,"
+  const base64Content = encoded.replace(
+    /^data:text\/html;charset=utf-8;base64,/,
+    ""
+  );
+
+  // Decodificar a string base64
+  const decodedContent = atob(base64Content);
+
+  return decodedContent;
+};
+
+export const encodeBin = (inputString) => {
+  // Encode the input string to Base64
+  const base64Encoded = btoa(unescape(encodeURIComponent(inputString)));
+
+  // Create the data URL string
+  const dataURL = `data:text/html;charset=utf-8;base64,${base64Encoded}`;
+
+  return dataURL;
+};
+
+export const getUnixTime = (timestamp) => moment(timestamp).valueOf();
