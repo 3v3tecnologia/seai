@@ -28,7 +28,6 @@ CREATE TABLE "News" (
 	"Content" bytea NOT NULL,
 	"CreatedAt" timestamp NOT NULL DEFAULT now(),
 	"UpdatedAt" timestamp NOT NULL DEFAULT now(),
-	CONSTRAINT "News_Title_key" UNIQUE ("Title"),
 	CONSTRAINT "News_pkey" PRIMARY KEY ("Id")
 );
 
