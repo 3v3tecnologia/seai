@@ -65,13 +65,8 @@ CREATE TABLE "ReadStations" (
 	"AverageAtmosphericTemperature" REAL DEFAULT NULL,
 	"AtmosphericPressure" REAL DEFAULT NULL,
 	"WindVelocity" REAL DEFAULT NULL,
+	"Et0" REAL DEFAULT NULL,
 	"FK_Organ" INT REFERENCES "MetereologicalOrgan"("IdOrgan"),
 	"FK_Equipment" INT REFERENCES "MetereologicalEquipment"("IdEquipment") ON DELETE CASCADE,
 	PRIMARY KEY("IdRead")
-);
-
-CREATE TABLE "Et0" (
-	"Value" REAL,
-	"FK_Station_Read" INT REFERENCES "ReadStations"("IdRead") ON DELETE CASCADE,	
-	PRIMARY KEY("FK_Station_Read")
 );

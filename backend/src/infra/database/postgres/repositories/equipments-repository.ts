@@ -169,14 +169,15 @@ export class KnexEquipmentsRepository
           MinAtmosphericTemperature: request.MinAtmosphericTemperature,
           AtmosphericPressure: request.AtmosphericPressure,
           WindVelocity: request.WindVelocity,
+          Et0: request.ETO,
         })
         .where("IdRead", request.IdRead);
 
-      await trx("Et0")
-        .update({
-          Value: request.ETO,
-        })
-        .where({ FK_Station_Read: request.IdRead });
+      // await trx("Et0")
+      //   .update({
+      //     Value: request.ETO,
+      //   })
+      //   .where({ FK_Station_Read: request.IdRead });
     });
   }
 
@@ -230,24 +231,35 @@ export class KnexEquipmentsRepository
   async checkIfStationMeasureTimeAlreadyExists(
     params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
   ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result {
-    const exists = await equipments
+    const measure = await equipments
       .select("IdRead")
       .from("ReadStations")
-      .where({ Time: params })
+      .where({ Time: params.time })
+      .andWhereNot({ IdRead: params.idRead })
       .first();
 
-    return exists ? true : false;
+    console.log(measure);
+    if (!measure) {
+      return false;
+    }
+
+    return measure.IdRead >= 0;
   }
   async checkIfPluviometerMeasureTimeAlreadyExists(
     params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
   ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
-    const exists = await equipments
+    const measure = await equipments
       .select("IdRead")
       .from("ReadPluviometers")
-      .where({ Time: params })
+      .where({ Time: params.time })
+      .andWhereNot({ IdRead: params.idRead })
       .first();
 
-    return exists ? true : false;
+    if (!measure) {
+      return false;
+    }
+
+    return measure.IdRead >= 0;
   }
 
   async getEquipmentIdByExternalCode(
@@ -300,8 +312,6 @@ export class KnexEquipmentsRepository
     if (!data) {
       return null;
     }
-
-    console.log(data);
 
     return {
       Id: Number(data.Id),
@@ -517,12 +527,10 @@ export class KnexEquipmentsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                eto."Value" AS "ETO"
+                stations."Et0" AS "ETO"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
-            LEFT JOIN "Et0" AS eto
-            ON stations."IdRead"  = eto."FK_Station_Read"
             INNER JOIN "MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
             ${queries.join(" ").concat(") AS t) AS measures")}
@@ -615,12 +623,10 @@ export class KnexEquipmentsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                eto."Value" AS "ETO"
+                stations."Et0" AS "ETO"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
-            LEFT JOIN "Et0" AS eto
-            ON stations."IdRead"  = eto."FK_Station_Read"
             INNER JOIN "MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
             WHERE stations."IdRead" = ?;

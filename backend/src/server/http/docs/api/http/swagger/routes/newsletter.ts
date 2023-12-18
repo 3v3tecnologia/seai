@@ -87,6 +87,7 @@ export const NEWSLETTER = {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Create news",
+      description: "SendDate is Unix Timestamp",
       requestBody: {
         content: {
           "application/json": {
@@ -96,6 +97,7 @@ export const NEWSLETTER = {
                 FK_Author: "number",
                 Title: "string",
                 Description: "string",
+                SendDate: "string",
                 Data: "string",
               },
               example: {
@@ -103,6 +105,7 @@ export const NEWSLETTER = {
                 Title: "TESTINHO",
                 Description: "Testinho",
                 Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
+                SendDate: 1702951200065,
               },
             },
           },
@@ -134,8 +137,8 @@ export const NEWSLETTER = {
     },
     put: {
       tags: TAGS,
-      summary: "Update equipments",
-      description: "Update equipment by id",
+      summary: "Update Newsletter by id",
+      description: "SendDate is Unix Timestamp",
       security: [BEARER_AUTH],
       parameters: [
         {
@@ -157,6 +160,7 @@ export const NEWSLETTER = {
                 FK_Author: "number",
                 Title: "string",
                 Description: "string",
+                SendDate: "string",
                 Data: "string",
               },
               example: {
@@ -164,6 +168,7 @@ export const NEWSLETTER = {
                 Title: "TESTINHO",
                 Description: "Testinho",
                 Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
+                SendDate: 1702951200065,
               },
             },
           },

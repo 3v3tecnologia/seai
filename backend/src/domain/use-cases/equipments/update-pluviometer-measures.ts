@@ -14,9 +14,20 @@ export class UpdatePluviometerMeasures extends Command {
   async execute(
     request: UpdatePluviometerMeasuresUseCaseProtocol.Request
   ): Promise<Either<Error, UpdatePluviometerMeasuresUseCaseProtocol.Response>> {
+    const measureExists =
+      await this.equipmentsRepository.getPluviometerReadsByIdRead({
+        idRead: request.IdRead,
+      });
+
+    if (measureExists === null) {
+      return left(new Error("Medição não encontrada"));
+    }
     const hasMeasuresWithSameTime =
       await this.equipmentsRepository.checkIfPluviometerMeasureTimeAlreadyExists(
-        request.Time
+        {
+          idRead: request.IdRead,
+          time: request.Time,
+        }
       );
     if (hasMeasuresWithSameTime) {
       return left(new Error("Foi encontrado uma medição com o mesmo tempo."));
