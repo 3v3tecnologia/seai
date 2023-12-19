@@ -1,6 +1,6 @@
 import { formatDateWithHour } from "@/helpers/date";
 import {
-  decodeBin,
+  decodeByteArr,
   encodeBin,
   getUnixTime,
   unwrapNewsLetter,
@@ -117,7 +117,7 @@ export default {
             newsletter.Hour
           );
 
-          newsletter.Text = decodeBin(newsletter.Data);
+          newsletter.Text = decodeByteArr(newsletter.Data);
 
           commit("SET_CURRENT", newsletter);
         } catch (e) {

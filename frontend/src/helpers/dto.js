@@ -138,6 +138,14 @@ export const decodeBin = (encoded) => {
   return decodedContent;
 };
 
+export const decodeByteArr = (data) => {
+  const byteArray = data.data;
+  const enc = new TextDecoder("utf-8");
+  const bin = enc.decode(new Uint8Array(byteArray));
+
+  return decodeBin(bin);
+};
+
 export const encodeBin = (inputString) => {
   // Encode the input string to Base64
   const base64Encoded = btoa(unescape(encodeURIComponent(inputString)));
