@@ -1,8 +1,9 @@
 #!/bin/bash
 
+npm run build;
+
 cd ..;
 
-npm run build;
 rm -r backend/public/;
 cp frontend/dist/ backend/public/;
 
