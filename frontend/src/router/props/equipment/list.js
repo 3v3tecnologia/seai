@@ -77,7 +77,7 @@ export default {
         url: function urlFormat(col) {
           const equipRoute =
             col._cell.row.data.Type === "station" ? "station" : "pluviometer";
-          return `/${equipRoute}-reads/${col._cell.value}`;
+          return `#/${equipRoute}-reads/${col._cell.value}`;
         },
       },
     },

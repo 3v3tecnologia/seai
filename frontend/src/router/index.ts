@@ -173,14 +173,14 @@ router.beforeEach(async (to: any, from, next) => {
     "retrieve-account": true,
   };
 
-  // if (!auth) {
-  //   // TODO
-  //   // IMPLEMENT TOKEN REFRESH
-  //   await store.dispatch("LOGIN_USER", {
-  //     login: "admin",
-  //     password: "1234567",
-  //   });
-  // }
+  if (!auth) {
+    // TODO
+    // IMPLEMENT TOKEN REFRESH
+    await store.dispatch("LOGIN_USER", {
+      login: "admin",
+      password: "1234567",
+    });
+  }
 
   auth = store.state.auth;
 
