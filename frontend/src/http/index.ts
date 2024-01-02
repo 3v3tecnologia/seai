@@ -2,6 +2,8 @@ import axios, { AxiosInstance } from "axios";
 
 const extractBaseUrl = () => {
   const urlObj = new URL(window.location.href);
+  // const urlObj = new URL("http://seai.3v3.farm");
+
   return [
     urlObj.protocol,
     urlObj.hostname,

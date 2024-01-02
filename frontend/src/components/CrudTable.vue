@@ -25,7 +25,7 @@
           />
 
           <div v-if="showDateRangeFilter" class="d-flex">
-            <FilterDate class="mt-0 mb-3 mb-lg-0" v-model="dates" />
+            <FilterDate class="mt-0 mb-3 mb-lg-0" v-model="dates" can-clear />
           </div>
 
           <div
@@ -88,6 +88,8 @@
           </button>
         </div>
       </div>
+
+      {{ filtersTable }}
 
       <BaseTable
         @selected="setSelectedUsers"
@@ -231,8 +233,8 @@ const allFiltersDropFields = computed(() => {
 
 const formatDateFilter = computed(() => {
   return [
-    { field: "start", value: dates.value[0] || null },
-    { field: "end", value: dates.value[1] || null },
+    { field: "start", value: dates.value[0] },
+    { field: "end", value: dates.value[1] },
   ];
 });
 
@@ -247,7 +249,6 @@ const filtersTable = computed(() => {
 watch(
   () => props.stateFilters,
   () => {
-    console.log("ta mudando de rota", currentRoute.value, props.stateFilters);
     search.value = "";
     props.stateFilters.forEach((f) => store.dispatch(f.getListKey));
   },

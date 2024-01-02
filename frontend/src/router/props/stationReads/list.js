@@ -1,7 +1,7 @@
 import { columnFullDateFormat } from "@/helpers/dto";
 import moment from "moment";
 
-const searchFilter = ["Name", "LocationName"];
+const searchFilter = [];
 
 export default {
   actionText: "leitura",

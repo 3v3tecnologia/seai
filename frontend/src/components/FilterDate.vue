@@ -1,5 +1,5 @@
 <template>
-  <span class="p-float-label w-100 margin-top-mob">
+  <span class="p-float-label w-100 margin-top-mob wrapper-filter">
     <Calendar
       v-model="dates"
       inputId="date-range-read"
@@ -15,6 +15,13 @@
     />
     <!-- show-button-bar="true" -->
     <label for="date-range-read">{{ label }}</label>
+    <button
+      @click="clearDates"
+      v-if="canClear && dates?.length"
+      class="clear d-flex align-items-center justify-content-center"
+    >
+      <i class="pi pi-times text-white"></i>
+    </button>
   </span>
 </template>
 
@@ -52,6 +59,10 @@ const props = defineProps({
     default: "YYYY-MM-DD",
     type: String,
   },
+  canClear: {
+    default: false,
+    type: Boolean,
+  },
 });
 
 // const valFormated = computed(() => moment(dates.value).format(props.dateFormat));
@@ -60,7 +71,13 @@ const dates = ref();
 const emit = defineEmits(["update:modelValue"]);
 
 watch(dates, (val) => {
-  emit("update:modelValue", val);
+  let emitedVal = val;
+
+  if (typeof val != "string" && !emitedVal?.length) {
+    emitedVal = [];
+  }
+
+  emit("update:modelValue", emitedVal);
 });
 
 watch(
@@ -74,4 +91,34 @@ watch(
   },
   { immediate: true }
 );
+
+const clearDates = () => (dates.value = null);
 </script>
+<style lang="scss" scoped>
+.wrapper-filter {
+  position: relative;
+  .clear {
+    background-color: #6366f1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 100%;
+    z-index: 100;
+    border-radius: 6px;
+    border: none;
+
+    &,
+    &:hover {
+      transition: all 0.2s;
+    }
+
+    &:hover {
+      filter: grayscale(0.2);
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+    }
+  }
+}
+</style>
