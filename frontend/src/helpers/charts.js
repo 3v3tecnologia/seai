@@ -27,8 +27,7 @@ export const validatePasswords = ({ password, confirmPassword }) => {
   return true;
 };
 
-export const groupByKeyData = (tempData, groupByKey) => {
-  const data = JSON.parse(JSON.stringify(tempData));
+export const groupByKeyData = (data, groupByKey) => {
   if (!data.length) {
     return {};
   }
@@ -47,18 +46,28 @@ export const groupByKeyData = (tempData, groupByKey) => {
   }
 
   mapedKeysUnique.forEach((key) => {
-    groupdedData[key] = data.filter((d) => d[keyGroup] === key);
+    groupdedData[key] = data
+      .filter((d) => d[keyGroup] === key)
+      .slice(0, itemsPerGraph);
   });
 
   return groupdedData;
 };
 
 export const getUniqueStackKeys = (data, stackKey) => {
-  return [...new Set(data.map((d) => d[stackKey]))];
+  return [...new Set(data.map((d) => d[stackKey]))].slice(0, itemsPerGraph);
 };
 
-export const labelsCharts = (groupedData) => {
-  return Object.keys(groupedData).sort().slice(0, itemsPerGraph);
+export const labelsCharts = (groupedData, groupByKey) => {
+  let sortedData = [];
+
+  if (groupByKey?.type === "month") {
+    sortedData = months;
+  } else {
+    sortedData = Object.keys(groupedData).sort().slice(0, itemsPerGraph);
+  }
+
+  return sortedData;
 };
 
 export const formatterPlot = (val) => {

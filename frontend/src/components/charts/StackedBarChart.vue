@@ -1,6 +1,7 @@
 <template>
   <CardChart>
     <apexchart
+      v-if="series?.length"
       class="h-100"
       :height="props.height"
       type="bar"
@@ -11,7 +12,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, ref, watch } from "vue";
+import { computed, defineProps } from "vue";
 import CardChart from "@/components/CardChart.vue";
 import {
   groupByKeyData,
@@ -97,7 +98,7 @@ const seriesStackKeys = computed(() =>
   getUniqueStackKeys(props.data, props.stackKey)
 );
 
-const labels = computed(() => labelsCharts(groupedData.value));
+const labels = computed(() => labelsCharts(groupedData.value, props.labelBy));
 
 const series = computed(() =>
   seriesStackKeys.value.map((stack) => {

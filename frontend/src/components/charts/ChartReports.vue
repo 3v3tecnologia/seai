@@ -4,7 +4,6 @@
       Máximo de {{ itemsPerGraph }} bacias/municípios por gráfico
     </div>
     <div class="row mb-3 mb-lg-5">
-      teste {{ captationCountSuper }}
       <div
         v-if="!isLoadingReport && !hasDataToShow"
         class="col-lg-12 mt-4 h4 font-weight-bold"
@@ -38,6 +37,10 @@ const store = useStore();
 const isLoadingReport = computed(() => store.state.isLoadingReport);
 const props = defineProps({
   data: {
+    type: Object,
+    default: () => ({}),
+  },
+  showingDataFormat: {
     type: Object,
     default: () => ({}),
   },
@@ -78,7 +81,7 @@ const workersCount = computed(() => {
 });
 
 const captationCountUnder = computed(() => {
-  const stackKey = "Mes";
+  const stackKey = currentValueKeyLocation.value;
   const valueKey = "Volume médio";
   const data = props.data.captationCount.filter(
     (c) => c["Captação"] === "Subterrânea"
@@ -92,7 +95,7 @@ const captationCountUnder = computed(() => {
 });
 
 const captationCountSuper = computed(() => {
-  const stackKey = "Bacia";
+  const stackKey = currentValueKeyLocation.value;
   const valueKey = "Volume médio";
   const data = props.data.captationCount.filter(
     (c) => c["Captação"] === "Superficial"
@@ -116,6 +119,10 @@ const animals = computed(() => {
     valueKey,
   };
 });
+
+const currentValueKeyLocation = computed(() =>
+  props.showingDataFormat.value === 2 ? "Municipio" : "Bacia"
+);
 
 const aquacultureCount = computed(() => {
   const valueKey = "QuantidadeTanques";
@@ -216,7 +223,8 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.superMonthFlow,
         "series-name": "Vazão média de captação mensal superficial (m³/h)",
-        "value-key": "Vazão média",
+        "label-by": { type: "month", key: "Mes" },
+        "value-key": captationCountSuper.value.valueKey,
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
@@ -224,6 +232,7 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.underMonthVol,
         "series-name": "Volume de captação mensal subterrânea (m³)",
+        "label-by": { type: "month", key: "Mes" },
         "value-key": captationCountUnder.value.valueKey,
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
@@ -232,6 +241,7 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.underMonthFlow,
         "value-key": "Vazão média",
+        "label-by": { type: "month", key: "Mes" },
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
       },

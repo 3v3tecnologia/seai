@@ -1,4 +1,4 @@
-export const itemsPerGraph = 20;
+export const itemsPerGraph = 10;
 
 export const reportsTitles = {
   registereds: "Recenseados (quantidade)",

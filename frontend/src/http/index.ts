@@ -13,7 +13,7 @@ const extractBaseUrl = () => {
 
 const urlBase = extractBaseUrl();
 const serverUrlBase = urlBase[2];
-// const serverPort = urlBase[1] == "localhost" ? 8080 : 80;
+
 const serverPort = 80;
 const baseURL = `${serverUrlBase}:${serverPort}/api/v1/`;
 

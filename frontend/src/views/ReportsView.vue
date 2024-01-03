@@ -72,6 +72,7 @@
       <div v-if="!isLoadingReport" class="mt-4 mt-lg-5">
         <ChartReports
           v-if="showingTab === 'charts'"
+          :showing-data-format="showingDataFormat"
           :data="reportsData"
           :current-report="groupReports"
           :current-data-format="showingDataFormat"
