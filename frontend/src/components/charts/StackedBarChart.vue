@@ -65,6 +65,11 @@ const props = defineProps({
     default: "",
     required: false,
   },
+  labelBy: {
+    type: Object,
+    default: null,
+    required: false,
+  },
   hasDataLabels: {
     type: Boolean,
     default: false,
@@ -86,7 +91,7 @@ const props = defineProps({
   },
 });
 
-const groupedData = computed(() => groupByKeyData(props.data));
+const groupedData = computed(() => groupByKeyData(props.data, props.labelBy));
 
 const seriesStackKeys = computed(() =>
   getUniqueStackKeys(props.data, props.stackKey)

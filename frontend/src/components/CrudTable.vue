@@ -89,8 +89,6 @@
         </div>
       </div>
 
-      {{ filtersTable }}
-
       <BaseTable
         @selected="setSelectedUsers"
         :api-pagination="apiPagination"

@@ -1,6 +1,21 @@
 import { toast } from "vue3-toastify";
 import { itemsPerGraph } from "../constants";
 
+const months = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
 export const validatePasswords = ({ password, confirmPassword }) => {
   const isPasswordsUnMatching = password != confirmPassword;
 
@@ -12,20 +27,24 @@ export const validatePasswords = ({ password, confirmPassword }) => {
   return true;
 };
 
-export const groupByKeyData = (data, groupByKeyData) => {
+export const groupByKeyData = (tempData, groupByKey) => {
+  const data = JSON.parse(JSON.stringify(tempData));
   if (!data.length) {
     return {};
   }
 
   const groupdedData = {};
 
-  let keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
+  let keyGroup = "";
+  let mapedKeysUnique = [];
 
-  if (groupByKeyData) {
-    keyGroup = groupByKeyData;
+  if (groupByKey?.type === "month") {
+    keyGroup = groupByKey.key;
+    mapedKeysUnique = months;
+  } else {
+    keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
+    mapedKeysUnique = new Set(data.map((d) => d[keyGroup]));
   }
-
-  const mapedKeysUnique = new Set(data.map((d) => d[keyGroup]));
 
   mapedKeysUnique.forEach((key) => {
     groupdedData[key] = data.filter((d) => d[keyGroup] === key);

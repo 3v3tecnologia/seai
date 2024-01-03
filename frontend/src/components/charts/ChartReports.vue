@@ -4,6 +4,7 @@
       Máximo de {{ itemsPerGraph }} bacias/municípios por gráfico
     </div>
     <div class="row mb-3 mb-lg-5">
+      teste {{ captationCountSuper }}
       <div
         v-if="!isLoadingReport && !hasDataToShow"
         class="col-lg-12 mt-4 h4 font-weight-bold"
@@ -91,7 +92,7 @@ const captationCountUnder = computed(() => {
 });
 
 const captationCountSuper = computed(() => {
-  const stackKey = "Mes";
+  const stackKey = "Bacia";
   const valueKey = "Volume médio";
   const data = props.data.captationCount.filter(
     (c) => c["Captação"] === "Superficial"
@@ -206,6 +207,7 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.superMonthVol,
         "series-name": "Volume de captação superficial (m³)",
+        "label-by": { type: "month", key: "Mes" },
         "value-key": captationCountSuper.value.valueKey,
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
