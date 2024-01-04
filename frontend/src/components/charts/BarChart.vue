@@ -10,10 +10,11 @@
 </template>
 
 <script setup>
-import { computed, defineProps, ref, watch } from "vue";
+import { computed, defineProps, watch } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
 import {
+  dataLabels,
   formatterLabels,
   formatterXTooltip,
   groupByKeyData,
@@ -31,10 +32,6 @@ const props = defineProps({
   },
   valueKey: {
     type: String,
-    required: true,
-  },
-  labels: {
-    type: Array,
     required: true,
   },
   title: {
@@ -132,7 +129,6 @@ const title = computed(() => ({
 
 const options = computed(() => ({
   chart: {
-    type: "bar",
     // group: "chart",
     id: props.id,
     toolbar: {
@@ -155,9 +151,7 @@ const options = computed(() => ({
       },
     },
   },
-  // fill: {
-  //   colors: props.color ? [props.color] : undefined,
-  // },
+  dataLabels,
   plotOptions: {
     bar: {
       distributed: true,

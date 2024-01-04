@@ -1,7 +1,7 @@
 import { toast } from "vue3-toastify";
 import { itemsPerGraph } from "../constants";
 
-const months = [
+export const months = [
   "Janeiro",
   "Fevereiro",
   "Março",
@@ -15,6 +15,31 @@ const months = [
   "Novembro",
   "Dezembro",
 ];
+
+const monthDict = {
+  Janeiro: 1,
+  Fevereiro: 2,
+  Março: 3,
+  Abril: 4,
+  Maio: 5,
+  Junho: 6,
+  Julho: 7,
+  Agosto: 8,
+  Setembro: 9,
+  Outubro: 10,
+  Novembro: 11,
+  Dezembro: 12,
+};
+
+const monthNumber = (text) => monthDict[text];
+
+export const dataLabels = {
+  enabled: true,
+  style: {
+    fontSize: "10px",
+    fontWeight: "normal",
+  },
+};
 
 export const validatePasswords = ({ password, confirmPassword }) => {
   const isPasswordsUnMatching = password != confirmPassword;
@@ -33,23 +58,26 @@ export const groupByKeyData = (data, groupByKey) => {
   }
 
   const groupdedData = {};
-
   let keyGroup = "";
-  let mapedKeysUnique = [];
 
   if (groupByKey?.type === "month") {
     keyGroup = groupByKey.key;
-    mapedKeysUnique = months;
   } else {
     keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
-    mapedKeysUnique = new Set(data.map((d) => d[keyGroup]));
   }
 
-  mapedKeysUnique.forEach((key) => {
-    groupdedData[key] = data
-      .filter((d) => d[keyGroup] === key)
-      .slice(0, itemsPerGraph);
-  });
+  for (let i = 0; i < data.length; i++) {
+    const current = data[i];
+    const currentGroupedVal = current[keyGroup];
+
+    if (!groupdedData[currentGroupedVal]) {
+      groupdedData[currentGroupedVal] = [];
+    }
+
+    if (groupdedData[currentGroupedVal].length < itemsPerGraph) {
+      groupdedData[currentGroupedVal].push(current);
+    }
+  }
 
   return groupdedData;
 };
@@ -87,7 +115,33 @@ export const formatterPlot = (val) => {
 export const formatterXTooltip = (seriesName) => `${seriesName}`;
 
 export const formatterLabels = (val, opt) => {
+  if (monthNumber(val)) {
+    return val.slice(0, 3);
+  }
+
   return val.length > 10 ? `${val.slice(0, 7)}...` : val;
+};
+
+export const mountSeries = (
+  seriesStackKeys,
+  labels,
+  groupedData,
+  stackKey,
+  valueKey
+) => {
+  const series = seriesStackKeys.map((stack) => {
+    const data = labels
+      .map((l) => groupedData[l] || [])
+      .map((l) => l.find((v) => v[stackKey] == stack))
+      .map((l) => (l ? l[valueKey] : 0));
+
+    return {
+      name: stack,
+      data,
+    };
+  });
+
+  return series;
 };
 
 export const fixPointsFloat = (val) => (val ? Number(val.toFixed(2)) : 0);

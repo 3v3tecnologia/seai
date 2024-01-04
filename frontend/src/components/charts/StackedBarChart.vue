@@ -21,6 +21,8 @@ import {
   formatterPlot,
   formatterXTooltip,
   formatterLabels,
+  dataLabels,
+  mountSeries,
 } from "../../helpers/charts";
 
 const props = defineProps({
@@ -71,11 +73,6 @@ const props = defineProps({
     default: null,
     required: false,
   },
-  hasDataLabels: {
-    type: Boolean,
-    default: false,
-    required: false,
-  },
   isHorizontal: {
     type: Boolean,
     default: false,
@@ -101,17 +98,13 @@ const seriesStackKeys = computed(() =>
 const labels = computed(() => labelsCharts(groupedData.value, props.labelBy));
 
 const series = computed(() =>
-  seriesStackKeys.value.map((stack) => {
-    const data = labels.value
-      .map((l) => groupedData.value[l] || [])
-      .map((l) => l.find((v) => v[props.stackKey] == stack))
-      .map((l) => (l ? l[props.valueKey] : 0));
-
-    return {
-      name: stack,
-      data,
-    };
-  })
+  mountSeries(
+    seriesStackKeys.value,
+    labels.value,
+    groupedData.value,
+    props.stackKey,
+    props.valueKey
+  )
 );
 
 const title = computed(() => ({
@@ -131,7 +124,6 @@ const title = computed(() => ({
 
 const options = computed(() => ({
   chart: {
-    type: "bar",
     // group: "chart",
     id: props.id,
     stacked: true,
@@ -153,13 +145,14 @@ const options = computed(() => ({
       enabled: true,
     },
   },
+  dataLabels,
   plotOptions: {
     bar: {
       horizontal: props.isHorizontal,
       // borderRadius: 10,
       dataLabels: {
+        enabled: false,
         total: {
-          offsetY: 2,
           enabled: true,
           formatter: formatterPlot,
           style: {
