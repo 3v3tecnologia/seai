@@ -1,5 +1,8 @@
 <template>
-  <div class="wrapper-card-total">
+  <div
+    class="wrapper-card-total h-100"
+    :style="{ minHeight: isLoadingReport ? '300px' : '' }"
+  >
     <div
       :class="{
         'd-flex align-items-center justify-content-center': isCentered,
@@ -12,7 +15,12 @@
       class="loading d-flex align-items-center justify-content-center"
       :class="{ active: isLoadingReport }"
     >
-      <ProgressSpinner />
+      <div class="lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +28,6 @@
 <script lang="ts" setup>
 import { computed, defineProps } from "vue";
 import { useStore } from "vuex";
-import ProgressSpinner from "primevue/progressspinner";
 
 defineProps({
   isCentered: {
@@ -34,6 +41,8 @@ const isLoadingReport = computed(() => store.state.isLoadingReport);
 </script>
 
 <style lang="scss" scoped>
+$SPIN-COLOR: white;
+
 .wrapper-card-total {
   position: relative;
 
@@ -57,6 +66,42 @@ const isLoadingReport = computed(() => store.state.isLoadingReport);
       z-index: 1;
       opacity: 1;
     }
+  }
+}
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  opacity: 0.4;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid $SPIN-COLOR;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: $SPIN-COLOR transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

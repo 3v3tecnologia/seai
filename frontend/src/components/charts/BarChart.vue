@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, watch } from "vue";
+import { computed, defineProps } from "vue";
 import CardChart from "@/components/CardChart.vue";
 
 import {

@@ -162,18 +162,6 @@ const props = defineProps({
   },
 });
 
-watch(
-  () => props.showingTab,
-  (val) => {
-    if (val === "charts") {
-      store.commit("SET_CURRENT_TAB", 4);
-    } else {
-      store.commit("SET_CURRENT_TAB", 3);
-    }
-  },
-  { immediate: true }
-);
-
 const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },
   groupReports: { ...groupReports.value },
@@ -235,8 +223,6 @@ const applyFilters = () => {
   city.value = cityTemp.value;
 };
 
-store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
-
 watch(
   () => showingDataFormat,
   async (val) => {
@@ -263,7 +249,7 @@ watch(
   async (newVal) => {
     await store.dispatch("FETCH_REPORTS_DATA", newVal);
   },
-  { deep: true }
+  { deep: true, immediate: true }
 );
 
 watch(
@@ -279,5 +265,19 @@ watch(
     }
   },
   { deep: true }
+);
+
+watch(
+  () => props.showingTab,
+  async (val) => {
+    if (val === "charts") {
+      store.commit("SET_CURRENT_TAB", 4);
+    } else {
+      store.commit("SET_CURRENT_TAB", 3);
+    }
+
+    // await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
+  },
+  { immediate: true }
 );
 </script>

@@ -1,18 +1,18 @@
 <template>
   <CardChart>
     <apexchart
-      v-if="seriesLoaded?.length"
+      v-if="series?.length"
       class="h-100"
       :height="props.height"
       type="bar"
-      :options="optionsLoaded"
-      :series="seriesLoaded"
+      :options="options"
+      :series="series"
     />
   </CardChart>
 </template>
 
 <script setup>
-import { computed, defineProps, ref, watch } from "vue";
+import { computed, defineProps } from "vue";
 import CardChart from "@/components/CardChart.vue";
 import {
   groupByKeyData,
@@ -24,7 +24,6 @@ import {
   dataLabels,
   mountSeries,
 } from "../../helpers/charts";
-import { useStore } from "vuex";
 
 const props = defineProps({
   data: {
@@ -90,12 +89,6 @@ const props = defineProps({
   },
 });
 
-const optionsLoaded = ref({});
-const seriesLoaded = ref([]);
-
-const store = useStore();
-const isLoadingReport = computed(() => store.state.isLoadingReport);
-
 const groupedData = computed(() => groupByKeyData(props.data, props.labelBy));
 
 const seriesStackKeys = computed(() =>
@@ -112,17 +105,6 @@ const series = computed(() =>
     props.stackKey,
     props.valueKey
   )
-);
-
-watch(
-  () => isLoadingReport.value,
-  (newval) => {
-    if (!newval) {
-      optionsLoaded.value = options.value;
-      seriesLoaded.value = series.value;
-    }
-  },
-  { immediate: true }
 );
 
 const title = computed(() => ({

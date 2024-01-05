@@ -81,6 +81,8 @@ export const getValue = (item, keyValOpt) => {
   return item;
 };
 
+export const getValueBasic = (item) => getValue(item);
+
 export const formatLocation = (item) => {
   if (item.Tipo === "bacia") {
     item["Bacia"] = item["Nome"];

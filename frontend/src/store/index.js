@@ -1,25 +1,18 @@
 import "vue3-toastify/dist/index.css";
 import newsletter from "./modules/newsletter";
-import { createStore, Store, useStore as vuexUseStore } from "vuex";
+import { createStore, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
-import { InjectionKey } from "vue";
-
-import IAuth from "@/interfaces/IAuth";
-import IUser from "@/interfaces/IUser";
-import IUsersWrapper from "@/interfaces/IUsersWrapper";
-import ICityOption from "@/interfaces/ICityOption";
-import IHydrographicBasinOption from "@/interfaces/IHydrographicBasinOption";
 
 import { previewEmailCensured } from "@/helpers/formatEmail";
-import INewUser from "@/interfaces/INewUser";
-import IReportsFilters from "@/interfaces/IReportsFilters";
-import IReportsData from "@/interfaces/IReportsData";
+import { reportsDataDefault } from "./mocks";
+
 import {
   checkMissingColumn,
   equipmentFormDTO,
   formatLocation,
   formatTemporaryToken,
   getValue,
+  getValueBasic,
   objectToParams,
   setAxiosHeader,
   ungroupData,
@@ -33,43 +26,31 @@ const defaultOption = {
   value: null,
 };
 
-interface Estado {
-  auth: IAuth | null;
-  equipments: any;
-  currentStationRead: any;
-  currentPluviometerRead: any;
-  readsStation: any;
-  readsPluviometer: any;
-  currentBody: any;
-  currentEquipment: any;
-  currentTab: number;
-  metereologicalBodies: any;
-  typesEquipments: any;
-  users: IUsersWrapper;
-  currentUser: INewUser | null;
-  profile: INewUser | null;
-  cityOptions: ICityOption[];
-  reportsFilters: IReportsFilters;
-  hydrographicBasinOptions: IHydrographicBasinOption[];
-  reportsData: IReportsData;
-  isLoadingReport: boolean;
-}
+// interface Estado {
+//   auth: IAuth | null;
+//   equipments;
+//   currentStationRead;
+//   currentPluviometerRead;
+//   readsStation;
+//   readsPluviometer;
+//   currentBody;
+//   currentEquipment;
+//   currentTab;
+//   metereologicalBodies;
+//   typesEquipments;
+//   users: IUsersWrapper;
+//   currentUser: INewUser | null;
+//   profile: INewUser | null;
+//   cityOptions: ICityOption[];
+//   reportsFilters: IReportsFilters;
+//   hydrographicBasinOptions: IHydrographicBasinOption[];
+//   reportsData: IReportsData;
+//   isLoadingReport: boolean;
+// }
 
-export const key: InjectionKey<Store<Estado>> = Symbol();
+export const key = Symbol();
 
-const reportsDataDefault: IReportsData = {
-  registeredCount: [],
-  captationCount: [],
-  workersCount: [],
-  aquaculture: [],
-  tankCaptation: [],
-  securityWater: [],
-  securitySocial: [],
-  securityEconomic: [],
-  securityProductive: [],
-};
-
-export const store = createStore<Estado>({
+export const store = createStore({
   modules: {
     newsletter,
   },
@@ -145,20 +126,20 @@ export const store = createStore<Estado>({
     ["SET_TYPES_EQUIPMENTS_OPTIONS"](state, options) {
       state.typesEquipments = options;
     },
-    ["SET_EQUIPMENTS"](state, equipments: any) {
+    ["SET_EQUIPMENTS"](state, equipments) {
       state.equipments = equipments;
     },
-    ["SET_STATION_READS"](state, reads: any) {
+    ["SET_STATION_READS"](state, reads) {
       state.readsStation = reads;
     },
-    ["SET_PLUVIOMETER_READS"](state, reads: any) {
+    ["SET_PLUVIOMETER_READS"](state, reads) {
       state.readsPluviometer = reads;
     },
-    ["SET_USER"](state, user: IAuth) {
+    ["SET_USER"](state, user) {
       state.auth = user;
       setAxiosHeader(user?.token || "");
     },
-    ["SET_LOADING_REPORT"](state, bool: boolean) {
+    ["SET_LOADING_REPORT"](state, bool) {
       state.isLoadingReport = bool;
     },
     ["SET_REPORTS_DATA"](state, data) {
@@ -174,7 +155,7 @@ export const store = createStore<Estado>({
     ["SET_SHOW_PER_BACIN"](state, val) {
       state.reportsFilters.showPerBasin = val;
     },
-    ["SET_USERS"](state, users: IUsersWrapper) {
+    ["SET_USERS"](state, users) {
       state.users = users;
     },
     ["SET_CURRENT_USER"](state, user) {
@@ -200,20 +181,17 @@ export const store = createStore<Estado>({
     ["SIGN_OUT"]({ commit }) {
       commit("SET_USER", null);
     },
-    async ["SEND_EMAIL_CHANGE_PASSWORD"](
-      context,
-      { email }: { email: string }
-    ) {
+    async ["SEND_EMAIL_CHANGE_PASSWORD"](context, { email }) {
       try {
         await http.post(`login/password/forgot`, { email });
         toast.success("Email de recuperação enviado com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao enviar email de recuperação.");
 
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["LOGIN_USER"]({ commit }, user: IUser) {
+    async ["LOGIN_USER"]({ commit }, user) {
       try {
         const { data } = await http.post(`login/sign-in`, user);
         const token = data?.data?.accessToken;
@@ -234,7 +212,7 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["UPDATE_SHOW_PER_BACIN"]({ commit }, val: boolean) {
+    async ["UPDATE_SHOW_PER_BACIN"]({ commit }, val) {
       commit("SET_SHOW_PER_BACIN", val);
     },
     async ["FETCH_CENSUS"]() {
@@ -247,7 +225,7 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_PLACES_OPTIONS"]({ commit }) {
       try {
-        const placesDTO = (places: []) => {
+        const placesDTO = (places) => {
           return places.map((place) => ({
             value: place["Id"],
             title: place["Local"],
@@ -324,7 +302,7 @@ export const store = createStore<Estado>({
       try {
         // TODO
         // IMPLEMENT REQUEST OF GENERAL REPORTS
-        const placesDTO = (places: []) => {
+        const placesDTO = (places) => {
           return places.map((place) => ({
             value: place["Id"],
             title: place["Local"],
@@ -349,7 +327,7 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_REPORT_GENERAL"]({ commit }, filters) {
       try {
-        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
         const {
@@ -373,7 +351,7 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_REPORT_AQUACULTURE"]({ commit }, filters) {
       try {
-        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
         const {
@@ -393,7 +371,7 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_REPORT_INDICATORS"]({ commit }, filters) {
       try {
-        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
         const {
@@ -415,9 +393,11 @@ export const store = createStore<Estado>({
         );
 
         commit("SET_REPORTS_DATA", {
-          securityWater: securityWater.map(getValue).map(formatLocation),
-          securitySocial: securitySocial.map(getValue).map(formatLocation),
-          securityEconomic: securityEconomic.map(getValue).map(formatLocation),
+          securityWater: securityWater.map(getValueBasic).map(formatLocation),
+          securitySocial: securitySocial.map(getValueBasic).map(formatLocation),
+          securityEconomic: securityEconomic
+            .map(getValueBasic)
+            .map(formatLocation),
           securityProductive: [],
         });
       } catch (e) {
@@ -426,7 +406,7 @@ export const store = createStore<Estado>({
     },
     async ["FETCH_REPORT_ANIMALS"]({ commit }, filters) {
       try {
-        const showingDataFormat: 1 | 2 | 3 = filters.showingDataFormat.value;
+        const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
         const {
@@ -460,32 +440,32 @@ export const store = createStore<Estado>({
         commit("SET_LOADING_REPORT", false);
       }
     },
-    async ["CREATE_USER"]({ commit }, user: any) {
+    async ["CREATE_USER"]({ commit }, user) {
       try {
         await http.post(`/user/register/`, user);
 
         toast.success("Usuário criado com sucesso.");
         toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao criar usuário.");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["CREATE_EQUIPMENT"]({ commit }, form: any) {
+    async ["CREATE_EQUIPMENT"]({ commit }, form) {
       try {
         const equipment = equipmentFormDTO(form);
 
         await http.post(`/equipments/`, equipment);
 
         toast.success("Equipamento criado com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao criar equipamento.");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["DELETE_USERS"]({ commit }, ids: number[]) {
+    async ["DELETE_USERS"]({ commit }, ids) {
       try {
         await Promise.allSettled(
           ids.map(async (id) => await http.delete(`/user/delete/${id}`))
@@ -497,7 +477,7 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["DELETE_EQUIPMENTS"]({ commit }, ids: number[]) {
+    async ["DELETE_EQUIPMENTS"]({ commit }, ids) {
       try {
         await Promise.allSettled(
           ids.map(async (id) => await http.delete(`/equipments/${id}`))
@@ -509,18 +489,18 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["UPDATE_USER"]({ state }, user: any) {
+    async ["UPDATE_USER"]({ state }, user) {
       try {
         await http.put(`/user/${state.currentUser?.id}`, user);
 
         toast.success("Dados de usuário atualizados com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar usuário.");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["UPDATE_STATION_READ"]({ state }, read: any) {
+    async ["UPDATE_STATION_READ"]({ state }, read) {
       try {
         const formattedRead = {
           ...read,
@@ -534,13 +514,13 @@ export const store = createStore<Estado>({
         );
 
         toast.success("Dados de leitura atualizados com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar dados de leitura.");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["UPDATE_PLUVIOMETER_READ"]({ state }, read: any) {
+    async ["UPDATE_PLUVIOMETER_READ"]({ state }, read) {
       try {
         const formattedRead = {
           ...read,
@@ -554,7 +534,7 @@ export const store = createStore<Estado>({
         );
 
         toast.success("Dados de leitura atualizados com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar dados de leitura.");
         console.error(e);
         throw Error(e?.response?.data?.error);
@@ -565,13 +545,13 @@ export const store = createStore<Estado>({
         // await http.put(`/user/${state.currentUser?.id}`, user);
 
         toast.success(" com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar usuário.");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["UPDATE_PROFILE"]({ state, commit }, user: any) {
+    async ["UPDATE_PROFILE"]({ state, commit }, user) {
       try {
         await http.put(`/user/profile/`, {
           ...state.profile,
@@ -588,21 +568,21 @@ export const store = createStore<Estado>({
         commit("SET_USER", auth);
 
         toast.success("Dados de usuário atualizados com sucesso.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar dados.");
         toast.error(e?.response?.data?.error);
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["UPDATE_EQUIPMENT"]({ state, commit }, form: any) {
+    async ["UPDATE_EQUIPMENT"]({ state, commit }, form) {
       try {
         const equipment = equipmentFormDTO(form);
 
         await http.put(`/equipments/${equipment.Id}`, equipment);
 
         toast.success("Dados do equipamento atualizados com sucesso");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Falha ao atualizar dados.");
         toast.error(e?.response?.data?.error);
         console.error(e);
@@ -618,31 +598,31 @@ export const store = createStore<Estado>({
         );
         toast.success("Senha atualizada com sucesso.");
         return true;
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Erro ao alterar senha.");
         toast.error(e?.response?.data?.error);
         throw Error(e?.response?.data?.error);
       }
     },
-    async ["GET_CURRENT_USER"]({ commit }, id: number) {
+    async ["GET_CURRENT_USER"]({ commit }, id) {
       const {
         data: { data },
       } = await http.get(`/user/list?userId=${id}`);
       commit("SET_CURRENT_USER", data);
     },
-    async ["GET_CURRENT_BODY"]({ state, commit, dispatch }, id: number) {
+    async ["GET_CURRENT_BODY"]({ state, commit, dispatch }, id) {
       try {
         await dispatch("FETCH_BODIES_OPTIONS");
 
         const equipment = state.metereologicalBodies.data.find(
-          (c: { Id: number }) => c.Id == id
+          (c) => c.Id == id
         );
         commit("SET_CURRENT_BODY", equipment);
       } catch (e) {
         console.error(e);
       }
     },
-    async ["GET_CURRENT_EQUIPMENT"]({ state, commit, dispatch }, id: number) {
+    async ["GET_CURRENT_EQUIPMENT"]({ state, commit, dispatch }, id) {
       try {
         await dispatch("GET_EQUIPMENTS");
 
@@ -652,19 +632,14 @@ export const store = createStore<Estado>({
           },
         } = await http.get(`/equipments/${id}`);
 
-        console.log("tentando buscar dado aqui", equipments);
+        const equipment = state.equipments.data.find((c) => c.Id == id);
 
-        const equipment = state.equipments.data.find(
-          (c: { Id: number }) => c.Id == id
-        );
-
-        console.log({ equipment });
         commit("SET_CURRENT_EQUIPMENT", equipment);
       } catch (e) {
         console.error(e);
       }
     },
-    async ["GET_CURRENT_STATION_READ"]({ commit }, id: number) {
+    async ["GET_CURRENT_STATION_READ"]({ commit }, id) {
       try {
         const {
           data: { data: read },
@@ -681,10 +656,7 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["GET_CURRENT_PLUVIOMETER_READ"](
-      { state, commit, dispatch },
-      id: number
-    ) {
+    async ["GET_CURRENT_PLUVIOMETER_READ"]({ state, commit, dispatch }, id) {
       try {
         const {
           data: { data: read },
@@ -701,7 +673,7 @@ export const store = createStore<Estado>({
         console.error(e);
       }
     },
-    async ["GET_PROFILE"]({ commit }, id: number) {
+    async ["GET_PROFILE"]({ commit }, id) {
       const {
         data: { data },
       } = await http.get(`/user/profile`);
@@ -716,8 +688,8 @@ export const store = createStore<Estado>({
 
         commit("SET_USERS", {
           data: users,
-          totalAdmins: users.filter((u: any) => u.type === "admin").length,
-          totalBasics: users.filter((u: any) => u.type !== "admin").length,
+          totalAdmins: users.filter((u) => u.type === "admin").length,
+          totalBasics: users.filter((u) => u.type !== "admin").length,
           totalActives: 0,
           totalInactives: 0,
         });
@@ -735,7 +707,7 @@ export const store = createStore<Estado>({
 
         const equipmentType = ["Estação", "Pluviômetro"];
 
-        equipments.map((equip: any) => {
+        equipments.map((equip) => {
           equip.Location = equip.Location?.Name;
           equip.Organ = equip.Organ.Name;
           equip.Type = equip.Type.Name || "station";
@@ -747,10 +719,10 @@ export const store = createStore<Estado>({
         commit("SET_EQUIPMENTS", {
           data: equipments,
           totalPluviometers: equipments.filter(
-            (d: any) => d.NomeTipoEquipamento === "Pluviômetro"
+            (d) => d.NomeTipoEquipamento === "Pluviômetro"
           ).length,
           totalStations: equipments.filter(
-            (d: any) => d.NomeTipoEquipamento === "Estação"
+            (d) => d.NomeTipoEquipamento === "Estação"
           ).length,
         });
       } catch (e) {
@@ -781,7 +753,7 @@ export const store = createStore<Estado>({
         );
 
         commit("SET_STATION_READS", {
-          data: reads.map((c: any) => {
+          data: reads.map((c) => {
             c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
             c.id = c.IdRead;
             c.FullTime = formatDateWithHour(c.Time, c.Hour);
@@ -822,7 +794,7 @@ export const store = createStore<Estado>({
         );
 
         commit("SET_PLUVIOMETER_READS", {
-          data: reads.map((c: any) => {
+          data: reads.map((c) => {
             c.id = c.IdRead;
             c.hasMissingColumn = checkMissingColumn({ ...c }, "Value");
             c.FullTime = formatDateWithHour(c.Time, c.Hour);
@@ -863,7 +835,7 @@ export const store = createStore<Estado>({
         }
 
         toast.success("Sucesso ao finalizar edição de usuário.");
-      } catch (e: any) {
+      } catch (e) {
         toast.error("Erro ao finalizar edição de usuário.");
         toast.error(e?.response?.data?.error);
         throw Error(e?.response?.data?.error);
@@ -872,7 +844,7 @@ export const store = createStore<Estado>({
   },
   getters: {
     bodiesOptions(state) {
-      const bodiesDTO = (bodies: { Name: string; Id: number }[]) => {
+      const bodiesDTO = (bodies) => {
         return bodies.map((bodie) => ({
           value: bodie["Id"],
           title: bodie["Name"],
@@ -882,9 +854,7 @@ export const store = createStore<Estado>({
       return [defaultOption, ...bodiesDTO(state.metereologicalBodies.data)];
     },
     equipmentTypeOptions(state) {
-      const typesEquips = (
-        typesEquips: { Name: string; Title: string; Id: number }[]
-      ) => {
+      const typesEquips = (typesEquips) => {
         return typesEquips.map((typeEquip) => ({
           value: typeEquip["Id"],
           title: typeEquip["Title"],
@@ -895,8 +865,7 @@ export const store = createStore<Estado>({
       return [defaultOption, ...typesEquips(state.typesEquipments.data)];
     },
     equipmentOptions(state) {
-      console.log("testezim", state.equipments.data);
-      const typesEquips = (typesEquips: any[]) => {
+      const typesEquips = (typesEquips) => {
         return typesEquips.map((equip) => {
           const title = ["Name", "Code"].map((c) => equip[c]).join(" - ");
 
@@ -913,7 +882,7 @@ export const store = createStore<Estado>({
   },
 });
 
-export function useStore(): Store<Estado> {
+export function useStore() {
   return vuexUseStore(key);
 }
 

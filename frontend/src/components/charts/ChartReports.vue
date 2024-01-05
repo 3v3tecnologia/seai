@@ -10,8 +10,9 @@
       >
         Sem dados para as localizações selecionadas
       </div>
+
       <div
-        v-for="chart in chartsGroups[currentReport.value - 1]"
+        v-for="chart in chartsGroups[currentReportLoaded - 1]"
         :key="chart.id"
         class="col-lg-6 d-flex align-items-center justify-content-start mt-4"
       >
@@ -26,7 +27,7 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from "vue";
+import { defineProps, computed, ref, watch } from "vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import StackedBarChart from "@/components/charts/StackedBarChart.vue";
 import { itemsPerGraph, reportsTitles } from "@/constants";
@@ -35,6 +36,7 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const isLoadingReport = computed(() => store.state.isLoadingReport);
+
 const props = defineProps({
   data: {
     type: Object,
@@ -53,6 +55,8 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const currentReportLoaded = ref(props.currentReport.value);
 
 const registeredCount = computed(() => {
   const valueKey = "Quantidade";
@@ -258,8 +262,10 @@ const chartsGroups = computed(() =>
             : animals.value.valueKey,
         "stack-key": animals.value.stackKey,
         data: animals.value.data,
-        "group-by-key":
-          props.currentDataFormat.value === 3 ? "TipoCriacao" : "",
+        groupByKey:
+          props.currentDataFormat.value === 3
+            ? { type: "value", key: "TipoCriacao" }
+            : "",
       },
     ],
     [
@@ -295,6 +301,7 @@ const chartsGroups = computed(() =>
         title: reportsTitles.secEconomic,
         "series-name": "Rentabilidade por área",
         "value-key": securityEconomic.value.valueKey,
+        groupByKey: "valor",
         data: securityEconomic.value.data,
       },
       {
@@ -322,5 +329,14 @@ const chartsGroups = computed(() =>
 
     return sub;
   })
+);
+
+watch(
+  () => isLoadingReport.value,
+  (newval) => {
+    if (!newval && props.currentReport.value != currentReportLoaded.value) {
+      currentReportLoaded.value = props.currentReport.value;
+    }
+  }
 );
 </script>

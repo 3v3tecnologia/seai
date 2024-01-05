@@ -60,7 +60,7 @@ export const groupByKeyData = (data, groupByKey) => {
   const groupdedData = {};
   let keyGroup = "";
 
-  if (groupByKey?.type === "month") {
+  if (groupByKey?.type) {
     keyGroup = groupByKey.key;
   } else {
     keyGroup = data[0]["Municipio"] ? "Municipio" : "Bacia";
@@ -114,7 +114,7 @@ export const formatterPlot = (val) => {
 
 export const formatterXTooltip = (seriesName) => `${seriesName}`;
 
-export const formatterLabels = (val, opt) => {
+export const formatterLabels = (val) => {
   if (monthNumber(val)) {
     return val.slice(0, 3);
   }
