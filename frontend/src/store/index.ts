@@ -446,19 +446,19 @@ export const store = createStore<Estado>({
         const groupmentParam = filters.groupReports.value;
 
         if (groupmentParam === 1) {
-          dispatch("FETCH_REPORT_GENERAL", filters);
+          await dispatch("FETCH_REPORT_GENERAL", filters);
         } else if (groupmentParam === 2) {
-          dispatch("FETCH_REPORT_ANIMALS", filters);
+          await dispatch("FETCH_REPORT_ANIMALS", filters);
         } else if (groupmentParam === 3) {
-          dispatch("FETCH_REPORT_AQUACULTURE", filters);
+          await dispatch("FETCH_REPORT_AQUACULTURE", filters);
         } else if (groupmentParam === 4) {
-          dispatch("FETCH_REPORT_INDICATORS", filters);
+          await dispatch("FETCH_REPORT_INDICATORS", filters);
         }
       } catch (e) {
         console.error(e);
+      } finally {
+        commit("SET_LOADING_REPORT", false);
       }
-
-      commit("SET_LOADING_REPORT", false);
     },
     async ["CREATE_USER"]({ commit }, user: any) {
       try {

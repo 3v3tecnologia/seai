@@ -135,7 +135,7 @@ const aquacultureCount = computed(() => {
 });
 
 const aquacultureSuper = computed(() => {
-  const stackKey = "Mes";
+  const stackKey = currentValueKeyLocation.value;
   const valueKey = "Volume/tanque";
   const data = props.data.tankCaptation.filter(
     (c) => c["Captação"] === "Superficial"
@@ -149,7 +149,7 @@ const aquacultureSuper = computed(() => {
 });
 
 const aquacultureUnder = computed(() => {
-  const stackKey = "Mes";
+  const stackKey = currentValueKeyLocation.value;
   const valueKey = "Volume/tanque";
   const data = props.data.tankCaptation.filter(
     (c) => c["Captação"] === "Subterrânea"
@@ -267,6 +267,7 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.underVolTanks,
         "series-name": "Volume de captação de tanques subterrâneos (m³)",
+        "label-by": { type: "month", key: "Mes" },
         "value-key": aquacultureUnder.value.valueKey,
         "stack-key": aquacultureUnder.value.stackKey,
         data: aquacultureUnder.value.data,
@@ -282,6 +283,7 @@ const chartsGroups = computed(() =>
         component: StackedBarChart,
         title: reportsTitles.underFlowTanks,
         "series-name": "Vazão média de captação de tanques subterrâneos (m³)",
+        "label-by": { type: "month", key: "Mes" },
         "value-key": aquacultureSuper.value.valueKey,
         "stack-key": aquacultureSuper.value.stackKey,
         data: aquacultureSuper.value.data,
