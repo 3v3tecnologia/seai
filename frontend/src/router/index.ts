@@ -11,6 +11,7 @@ import CreateUserView from "../views/UserRegisterView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 import store from "../store";
 import routeProps from "./props";
+import { isLocalhost } from "@/helpers/url";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -173,7 +174,7 @@ router.beforeEach(async (to: any, from, next) => {
     "retrieve-account": true,
   };
 
-  if (!auth) {
+  if (!auth && isLocalhost()) {
     // TODO
     // IMPLEMENT TOKEN REFRESH
     await store.dispatch("LOGIN_USER", {
