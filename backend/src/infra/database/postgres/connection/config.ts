@@ -1,5 +1,5 @@
 import env from "../../../../server/http/env";
-import { DATABASES_NAMES } from "../../../../shared/db/tableNames";
+import { DATABASES } from "../../../../shared/db/tableNames";
 
 export const db_config: { [index: string]: any } = {
   census: {
@@ -138,7 +138,7 @@ export const db_config: { [index: string]: any } = {
       },
     },
   },
-  [DATABASES_NAMES.NEWSLETTER.DATABASE]: {
+  [DATABASES.NEWSLETTER.DATABASE]: {
     development: {
       client: "pg",
       connection: {
@@ -146,7 +146,7 @@ export const db_config: { [index: string]: any } = {
         port: env.database.port,
         user: env.database.user,
         password: env.database.password,
-        database: DATABASES_NAMES.NEWSLETTER.DATABASE,
+        database: DATABASES.NEWSLETTER.DATABASE,
         charset: "utf8",
         timezone: "Brazil/East",
       },
@@ -160,9 +160,43 @@ export const db_config: { [index: string]: any } = {
       connection: {
         host: env.database.host,
         port: env.database.port,
-        database: DATABASES_NAMES.NEWSLETTER.DATABASE,
+        database: DATABASES.NEWSLETTER.DATABASE,
         user: env.database.user,
         password: env.database.password,
+        charset: "utf8",
+        timezone: "Brazil/East",
+      },
+      pool: {
+        min: 2,
+        max: 10,
+      },
+    },
+  },
+  [DATABASES.BACKGROUND_JOBS.DATABASE]: {
+    development: {
+      client: "pg",
+      connection: {
+        host: env.jobs.host,
+        port: env.jobs.port,
+        user: env.jobs.user,
+        password: env.jobs.password,
+        database: DATABASES.BACKGROUND_JOBS.DATABASE,
+        charset: "utf8",
+        timezone: "Brazil/East",
+      },
+      pool: {
+        min: 2,
+        max: 10,
+      },
+    },
+    production: {
+      client: "pg",
+      connection: {
+        host: env.jobs.host,
+        port: env.jobs.port,
+        user: env.jobs.user,
+        password: env.jobs.password,
+        database: DATABASES.BACKGROUND_JOBS.DATABASE,
         charset: "utf8",
         timezone: "Brazil/East",
       },

@@ -17,7 +17,7 @@ import {
 
 export const newsRouter = (): Router => {
   const router = Router();
-  // criar novo usuário
+
   router.post(
     "/",
     authorization,

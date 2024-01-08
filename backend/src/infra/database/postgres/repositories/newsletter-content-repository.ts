@@ -4,7 +4,7 @@ import {
   NewsRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
-import { DATABASES_NAMES } from "../../../../shared/db/tableNames";
+import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
@@ -20,7 +20,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Content: request.Data,
       })
       .returning("Id")
-      .into(DATABASES_NAMES.NEWSLETTER.NEWS);
+      .into(DATABASES.NEWSLETTER.NEWS);
 
     const id = result.length && result[0].Id;
 
@@ -29,7 +29,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async update(
     request: ContentRepositoryDTO.Update.Request
   ): ContentRepositoryDTO.Update.Response {
-    const result = await newsletterDb(DATABASES_NAMES.NEWSLETTER.NEWS)
+    const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS)
       .where({
         Id: request.Id,
       })
@@ -43,7 +43,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async delete(
     request: ContentRepositoryDTO.Delete.Request
   ): ContentRepositoryDTO.Delete.Response {
-    await newsletterDb(DATABASES_NAMES.NEWSLETTER.NEWS)
+    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
       .where({ Id: request.Id })
       .delete();
   }
@@ -62,8 +62,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           n."UpdatedAt",
           s."Email" ,
           s."Organ" 
-      FROM "${DATABASES_NAMES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES_NAMES.NEWSLETTER.SENDER}" s 
+      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
+      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
       ON s."Id" = n."Fk_Sender" 
       WHERE n."Id" = ?
     `,
@@ -89,8 +89,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           n."UpdatedAt",
           s."Email" ,
           s."Organ" 
-      FROM "${DATABASES_NAMES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES_NAMES.NEWSLETTER.SENDER}" s 
+      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
+      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
       ON s."Id" = n."Fk_Sender" 
       LIMIT ${request.limit} OFFSET  ${request.pageNumber}
     `);
