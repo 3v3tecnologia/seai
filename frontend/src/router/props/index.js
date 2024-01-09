@@ -13,6 +13,9 @@ import pluviometerReadsUpdate from "./pluviometerReads/update";
 import newsletter from "./newsletter/list";
 import newsletterUpdate from "./newsletter/update";
 import newsletterCreate from "./newsletter/create";
+import cron from "./cron/list";
+import cronUpdate from "./cron/update";
+import cronCreate from "./cron/create";
 
 export default {
   user,
@@ -31,6 +34,11 @@ export default {
     list: newsletter,
     update: newsletterUpdate,
     create: newsletterCreate,
+  },
+  cron: {
+    list: cron,
+    update: cronUpdate,
+    create: cronCreate,
   },
   metereologicalBodies,
   profile,

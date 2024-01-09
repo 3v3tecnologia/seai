@@ -25,3 +25,23 @@ export const dataFormatUrl = {
   2: "county",
   3: "consumption",
 };
+
+export const cronsOptions = [
+  {
+    cron: "0 0 * * *",
+    title: "Diariamente (00:00)",
+  },
+  {
+    cron: "0 * * * *",
+    title: "A cada início de hora",
+  },
+];
+
+const mapedCronsOptionsTemp = {};
+
+for (let i = 0; i < cronsOptions.length; i++) {
+  const current = cronsOptions[i];
+  mapedCronsOptionsTemp[current.cron] = current.title;
+}
+
+export const mapedCronsOptions = mapedCronsOptionsTemp;

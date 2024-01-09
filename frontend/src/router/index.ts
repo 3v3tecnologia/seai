@@ -156,6 +156,24 @@ const routes: Array<RouteRecordRaw> = [
     name: "initial-register-infos",
     component: InitialRegisterUserInfos,
   },
+  {
+    path: "/cron/",
+    name: "cron",
+    component: BaseCrudView,
+    props: routeProps.cron.list,
+  },
+  {
+    path: "/cron/edit/:id",
+    name: "edit-cron",
+    component: BaseForm,
+    props: routeProps.cron.update,
+  },
+  {
+    path: "/cron/create",
+    name: "create-cron",
+    component: BaseForm,
+    props: routeProps.cron.create,
+  },
   { path: "/:catchAll(.*)", component: PageNotFoundView },
 ];
 

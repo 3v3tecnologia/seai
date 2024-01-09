@@ -211,9 +211,13 @@ watch(
   { immediate: true, deep: true }
 );
 
-const formData = computed(() =>
-  props.storeDataKey ? accessStoreKey(store.state, props.storeDataKey) : {}
-);
+const formData = computed(() => {
+  const data = props.storeDataKey
+    ? accessStoreKey(store.state, props.storeDataKey)
+    : {};
+
+  return data;
+});
 
 const labelTypeField = (fields, type) =>
   fields.map((field) => {
@@ -313,9 +317,13 @@ const updateOldForm = (hasSavedForm = false) => {
   hasSaved.value = !!hasSavedForm;
 };
 
-watch(formData, () => {
-  setFormWatcher();
-});
+watch(
+  formData,
+  () => {
+    setFormWatcher();
+  },
+  { immediate: true }
+);
 
 watch(
   () => currentRoute.name,

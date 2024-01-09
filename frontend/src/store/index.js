@@ -1,5 +1,6 @@
 import "vue3-toastify/dist/index.css";
 import newsletter from "./modules/newsletter";
+import cron from "./modules/cron";
 import { createStore, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
 
@@ -53,6 +54,7 @@ export const key = Symbol();
 export const store = createStore({
   modules: {
     newsletter,
+    cron,
   },
   state: {
     auth: null,
