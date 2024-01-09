@@ -1,7 +1,8 @@
 import { Either, left, right } from "../../../shared/Either";
 import { JobsRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
+import { NotExistsError } from "../errors/notFound-error";
 
-export class DeleteJob {
+export class DeleteJob implements DeleteJobUseCaseProtocol.UseCase {
   private readonly repository: JobsRepositoryProtocol;
 
   constructor(repository: JobsRepositoryProtocol) {
@@ -10,12 +11,14 @@ export class DeleteJob {
 
   async execute(
     request: DeleteJobUseCaseProtocol.Request
-  ): Promise<Either<Error, DeleteJobUseCaseProtocol.Response>> {
+  ): Promise<Either<NotExistsError, DeleteJobUseCaseProtocol.Response>> {
     const job = await this.repository.getJobById(request.Id);
 
     if (job == null) {
       return left(
-        new Error(`Não foi possível encontrar job com id ${request.Id}`)
+        new NotExistsError(
+          `Não foi possível encontrar job com id ${request.Id}`
+        )
       );
     }
 
@@ -33,4 +36,10 @@ export namespace DeleteJobUseCaseProtocol {
   };
 
   export type Response = any;
+
+  export interface UseCase {
+    execute(
+      request: Request
+    ): Promise<Either<NotExistsError, DeleteJobUseCaseProtocol.Response>>;
+  }
 }

@@ -1,19 +1,37 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
+import { UpdateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { ok } from "../helpers";
-import { FetchWorkersCensusByBasin } from "../../../domain/use-cases/workers-census/fetch-workers-census-by-basin";
 
-export class UpdateJobController implements Controller<void, HttpResponse> {
-  private fetchWorkersCensusByBasin: FetchWorkersCensusByBasin;
+export class UpdateJobController
+  implements Controller<UpdateJobControllerProtocol.Request, HttpResponse>
+{
+  private useCase: UpdateJobUseCaseProtocol.UseCase;
 
-  constructor(fetchWorkersCensusByBasin: FetchWorkersCensusByBasin) {
-    this.fetchWorkersCensusByBasin = fetchWorkersCensusByBasin;
+  constructor(useCase: UpdateJobUseCaseProtocol.UseCase) {
+    this.useCase = useCase;
   }
 
-  async handle(): Promise<HttpResponse> {
-    const result = await this.fetchWorkersCensusByBasin.execute();
+  async handle(
+    request: UpdateJobControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    const result = await this.useCase.execute({
+      Id: request.id,
+      Data: request.Data,
+      Queue: request.Queue,
+      Priority: request.Priority,
+      RetryDelay: request.RetryDelay,
+      RetryLimit: request.RetryLimit,
+    });
 
     return ok(result.value);
   }
+}
+
+export namespace UpdateJobControllerProtocol {
+  export type Request = {
+    accountId: number;
+    id: string;
+  } & Omit<UpdateJobUseCaseProtocol.Request, "Id">;
 }

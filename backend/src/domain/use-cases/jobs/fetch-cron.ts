@@ -2,7 +2,7 @@ import { Either, right } from "../../../shared/Either";
 import { ScheduleRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
 
-export class FetchCron {
+export class FetchCron implements FetchCronUseCaseProtocol.UseCase {
   private readonly repository: ScheduleRepositoryProtocol;
 
   constructor(repository: ScheduleRepositoryProtocol) {
@@ -26,4 +26,10 @@ export namespace FetchCronUseCaseProtocol {
   export type Request = InputWithPagination & { Queue?: string };
 
   export type Response = OutputWithPagination<Array<any>> | null;
+
+  export interface UseCase {
+    execute(
+      request: Request
+    ): Promise<Either<Error, FetchCronUseCaseProtocol.Response>>;
+  }
 }

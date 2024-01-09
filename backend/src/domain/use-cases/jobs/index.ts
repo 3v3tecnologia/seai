@@ -6,3 +6,4 @@ export * from "./fetch-cron";
 export * from "./fetch-jobs";
 export * from "./update-cron";
 export * from "./update-job";
+export * from "./fetch-jobs-states";

@@ -1,7 +1,8 @@
 import { Either, left, right } from "../../../shared/Either";
 import { JobsRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
+import { NotExistsError } from "../errors/notFound-error";
 
-export class UpdateJob {
+export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
   private readonly repository: JobsRepositoryProtocol;
 
   constructor(repository: JobsRepositoryProtocol) {
@@ -10,16 +11,18 @@ export class UpdateJob {
 
   async execute(
     request: UpdateJobUseCaseProtocol.Request
-  ): Promise<Either<Error, any | null>> {
+  ): Promise<Either<NotExistsError, any | null>> {
     const job = await this.repository.getJobById(request.Id);
 
     if (job == null) {
       return left(
-        new Error(`Não foi possível encontrar job com id ${request.Id}`)
+        new NotExistsError(
+          `Não foi possível encontrar job com id ${request.Id}`
+        )
       );
     }
 
-    const data = await this.repository.createJob(request);
+    const data = await this.repository.updateJob(request);
 
     return right(data);
   }
@@ -36,4 +39,10 @@ export namespace UpdateJobUseCaseProtocol {
   };
 
   export type Response = string;
+
+  export interface UseCase {
+    execute(
+      request: UpdateJobUseCaseProtocol.Request
+    ): Promise<Either<Error, any | null>>;
+  }
 }

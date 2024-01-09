@@ -1,7 +1,8 @@
-import { Either, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import { ScheduleRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
+import { NotExistsError } from "../errors/notFound-error";
 
-export class UpdateCron {
+export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
   private readonly repository: ScheduleRepositoryProtocol;
 
   constructor(repository: ScheduleRepositoryProtocol) {
@@ -11,6 +12,14 @@ export class UpdateCron {
   async execute(
     request: UpdateCronUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateCronUseCaseProtocol.Response>> {
+    const exists = await this.repository.getScheduleByQueue({
+      Queue: request.Name,
+    });
+
+    if (exists == null) {
+      return left(new NotExistsError(`Queue name ${request.Name} not exists`));
+    }
+
     const data = await this.repository.updateSchedule({
       Cron: request.Cron,
       Data: request.Data,
@@ -18,6 +27,7 @@ export class UpdateCron {
       Option: request.Option,
       Timezone: request.Timezone,
     });
+
     return right(data);
   }
 }
@@ -32,4 +42,10 @@ export namespace UpdateCronUseCaseProtocol {
   };
 
   export type Response = any | null;
+
+  export interface UseCase {
+    execute(
+      request: UpdateCronUseCaseProtocol.Request
+    ): Promise<Either<Error, UpdateCronUseCaseProtocol.Response>>;
+  }
 }
