@@ -2,7 +2,7 @@ import { Either, left, right } from "../../../shared/Either";
 import { JobsRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
 
-export class FetchJobs {
+export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
   private readonly repository: JobsRepositoryProtocol;
 
   constructor(repository: JobsRepositoryProtocol) {
@@ -50,4 +50,8 @@ export namespace FetchJobUseCaseProtocol {
   } & InputWithPagination & { Queue?: string; State?: string };
 
   export type Response = OutputWithPagination<any[]> | null | any;
+
+  export interface UseCase {
+    execute(request: Request): Promise<Either<Error, any | null>>;
+  }
 }

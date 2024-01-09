@@ -1,27 +1,24 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchCronUseCaseProtocol } from "../../../domain/use-cases/jobs";
+import {
+  FetchCronUseCaseProtocol,
+  FetchJobsStatesUseCaseProtocol,
+} from "../../../domain/use-cases/jobs";
 import { ok } from "../helpers";
 
 export class FetchJobsStatesController
   implements
     Controller<FetchJobsStatesControllerProtocol.Request, HttpResponse>
 {
-  private useCase: FetchCronUseCaseProtocol.UseCase;
+  private useCase: FetchJobsStatesUseCaseProtocol.UseCase;
 
-  constructor(useCase: FetchCronUseCaseProtocol.UseCase) {
+  constructor(useCase: FetchJobsStatesUseCaseProtocol.UseCase) {
     this.useCase = useCase;
   }
 
-  async handle(
-    request: FetchJobsStatesControllerProtocol.Request
-  ): Promise<HttpResponse> {
-    const result = await this.useCase.execute({
-      limit: request.limit,
-      pageNumber: request.pageNumber,
-      Queue: request.Queue,
-    });
+  async handle(): Promise<HttpResponse> {
+    const result = await this.useCase.execute();
 
     return ok(result.value);
   }

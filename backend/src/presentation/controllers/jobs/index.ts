@@ -6,3 +6,4 @@ export * from "./fetch-cron.controller";
 export * from "./update-cron.controller";
 export * from "./update-job.controller";
 export * from "./fetch-jobs-states.controller";
+export * from "./fetch-jobs.controller";
