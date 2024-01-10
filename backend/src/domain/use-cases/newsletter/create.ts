@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { DATABASES_NAMES } from "../../../shared/db/tableNames";
+import { DATABASES } from "../../../shared/db/tableNames";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 
@@ -21,7 +21,7 @@ export class CreateNews
 
     this.addLog({
       action: "create",
-      table: DATABASES_NAMES.NEWSLETTER.NEWS,
+      table: DATABASES.NEWSLETTER.NEWS,
       description: successLog,
     });
 

@@ -1,5 +1,4 @@
 import { Either, right } from "../../../shared/Either";
-import { DATABASES_NAMES } from "../../../shared/db/tableNames";
 import { Content } from "../../entities/newsletter/news";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";

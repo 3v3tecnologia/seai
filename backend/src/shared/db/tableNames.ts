@@ -1,4 +1,4 @@
-export const DATABASES_NAMES = {
+export const DATABASES = {
   GOVERNMENT: "government",
   LOGS: "logs",
   CENSUS: "census",
@@ -8,5 +8,13 @@ export const DATABASES_NAMES = {
     NEWS: "News",
     SENDER: "Sender",
     SUBSCRIBER: "Subscriber",
+  },
+  BACKGROUND_JOBS: {
+    DATABASE: "postgres",
+    SCHEMA: "pgboss",
+    TABLES: {
+      SCHEDULE: "schedule",
+      JOB: "job",
+    },
   },
 };
