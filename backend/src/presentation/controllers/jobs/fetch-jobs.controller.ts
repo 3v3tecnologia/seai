@@ -31,7 +31,7 @@ export class FetchJobsController
 }
 
 export namespace FetchJobsControllerProtocol {
-  export type Request = { id: string } & Omit<
+  export type Request = { id?: string } & Omit<
     FetchCronUseCaseProtocol.Request,
     "Id"
   >;

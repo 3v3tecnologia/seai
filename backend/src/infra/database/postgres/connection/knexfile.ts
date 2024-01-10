@@ -16,6 +16,7 @@ export const newsletterDb = knex(
   db_config[DATABASES.NEWSLETTER.DATABASE][env.environment]
 );
 
+console.log(db_config[DATABASES.BACKGROUND_JOBS.DATABASE][env.environment]);
 export const backgroundJobsDb = knex(
   db_config[DATABASES.BACKGROUND_JOBS.DATABASE][env.environment]
 );

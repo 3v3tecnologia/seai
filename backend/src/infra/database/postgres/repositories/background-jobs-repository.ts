@@ -121,25 +121,6 @@ export class DbBackgroundJobsRepository
     });
   }
 
-  async fetchJobsStates(): Promise<any | null> {
-    const { rows } = await backgroundJobsDb.raw(
-      `SELECT     
-       e.enumlabel AS state
-        FROM
-            pg_type t
-        JOIN pg_enum e ON
-            t.oid = e.enumtypid
-        JOIN pg_catalog.pg_namespace n ON
-            n.oid = t.typnamespace
-        WHERE
-            t.typname = 'job_state';`
-    );
-
-    console.log("fetchJobsStates >> ", rows);
-
-    return rows;
-  }
-
   async getAllJob(
     request: JobsRepositoryDTO.Fetch.Request
   ): JobsRepositoryDTO.Fetch.Response {
@@ -334,6 +315,7 @@ export class DbBackgroundJobsRepository
     };
   }
   async getJobsStates(): JobsRepositoryDTO.FetchJobsStates.Response {
+    console.log("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     const { rows } = await backgroundJobsDb.raw(`SELECT     
        e.enumlabel AS state
         FROM

@@ -67,7 +67,7 @@ services:
     container_name: "seai-server"
     restart: always
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - ./backend:/usr/src/app
       - backend_node_modules:/usr/src/app/node_modules
@@ -75,20 +75,21 @@ services:
       database:
         condition: service_healthy
     networks:
+      - custom
       - private
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: "seai-client"
-    restart: always
-    ports:
-      - "8081:8080"
-    volumes:
-      - ./frontend:/usr/src/app
-      - frontend_node_modules:/usr/src/app/node_modules
-    networks:
-      - private
+  # frontend:
+  #   build: 
+  #     context: ./frontend
+  #     dockerfile: Dockerfile.dev
+  #   container_name: "seai-client"
+  #   restart: always
+  #   ports:
+  #     - "8081:8080"
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  #     - frontend_node_modules:/usr/src/app/node_modules
+  #   networks:
+  #     - private
 volumes:
   db-data: {}
   backend_node_modules: {}

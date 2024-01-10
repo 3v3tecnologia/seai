@@ -10,7 +10,7 @@ export const DATABASES = {
     SUBSCRIBER: "Subscriber",
   },
   BACKGROUND_JOBS: {
-    DATABASE: "postgresql",
+    DATABASE: "postgres",
     SCHEMA: "pgboss",
     TABLES: {
       SCHEDULE: "schedule",
