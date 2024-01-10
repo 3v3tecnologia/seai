@@ -13,7 +13,7 @@ export class CreateJob implements CreateJobUseCaseProtocol.UseCase {
   ): Promise<Either<Error, any | null>> {
     const data = await this.repository.createJob(request);
 
-      return right(data);
+    return right(data);
   }
 }
 

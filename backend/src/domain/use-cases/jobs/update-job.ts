@@ -22,7 +22,7 @@ export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
       );
     }
 
-      await this.repository.updateJob(request);
+    await this.repository.updateJob(request);
 
     return right(`Sucesso ao atualizar job ${request.Id}`);
   }

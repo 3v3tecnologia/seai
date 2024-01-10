@@ -22,7 +22,7 @@ export class DeleteJob implements DeleteJobUseCaseProtocol.UseCase {
       );
     }
 
-    const data = await this.repository.deleteJob({
+    await this.repository.deleteJob({
       Id: request.Id,
     });
 

@@ -20,7 +20,7 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
       return left(new NotExistsError(`Queue name ${request.Name} not exists`));
     }
 
-    const data = await this.repository.updateSchedule({
+    await this.repository.updateSchedule({
       Cron: request.Cron,
       Data: request.Data,
       Name: request.Name,

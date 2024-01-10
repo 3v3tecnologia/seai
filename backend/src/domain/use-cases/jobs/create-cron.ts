@@ -22,7 +22,7 @@ export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
       );
     }
 
-    const data = await this.repository.createSchedule({
+    await this.repository.createSchedule({
       Cron: request.Cron,
       Data: request.Data || null,
       Name: request.Name,

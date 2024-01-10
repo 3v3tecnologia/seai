@@ -20,7 +20,7 @@ export class DeleteCron implements DeleteCronUseCaseProtocol.UseCase {
       return left(new NotExistsError(`Queue name ${request.Name} not exists`));
     }
 
-    const data = await this.repository.deleteSchedule({
+    await this.repository.deleteSchedule({
       Name: request.Name,
     });
 
