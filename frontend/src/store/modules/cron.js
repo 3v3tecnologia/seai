@@ -43,7 +43,6 @@ export default {
         try {
           const dataToServe = [
             {
-              id: 1,
               name: "funceme-etl",
               cron: "0 0 * * *",
               timezone: "America/Fortaleza",
@@ -59,6 +58,7 @@ export default {
             },
           ].map((c) => {
             return {
+              id: c.name,
               ...c.options,
               ...c,
               cron_text_formatted: mapedCronsOptions[c.cron],
@@ -86,10 +86,10 @@ export default {
           };
 
           await http.post(`/news/`, newsletter);
-          toast.success("Cron criada com sucesso.");
+          toast.success("Rotina criada com sucesso.");
         } catch (e) {
           console.error(e);
-          toast.error("Falha ao criar cron.");
+          toast.error("Falha ao criar rotina");
           throw Error(e?.response?.data?.error);
         }
       },
@@ -106,10 +106,10 @@ export default {
           };
 
           await http.put(`/news/${form.Id}`, newsletter);
-          toast.success("Cron atualizada com sucesso.");
+          toast.success("Rotina atualizada com sucesso.");
         } catch (e) {
           console.error(e);
-          toast.error("Falha ao atualizar cron.");
+          toast.error("Falha ao atualizar rotina");
           throw Error(e?.response?.data?.error);
         }
       },

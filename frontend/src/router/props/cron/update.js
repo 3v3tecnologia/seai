@@ -6,7 +6,7 @@ const submitDataKey = "UPDATE_CRON";
 
 const storeDataKey = ["cron", "update"];
 
-const headerLabel = "Editando rotina de busca dados";
+const headerLabel = "Editando rotina de dados";
 
 const finishedDataButton = {
   text: "Retornar a listagem de notícias",

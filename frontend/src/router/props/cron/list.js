@@ -30,6 +30,10 @@ export default {
       field: "name",
     },
     {
+      title: "Recorrência",
+      field: "cron_text_formatted",
+    },
+    {
       title: "Prioridade",
       field: "priority",
     },
