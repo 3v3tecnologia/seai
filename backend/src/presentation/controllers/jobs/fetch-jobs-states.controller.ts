@@ -5,7 +5,7 @@ import {
   FetchCronUseCaseProtocol,
   FetchJobsStatesUseCaseProtocol,
 } from "../../../domain/use-cases/jobs";
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchJobsStatesController
   implements
@@ -18,9 +18,13 @@ export class FetchJobsStatesController
   }
 
   async handle(): Promise<HttpResponse> {
-    const result = await this.useCase.execute();
+    try {
+      const result = await this.useCase.execute();
 
     return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error)
+    }
   }
 }
 

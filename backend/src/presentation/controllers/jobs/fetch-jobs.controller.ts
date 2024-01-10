@@ -5,7 +5,7 @@ import {
   FetchCronUseCaseProtocol,
   FetchJobUseCaseProtocol,
 } from "../../../domain/use-cases/jobs";
-import { ok } from "../helpers";
+import { badRequest, ok, serverError } from "../helpers";
 
 export class FetchJobsController
   implements Controller<FetchJobsControllerProtocol.Request, HttpResponse>
@@ -19,6 +19,8 @@ export class FetchJobsController
   async handle(
     request: FetchJobsControllerProtocol.Request
   ): Promise<HttpResponse> {
+    try {
+      
     const result = await this.useCase.execute({
       Id: request.id,
       limit: request.limit,
@@ -26,7 +28,15 @@ export class FetchJobsController
       Queue: request.Queue,
     });
 
+    if(result.isLeft()){
+      return badRequest(result.value)
+    }
+
+
     return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error)
+    }
   }
 }
 

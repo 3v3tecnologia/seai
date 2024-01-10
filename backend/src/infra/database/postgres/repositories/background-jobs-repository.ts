@@ -64,7 +64,7 @@ export class DbBackgroundJobsRepository
           n."options" ,
           n."created_on" ,
           n."updated_on"
-      FROM "${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE}" n 
+      FROM ${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE} n 
       WHERE n."name"= ?;
     `,
       [request.Queue]
@@ -90,7 +90,7 @@ export class DbBackgroundJobsRepository
     const whereClause: Array<any> = [];
 
     let baseQuery = `SELECT "name", cron, timezone, "data", "options", created_on, updated_on
-      FROM pgboss.schedule \n`;
+      FROM ${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE} \n`;
 
     if (request.queue) {
       whereQueries.push({ query: `"name" = ?`, params: request.queue });
@@ -121,7 +121,7 @@ export class DbBackgroundJobsRepository
     });
   }
 
-  async getAllJob(
+  async getJobs(
     request: JobsRepositoryDTO.Fetch.Request
   ): JobsRepositoryDTO.Fetch.Response {
     const limit = request.limit || 50;
@@ -153,11 +153,11 @@ export class DbBackgroundJobsRepository
       .from(DATABASES.BACKGROUND_JOBS.TABLES.JOB);
 
     if (request.queue) {
-      whereQueries.push({ column: `"name"`, params: request.queue });
+      whereQueries.push({ column: "name", params: request.queue });
     }
 
     if (request.state) {
-      whereQueries.push({ column: `"state"`, params: request.state });
+      whereQueries.push({ column: "state", params: request.state });
     }
 
     if (whereQueries.length) {
@@ -183,7 +183,6 @@ export class DbBackgroundJobsRepository
     query.limit(limit).offset(pageOffset);
 
     const rows = await query;
-    console.log("[getAllJob] :: ", rows);
 
     return withPagination(rows, {
       count: rows.length,
@@ -315,7 +314,6 @@ export class DbBackgroundJobsRepository
     };
   }
   async getJobsStates(): JobsRepositoryDTO.FetchJobsStates.Response {
-    console.log("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     const { rows } = await backgroundJobsDb.raw(`SELECT     
        e.enumlabel AS state
         FROM
@@ -334,9 +332,4 @@ export class DbBackgroundJobsRepository
     return rows;
   }
 
-  async getJobs(
-    request: JobsRepositoryDTO.Fetch.Request
-  ): JobsRepositoryDTO.Fetch.Response {
-    throw new Error("Method not implemented.");
-  }
 }

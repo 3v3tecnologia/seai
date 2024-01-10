@@ -13,8 +13,8 @@ export const DATABASES = {
     DATABASE: "postgres",
     SCHEMA: "pgboss",
     TABLES: {
-      SCHEDULE: "schedule",
-      JOB: "job",
+      SCHEDULE: "pgboss.schedule",
+      JOB: "pgboss.job",
     },
   },
 };

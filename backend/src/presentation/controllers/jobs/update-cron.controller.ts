@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { UpdateCronUseCaseProtocol } from "../../../domain/use-cases/jobs";
-import { ok } from "../helpers";
+import { badRequest, ok, serverError } from "../helpers";
 
 export class UpdateCronController
   implements Controller<UpdateCronControllerProtocol.Request, HttpResponse>
@@ -16,15 +16,23 @@ export class UpdateCronController
   async handle(
     request: UpdateCronControllerProtocol.Request
   ): Promise<HttpResponse> {
-    const result = await this.useCase.execute({
-      Cron: request.Cron,
-      Data: request.Data || null,
-      Name: request.Name,
-      Option: request.Option || null,
-      Timezone: request.Timezone || null,
-    });
-
-    return ok(result.value);
+    try {
+      const result = await this.useCase.execute({
+        Cron: request.Cron,
+        Data: request.Data || null,
+        Name: request.Name,
+        Option: request.Option || null,
+        Timezone: request.Timezone || null,
+      });
+  
+      if(result.isLeft()){
+        return badRequest(result.value)
+      }
+  
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error)
+    }
   }
 }
 

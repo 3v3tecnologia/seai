@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { FetchCronUseCaseProtocol } from "../../../domain/use-cases/jobs";
-import { ok } from "../helpers";
+import { badRequest, ok, serverError } from "../helpers";
 
 export class FetchCronController
   implements Controller<FetchCronControllerProtocol.Request, HttpResponse>
@@ -16,13 +16,22 @@ export class FetchCronController
   async handle(
     request: FetchCronControllerProtocol.Request
   ): Promise<HttpResponse> {
-    const result = await this.useCase.execute({
-      limit: request.limit,
-      pageNumber: request.pageNumber,
-      Queue: request.Queue,
-    });
-
-    return ok(result.value);
+    try {
+      const result = await this.useCase.execute({
+        limit: request.limit,
+        pageNumber: request.pageNumber,
+        Queue: request.Queue,
+      });
+  
+      if(result.isLeft()){
+        return badRequest(result.value)
+      }
+  
+  
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error) 
+    }
   }
 }
 

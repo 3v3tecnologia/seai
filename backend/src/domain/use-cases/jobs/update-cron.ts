@@ -28,7 +28,7 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
       Timezone: request.Timezone,
     });
 
-    return right(data);
+    return right(`Sucesso ao atualizar cron.`);
   }
 }
 

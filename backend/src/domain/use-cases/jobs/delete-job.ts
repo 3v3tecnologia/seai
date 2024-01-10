@@ -26,7 +26,7 @@ export class DeleteJob implements DeleteJobUseCaseProtocol.UseCase {
       Id: request.Id,
     });
 
-    return right(data);
+    return right(`Sucesso ao deletar job ${request.Id}`);
   }
 }
 

@@ -30,7 +30,7 @@ export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
       Timezone: request.Timezone || null,
     });
 
-    return right(data);
+    return right(`Sucesso ao criar cron para a fila ${request.Name}`);
   }
 }
 

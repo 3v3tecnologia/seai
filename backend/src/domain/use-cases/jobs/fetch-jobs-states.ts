@@ -1,4 +1,4 @@
-import { Either, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import { JobsRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 
 export class FetchJobsStates implements FetchJobsStatesUseCaseProtocol.UseCase {

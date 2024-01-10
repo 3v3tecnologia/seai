@@ -24,7 +24,7 @@ export class DeleteCron implements DeleteCronUseCaseProtocol.UseCase {
       Name: request.Name,
     });
 
-    return right(data);
+    return right(`Sucesso ao deletar ${request.Name}.`);
   }
 }
 

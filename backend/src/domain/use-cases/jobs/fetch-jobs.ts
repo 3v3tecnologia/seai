@@ -20,6 +20,7 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
           new Error(`Não foi possível encontrar job com id ${request.Id}`)
         );
       }
+      
       return right(job);
     }
 

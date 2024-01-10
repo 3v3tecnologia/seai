@@ -1,4 +1,4 @@
-import { Either, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import { ScheduleRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
 

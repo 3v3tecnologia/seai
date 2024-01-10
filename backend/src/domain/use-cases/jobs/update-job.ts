@@ -11,7 +11,7 @@ export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
 
   async execute(
     request: UpdateJobUseCaseProtocol.Request
-  ): Promise<Either<NotExistsError, any | null>> {
+  ): Promise<Either<NotExistsError | Error, any | null>> {
     const job = await this.repository.getJobById(request.Id);
 
     if (job == null) {
@@ -22,9 +22,9 @@ export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
       );
     }
 
-    const data = await this.repository.updateJob(request);
+      await this.repository.updateJob(request);
 
-    return right(data);
+    return right(`Sucesso ao atualizar job ${request.Id}`);
   }
 }
 
