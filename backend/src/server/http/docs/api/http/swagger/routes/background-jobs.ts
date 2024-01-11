@@ -353,6 +353,44 @@ export const NEWSLETTER = {
       },
     },
   },
+  [`${BASE_URL.V1}/jobs/states`]: {
+    get: {
+      tags: TAGS,
+      summary: "Get jobs states",
+      security: [BEARER_AUTH],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "array",
+                    },
+                  },
+                },
+                example: {
+                  data: [
+                    "created",
+                    "retry",
+                    "active",
+                    "completed",
+                    "expired",
+                    "cancelled",
+                    "failed",
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${BASE_URL.V1}/jobs/schedule`]: {
     get: {
       tags: TAGS,
