@@ -78,6 +78,7 @@ export namespace JobsRepositoryDTO {
       priority: number;
       retryLimit: number;
       retryDelay: number;
+      startAfter?: string;
       data: any;
     };
 
@@ -88,9 +89,11 @@ export namespace JobsRepositoryDTO {
     export type Request = {
       id: string;
       queue: string;
+      state?: string;
       priority: number;
       retryLimit: number;
       retryDelay: number;
+      startAfter?: string;
       data: any;
     };
 

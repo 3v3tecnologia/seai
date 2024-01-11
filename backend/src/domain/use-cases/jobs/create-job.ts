@@ -23,6 +23,8 @@ export namespace CreateJobUseCaseProtocol {
     priority: number;
     retryLimit: number;
     retryDelay: number;
+    startAfter?: string;
+    state?: string;
     data: any;
   };
 

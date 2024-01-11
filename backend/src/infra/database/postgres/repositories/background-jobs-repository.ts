@@ -54,7 +54,6 @@ export class DbBackgroundJobsRepository
   async getScheduleByQueue(
     request: ScheduleRepositoryDTO.GetByQueue.Request
   ): ScheduleRepositoryDTO.GetByQueue.Response {
-    console.log(request);
     const { rows } = await backgroundJobsDb.raw(
       `
       SELECT 
@@ -194,14 +193,22 @@ export class DbBackgroundJobsRepository
   async createJob(
     request: JobsRepositoryDTO.Create.Request
   ): JobsRepositoryDTO.Create.Response {
+    const data = {
+      name: request.queue,
+      priority: request.priority || 1,
+      data: request.data || null,
+      retrylimit: request.retryLimit || 3,
+      retrydelay: request.retryDelay || 60,
+    };
+
+    if (Reflect.has(request, "startAfter")) {
+      Object.assign(data, {
+        startafter: request.startAfter,
+      });
+    }
+
     const result = await backgroundJobsDb
-      .insert({
-        name: request.queue,
-        priority: request.priority || 1,
-        data: request.data || null,
-        retrylimit: request.retryLimit || 3,
-        retrydelay: request.retryDelay || 60,
-      })
+      .insert(data)
       .returning("*")
       .into(DATABASES.BACKGROUND_JOBS.TABLES.JOB);
 
@@ -233,14 +240,28 @@ export class DbBackgroundJobsRepository
   async updateJob(
     request: JobsRepositoryDTO.Update.Request
   ): JobsRepositoryDTO.Update.Response {
+    const data = {
+      // name: request.queue,
+      priority: request.priority || 1,
+      data: request.data || null,
+      retrylimit: request.retryLimit || 3,
+      retrydelay: request.retryDelay || 60,
+    };
+
+    if (Reflect.has(request, "startAfter")) {
+      Object.assign(data, {
+        startafter: request.startAfter,
+      });
+    }
+
+    if (Reflect.has(request, "state")) {
+      Object.assign(data, {
+        state: request.state,
+      });
+    }
+
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
-      .update({
-        name: request.queue,
-        priority: request.priority || 1,
-        data: request.data || null,
-        retrylimit: request.retryLimit || 3,
-        retrydelay: request.retryDelay || 60,
-      })
+      .update(data)
       .where({
         id: request.id,
       });

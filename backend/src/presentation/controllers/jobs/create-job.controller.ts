@@ -17,13 +17,27 @@ export class CreateJobController
     request: CreateJobControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.useCase.execute({
+      const dto = {
+        data: request.data,
         queue: request.queue,
-        data: request.data || null,
-        priority: request.priority || 2,
-        retryDelay: request.retryDelay || 60,
-        retryLimit: request.retryLimit || 3,
-      });
+        priority: request.priority,
+        retryDelay: request.retryDelay,
+        retryLimit: request.retryLimit,
+      };
+
+      if (request.state) {
+        Object.assign(dto, {
+          state: request.state,
+        });
+      }
+
+      if (request.startAfter) {
+        Object.assign(dto, {
+          startAfter: request.startAfter,
+        });
+      }
+
+      const result = await this.useCase.execute(dto);
 
       if (result.isLeft()) {
         return badRequest(result.value);

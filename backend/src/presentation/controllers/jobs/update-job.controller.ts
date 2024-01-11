@@ -17,14 +17,28 @@ export class UpdateJobController
     request: UpdateJobControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.useCase.execute({
+      const dto = {
         id: request.id,
         data: request.data,
         queue: request.queue,
         priority: request.priority,
         retryDelay: request.retryDelay,
         retryLimit: request.retryLimit,
-      });
+      };
+
+      if (request.state) {
+        Object.assign(dto, {
+          state: request.state,
+        });
+      }
+
+      if (request.startAfter) {
+        Object.assign(dto, {
+          startAfter: request.startAfter,
+        });
+      }
+
+      const result = await this.useCase.execute(dto);
 
       if (result.isLeft()) {
         return badRequest(result.value);
