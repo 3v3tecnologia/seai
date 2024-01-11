@@ -10,6 +10,53 @@ export const NEWSLETTER = {
       tags: TAGS,
       summary: "Get jobs",
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Pagination number. Default 1",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "limit",
+          in: "query",
+          description: "Data limit",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "queue",
+          in: "query",
+          description: "Job name",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+        {
+          name: "id",
+          in: "query",
+          description: "Job ID (UUID)",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+        {
+          name: "state",
+          in: "query",
+          description: "Jobs states available in pb_boss",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       responses: {
         200: {
           content: {
@@ -26,19 +73,25 @@ export const NEWSLETTER = {
                         items: {
                           type: "object",
                           properties: {
-                            Id: "number",
-                            Author: {
-                              type: "object",
-                              properties: {
-                                Id: "number",
-                                Email: "string",
-                                Organ: "string",
-                              },
+                            id: "string",
+                            name: "string",
+                            priority: 1,
+                            data: "object",
+                            state: "completed",
+                            retrylimit: "number",
+                            retrycount: "number",
+                            retrydelay: "number",
+                            retrybackoff: "boolean",
+                            startafter: "string",
+                            startedon: "string",
+                            expirein: {
+                              minutes: "number",
                             },
-                            Title: "string",
-                            Description: "string",
-                            CreatedAt: "string",
-                            UpdatedAt: "string",
+                            createdon: "string",
+                            completedon: "string",
+                            keepuntil: "string",
+                            on_complete: "boolean",
+                            output: "object",
                           },
                         },
                       },
@@ -57,20 +110,31 @@ export const NEWSLETTER = {
                   data: {
                     Data: [
                       {
-                        Id: 4,
-                        Author: {
-                          Id: 1,
-                          Email: "testSender@gmail.com",
-                          Organ: "FUNCEME",
+                        id: "96a9c298-4662-4972-a4ed-1399c5387ed1",
+                        name: "send-newsletter",
+                        priority: 1,
+                        data: {
+                          id: 2,
                         },
-                        Title: "TESTINHO",
-                        Description: "Testinho",
-                        CreatedAt: "2023-12-12T11:24:24.600Z",
-                        UpdatedAt: "2023-12-12T11:24:24.600Z",
+                        state: "completed",
+                        retrylimit: 23,
+                        retrycount: 0,
+                        retrydelay: 40,
+                        retrybackoff: false,
+                        startafter: "2024-01-11T12:21:27.005Z",
+                        startedon: "2024-01-11T12:21:31.127Z",
+                        expirein: {
+                          minutes: 15,
+                        },
+                        createdon: "2024-01-11T12:21:27.005Z",
+                        completedon: "2024-01-11T12:21:33.751Z",
+                        keepuntil: "2024-01-25T12:21:27.005Z",
+                        on_complete: false,
+                        output: null,
                       },
                     ],
                     Pagination: {
-                      PageLimitRows: 40,
+                      PageLimitRows: 50,
                       PageNumber: 1,
                       QtdRows: 1,
                     },
@@ -86,26 +150,30 @@ export const NEWSLETTER = {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Create news",
-      description: "SendDate is Unix Timestamp",
+      summary: "Create job",
+      description: "Create a job ",
       requestBody: {
         content: {
           "application/json": {
             schema: {
               type: "object",
               properties: {
-                FK_Author: "number",
-                Title: "string",
-                Description: "string",
-                SendDate: "string",
-                Data: "string",
+                name: "string",
+                priority: "number",
+                retryLimit: "number",
+                retryDelay: "number",
+                startAfter: "string",
+                data: {
+                  type: "object",
+                },
               },
               example: {
-                FK_Author: 1,
-                Title: "TESTINHO",
-                Description: "Testinho",
-                Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
-                SendDate: 1702951200065,
+                name: "send-newsletter",
+                priority: 1,
+                retryLimit: 23,
+                retryDelay: 40,
+                data: null,
+                startAfter: "2024-01-11 18:21:33.751 -0300",
               },
             },
           },
@@ -117,16 +185,60 @@ export const NEWSLETTER = {
             "application/json": {
               schema: {
                 type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
+                properties: {
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: "string",
+                      name: "string",
+                      priority: "number",
+                      data: "object",
+                      state: "string",
+                      retrylimit: "number",
+                      retrycount: "number",
+                      retrydelay: "number",
+                      retrybackoff: "boolean",
+                      startafter: "string",
+                      startedon: "string",
+                      singletonkey: "string",
+                      singletonon: "string",
+                      expirein: {
+                        minutes: "number",
+                      },
+                      createdon: "string",
+                      completedon: "string",
+                      keepuntil: "string",
+                      on_complete: "boolean",
+                      output: "object",
                     },
                   },
                 },
                 example: {
-                  data: "Notícia criada com sucessso.",
+                  data: {
+                    id: "d86b95c0-4fc4-489e-80dd-634675695b6c",
+                    name: "send-newsletter",
+                    priority: 1,
+                    data: {
+                      id: 2,
+                    },
+                    state: "created",
+                    retrylimit: 23,
+                    retrycount: 0,
+                    retrydelay: 40,
+                    retrybackoff: false,
+                    startafter: "2024-01-11T21:21:33.751Z",
+                    startedon: null,
+                    singletonkey: null,
+                    singletonon: null,
+                    expirein: {
+                      minutes: 15,
+                    },
+                    createdon: "2024-01-11T14:58:18.387Z",
+                    completedon: null,
+                    keepuntil: "2024-01-25T14:58:18.387Z",
+                    on_complete: false,
+                    output: null,
+                  },
                 },
               },
             },
@@ -137,17 +249,16 @@ export const NEWSLETTER = {
     },
     put: {
       tags: TAGS,
-      summary: "Update Newsletter by id",
-      description: "SendDate is Unix Timestamp",
+      summary: "Update job",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
           in: "path",
-          description: "News Id",
+          description: "Job UUID",
           required: true,
           schema: {
-            type: "number",
+            type: "string",
           },
         },
       ],
@@ -157,18 +268,22 @@ export const NEWSLETTER = {
             schema: {
               type: "object",
               properties: {
-                FK_Author: "number",
-                Title: "string",
-                Description: "string",
-                SendDate: "string",
-                Data: "string",
+                name: "string",
+                priority: "number",
+                retryLimit: "number",
+                retryDelay: "number",
+                startAfter: "string",
+                data: {
+                  type: "object",
+                },
               },
               example: {
-                FK_Author: 1,
-                Title: "TESTINHO",
-                Description: "Testinho",
-                Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
-                SendDate: 1702951200065,
+                name: "send-newsletter",
+                priority: 1,
+                retryLimit: 23,
+                retryDelay: 40,
+                data: null,
+                startAfter: "2024-01-11 18:21:33.751 -0300",
               },
             },
           },
@@ -189,7 +304,7 @@ export const NEWSLETTER = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao atualizar notícia",
+                  data: "Sucesso ao atualizar job d86b95c0-4fc4-489e-80dd-634675695b6c",
                 },
               },
             },
@@ -200,17 +315,16 @@ export const NEWSLETTER = {
     },
     delete: {
       tags: TAGS,
-      summary: "Delete news",
-      description: "Delete news by id",
+      summary: "Delete job",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
           in: "path",
-          description: "News Id",
+          description: "Job id",
           required: true,
           schema: {
-            type: "number",
+            type: "string",
           },
         },
       ],
@@ -229,7 +343,7 @@ export const NEWSLETTER = {
                   },
                 },
                 example: {
-                  data: "Notícia deletada com sucessso.",
+                  data: "Sucesso ao deletar job 9142f7ee-4679-40a4-bb94-b6e3d3681219",
                 },
               },
             },

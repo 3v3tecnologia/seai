@@ -19,7 +19,7 @@ export class CreateJobController
     try {
       const dto = {
         data: request.data,
-        queue: request.queue,
+        name: request.name,
         priority: request.priority,
         retryDelay: request.retryDelay,
         retryLimit: request.retryLimit,

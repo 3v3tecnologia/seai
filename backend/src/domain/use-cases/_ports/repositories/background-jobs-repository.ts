@@ -74,7 +74,7 @@ export namespace ScheduleRepositoryDTO {
 export namespace JobsRepositoryDTO {
   export namespace Create {
     export type Request = {
-      queue: string;
+      name: string;
       priority: number;
       retryLimit: number;
       retryDelay: number;

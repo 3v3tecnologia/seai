@@ -19,7 +19,7 @@ export class CreateJob implements CreateJobUseCaseProtocol.UseCase {
 
 export namespace CreateJobUseCaseProtocol {
   export type Request = {
-    queue: string;
+    name: string;
     priority: number;
     retryLimit: number;
     retryDelay: number;

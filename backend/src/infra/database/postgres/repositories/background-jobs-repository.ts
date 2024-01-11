@@ -194,7 +194,7 @@ export class DbBackgroundJobsRepository
     request: JobsRepositoryDTO.Create.Request
   ): JobsRepositoryDTO.Create.Response {
     const data = {
-      name: request.queue,
+      name: request.name,
       priority: request.priority || 1,
       data: request.data || null,
       retrylimit: request.retryLimit || 3,
