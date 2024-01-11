@@ -20,8 +20,6 @@ let server;
     coredump: false,
   });
 
-  console.log(env);
-
   // programmer errors = let this program crash!
   process.on("uncaughtException", exitHandler(1, "Unexpected Error"));
 

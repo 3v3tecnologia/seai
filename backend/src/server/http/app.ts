@@ -33,7 +33,6 @@ export const setupApp = async (): Promise<Express> => {
   );
 
   app.get("/", (request, response) => {
-    console.log(resolve(__dirname, "..", "..", "..", "public", "index.html"));
     return response.sendFile(
       resolve(__dirname, "..", "..", "..", "public", "index.html")
     );

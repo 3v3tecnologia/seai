@@ -17,7 +17,6 @@ export class FetchCronController
     request: FetchCronControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      console.log(request);
       const result = await this.useCase.execute({
         limit: request.limit,
         pageNumber: request.pageNumber ? Number(request.pageNumber) : 1,
