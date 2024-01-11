@@ -17,11 +17,11 @@ export class DbBackgroundJobsRepository
   ): ScheduleRepositoryDTO.Create.Response {
     await backgroundJobsDb
       .insert({
-        name: request.Name,
-        cron: request.Cron,
-        timezone: request.Timezone,
-        data: request.Data,
-        options: request.Option,
+        name: request.name,
+        cron: request.cron,
+        timezone: request.timezone,
+        data: request.data,
+        options: request.option,
         updated_on: backgroundJobsDb.fn.now(),
       })
       .into(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE);
@@ -32,13 +32,13 @@ export class DbBackgroundJobsRepository
   ): ScheduleRepositoryDTO.Update.Response {
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE)
       .where({
-        name: request.Name,
+        name: request.name,
       })
       .update({
-        cron: request.Cron,
-        timezone: request.Timezone,
-        data: request.Data,
-        options: request.Option,
+        cron: request.cron,
+        timezone: request.timezone,
+        data: request.data,
+        options: request.option,
         updated_on: backgroundJobsDb.fn.now(),
       });
   }
@@ -47,7 +47,7 @@ export class DbBackgroundJobsRepository
     request: ScheduleRepositoryDTO.Delete.Request
   ): ScheduleRepositoryDTO.Delete.Response {
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE)
-      .where({ name: request.Name })
+      .where({ name: request.name })
       .delete();
   }
 
@@ -67,7 +67,7 @@ export class DbBackgroundJobsRepository
       FROM ${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE} n 
       WHERE n."name"= ?;
     `,
-      [request.Queue]
+      [request.queue]
     );
 
     if (!rows.length) {
@@ -108,8 +108,6 @@ export class DbBackgroundJobsRepository
     }
 
     baseQuery += "LIMIT 50 OFFSET ?;";
-
-    console.log("[getAllSchedule] :: ", baseQuery);
 
     const { rows } = await backgroundJobsDb.raw(baseQuery, args);
 
@@ -197,11 +195,11 @@ export class DbBackgroundJobsRepository
   ): JobsRepositoryDTO.Create.Response {
     const result = await backgroundJobsDb
       .insert({
-        name: request.Queue,
-        priority: request.Priority || 1,
-        data: request.Data || null,
-        retrylimit: request.RetryLimit || 3,
-        retrydelay: request.RetryDelay || 60,
+        name: request.queue,
+        priority: request.priority || 1,
+        data: request.data || null,
+        retrylimit: request.retryLimit || 3,
+        retrydelay: request.retryDelay || 60,
       })
       .returning("*")
       .into(DATABASES.BACKGROUND_JOBS.TABLES.JOB);
@@ -236,14 +234,14 @@ export class DbBackgroundJobsRepository
   ): JobsRepositoryDTO.Update.Response {
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
       .update({
-        name: request.Queue,
-        priority: request.Priority || 1,
-        data: request.Data || null,
-        retrylimit: request.RetryLimit || 3,
-        retrydelay: request.RetryDelay || 60,
+        name: request.queue,
+        priority: request.priority || 1,
+        data: request.data || null,
+        retrylimit: request.retryLimit || 3,
+        retrydelay: request.retryDelay || 60,
       })
       .where({
-        id: request.Id,
+        id: request.id,
       });
   }
 
@@ -253,7 +251,7 @@ export class DbBackgroundJobsRepository
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
       .delete()
       .where({
-        id: request.Id,
+        id: request.id,
       });
   }
 
@@ -331,5 +329,4 @@ export class DbBackgroundJobsRepository
 
     return rows;
   }
-
 }

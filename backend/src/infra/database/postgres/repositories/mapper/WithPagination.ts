@@ -6,7 +6,7 @@ export function withPagination(
     Data: data,
     Pagination: {
       PageLimitRows: pagination.limit,
-      PageNumber: pagination.offset,
+      PageNumber: pagination.page || 1,
       QtdRows: pagination.count || 0,
       //   QtdPages: pagination?.count
       //     ? Math.ceil(pagination.count / pagination.limit)
