@@ -32,36 +32,36 @@ export interface Cron {
 export namespace ScheduleRepositoryDTO {
   export namespace Create {
     export type Request = {
-      Name: any;
-      Cron: any;
-      Timezone: any;
-      Data: any;
-      Option: any;
+      name: any;
+      cron: any;
+      timezone: any;
+      data: any;
+      option: any;
     };
     export type Response = Promise<void>;
   }
 
   export namespace Update {
     export type Request = {
-      Name: any;
-      Cron: any;
-      Timezone: any;
-      Data: any;
-      Option: any;
+      name: any;
+      cron: any;
+      timezone: any;
+      data: any;
+      option: any;
     };
     export type Response = Promise<void>;
   }
 
   export namespace Delete {
     export type Request = {
-      Name: string;
+      name: string;
     };
     export type Response = Promise<void>;
   }
 
   export namespace GetByQueue {
     export type Request = {
-      Queue: string;
+      queue: string;
     };
     export type Response = Promise<any | null>;
   }
@@ -74,11 +74,11 @@ export namespace ScheduleRepositoryDTO {
 export namespace JobsRepositoryDTO {
   export namespace Create {
     export type Request = {
-      Queue: string;
-      Priority: number;
-      RetryLimit: number;
-      RetryDelay: number;
-      Data: any;
+      queue: string;
+      priority: number;
+      retryLimit: number;
+      retryDelay: number;
+      data: any;
     };
 
     export type Response = Promise<any | null>;
@@ -86,12 +86,12 @@ export namespace JobsRepositoryDTO {
 
   export namespace Update {
     export type Request = {
-      Id: string;
-      Queue: string;
-      Priority: number;
-      RetryLimit: number;
-      RetryDelay: number;
-      Data: any;
+      id: string;
+      queue: string;
+      priority: number;
+      retryLimit: number;
+      retryDelay: number;
+      data: any;
     };
 
     export type Response = Promise<void>;
@@ -99,7 +99,7 @@ export namespace JobsRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      Id: string;
+      id: string;
     };
 
     export type Response = Promise<void>;

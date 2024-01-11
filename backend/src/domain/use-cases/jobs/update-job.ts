@@ -12,30 +12,30 @@ export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
   async execute(
     request: UpdateJobUseCaseProtocol.Request
   ): Promise<Either<NotExistsError | Error, any | null>> {
-    const job = await this.repository.getJobById(request.Id);
+    const job = await this.repository.getJobById(request.id);
 
     if (job == null) {
       return left(
         new NotExistsError(
-          `Não foi possível encontrar job com id ${request.Id}`
+          `Não foi possível encontrar job com id ${request.id}`
         )
       );
     }
 
     await this.repository.updateJob(request);
 
-    return right(`Sucesso ao atualizar job ${request.Id}`);
+    return right(`Sucesso ao atualizar job ${request.id}`);
   }
 }
 
 export namespace UpdateJobUseCaseProtocol {
   export type Request = {
-    Id: string;
-    Queue: string;
-    Priority: number;
-    RetryLimit: number;
-    RetryDelay: number;
-    Data: any;
+    id: string;
+    queue: string;
+    priority: number;
+    retryLimit: number;
+    retryDelay: number;
+    data: any;
   };
 
   export type Response = string;

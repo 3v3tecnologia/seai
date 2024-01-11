@@ -18,21 +18,21 @@ export class UpdateJobController
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute({
-        Id: request.id,
-        Data: request.Data,
-        Queue: request.Queue,
-        Priority: request.Priority,
-        RetryDelay: request.RetryDelay,
-        RetryLimit: request.RetryLimit,
+        id: request.id,
+        data: request.data,
+        queue: request.queue,
+        priority: request.priority,
+        retryDelay: request.retryDelay,
+        retryLimit: request.retryLimit,
       });
-  
-      if(result.isLeft()){
-        return badRequest(result.value)
+
+      if (result.isLeft()) {
+        return badRequest(result.value);
       }
-  
+
       return ok(result.value);
     } catch (error) {
-      return serverError(error as Error)
+      return serverError(error as Error);
     }
   }
 }

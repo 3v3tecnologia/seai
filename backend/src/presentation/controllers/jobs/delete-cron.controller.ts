@@ -18,16 +18,16 @@ export class DeleteCronController
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute({
-        Name: request.Name,
+        name: request.name,
       });
-  
-      if(result.isLeft()){
-        return badRequest(result.value)
+
+      if (result.isLeft()) {
+        return badRequest(result.value);
       }
-  
+
       return ok(result.value);
     } catch (error) {
-      return serverError(error as Error)
+      return serverError(error as Error);
     }
   }
 }

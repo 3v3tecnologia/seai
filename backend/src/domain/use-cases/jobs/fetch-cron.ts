@@ -15,7 +15,7 @@ export class FetchCron implements FetchCronUseCaseProtocol.UseCase {
     const data = await this.repository.getAllSchedule({
       limit: request.limit,
       pageNumber: request.pageNumber,
-      queue: request.Queue,
+      queue: request.queue,
     });
 
     return right(data);
@@ -23,7 +23,7 @@ export class FetchCron implements FetchCronUseCaseProtocol.UseCase {
 }
 
 export namespace FetchCronUseCaseProtocol {
-  export type Request = InputWithPagination & { Queue?: string };
+  export type Request = InputWithPagination & { queue?: string };
 
   export type Response = OutputWithPagination<Array<any>> | null;
 

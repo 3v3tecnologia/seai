@@ -13,19 +13,19 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
     request: UpdateCronUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateCronUseCaseProtocol.Response>> {
     const exists = await this.repository.getScheduleByQueue({
-      Queue: request.Name,
+      queue: request.name,
     });
 
     if (exists == null) {
-      return left(new NotExistsError(`Queue name ${request.Name} not exists`));
+      return left(new NotExistsError(`Queue name ${request.name} not exists`));
     }
 
     await this.repository.updateSchedule({
-      Cron: request.Cron,
-      Data: request.Data,
-      Name: request.Name,
-      Option: request.Option,
-      Timezone: request.Timezone,
+      cron: request.cron,
+      data: request.data,
+      name: request.name,
+      option: request.option,
+      timezone: request.timezone,
     });
 
     return right(`Sucesso ao atualizar cron.`);
@@ -34,11 +34,11 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
 
 export namespace UpdateCronUseCaseProtocol {
   export type Request = {
-    Name: any;
-    Cron: any;
-    Timezone: any;
-    Data: any;
-    Option: any;
+    name: any;
+    cron: any;
+    timezone: any;
+    data: any;
+    option: any;
   };
 
   export type Response = any | null;

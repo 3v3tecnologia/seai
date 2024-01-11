@@ -12,27 +12,27 @@ export class DeleteJob implements DeleteJobUseCaseProtocol.UseCase {
   async execute(
     request: DeleteJobUseCaseProtocol.Request
   ): Promise<Either<NotExistsError, DeleteJobUseCaseProtocol.Response>> {
-    const job = await this.repository.getJobById(request.Id);
+    const job = await this.repository.getJobById(request.id);
 
     if (job == null) {
       return left(
         new NotExistsError(
-          `Não foi possível encontrar job com id ${request.Id}`
+          `Não foi possível encontrar job com id ${request.id}`
         )
       );
     }
 
     await this.repository.deleteJob({
-      Id: request.Id,
+      id: request.id,
     });
 
-    return right(`Sucesso ao deletar job ${request.Id}`);
+    return right(`Sucesso ao deletar job ${request.id}`);
   }
 }
 
 export namespace DeleteJobUseCaseProtocol {
   export type Request = {
-    Id: string;
+    id: string;
   };
 
   export type Response = any;

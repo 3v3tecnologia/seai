@@ -13,24 +13,24 @@ export class DeleteCron implements DeleteCronUseCaseProtocol.UseCase {
     request: DeleteCronUseCaseProtocol.Request
   ): DeleteCronUseCaseProtocol.Response {
     const exists = await this.repository.getScheduleByQueue({
-      Queue: request.Name,
+      queue: request.name,
     });
 
     if (exists == null) {
-      return left(new NotExistsError(`Queue name ${request.Name} not exists`));
+      return left(new NotExistsError(`Queue name ${request.name} not exists`));
     }
 
     await this.repository.deleteSchedule({
-      Name: request.Name,
+      name: request.name,
     });
 
-    return right(`Sucesso ao deletar ${request.Name}.`);
+    return right(`Sucesso ao deletar ${request.name}.`);
   }
 }
 
 export namespace DeleteCronUseCaseProtocol {
   export type Request = {
-    Name: string;
+    name: string;
   };
   export type Response = Promise<Either<Error, any | null>>;
 

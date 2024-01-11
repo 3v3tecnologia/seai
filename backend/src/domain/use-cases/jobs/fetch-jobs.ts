@@ -12,15 +12,15 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
   async execute(
     request: FetchJobUseCaseProtocol.Request
   ): Promise<Either<Error, any | null>> {
-    if (request.Id) {
-      const job = await this.repository.getJobById(request.Id);
+    if (request.id) {
+      const job = await this.repository.getJobById(request.id);
 
       if (job == null) {
         return left(
-          new Error(`Não foi possível encontrar job com id ${request.Id}`)
+          new Error(`Não foi possível encontrar job com id ${request.id}`)
         );
       }
-      
+
       return right(job);
     }
 
@@ -29,14 +29,14 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
       pageNumber: request.pageNumber || 1,
     };
 
-    if (request.Queue)
+    if (request.queue)
       Object.assign(dto, {
-        queue: request.Queue,
+        queue: request.queue,
       });
 
-    if (request.State)
+    if (request.state)
       Object.assign(dto, {
-        queue: request.State,
+        queue: request.state,
       });
 
     const data = await this.repository.getJobs(dto);
@@ -47,8 +47,8 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
 
 export namespace FetchJobUseCaseProtocol {
   export type Request = {
-    Id?: string;
-  } & InputWithPagination & { Queue?: string; State?: string };
+    id?: string;
+  } & InputWithPagination & { queue?: string; state?: string };
 
   export type Response = OutputWithPagination<any[]> | null | any;
 

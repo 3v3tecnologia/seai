@@ -20,22 +20,20 @@ export class FetchJobsController
     request: FetchJobsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      
-    const result = await this.useCase.execute({
-      Id: request.id,
-      limit: request.limit,
-      pageNumber: request.pageNumber,
-      Queue: request.Queue,
-    });
+      const result = await this.useCase.execute({
+        id: request.id,
+        limit: request.limit,
+        pageNumber: request.pageNumber,
+        queue: request.queue,
+      });
 
-    if(result.isLeft()){
-      return badRequest(result.value)
-    }
+      if (result.isLeft()) {
+        return badRequest(result.value);
+      }
 
-
-    return ok(result.value);
+      return ok(result.value);
     } catch (error) {
-      return serverError(error as Error)
+      return serverError(error as Error);
     }
   }
 }

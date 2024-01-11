@@ -18,20 +18,20 @@ export class UpdateCronController
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute({
-        Cron: request.Cron,
-        Data: request.Data || null,
-        Name: request.Name,
-        Option: request.Option || null,
-        Timezone: request.Timezone || null,
+        cron: request.cron,
+        data: request.data || null,
+        name: request.name,
+        option: request.option || null,
+        timezone: request.timezone || null,
       });
-  
-      if(result.isLeft()){
-        return badRequest(result.value)
+
+      if (result.isLeft()) {
+        return badRequest(result.value);
       }
-  
+
       return ok(result.value);
     } catch (error) {
-      return serverError(error as Error)
+      return serverError(error as Error);
     }
   }
 }

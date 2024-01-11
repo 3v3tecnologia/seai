@@ -13,34 +13,34 @@ export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
     request: CreateCronUseCaseProtocol.Request
   ): Promise<Either<AlreadyExistsError, any | null>> {
     const exists = await this.repository.getScheduleByQueue({
-      Queue: request.Name,
+      queue: request.name,
     });
 
     if (exists !== null) {
       return left(
-        new AlreadyExistsError(`Queue name ${request.Name} already exists`)
+        new AlreadyExistsError(`Queue name ${request.name} already exists`)
       );
     }
 
     await this.repository.createSchedule({
-      Cron: request.Cron,
-      Data: request.Data || null,
-      Name: request.Name,
-      Option: request.Option || null,
-      Timezone: request.Timezone || null,
+      cron: request.cron,
+      data: request.data || null,
+      name: request.name,
+      option: request.option || null,
+      timezone: request.timezone || null,
     });
 
-    return right(`Sucesso ao criar cron para a fila ${request.Name}`);
+    return right(`Sucesso ao criar cron para a fila ${request.name}`);
   }
 }
 
 export namespace CreateCronUseCaseProtocol {
   export type Request = {
-    Name: any;
-    Cron: any;
-    Timezone: any;
-    Data: any;
-    Option: any;
+    name: any;
+    cron: any;
+    timezone: any;
+    data: any;
+    option: any;
   };
 
   export type Response = string;

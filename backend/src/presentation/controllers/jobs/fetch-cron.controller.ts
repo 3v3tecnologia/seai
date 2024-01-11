@@ -20,17 +20,16 @@ export class FetchCronController
       const result = await this.useCase.execute({
         limit: request.limit,
         pageNumber: request.pageNumber,
-        Queue: request.Queue,
+        queue: request.queue,
       });
-  
-      if(result.isLeft()){
-        return badRequest(result.value)
+
+      if (result.isLeft()) {
+        return badRequest(result.value);
       }
-  
-  
+
       return ok(result.value);
     } catch (error) {
-      return serverError(error as Error) 
+      return serverError(error as Error);
     }
   }
 }
