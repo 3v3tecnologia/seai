@@ -1,6 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { ScheduleRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { AlreadyExistsError } from "../errors/alreadyExistsError";
+import { DefaultSchedulerParams } from "./utils/defaultScheduleOptions";
 
 export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
   private readonly repository: ScheduleRepositoryProtocol;
@@ -26,8 +27,8 @@ export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
       cron: request.cron,
       data: request.data || null,
       name: request.name,
-      options: request.options || null,
-      timezone: request.timezone || null,
+      options: request.options || DefaultSchedulerParams.options,
+      timezone: request.timezone || DefaultSchedulerParams.timezone,
     });
 
     return right(`Sucesso ao criar cron para a fila ${request.name}`);

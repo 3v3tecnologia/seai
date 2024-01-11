@@ -1,6 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { ScheduleRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { NotExistsError } from "../errors/notFound-error";
+import { DefaultSchedulerParams } from "./utils/defaultScheduleOptions";
 
 export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
   private readonly repository: ScheduleRepositoryProtocol;
@@ -24,8 +25,8 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
       cron: request.cron,
       data: request.data,
       name: request.name,
-      options: request.options,
-      timezone: request.timezone,
+      options: request.options || DefaultSchedulerParams.options,
+      timezone: request.timezone || DefaultSchedulerParams.timezone,
     });
 
     return right(`Sucesso ao atualizar cron.`);
