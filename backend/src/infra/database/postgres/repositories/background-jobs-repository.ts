@@ -328,6 +328,8 @@ export class DbBackgroundJobsRepository
       return null;
     }
 
-    return rows;
+    return rows.map((row: any) => {
+      return row.state;
+    });
   }
 }
