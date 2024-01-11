@@ -394,13 +394,31 @@ export const NEWSLETTER = {
   [`${BASE_URL.V1}/jobs/schedule`]: {
     get: {
       tags: TAGS,
-      summary: "Get news by ID",
+      summary: "Get cron jobs",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
-          in: "path",
-          description: "News Id",
+          in: "query",
+          description: "Job id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Page",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "limit",
+          in: "query",
+          description: "Limit of rows",
           required: true,
           schema: {
             type: "number",
@@ -459,34 +477,196 @@ export const NEWSLETTER = {
                 },
                 example: {
                   data: {
-                    Id: 4,
-                    Author: {
-                      Id: 1,
-                      Email: "testSender@gmail.com",
-                      Organ: "FUNCEME",
-                    },
-                    Title: "TESTINHO",
-                    Description: "Testinho",
-                    CreatedAt: "2023-12-12T11:24:24.600Z",
-                    UpdatedAt: "2023-12-12T11:24:24.600Z",
-                    Data: {
-                      type: "Buffer",
-                      data: [
-                        100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 104, 116,
-                        109, 108, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117,
-                        116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 67,
-                        105, 65, 103, 73, 67, 65, 56, 97, 68, 69, 43, 77, 49,
-                        89, 122, 73, 70, 86, 83, 84, 68, 119, 118, 97, 68, 69,
-                        43, 67, 105, 65, 103, 73, 67, 65, 56, 89, 83, 66, 111,
-                        99, 109, 86, 109, 80, 87, 104, 48, 100, 72, 65, 54, 76,
-                        121, 57, 122, 98, 50, 90, 48, 100, 50, 70, 121, 90, 83,
-                        52, 122, 100, 106, 77, 117, 90, 109, 70, 121, 98, 84,
-                        53, 87, 97, 88, 78, 112, 100, 71, 85, 103, 89, 83, 66,
-                        122, 98, 50, 90, 48, 100, 50, 70, 121, 90, 84, 119, 118,
-                        89, 84, 52, 75,
-                      ],
+                    Data: [
+                      {
+                        name: "funceme-etl",
+                        cron: "0 0 0 0 0",
+                        timezone: null,
+                        data: null,
+                        options: {
+                          priority: 1,
+                          retryDelay: 40,
+                          retryLimit: 23,
+                        },
+                        created_on: "2023-12-13T19:17:00.254Z",
+                        updated_on: "2024-01-11T12:36:52.674Z",
+                      },
+                    ],
+                    Pagination: {
+                      PageLimitRows: 50,
+                      PageNumber: 1,
+                      QtdRows: 1,
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Create cron job",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                name: "string",
+                cron: "string",
+                data: {
+                  type: "object",
+                },
+                options: {
+                  priority: "number",
+                  retryLimit: "number",
+                  retryDelay: "number",
+                },
+              },
+              example: {
+                name: "send-newsletter2",
+                cron: "0 0 0 0 0",
+                data: {
+                  id: 1,
+                },
+                options: {
+                  priority: 1,
+                  retryLimit: 23,
+                  retryDelay: 40,
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "string",
+                  },
+                },
+                example: {
+                  data: "Sucesso ao criar cron para a fila send-newsletter2",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    put: {
+      tags: TAGS,
+      summary: "Update cron job",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "name",
+          in: "path",
+          description: "Cron job name",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                name: "string",
+                cron: "string",
+                data: {
+                  type: "object",
+                },
+                options: {
+                  priority: "number",
+                  retryLimit: "number",
+                  retryDelay: "number",
+                },
+              },
+              example: {
+                name: "send-newsletter2",
+                cron: "0 0 0 0 0",
+                data: {
+                  id: 1,
+                },
+                options: {
+                  priority: 1,
+                  retryLimit: 23,
+                  retryDelay: 40,
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao atualizar cron.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      summary: "Delete cron job",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "name",
+          in: "path",
+          description: "Cron job name",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao deletar job 9142f7ee-4679-40a4-bb94-b6e3d3681219",
                 },
               },
             },
