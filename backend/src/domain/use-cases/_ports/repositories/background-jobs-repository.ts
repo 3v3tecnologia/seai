@@ -36,7 +36,7 @@ export namespace ScheduleRepositoryDTO {
       cron: any;
       timezone: any;
       data: any;
-      option: any;
+      options: any;
     };
     export type Response = Promise<void>;
   }
@@ -47,7 +47,7 @@ export namespace ScheduleRepositoryDTO {
       cron: any;
       timezone: any;
       data: any;
-      option: any;
+      options: any;
     };
     export type Response = Promise<void>;
   }

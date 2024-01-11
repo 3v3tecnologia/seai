@@ -27,6 +27,7 @@ export class DeleteJobController
 
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }

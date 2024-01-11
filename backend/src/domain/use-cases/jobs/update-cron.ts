@@ -24,7 +24,7 @@ export class UpdateCron implements UpdateCronUseCaseProtocol.UseCase {
       cron: request.cron,
       data: request.data,
       name: request.name,
-      option: request.option,
+      options: request.options,
       timezone: request.timezone,
     });
 
@@ -38,7 +38,7 @@ export namespace UpdateCronUseCaseProtocol {
     cron: any;
     timezone: any;
     data: any;
-    option: any;
+    options: any;
   };
 
   export type Response = any | null;

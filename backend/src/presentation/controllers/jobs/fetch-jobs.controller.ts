@@ -33,6 +33,7 @@ export class FetchJobsController
 
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -41,6 +42,6 @@ export class FetchJobsController
 export namespace FetchJobsControllerProtocol {
   export type Request = { id?: string } & Omit<
     FetchCronUseCaseProtocol.Request,
-    "Id"
+    "id"
   >;
 }

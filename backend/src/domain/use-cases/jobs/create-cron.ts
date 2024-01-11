@@ -26,7 +26,7 @@ export class CreateCron implements CreateCronUseCaseProtocol.UseCase {
       cron: request.cron,
       data: request.data || null,
       name: request.name,
-      option: request.option || null,
+      options: request.options || null,
       timezone: request.timezone || null,
     });
 
@@ -40,7 +40,7 @@ export namespace CreateCronUseCaseProtocol {
     cron: any;
     timezone: any;
     data: any;
-    option: any;
+    options: any;
   };
 
   export type Response = string;

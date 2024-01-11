@@ -21,7 +21,7 @@ export class CreateCronController
         cron: request.cron,
         data: request.data,
         name: request.name,
-        option: request.option,
+        options: request.options,
         timezone: request.timezone,
       });
 
@@ -31,6 +31,7 @@ export class CreateCronController
 
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }

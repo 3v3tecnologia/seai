@@ -21,7 +21,7 @@ export class DbBackgroundJobsRepository
         cron: request.cron,
         timezone: request.timezone,
         data: request.data,
-        options: request.option,
+        options: request.options,
         updated_on: backgroundJobsDb.fn.now(),
       })
       .into(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE);
@@ -38,7 +38,7 @@ export class DbBackgroundJobsRepository
         cron: request.cron,
         timezone: request.timezone,
         data: request.data,
-        options: request.option,
+        options: request.options,
         updated_on: backgroundJobsDb.fn.now(),
       });
   }
@@ -54,6 +54,7 @@ export class DbBackgroundJobsRepository
   async getScheduleByQueue(
     request: ScheduleRepositoryDTO.GetByQueue.Request
   ): ScheduleRepositoryDTO.GetByQueue.Response {
+    console.log(request);
     const { rows } = await backgroundJobsDb.raw(
       `
       SELECT 

@@ -32,6 +32,7 @@ export class UpdateJobController
 
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -41,5 +42,5 @@ export namespace UpdateJobControllerProtocol {
   export type Request = {
     accountId: number;
     id: string;
-  } & Omit<UpdateJobUseCaseProtocol.Request, "Id">;
+  } & Omit<UpdateJobUseCaseProtocol.Request, "id">;
 }

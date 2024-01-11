@@ -21,7 +21,7 @@ export class UpdateCronController
         cron: request.cron,
         data: request.data || null,
         name: request.name,
-        option: request.option || null,
+        options: request.options || null,
         timezone: request.timezone || null,
       });
 
@@ -31,6 +31,7 @@ export class UpdateCronController
 
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -39,5 +40,5 @@ export class UpdateCronController
 namespace UpdateCronControllerProtocol {
   export type Request = {
     accountId: number;
-  } & Omit<UpdateCronUseCaseProtocol.Request, "Id">;
+  } & Omit<UpdateCronUseCaseProtocol.Request, "id">;
 }
