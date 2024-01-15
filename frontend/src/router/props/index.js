@@ -16,6 +16,9 @@ import newsletterCreate from "./newsletter/create";
 import cron from "./cron/list";
 import cronUpdate from "./cron/update";
 import cronCreate from "./cron/create";
+import status from "./status/list";
+import statusUpdate from "./status/update";
+import statusCreate from "./status/create";
 
 export default {
   user,
@@ -39,6 +42,11 @@ export default {
     list: cron,
     update: cronUpdate,
     create: cronCreate,
+  },
+  status: {
+    list: status,
+    update: statusUpdate,
+    create: statusCreate,
   },
   metereologicalBodies,
   profile,

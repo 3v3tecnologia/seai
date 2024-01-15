@@ -111,6 +111,10 @@ const itemsRoutesRaw = [
     label: "Rotina de dados",
     route: "/cron",
   },
+  {
+    label: "Status de rotinas",
+    route: "/status",
+  },
 ];
 
 const itemsRoutes = computed(() =>

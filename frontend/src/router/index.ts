@@ -174,6 +174,24 @@ const routes: Array<RouteRecordRaw> = [
     component: BaseForm,
     props: routeProps.cron.create,
   },
+  {
+    path: "/status/",
+    name: "status",
+    component: BaseCrudView,
+    props: routeProps.status.list,
+  },
+  {
+    path: "/status/edit/:id",
+    name: "edit-status",
+    component: BaseForm,
+    props: routeProps.status.update,
+  },
+  {
+    path: "/status/create",
+    name: "create-status",
+    component: BaseForm,
+    props: routeProps.status.create,
+  },
   { path: "/:catchAll(.*)", component: PageNotFoundView },
 ];
 

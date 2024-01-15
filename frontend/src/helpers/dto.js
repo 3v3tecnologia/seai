@@ -159,3 +159,14 @@ export const encodeBin = (inputString) => {
 };
 
 export const getUnixTime = (timestamp) => moment(timestamp).valueOf();
+
+export const mapOptions = (options) => {
+  const mapedCronsOptionsTemp = {};
+
+  for (let i = 0; i < options.length; i++) {
+    const current = options[i];
+    mapedCronsOptionsTemp[current.key] = current.value;
+  }
+
+  return mapedCronsOptionsTemp;
+};

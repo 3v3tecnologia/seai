@@ -1,6 +1,5 @@
 import "vue3-toastify/dist/index.css";
-import newsletter from "./modules/newsletter";
-import cron from "./modules/cron";
+import modules from "./modules";
 import { createStore, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
 
@@ -18,14 +17,9 @@ import {
   setAxiosHeader,
   ungroupData,
 } from "@/helpers/dto";
-import { dataFormatUrl } from "@/constants";
+import { dataFormatUrl, defaultOption } from "@/constants";
 import http from "@/http";
 import { extractDate, extractHour, formatDateWithHour } from "@/helpers/date";
-
-const defaultOption = {
-  title: "Todos",
-  value: null,
-};
 
 // interface Estado {
 //   auth: IAuth | null;
@@ -52,10 +46,7 @@ const defaultOption = {
 export const key = Symbol();
 
 export const store = createStore({
-  modules: {
-    newsletter,
-    cron,
-  },
+  modules,
   state: {
     auth: null,
     currentTab: 0,

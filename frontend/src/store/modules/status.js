@@ -1,4 +1,4 @@
-import { cronsOptions, mapedCronsOptions } from "@/constants";
+import { statusOptions, mapedStatusOptions, defaultOption } from "@/constants";
 import { encodeBin, getUnixTime } from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
@@ -9,7 +9,7 @@ export default {
       data: [],
     },
     update: {},
-    cron_options: {
+    status_options: {
       data: [],
     },
   }),
@@ -17,20 +17,20 @@ export default {
     ["SET_LIST"](state, list) {
       state.list = list;
     },
-    ["SET_CURRENT"](state, cron) {
-      state.update = cron;
+    ["SET_CURRENT"](state, status) {
+      state.update = status;
     },
-    ["SET_CRON_OPTIONS"](state, options) {
-      state.cron_options = options;
+    ["SET_STATUS_OPTIONS"](state, options) {
+      state.status_options = options;
     },
   },
   actions: {
-    FETCH_CRON_OPTIONS: {
+    FETCH_STATUS_OPTIONS: {
       async handler({ commit }) {
         try {
-          const data = cronsOptions;
+          const data = statusOptions;
 
-          commit("SET_CRON_OPTIONS", {
+          commit("SET_STATUS_OPTIONS", {
             data,
           });
         } catch (e) {
@@ -38,30 +38,39 @@ export default {
         }
       },
     },
-    GET_CRONS: {
+    GET_STATUS: {
       async handler({ commit }) {
         try {
           const dataToServe = [
             {
-              name: "funceme-etl",
-              cron: "0 0 * * *",
-              timezone: "America/Fortaleza",
-              data: null,
-              options: {
-                tz: "America/Fortaleza",
-                priority: 2,
-                retryDelay: 60,
-                retryLimit: 3,
+              id: "96a9c298-4662-4972-a4ed-1399c5387ed1",
+              name: "send-newsletter",
+              priority: 1,
+              data: {
+                id: 2,
               },
-              created_on: "2023-12-18T18:35:38.464Z",
-              updated_on: "2024-01-09T13:16:23.307Z",
+              state: "completed",
+              retrylimit: 23,
+              retrycount: 0,
+              retrydelay: 40,
+              retrybackoff: false,
+              startafter: "2024-01-11T12:21:27.005Z",
+              startedon: "2024-01-11T12:21:31.127Z",
+              expirein: {
+                minutes: 15,
+              },
+              createdon: "2024-01-11T12:21:27.005Z",
+              completedon: "2024-01-11T12:21:33.751Z",
+              keepuntil: "2024-01-25T12:21:27.005Z",
+              on_complete: false,
+              output: null,
             },
           ].map((c) => {
             return {
               id: c.name,
               ...c.options,
               ...c,
-              cron_text_formatted: mapedCronsOptions[c.cron],
+              status_text_formatted: mapedStatusOptions[c.state],
             };
           });
 
@@ -70,11 +79,11 @@ export default {
           });
         } catch (e) {
           console.error(e);
-          toast.error("Erro ao buscar crons.");
+          toast.error("Erro ao buscar status.");
         }
       },
     },
-    CREATE_CRON: {
+    CREATE_STATUS: {
       async handler(_, form) {
         try {
           const newsletter = {
@@ -94,7 +103,7 @@ export default {
         }
       },
     },
-    UPDATE_CRON: {
+    UPDATE_STATUS: {
       async handler(_, form) {
         try {
           const newsletter = {
@@ -114,12 +123,12 @@ export default {
         }
       },
     },
-    GET_CURRENT_CRON: {
+    GET_CURRENT_STATUS: {
       async handler({ commit, dispatch, state }, id) {
         try {
-          let cron = {
+          let status = {
             name: "",
-            cron: "0 0 * * *",
+            status: "0 0 * * *",
             timezone: "America/Fortaleza",
             data: null,
             tz: "America/Fortaleza",
@@ -131,11 +140,11 @@ export default {
           };
 
           if (id) {
-            await dispatch("GET_CRONS");
-            cron = state.list.data.find((c) => c.id == id);
+            await dispatch("GET_STATUS");
+            status = state.list.data.find((c) => c.id == id);
           }
 
-          commit("SET_CURRENT", cron);
+          commit("SET_CURRENT", status);
         } catch (e) {
           commit("SET_CURRENT", {});
           console.error(e);
@@ -145,11 +154,13 @@ export default {
     },
   },
   getters: {
-    cronOptions(state) {
-      return state.cron_options.data.map((option) => ({
+    statusOptions(state) {
+      const optsData = state.status_options.data.map((option) => ({
         value: option["key"],
         title: option["value"],
       }));
+
+      return [defaultOption, ...optsData];
     },
   },
 };

@@ -1,4 +1,12 @@
+import { mapOptions } from "./helpers/dto";
+
 export const itemsPerGraph = 10;
+
+export const defaultOption = {
+  title: "Todos",
+  key: "Todos",
+  value: null,
+};
 
 export const reportsTitles = {
   registereds: "Recenseados (quantidade)",
@@ -28,20 +36,49 @@ export const dataFormatUrl = {
 
 export const cronsOptions = [
   {
-    cron: "0 0 * * *",
-    title: "Diariamente (00:00)",
+    key: "0 0 * * *",
+    value: "Diariamente (00:00)",
   },
   {
-    cron: "0 * * * *",
-    title: "A cada início de hora",
+    key: "0 * * * *",
+    value: "A cada início de hora",
   },
 ];
 
-const mapedCronsOptionsTemp = {};
+export const statusOptions = [
+  {
+    key: "created",
+    value: "Criado",
+  },
+  {
+    key: "completed",
+    value: "Completado",
+  },
+  {
+    key: "retry",
+    value: "Tentando novamente",
+  },
+  {
+    key: "active",
+    value: "Em execução",
+  },
+  {
+    key: "completed",
+    value: "Completado",
+  },
+  {
+    key: "expired",
+    value: "Expirado",
+  },
+  {
+    key: "cancelled",
+    value: "Cancelado",
+  },
+  {
+    key: "failed",
+    value: "Execução falhou",
+  },
+];
 
-for (let i = 0; i < cronsOptions.length; i++) {
-  const current = cronsOptions[i];
-  mapedCronsOptionsTemp[current.cron] = current.title;
-}
-
-export const mapedCronsOptions = mapedCronsOptionsTemp;
+export const mapedCronsOptions = mapOptions(cronsOptions);
+export const mapedStatusOptions = mapOptions(statusOptions);
