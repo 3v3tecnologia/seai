@@ -1,5 +1,5 @@
 import { cronsOptions, mapedCronsOptions } from "@/constants";
-import { encodeBin, getUnixTime } from "@/helpers/dto";
+import { concatUrlFiltersList, encodeBin, getUnixTime } from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
 
@@ -7,6 +7,10 @@ export default {
   state: () => ({
     list: {
       data: [],
+      apiPagination: {
+        pages: 1,
+        total: 0,
+      },
     },
     update: {},
     cron_options: {
@@ -39,24 +43,20 @@ export default {
       },
     },
     GET_CRONS: {
-      async handler({ commit }) {
+      async handler({ commit }, filters) {
         try {
-          const dataToServe = [
-            {
-              name: "funceme-etl",
-              cron: "0 0 * * *",
-              timezone: "America/Fortaleza",
-              data: null,
-              options: {
-                tz: "America/Fortaleza",
-                priority: 2,
-                retryDelay: 60,
-                retryLimit: 3,
+          const {
+            data: {
+              data: {
+                Data: dataRaw,
+                QtdPages: pages,
+                QtdRows: total,
+                PageLimitRows: pageLimit,
               },
-              created_on: "2023-12-18T18:35:38.464Z",
-              updated_on: "2024-01-09T13:16:23.307Z",
             },
-          ].map((c) => {
+          } = await http.get(concatUrlFiltersList("/jobs/schedule", filters));
+
+          const data = dataRaw.map((c) => {
             return {
               id: c.name,
               ...c.options,
@@ -65,8 +65,15 @@ export default {
             };
           });
 
+          const apiPagination = {
+            pages,
+            total,
+            pageLimit,
+          };
+
           commit("SET_LIST", {
-            data: dataToServe,
+            data,
+            apiPagination,
           });
         } catch (e) {
           console.error(e);

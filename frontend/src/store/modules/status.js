@@ -1,5 +1,5 @@
 import { statusOptions, mapedStatusOptions, defaultOption } from "@/constants";
-import { encodeBin, getUnixTime } from "@/helpers/dto";
+import { concatUrlFiltersList, encodeBin, getUnixTime } from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
 
@@ -39,43 +39,35 @@ export default {
       },
     },
     GET_STATUS: {
-      async handler({ commit }) {
+      async handler({ commit }, filters) {
         try {
-          const dataToServe = [
-            {
-              id: "96a9c298-4662-4972-a4ed-1399c5387ed1",
-              name: "send-newsletter",
-              priority: 1,
+          const {
+            data: {
               data: {
-                id: 2,
+                Data: dataRaw,
+                QtdPages: pages,
+                QtdRows: total,
+                PageLimitRows: pageLimit,
               },
-              state: "completed",
-              retrylimit: 23,
-              retrycount: 0,
-              retrydelay: 40,
-              retrybackoff: false,
-              startafter: "2024-01-11T12:21:27.005Z",
-              startedon: "2024-01-11T12:21:31.127Z",
-              expirein: {
-                minutes: 15,
-              },
-              createdon: "2024-01-11T12:21:27.005Z",
-              completedon: "2024-01-11T12:21:33.751Z",
-              keepuntil: "2024-01-25T12:21:27.005Z",
-              on_complete: false,
-              output: null,
             },
-          ].map((c) => {
+          } = await http.get(concatUrlFiltersList("/jobs", filters));
+
+          const data = dataRaw.map((c) => {
             return {
-              id: c.name,
-              ...c.options,
               ...c,
               status_text_formatted: mapedStatusOptions[c.state],
             };
           });
 
+          const apiPagination = {
+            pages,
+            total,
+            pageLimit,
+          };
+
           commit("SET_LIST", {
-            data: dataToServe,
+            data,
+            apiPagination,
           });
         } catch (e) {
           console.error(e);

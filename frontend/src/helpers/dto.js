@@ -170,3 +170,14 @@ export const mapOptions = (options) => {
 
   return mapedCronsOptionsTemp;
 };
+
+export const concatUrlFiltersList = (url, filters = {}) => {
+  const params = {
+    idEquipment: filters._itemId,
+    start: filters.start,
+    end: filters.end,
+    pageNumber: filters.pageNumber,
+  };
+
+  return `${url}${objectToParams(params)}`;
+};
