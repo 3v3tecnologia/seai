@@ -4,7 +4,7 @@ import { BASE_URL } from "../commons/baseURL";
 
 const TAGS = ["Background Jobs"];
 
-export const NEWSLETTER = {
+export const BACKGROUND_JOBS = {
   [`${BASE_URL.V1}/jobs`]: {
     get: {
       tags: TAGS,

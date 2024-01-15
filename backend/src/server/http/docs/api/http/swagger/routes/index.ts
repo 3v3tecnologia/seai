@@ -7,3 +7,4 @@ export * from "./meteorologicalOrgan";
 export * from "./user";
 export * from "./system-logs";
 export * from "./newsletter";
+export * from "./background-jobs";
