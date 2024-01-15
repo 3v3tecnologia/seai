@@ -228,7 +228,7 @@ const chartsGroups = computed(() =>
         title: reportsTitles.superMonthFlow,
         "series-name": "Vazão média de captação mensal superficial (m³/h)",
         "label-by": { type: "month", key: "Mes" },
-        "value-key": captationCountSuper.value.valueKey,
+        "value-key": "Vazão média",
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
