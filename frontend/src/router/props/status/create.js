@@ -1,3 +1,4 @@
+import { defaultStatus } from "@/constants";
 import { route } from "./common";
 import status from "./update";
 
@@ -7,8 +8,9 @@ export default {
   fields: status.fields,
   getDataKey: "GET_CURRENT_STATUS",
   storeDataKey: ["status", "update"],
-  submitDataKey: "CREATE_CRON",
+  submitDataKey: "CREATE_STATUS",
   headerLabel,
   finishedDataButton: status.finishedDataButton,
   navBarTab: route.navBarTab,
+  defaultValue: defaultStatus,
 };

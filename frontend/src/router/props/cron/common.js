@@ -1,6 +1,11 @@
 export const route = {
   navBarTab: 6,
 
+  finishedDataButton: {
+    text: "Retornar a listagem de rotinas",
+    routeName: "cron",
+  },
+
   fields: [
     {
       label: "Título",

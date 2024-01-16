@@ -71,23 +71,34 @@ export default {
           });
         } catch (e) {
           console.error(e);
-          toast.error("Erro ao buscar status.");
+          toast.error("Erro ao buscar status");
         }
       },
     },
     CREATE_STATUS: {
       async handler(_, form) {
         try {
-          const newsletter = {
-            FK_Author: 1,
-            Title: form.Title,
-            Description: form.Description,
-            Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+          const {
+            name,
+            id,
+            status_text_formatted,
+            priority,
+            retryLimit: retrylimit,
+            retryDelay: retrydelay,
+          } = form;
+
+          const data = {
+            name,
+            state: status_text_formatted.value,
+            data: null,
+            id,
+            priority,
+            retrylimit,
+            retrydelay,
           };
 
-          await http.post(`/news/`, newsletter);
-          toast.success("Rotina criada com sucesso.");
+          await http.post(`/jobs`, data);
+          toast.success("Rotina criada com sucesso");
         } catch (e) {
           console.error(e);
           toast.error("Falha ao criar rotina");
@@ -98,16 +109,27 @@ export default {
     UPDATE_STATUS: {
       async handler(_, form) {
         try {
-          const newsletter = {
-            FK_Author: 1,
-            Title: form.Title,
-            Description: form.Description,
-            Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+          const {
+            name,
+            id,
+            status_text_formatted,
+            priority,
+            retryLimit: retrylimit,
+            retryDelay: retrydelay,
+          } = form;
+
+          const data = {
+            name,
+            state: status_text_formatted.value,
+            data: null,
+            id,
+            priority,
+            retrylimit,
+            retrydelay,
           };
 
-          await http.put(`/news/${form.Id}`, newsletter);
-          toast.success("Rotina atualizada com sucesso.");
+          await http.put(`/jobs`, data);
+          toast.success("Rotina atualizada com sucesso");
         } catch (e) {
           console.error(e);
           toast.error("Falha ao atualizar rotina");
@@ -141,6 +163,20 @@ export default {
           commit("SET_CURRENT", {});
           console.error(e);
           toast.error(e);
+        }
+      },
+    },
+    DELETE_STATUS: {
+      async handler(_, ids) {
+        try {
+          await Promise.allSettled(
+            ids.map(async (id) => await http.delete(`/jobs/?id=${id}`))
+          );
+          toast.success("Sucesso ao deletar status de rotina(s)");
+        } catch (e) {
+          console.error(e);
+          toast.success("Falha ao deletar status de rotina(s)");
+          throw Error(e?.response?.data?.error);
         }
       },
     },

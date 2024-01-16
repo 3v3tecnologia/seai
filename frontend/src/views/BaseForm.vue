@@ -55,11 +55,12 @@
               <InputText
                 v-else
                 v-model="form[field.formKey]"
+                :disabled="field.disabled"
                 :required="!field.nullable"
                 :type="field.type || 'text'"
                 :input-id="field.formKey"
-                :minlength="requireMinMax ? 5 : null"
-                :maxlength="requireMinMax ? 25 : null"
+                :minlength="field.requireMinMax ? 5 : null"
+                :maxlength="field.requireMinMax ? 25 : null"
                 class="w-100"
               />
 
@@ -142,10 +143,6 @@ const props = defineProps({
     type: [String, Array],
     required: true,
   },
-  requireMinMax: {
-    type: Boolean,
-    default: false,
-  },
   submitDataKey: {
     type: String,
     required: true,
@@ -157,6 +154,11 @@ const props = defineProps({
   finishedDataButton: {
     type: Object,
     required: true,
+  },
+  defaultValue: {
+    type: [Object, Boolean],
+    required: false,
+    default: false,
   },
   fields: {
     type: Array,
@@ -212,9 +214,15 @@ watch(
 );
 
 const formData = computed(() => {
-  const data = props.storeDataKey
-    ? accessStoreKey(store.state, props.storeDataKey)
-    : {};
+  let data = {};
+
+  if (props.defaultValue) {
+    data = props.defaultValue;
+  } else if (props.storeDataKey) {
+    data = accessStoreKey(store.state, props.storeDataKey);
+  } else {
+    data = {};
+  }
 
   return data;
 });
@@ -296,7 +304,7 @@ const changedForm = computed(() => {
 });
 
 const isNewForm = computed(() => {
-  return !Object.keys(oldForm.value).length;
+  return !Object.keys(oldForm.value).length || props.defaultValue;
 });
 
 const setFormWatcher = () => {

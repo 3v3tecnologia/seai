@@ -8,17 +8,18 @@ const storeDataKey = ["cron", "update"];
 
 const headerLabel = "Editando rotina de dados";
 
-const finishedDataButton = {
-  text: "Retornar a listagem de notícias",
-  routeName: "cron",
-};
-
 export default {
   getDataKey,
   storeDataKey,
   submitDataKey,
-  finishedDataButton,
+  finishedDataButton: route.finishedDataButton,
   headerLabel,
-  fields: route.fields,
+  fields: route.fields.map((c, i) => {
+    if (!i) {
+      return { ...c, disabled: true };
+    } else {
+      return c;
+    }
+  }),
   navBarTab: route.navBarTab,
 };

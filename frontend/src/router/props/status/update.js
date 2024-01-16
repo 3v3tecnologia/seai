@@ -9,7 +9,7 @@ const storeDataKey = ["status", "update"];
 const headerLabel = "Editando status de rotinas";
 
 const finishedDataButton = {
-  text: "Retornar a listagem de notícias",
+  text: "Retornar a listagem de status de rotinas",
   routeName: "status",
 };
 

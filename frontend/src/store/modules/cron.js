@@ -1,4 +1,4 @@
-import { cronsOptions, mapedCronsOptions } from "@/constants";
+import { cronsOptions, defaultOption, mapedCronsOptions } from "@/constants";
 import { concatUrlFiltersList, encodeBin, getUnixTime } from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
@@ -77,23 +77,34 @@ export default {
           });
         } catch (e) {
           console.error(e);
-          toast.error("Erro ao buscar crons.");
+          toast.error("Erro ao buscar crons");
         }
       },
     },
     CREATE_CRON: {
       async handler(_, form) {
         try {
-          const newsletter = {
-            FK_Author: 1,
-            Title: form.Title,
-            Description: form.Description,
-            Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+          const {
+            name,
+            cron_text_formatted,
+            priority,
+            retryLimit,
+            retryDelay,
+          } = form;
+
+          const data = {
+            name,
+            cron: cron_text_formatted.value,
+            data: null,
+            options: {
+              priority,
+              retryLimit,
+              retryDelay,
+            },
           };
 
-          await http.post(`/news/`, newsletter);
-          toast.success("Rotina criada com sucesso.");
+          await http.post(`/jobs/schedule`, data);
+          toast.success("Rotina criada com sucesso");
         } catch (e) {
           console.error(e);
           toast.error("Falha ao criar rotina");
@@ -104,16 +115,27 @@ export default {
     UPDATE_CRON: {
       async handler(_, form) {
         try {
-          const newsletter = {
-            FK_Author: 1,
-            Title: form.Title,
-            Description: form.Description,
-            Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+          const {
+            name,
+            cron_text_formatted,
+            priority,
+            retryLimit,
+            retryDelay,
+          } = form;
+
+          const data = {
+            name,
+            cron: cron_text_formatted.value,
+            data: null,
+            options: {
+              priority,
+              retryLimit,
+              retryDelay,
+            },
           };
 
-          await http.put(`/news/${form.Id}`, newsletter);
-          toast.success("Rotina atualizada com sucesso.");
+          await http.put(`/jobs/schedule/`, data);
+          toast.success("Rotina atualizada com sucesso");
         } catch (e) {
           console.error(e);
           toast.error("Falha ao atualizar rotina");
@@ -124,23 +146,8 @@ export default {
     GET_CURRENT_CRON: {
       async handler({ commit, dispatch, state }, id) {
         try {
-          let cron = {
-            name: "",
-            cron: "0 0 * * *",
-            timezone: "America/Fortaleza",
-            data: null,
-            tz: "America/Fortaleza",
-            priority: 2,
-            retryDelay: 60,
-            retryLimit: 3,
-            created_on: "",
-            updated_on: "",
-          };
-
-          if (id) {
-            await dispatch("GET_CRONS");
-            cron = state.list.data.find((c) => c.id == id);
-          }
+          await dispatch("GET_CRONS");
+          const cron = state.list.data.find((c) => c.id == id);
 
           commit("SET_CURRENT", cron);
         } catch (e) {
@@ -150,13 +157,31 @@ export default {
         }
       },
     },
+    DELETE_CRONS: {
+      async handler(_, ids) {
+        try {
+          await Promise.allSettled(
+            ids.map(
+              async (id) => await http.delete(`/jobs/schedule?name=${id}`)
+            )
+          );
+          toast.success("Sucesso ao deletar rotinas(s)");
+        } catch (e) {
+          console.error(e);
+          toast.success("Falha ao deletar rotinas(s)");
+          throw Error(e?.response?.data?.error);
+        }
+      },
+    },
   },
   getters: {
     cronOptions(state) {
-      return state.cron_options.data.map((option) => ({
+      const optsData = state.cron_options.data.map((option) => ({
         value: option["key"],
         title: option["value"],
       }));
+
+      return [defaultOption, ...optsData];
     },
   },
 };

@@ -82,3 +82,23 @@ export const statusOptions = [
 
 export const mapedCronsOptions = mapOptions(cronsOptions);
 export const mapedStatusOptions = mapOptions(statusOptions);
+
+export const defaultCron = {
+  name: "",
+  cron: "0 0 * * *",
+  timezone: "America/Fortaleza",
+  data: null,
+  tz: "America/Fortaleza",
+  priority: 2,
+  retryDelay: 60,
+  retryLimit: 3,
+  created_on: "",
+  updated_on: "",
+};
+
+export const defaultStatus = {
+  timezone: "America/Fortaleza",
+  priority: 2,
+  retrydelay: 60,
+  retrylimit: 3,
+};

@@ -33,6 +33,7 @@ export const route = {
       label: "Observação",
       formKey: "output",
       type: "text",
+      nullable: true,
     },
   ],
 };

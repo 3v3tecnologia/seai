@@ -177,9 +177,9 @@ export const store = createStore({
     async ["SEND_EMAIL_CHANGE_PASSWORD"](context, { email }) {
       try {
         await http.post(`login/password/forgot`, { email });
-        toast.success("Email de recuperação enviado com sucesso.");
+        toast.success("Email de recuperação enviado com sucesso");
       } catch (e) {
-        toast.error("Falha ao enviar email de recuperação.");
+        toast.error("Falha ao enviar email de recuperação");
 
         throw Error(e?.response?.data?.error);
       }
@@ -201,7 +201,7 @@ export const store = createStore({
           return true;
         }
       } catch (e) {
-        toast.error("Credenciais inválidas.");
+        toast.error("Credenciais inválidas");
         console.error(e);
       }
     },
@@ -437,10 +437,10 @@ export const store = createStore({
       try {
         await http.post(`/user/register/`, user);
 
-        toast.success("Usuário criado com sucesso.");
+        toast.success("Usuário criado com sucesso");
         toast.success(`Email enviado para ${previewEmailCensured(user.email)}`);
       } catch (e) {
-        toast.error("Falha ao criar usuário.");
+        toast.error("Falha ao criar usuário");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -451,9 +451,9 @@ export const store = createStore({
 
         await http.post(`/equipments/`, equipment);
 
-        toast.success("Equipamento criado com sucesso.");
+        toast.success("Equipamento criado com sucesso");
       } catch (e) {
-        toast.error("Falha ao criar equipamento.");
+        toast.error("Falha ao criar equipamento");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -466,7 +466,7 @@ export const store = createStore({
 
         toast.success("Sucesso ao deletar usuário(s)");
       } catch (e) {
-        toast.error("Falha ao deletar usuário(s).");
+        toast.error("Falha ao deletar usuário(s)");
         console.error(e);
       }
     },
@@ -478,7 +478,7 @@ export const store = createStore({
 
         toast.success("Sucesso ao deletar equipamento(s)");
       } catch (e) {
-        toast.error("Falha ao deletar equipamento(s).");
+        toast.error("Falha ao deletar equipamento(s)");
         console.error(e);
       }
     },
@@ -486,9 +486,9 @@ export const store = createStore({
       try {
         await http.put(`/user/${state.currentUser?.id}`, user);
 
-        toast.success("Dados de usuário atualizados com sucesso.");
+        toast.success("Dados de usuário atualizados com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar usuário.");
+        toast.error("Falha ao atualizar usuário");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -506,9 +506,9 @@ export const store = createStore({
           formattedRead
         );
 
-        toast.success("Dados de leitura atualizados com sucesso.");
+        toast.success("Dados de leitura atualizados com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar dados de leitura.");
+        toast.error("Falha ao atualizar dados de leitura");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -526,9 +526,9 @@ export const store = createStore({
           formattedRead
         );
 
-        toast.success("Dados de leitura atualizados com sucesso.");
+        toast.success("Dados de leitura atualizados com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar dados de leitura.");
+        toast.error("Falha ao atualizar dados de leitura");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -537,9 +537,9 @@ export const store = createStore({
       try {
         // await http.put(`/user/${state.currentUser?.id}`, user);
 
-        toast.success(" com sucesso.");
+        toast.success(" com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar usuário.");
+        toast.error("Falha ao atualizar usuário");
         console.error(e);
         throw Error(e?.response?.data?.error);
       }
@@ -560,9 +560,9 @@ export const store = createStore({
 
         commit("SET_USER", auth);
 
-        toast.success("Dados de usuário atualizados com sucesso.");
+        toast.success("Dados de usuário atualizados com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar dados.");
+        toast.error("Falha ao atualizar dados");
         toast.error(e?.response?.data?.error);
         console.error(e);
         throw Error(e?.response?.data?.error);
@@ -576,7 +576,7 @@ export const store = createStore({
 
         toast.success("Dados do equipamento atualizados com sucesso");
       } catch (e) {
-        toast.error("Falha ao atualizar dados.");
+        toast.error("Falha ao atualizar dados");
         toast.error(e?.response?.data?.error);
         console.error(e);
         throw Error(e?.response?.data?.error);
@@ -589,10 +589,10 @@ export const store = createStore({
           { ...form, token: `Bearer ${form.token}` },
           formatTemporaryToken(form.token)
         );
-        toast.success("Senha atualizada com sucesso.");
+        toast.success("Senha atualizada com sucesso");
         return true;
       } catch (e) {
-        toast.error("Erro ao alterar senha.");
+        toast.error("Erro ao alterar senha");
         toast.error(e?.response?.data?.error);
         throw Error(e?.response?.data?.error);
       }
@@ -687,7 +687,7 @@ export const store = createStore({
           totalInactives: 0,
         });
       } catch (e) {
-        toast.error("Erro ao buscar usuários.");
+        toast.error("Erro ao buscar usuários");
       }
     },
     async ["GET_EQUIPMENTS"]({ commit }) {
@@ -720,7 +720,7 @@ export const store = createStore({
         });
       } catch (e) {
         console.error(e);
-        toast.error("Erro ao buscar equipamentos.");
+        toast.error("Erro ao buscar equipamentos");
       }
     },
     async ["GET_STATION_READS"]({ commit }, filters = {}) {
@@ -827,9 +827,9 @@ export const store = createStore({
           commit("SET_USER", userLogged);
         }
 
-        toast.success("Sucesso ao finalizar edição de usuário.");
+        toast.success("Sucesso ao finalizar edição de usuário");
       } catch (e) {
-        toast.error("Erro ao finalizar edição de usuário.");
+        toast.error("Erro ao finalizar edição de usuário");
         toast.error(e?.response?.data?.error);
         throw Error(e?.response?.data?.error);
       }

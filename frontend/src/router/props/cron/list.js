@@ -3,6 +3,15 @@ import { route } from "./common";
 
 const searchFilter = ["name"];
 
+const stateOptionsFilters = [
+  {
+    label: "Recorrência",
+    field: "cron_text_formatted",
+    getListKey: "FETCH_CRON_OPTIONS",
+    getterKey: "cronOptions",
+  },
+];
+
 export default {
   actionText: "rotina",
   navBarTab: route.navBarTab,
@@ -12,6 +21,7 @@ export default {
   storeDataKey: ["cron", "list"],
   filters: [],
   searchFilter: searchFilter,
+  stateFilters: stateOptionsFilters,
   actionRoutes: {
     edit: "edit-cron",
     create: "create-cron",
