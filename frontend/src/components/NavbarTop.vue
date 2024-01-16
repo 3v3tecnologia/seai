@@ -6,14 +6,19 @@
       <LogoProject title-size="md" />
 
       <div class="align-items-center d-flex font-weight-bold pl-3">
-        <i class="pi pi-user pr-2" style="color: #708090"></i>
         <div
           class="d-flex align-items-center justify-content-center"
           v-if="auth?.login"
         >
-          <div class="mr-2 mr-lg-3 text-decoration-none">
-            {{ auth.login }}
-          </div>
+          <router-link
+            to="/profile"
+            class="d-flex align-items-center justify-content-center"
+          >
+            <i class="pi pi-user pr-2" style="color: #708090"></i>
+            <div class="mr-2 mr-lg-3 text-decoration-none">
+              {{ auth.login }}
+            </div>
+          </router-link>
           <div @click="signOut" class="wrapper-sign-out">
             <router-link to="/login">
               <font-awesome-icon
@@ -102,10 +107,6 @@ const itemsRoutesRaw = [
   {
     label: "Gráficos",
     route: "/charts",
-  },
-  {
-    label: "Perfil",
-    route: "/profile",
   },
   {
     label: "Rotina de dados",

@@ -1,5 +1,5 @@
 export const route = {
-  navBarTab: 8,
+  navBarTab: 7,
 
   fields: [
     {
