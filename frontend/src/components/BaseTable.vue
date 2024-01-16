@@ -35,7 +35,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, defineProps, watch, computed, defineEmits } from "vue";
+import {
+  onMounted,
+  ref,
+  defineProps,
+  watch,
+  computed,
+  defineEmits,
+  defineExpose,
+} from "vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import BasePagination from "@/components/BasePagination.vue";
 import { defaultPagination } from "@/constants";
@@ -159,6 +167,18 @@ watch(
   { immediate: true }
 );
 
+const getData = async () => {
+  baseTimeout.value = setTimeout(async () => {
+    await store.dispatch(props.getDataKey, {
+      _itemId: paramId.value,
+      pageNumber: pageNumber.value,
+      ...mapedFiltersTable.value,
+    });
+  }, 300);
+};
+
+defineExpose({ getData });
+
 watch(
   () => [props.filtersTable, currentRouteName.value, pageNumber.value],
   async (newVal, oldVal) => {
@@ -172,13 +192,7 @@ watch(
     }
 
     if (props.getDataKey) {
-      baseTimeout.value = setTimeout(async () => {
-        await store.dispatch(props.getDataKey, {
-          _itemId: paramId.value,
-          pageNumber: pageNumber.value,
-          ...mapedFiltersTable.value,
-        });
-      }, 300);
+      await getData();
     }
   },
   { immediate: true, deep: true }

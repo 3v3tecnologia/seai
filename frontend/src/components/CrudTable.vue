@@ -77,19 +77,20 @@
               class="ml-4 btn btn-success text-white"
             >
               <span class="mr-lg-2 d-none d-lg-inline-block">
-                Adicionar novo {{ actionText }}
+                Criar {{ actionText }}
               </span>
               <font-awesome-icon class="text-white" icon="fa-solid fa-plus" />
             </router-link>
           </div>
 
-          <button @click="getData" class="ml-4 btn btn-primary">
+          <button @click="getDataTable" class="ml-4 btn btn-primary">
             <font-awesome-icon class="text-white" icon="fa-solid fa-refresh" />
           </button>
         </div>
       </div>
 
       <BaseTable
+        ref="refBaseTable"
         @selected="setSelectedUsers"
         :api-pagination="apiPagination"
         :filters-table="filtersTable"
@@ -105,7 +106,14 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, onMounted, computed } from "vue";
+import {
+  defineProps,
+  defineEmits,
+  ref,
+  watch,
+  computed,
+  getCurrentInstance,
+} from "vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
@@ -187,6 +195,12 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const refBaseTable = ref(null);
+
+const getDataTable = async () => {
+  await refBaseTable.value.getData();
+};
 
 const filtersValue = ref([]);
 const route = useRoute();

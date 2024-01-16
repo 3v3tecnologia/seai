@@ -120,22 +120,6 @@ const props = defineProps({
 // const paramId = computed(() => currentRoute.params.id || "");
 const filtersUsers = ref({});
 
-// const getData = async () => {
-//   return await store.dispatch(props.getDataKey, {
-//     id: paramId.value,
-//   });
-// };
-
-// watch(
-//   () => props.getDataKey,
-//   async (newVal) => {
-//     await getData();
-//   },
-//   { immediate: true }
-// );
-
-// getData();
-
 const data = computed(() => accessStoreKey(store.state, props.storeDataKey));
 const apiPagination = computed(() => data.value.apiPagination);
 </script>
