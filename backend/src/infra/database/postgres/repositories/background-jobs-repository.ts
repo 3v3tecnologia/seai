@@ -258,11 +258,13 @@ export class DbBackgroundJobsRepository
         state: request.state,
       });
     }
-    if (Reflect.has(request, "queue")) {
+    if (Reflect.has(request, "name")) {
       Object.assign(data, {
-        name: request.queue,
+        name: request.name,
       });
     }
+
+    console.log(data)
 
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
       .update(data)
@@ -308,6 +310,7 @@ export class DbBackgroundJobsRepository
       .where({
         id,
       });
+      
 
     if (!result.length) {
       return null;
