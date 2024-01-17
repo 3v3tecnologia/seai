@@ -20,7 +20,7 @@ export class UpdateJobController
       const dto = {
         id: request.id,
         data: request.data,
-        queue: request.queue,
+        name: request.name,
         priority: request.priority,
         retryDelay: request.retryDelay,
         retryLimit: request.retryLimit,
@@ -38,6 +38,8 @@ export class UpdateJobController
         });
       }
 
+
+      console.log("[UpdateJobDTO] - ",dto)
       const result = await this.useCase.execute(dto);
 
       if (result.isLeft()) {
