@@ -1,5 +1,5 @@
 import { cronsOptions, defaultOption, mapedCronsOptions } from "@/constants";
-import { concatUrlFiltersList, encodeBin, getUnixTime } from "@/helpers/dto";
+import { concatUrlFiltersList } from "@/helpers/dto";
 import http from "@/http";
 import { toast } from "vue3-toastify";
 

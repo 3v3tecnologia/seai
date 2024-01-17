@@ -35,7 +35,7 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-const isLoadingReport = computed(() => store.state.isLoadingReport);
+const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const props = defineProps({
   data: {

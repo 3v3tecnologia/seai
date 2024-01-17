@@ -174,7 +174,7 @@ const hydrographicBasinName = computed(() =>
 const citiesName = computed(() => city.value.map((d) => d["title"]));
 
 const reportsData = computed(() => {
-  const reportsDataRaw = store.state.reportsData;
+  const reportsDataRaw = store.state.report.reportsData;
   const filteredData = {};
 
   if (!hydrographicBasinName.value.length && !citiesName.value.length) {
@@ -198,7 +198,7 @@ const hydrographicBasinOptions = computed(
   () => store.state.hydrographicBasinOptions
 );
 
-const isLoadingReport = computed(() => store.state.isLoadingReport);
+const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const cityOptions = computed(() => {
   return store.state.cityOptions.filter((val) => {
@@ -275,8 +275,6 @@ watch(
     } else {
       store.commit("SET_CURRENT_TAB", 3);
     }
-
-    // await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
   },
   { immediate: true }
 );

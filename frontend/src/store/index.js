@@ -1,47 +1,23 @@
 import "vue3-toastify/dist/index.css";
-import modules from "./modules";
 import { createStore, useStore as vuexUseStore } from "vuex";
 import { toast } from "vue3-toastify";
 
-import { previewEmailCensured } from "@/helpers/formatEmail";
-import { reportsDataDefault } from "./mocks";
+import modules from "./modules";
 
+import { previewEmailCensured } from "@/helpers/formatEmail";
+import { extractDate, extractHour, formatDateWithHour } from "@/helpers/date";
 import {
   checkMissingColumn,
   equipmentFormDTO,
-  formatLocation,
   formatTemporaryToken,
   getValue,
-  getValueBasic,
   objectToParams,
   setAxiosHeader,
-  ungroupData,
 } from "@/helpers/dto";
-import { dataFormatUrl, defaultOption } from "@/constants";
-import http from "@/http";
-import { extractDate, extractHour, formatDateWithHour } from "@/helpers/date";
 
-// interface Estado {
-//   auth: IAuth | null;
-//   equipments;
-//   currentStationRead;
-//   currentPluviometerRead;
-//   readsStation;
-//   readsPluviometer;
-//   currentBody;
-//   currentEquipment;
-//   currentTab;
-//   metereologicalBodies;
-//   typesEquipments;
-//   users: IUsersWrapper;
-//   currentUser: INewUser | null;
-//   profile: INewUser | null;
-//   cityOptions: ICityOption[];
-//   reportsFilters: IReportsFilters;
-//   hydrographicBasinOptions: IHydrographicBasinOption[];
-//   reportsData: IReportsData;
-//   isLoadingReport: boolean;
-// }
+import { defaultOption } from "@/constants";
+
+import http from "@/http";
 
 export const key = Symbol();
 
@@ -52,8 +28,6 @@ export const store = createStore({
     currentTab: 0,
     currentBody: null,
     currentEquipment: null,
-    isLoadingReport: false,
-    reportsData: reportsDataDefault,
     hydrographicBasinOptions: [
       {
         title: "Alto Jaguaribe",
@@ -131,15 +105,6 @@ export const store = createStore({
     ["SET_USER"](state, user) {
       state.auth = user;
       setAxiosHeader(user?.token || "");
-    },
-    ["SET_LOADING_REPORT"](state, bool) {
-      state.isLoadingReport = bool;
-    },
-    ["SET_REPORTS_DATA"](state, data) {
-      state.reportsData = {
-        ...reportsDataDefault,
-        ...data,
-      };
     },
     ["SET_OPTIONS"](state, { basins, cities }) {
       state.cityOptions = cities;
@@ -316,121 +281,6 @@ export const store = createStore({
         return true;
       } catch (e) {
         console.error(e);
-      }
-    },
-    async ["FETCH_REPORT_GENERAL"]({ commit }, filters) {
-      try {
-        const showingDataFormat = filters.showingDataFormat.value;
-        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
-
-        const {
-          data: { data: workersCount },
-        } = await http.get(`/census/workers/${showingDataFormatUrl}`);
-        const {
-          data: { data: captationCount },
-        } = await http.get(`/census/captation/${showingDataFormatUrl}`);
-        const {
-          data: { data: registeredCount },
-        } = await http.get(`/census/census-takers/${showingDataFormatUrl}`);
-
-        commit("SET_REPORTS_DATA", {
-          workersCount,
-          captationCount,
-          registeredCount,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    async ["FETCH_REPORT_AQUACULTURE"]({ commit }, filters) {
-      try {
-        const showingDataFormat = filters.showingDataFormat.value;
-        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
-
-        const {
-          data: { data: tankCaptation },
-        } = await http.get(`/census/captation/tank/${showingDataFormatUrl}`);
-        const {
-          data: { data: aquaculture },
-        } = await http.get(`/census/aquaculture/${showingDataFormatUrl}`);
-
-        commit("SET_REPORTS_DATA", {
-          tankCaptation,
-          aquaculture,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    async ["FETCH_REPORT_INDICATORS"]({ commit }, filters) {
-      try {
-        const showingDataFormat = filters.showingDataFormat.value;
-        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
-
-        const {
-          data: { data: securityWater },
-        } = await http.get(
-          `/census/indicator/security/water/${showingDataFormatUrl}`
-        );
-
-        const {
-          data: { data: securitySocial },
-        } = await http.get(
-          `/census/indicator/security/social/${showingDataFormatUrl}`
-        );
-
-        const {
-          data: { data: securityEconomic },
-        } = await http.get(
-          `/census/indicator/security/economic/${showingDataFormatUrl}`
-        );
-
-        commit("SET_REPORTS_DATA", {
-          securityWater: securityWater.map(getValueBasic).map(formatLocation),
-          securitySocial: securitySocial.map(getValueBasic).map(formatLocation),
-          securityEconomic: securityEconomic
-            .map(getValueBasic)
-            .map(formatLocation),
-          securityProductive: [],
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    async ["FETCH_REPORT_ANIMALS"]({ commit }, filters) {
-      try {
-        const showingDataFormat = filters.showingDataFormat.value;
-        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
-
-        const {
-          data: { data: animals },
-        } = await http.get(`/census/animals/${showingDataFormatUrl}`);
-
-        commit("SET_REPORTS_DATA", {
-          animals: showingDataFormat === 3 ? animals : ungroupData(animals),
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    async ["FETCH_REPORTS_DATA"]({ commit, dispatch }, filters) {
-      try {
-        commit("SET_LOADING_REPORT", true);
-        const groupmentParam = filters.groupReports.value;
-
-        if (groupmentParam === 1) {
-          await dispatch("FETCH_REPORT_GENERAL", filters);
-        } else if (groupmentParam === 2) {
-          await dispatch("FETCH_REPORT_ANIMALS", filters);
-        } else if (groupmentParam === 3) {
-          await dispatch("FETCH_REPORT_AQUACULTURE", filters);
-        } else if (groupmentParam === 4) {
-          await dispatch("FETCH_REPORT_INDICATORS", filters);
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        commit("SET_LOADING_REPORT", false);
       }
     },
     async ["CREATE_USER"]({ commit }, user) {
