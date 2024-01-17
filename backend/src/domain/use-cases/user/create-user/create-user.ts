@@ -8,26 +8,29 @@ import { Command } from "../../_ports/core/command";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
-import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
+import {
+  AvailablesEmailServices,
+  ScheduleUserAccountNotification,
+} from "../send-notification-to-user/send-notification-to-user";
 import { Either, left, right } from "./../../../../shared/Either";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { CreateUserDTO, CreateUserProtocol } from "./ports";
 
 export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
-  private readonly sendEmailToUser: SendEmailToUser;
+  private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
   private readonly dateProvider: IDateProvider;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
     accountRepository: AccountRepositoryProtocol,
-    sendEmailToUser: SendEmailToUser,
+    scheduleUserAccountNotification: ScheduleUserAccountNotification,
     dateProvider: IDateProvider,
     tokenProvider: TokenProvider
   ) {
     super();
     this.accountRepository = accountRepository;
-    this.sendEmailToUser = sendEmailToUser;
+    this.scheduleUserAccountNotification = scheduleUserAccountNotification;
     this.dateProvider = dateProvider;
     this.tokenProvider = tokenProvider;
   }
@@ -83,41 +86,18 @@ export class CreateUser extends Command implements CreateUserProtocol {
         },
         "1d"
       );
-      const exp_date = this.dateProvider.addHours(3);
 
-      console.log("Adding :::", user);
-
-      const port = env.port;
-
-      const link = `http://localhost:${port}/api/login/password/reset?token=${token}`;
-
-      // const token = "asAxnZsd2d12sas123#@$sdasdz11";
-      const msg = `
-      Você está recebendo esta mensagem por que você (ou alguém) criou uma conta no <b>SEAI</b> associada a esse e-mail.<br>
-      Por favor, clique no link abaixo ou copie e cole no seu navegador para realizar o cadastro da sua conta de acesso:<br><br>
-
-      <a href="http://seai.com/create-user-account?action=verify&token=${token}">http://seai.com/create-user-account?action=verify&token=${token}</a>
-      <br><br>
-
-      Se houver algum questionamento você pode entrar em contato com <b>suporteseai@email.com</b> <br><br>
-
-      Se não reconhece a conta do SEAI <a href="mailto:${user.email?.value}">${user.email?.value}</a> , você pode <a href="https://www.google.com/">clicar aqui</a> para remover seu endereço de email dessa conta.<br><br>
-
-      Obrigado <br>
-      Equipe SEAI
-    `;
+      // const exp_date = this.dateProvider.addHours(3);
 
       // TODO criar token e adicionar ao email
-      await this.sendEmailToUser.send(
-        {
+      await this.scheduleUserAccountNotification.schedule({
+        user: {
           email: user.email?.value as string,
+          token,
         },
-        {
-          subject: "Bem vindo ao SEAI",
-          text: "Estou muito content de ter você por aqui!",
-          html: msg,
-        }
-      );
+        subject: "Bem vindo ao SEAI",
+        action: AvailablesEmailServices.CREATE_ACCOUNT,
+      });
     }
 
     this.addLog({

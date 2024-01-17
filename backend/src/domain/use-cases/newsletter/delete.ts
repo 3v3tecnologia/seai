@@ -2,15 +2,21 @@ import { Either, right } from "../../../shared/Either";
 import { DATABASES } from "../../../shared/db/tableNames";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
+import { DeleteJobUseCaseProtocol } from "../jobs";
 
 export class DeleteNews
   extends Command
   implements DeleteNewsUseCaseProtocol.UseCase
 {
   private repository: NewsRepositoryProtocol;
-  constructor(repository: NewsRepositoryProtocol) {
+  private readonly deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase;
+  constructor(
+    repository: NewsRepositoryProtocol,
+    deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase
+  ) {
     super();
     this.repository = repository;
+    this.deleteJobUseCase = deleteJobUseCase;
   }
   async create(
     request: DeleteNewsUseCaseProtocol.Request

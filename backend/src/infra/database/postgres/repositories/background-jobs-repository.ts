@@ -241,7 +241,6 @@ export class DbBackgroundJobsRepository
     request: JobsRepositoryDTO.Update.Request
   ): JobsRepositoryDTO.Update.Response {
     const data = {
-      // name: request.queue,
       priority: request.priority || 1,
       data: request.data || null,
       retrylimit: request.retryLimit || 3,
@@ -257,6 +256,11 @@ export class DbBackgroundJobsRepository
     if (Reflect.has(request, "state")) {
       Object.assign(data, {
         state: request.state,
+      });
+    }
+    if (Reflect.has(request, "queue")) {
+      Object.assign(data, {
+        name: request.queue,
       });
     }
 
