@@ -92,9 +92,8 @@
 </template>
 
 <script setup>
-import ChartReports from "@/components/charts/ChartReports.vue";
-import ExportData from "@/components/charts/ExportData.vue";
-import BaseSwitch from "@/components/BaseSwitch.vue";
+import ChartReports from "./components/ChartReports.vue";
+import ExportData from "./components/ExportData.vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import BaseCheckBox from "@/components/BaseCheckBox.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
@@ -136,6 +135,10 @@ const groupReportsOptions = [
   {
     title: "Indicadores",
     value: 4,
+  },
+  {
+    title: "Recursos hídricos",
+    value: 5,
   },
 ];
 

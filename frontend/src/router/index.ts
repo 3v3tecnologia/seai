@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import AuthView from "../views/AuthView.vue";
-import ReportsView from "../views/ReportsView.vue";
+import ReportsView from "../views/ReportsView/PageView.vue";
 import RetrieveAccount from "../views/RetrieveAccount.vue";
 import BaseForm from "../views/BaseForm.vue";
 import HomeView from "../views/HomeView.vue";

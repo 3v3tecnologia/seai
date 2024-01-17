@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import TableReport from "../BaseTable.vue";
+import BaseTable from "@/components/BaseTable.vue";
 import { toast } from "vue3-toastify";
 import { ref, defineProps, computed } from "vue";
 
