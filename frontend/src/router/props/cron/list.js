@@ -47,10 +47,5 @@ export default {
       title: "Prioridade",
       field: "priority",
     },
-    {
-      title: "Atualizado",
-      field: "updated_on",
-      formatter: columnFullDateFormat,
-    },
   ],
 };

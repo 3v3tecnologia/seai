@@ -48,11 +48,6 @@ export default {
       field: "priority",
     },
     {
-      title: "Atualizado",
-      field: "updated_on",
-      formatter: columnFullDateFormat,
-    },
-    {
       title: "Observação",
       field: "output",
     },

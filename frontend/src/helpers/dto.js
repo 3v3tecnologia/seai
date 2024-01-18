@@ -112,7 +112,9 @@ export const ungroupData = (items) => {
 };
 
 export const columnFullDateFormat = (col) => {
-  return moment(col._cell.value).format("DD/MM/YYYY HH:ss");
+  return col._cell.value
+    ? moment(col._cell.value).format("DD/MM/YYYY HH:ss")
+    : "";
 };
 
 export const unwrapNewsLetter = (newsletterFromApi) => {
