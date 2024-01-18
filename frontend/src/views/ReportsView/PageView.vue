@@ -92,9 +92,8 @@
 </template>
 
 <script setup>
-import ChartReports from "@/components/charts/ChartReports.vue";
-import ExportData from "@/components/charts/ExportData.vue";
-import BaseSwitch from "@/components/BaseSwitch.vue";
+import ChartReports from "./components/ChartReports.vue";
+import ExportData from "./components/ExportData.vue";
 import BaseDropdown from "@/components/BaseDropdown.vue";
 import BaseCheckBox from "@/components/BaseCheckBox.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
@@ -137,6 +136,10 @@ const groupReportsOptions = [
     title: "Indicadores",
     value: 4,
   },
+  {
+    title: "Recursos hídricos",
+    value: 5,
+  },
 ];
 
 const groupReports = ref(groupReportsOptions[0]);
@@ -174,7 +177,7 @@ const hydrographicBasinName = computed(() =>
 const citiesName = computed(() => city.value.map((d) => d["title"]));
 
 const reportsData = computed(() => {
-  const reportsDataRaw = store.state.reportsData;
+  const reportsDataRaw = store.state.report.reportsData;
   const filteredData = {};
 
   if (!hydrographicBasinName.value.length && !citiesName.value.length) {
@@ -198,7 +201,7 @@ const hydrographicBasinOptions = computed(
   () => store.state.hydrographicBasinOptions
 );
 
-const isLoadingReport = computed(() => store.state.isLoadingReport);
+const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const cityOptions = computed(() => {
   return store.state.cityOptions.filter((val) => {
@@ -275,8 +278,6 @@ watch(
     } else {
       store.commit("SET_CURRENT_TAB", 3);
     }
-
-    // await store.dispatch("FETCH_REPORTS_DATA", filtersRequest.value);
   },
   { immediate: true }
 );

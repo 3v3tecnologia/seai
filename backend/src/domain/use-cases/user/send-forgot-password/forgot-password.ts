@@ -3,23 +3,26 @@ import { Either, left, right } from "../../../../shared/Either";
 import { IDateProvider } from "../../_ports/date-provider/date-provider";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { TokenProvider } from "../authentication/ports/token-provider";
-import { SendEmailToUser } from "../send-email-to-user/send-email-to-user";
+import {
+  AvailablesEmailServices,
+  ScheduleUserAccountNotification,
+} from "../send-notification-to-user/send-notification-to-user";
 import { AccountEmailNotFound } from "../sign-up/errors/user-email-not-found";
 
 export class ForgotPassword {
   private readonly accountRepository: AccountRepositoryProtocol;
-  private readonly sendEmailToUser: SendEmailToUser;
+  private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
   private readonly dateProvider: IDateProvider;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
     accountRepository: AccountRepositoryProtocol,
-    sendEmailToUser: SendEmailToUser,
+    scheduleUserAccountNotification: ScheduleUserAccountNotification,
     dateProvider: IDateProvider,
     tokenProvider: TokenProvider
   ) {
     this.accountRepository = accountRepository;
-    this.sendEmailToUser = sendEmailToUser;
+    this.scheduleUserAccountNotification = scheduleUserAccountNotification;
     this.dateProvider = dateProvider;
     this.tokenProvider = tokenProvider;
   }
@@ -38,39 +41,14 @@ export class ForgotPassword {
       "1d"
     );
 
-    // const exp_date = this.dateProvider.addHours(3);
-
-    const port = env.port;
-
-    const link = `http://localhost:${port}/api/login/password/reset?token=${token}`;
-
-    const msg = `
-      Você está recebendo esta mensagem por que você (ou alguém) solicitou a redefinição de senha da conta ${account.login} (login) do SEAI.<br>
-      Por favor, clique no link abaixo ou copie e cole no seu navegador para completar o processo:<br><br>
-
-
-      <a href="${link}">${link}</a><br><br>
-
-      Se houver algum questionamento você pode entrar em contato com suporteseai@email.com <br>
-
-      Se não reconhece a conta do SEAI  email@email.com, você pode clicar aqui para remover seu endereço de email dessa conta.<br><br>
-
-      Obrigado<br>
-      Equipe SEAI<br>
-
-    `;
-
-    console.log("ENVIANDO = ", account);
-    await this.sendEmailToUser.send(
-      {
+    await this.scheduleUserAccountNotification.schedule({
+      user: {
         email: account.email,
+        token,
       },
-      {
-        subject: "Bem vindo ao SEAI",
-        text: "Recuperação de senha!",
-        html: msg,
-      }
-    );
+      action: AvailablesEmailServices.FORGOT_PASSWORD,
+      subject: "Resetar senhar",
+    });
 
     return right(
       `Email de recuperação de senha enviado com sucesso para ${account.email}`

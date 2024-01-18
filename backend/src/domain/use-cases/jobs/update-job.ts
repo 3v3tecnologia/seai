@@ -31,7 +31,7 @@ export class UpdateJob implements UpdateJobUseCaseProtocol.UseCase {
 export namespace UpdateJobUseCaseProtocol {
   export type Request = {
     id: string;
-    queue: string;
+    name: string;
     state?: string;
     priority: number;
     retryLimit: number;

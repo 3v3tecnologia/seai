@@ -30,12 +30,13 @@
 import { defineProps, computed, ref, watch } from "vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import StackedBarChart from "@/components/charts/StackedBarChart.vue";
-import { itemsPerGraph, reportsTitles } from "@/constants";
+import { itemsPerGraph } from "@/constants";
+import { reportsBaseConfigs } from "../configs";
 import { useStore } from "vuex";
 
 const store = useStore();
 
-const isLoadingReport = computed(() => store.state.isLoadingReport);
+const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const props = defineProps({
   data: {
@@ -200,123 +201,81 @@ const chartsGroups = computed(() =>
   [
     [
       {
-        component: BarChart,
-        title: reportsTitles.registereds,
-        "series-name": "Recenseados",
-        "value-key": registeredCount.value.valueKey,
+        ...reportsBaseConfigs.registereds,
         data: registeredCount.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.workers,
-        "series-name": "trabalhadores",
-        "value-key": workersCount.value.valueKey,
-        "stack-key": workersCount.value.stackKey,
+        ...reportsBaseConfigs.workers,
         data: workersCount.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.superMonthVol,
-        "series-name": "Volume de captação superficial (m³)",
-        "label-by": { type: "month", key: "Mes" },
-        "value-key": captationCountSuper.value.valueKey,
+        ...reportsBaseConfigs.superMonthVol,
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.superMonthFlow,
-        "series-name": "Vazão média de captação mensal superficial (m³/h)",
-        "label-by": { type: "month", key: "Mes" },
-        "value-key": "Vazão média",
+        ...reportsBaseConfigs.superMonthFlow,
         "stack-key": captationCountSuper.value.stackKey,
         data: captationCountSuper.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.underMonthVol,
-        "series-name": "Volume de captação mensal subterrânea (m³)",
-        "label-by": { type: "month", key: "Mes" },
-        "value-key": captationCountUnder.value.valueKey,
+        ...reportsBaseConfigs.underMonthVol,
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.underMonthFlow,
-        "value-key": "Vazão média",
-        "label-by": { type: "month", key: "Mes" },
+        ...reportsBaseConfigs.underMonthFlow,
         "stack-key": captationCountUnder.value.stackKey,
         data: captationCountUnder.value.data,
       },
     ],
     [
       {
-        component:
-          props.currentDataFormat.value === 3 ? BarChart : StackedBarChart,
-        title: reportsTitles.animals,
-        "series-name": "Animais",
+        ...(props.currentDataFormat.value === 3
+          ? reportsBaseConfigs.animalsByType
+          : reportsBaseConfigs.animals),
         "value-key":
           props.currentDataFormat.value === 3
             ? "Consumo"
             : animals.value.valueKey,
         "stack-key": animals.value.stackKey,
         data: animals.value.data,
-        groupByKey:
-          props.currentDataFormat.value === 3
-            ? { type: "value", key: "TipoCriacao" }
-            : "",
       },
     ],
     [
       {
-        component: StackedBarChart,
-        title: reportsTitles.underVolTanks,
-        "series-name": "Volume de captação de tanques subterrâneos (m³)",
-        "label-by": { type: "month", key: "Mes" },
-        "value-key": aquacultureUnder.value.valueKey,
+        ...reportsBaseConfigs.underVolTanks,
         "stack-key": aquacultureUnder.value.stackKey,
         data: aquacultureUnder.value.data,
       },
       {
-        component: BarChart,
-        title: reportsTitles.tanks,
-        "series-name": "Tanques",
-        "value-key": "Tanques",
+        ...reportsBaseConfigs.tanks,
         data: aquacultureCount.value.data,
       },
       {
-        component: StackedBarChart,
-        title: reportsTitles.underFlowTanks,
-        "series-name": "Vazão média de captação de tanques subterrâneos (m³)",
-        "label-by": { type: "month", key: "Mes" },
-        "value-key": aquacultureSuper.value.valueKey,
+        ...reportsBaseConfigs.underFlowTanks,
         "stack-key": aquacultureSuper.value.stackKey,
         data: aquacultureSuper.value.data,
       },
     ],
     [
       {
-        component: BarChart,
-        title: reportsTitles.secEconomic,
-        "series-name": "Rentabilidade por área",
-        "value-key": securityEconomic.value.valueKey,
-        groupByKey: "valor",
+        ...reportsBaseConfigs.secEconomic,
         data: securityEconomic.value.data,
       },
       {
-        component: BarChart,
-        title: reportsTitles.secSocial,
-        "series-name": "Empregos por área",
-        "value-key": securitySocial.value.valueKey,
+        ...reportsBaseConfigs.secSocial,
         data: securitySocial.value.data,
       },
       {
-        component: BarChart,
-        title: reportsTitles.secHydro,
-        "series-name": "Volume por área",
-        "value-key": securityWater.value.valueKey,
+        ...reportsBaseConfigs.secHydro,
         data: securityWater.value.data,
+      },
+    ],
+    [
+      {
+        ...reportsBaseConfigs.cutHydro,
+        data: registeredCount.value.data,
       },
     ],
   ].map((sub, i) => {

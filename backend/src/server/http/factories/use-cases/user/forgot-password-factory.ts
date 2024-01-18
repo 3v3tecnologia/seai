@@ -3,7 +3,7 @@ import { JwtAdapter } from "../../../../../infra/cryptography/jwt-adapter";
 import { KnexAccountRepository } from "../../../../../infra/database/postgres/repositories/account-repository";
 import env from "../../../env";
 import { DateProvider } from "./../../../../../infra/dateprovider/date";
-import { makeSendEmailToUser } from "./send-email-to-user-factory";
+import { makeSendNotificationToUser } from "./send-user-account-notification-factory";
 
 export const makeForgotPasswordUser = (): ForgotPassword => {
   const accountRepository = new KnexAccountRepository();
@@ -11,7 +11,7 @@ export const makeForgotPasswordUser = (): ForgotPassword => {
   const tokenProvider = new JwtAdapter(env.jwtSecret);
   return new ForgotPassword(
     accountRepository,
-    makeSendEmailToUser(),
+    makeSendNotificationToUser(),
     dateProvider,
     tokenProvider
   );

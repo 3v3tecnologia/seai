@@ -241,7 +241,6 @@ export class DbBackgroundJobsRepository
     request: JobsRepositoryDTO.Update.Request
   ): JobsRepositoryDTO.Update.Response {
     const data = {
-      // name: request.queue,
       priority: request.priority || 1,
       data: request.data || null,
       retrylimit: request.retryLimit || 3,
@@ -259,6 +258,13 @@ export class DbBackgroundJobsRepository
         state: request.state,
       });
     }
+    if (Reflect.has(request, "name")) {
+      Object.assign(data, {
+        name: request.name,
+      });
+    }
+
+    console.log(data)
 
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
       .update(data)
@@ -304,6 +310,7 @@ export class DbBackgroundJobsRepository
       .where({
         id,
       });
+      
 
     if (!result.length) {
       return null;
