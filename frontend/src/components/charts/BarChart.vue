@@ -26,7 +26,7 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  groupByKey: {
+  labelBy: {
     type: String,
     required: false,
   },
@@ -90,9 +90,7 @@ const props = defineProps({
   },
 });
 
-const groupedData = computed(() =>
-  groupByKeyData(props.data, props.groupByKey)
-);
+const groupedData = computed(() => groupByKeyData(props.data, props.labelBy));
 
 const labels = computed(() => labelsCharts(groupedData.value));
 

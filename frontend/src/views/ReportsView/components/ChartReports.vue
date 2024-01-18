@@ -210,22 +210,22 @@ const chartsGroups = computed(() =>
       },
       {
         ...reportsBaseConfigs.superMonthVol,
-        "stack-key": captationCountSuper.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: captationCountSuper.value.data,
       },
       {
         ...reportsBaseConfigs.superMonthFlow,
-        "stack-key": captationCountSuper.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: captationCountSuper.value.data,
       },
       {
         ...reportsBaseConfigs.underMonthVol,
-        "stack-key": captationCountUnder.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: captationCountUnder.value.data,
       },
       {
         ...reportsBaseConfigs.underMonthFlow,
-        "stack-key": captationCountUnder.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: captationCountUnder.value.data,
       },
     ],
@@ -234,18 +234,13 @@ const chartsGroups = computed(() =>
         ...(props.currentDataFormat.value === 3
           ? reportsBaseConfigs.animalsByType
           : reportsBaseConfigs.animals),
-        "value-key":
-          props.currentDataFormat.value === 3
-            ? "Consumo"
-            : animals.value.valueKey,
-        "stack-key": animals.value.stackKey,
         data: animals.value.data,
       },
     ],
     [
       {
         ...reportsBaseConfigs.underVolTanks,
-        "stack-key": aquacultureUnder.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: aquacultureUnder.value.data,
       },
       {
@@ -254,7 +249,7 @@ const chartsGroups = computed(() =>
       },
       {
         ...reportsBaseConfigs.underFlowTanks,
-        "stack-key": aquacultureSuper.value.stackKey,
+        stackKey: currentValueKeyLocation.value,
         data: aquacultureSuper.value.data,
       },
     ],
