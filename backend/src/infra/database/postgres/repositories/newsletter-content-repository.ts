@@ -12,6 +12,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(
     request: ContentRepositoryDTO.Create.Request
   ): ContentRepositoryDTO.Create.Response {
+    console.log(request);
     const result = await newsletterDb
       .insert({
         Fk_Sender: request.FK_Author,
@@ -23,8 +24,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       .into(DATABASES.NEWSLETTER.NEWS);
 
     const id = result.length && result[0].Id;
-
-    await newsletterDb.insert({});
 
     return id;
   }
