@@ -11,7 +11,7 @@
       :time-only="timeOnly"
       :show-time="showTime"
       :hour-format="hourFormat"
-      :stepMinute="60"
+      :stepMinute="stepMinute"
     />
     <!-- show-button-bar="true" -->
     <label for="date-range-read">{{ label }}</label>
@@ -54,6 +54,10 @@ const props = defineProps({
   hourFormat: {
     default: "24",
     type: String,
+  },
+  stepMinute: {
+    default: 60,
+    type: Number,
   },
   dateFormat: {
     default: "YYYY-MM-DD",

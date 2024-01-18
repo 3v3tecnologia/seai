@@ -19,8 +19,8 @@ const fields = [
       props: {
         label: "Data de envio",
         showTime: true,
-        hourFormat: "24",
         selectionMode: "single",
+        stepMinute: 1,
       },
     },
   },
