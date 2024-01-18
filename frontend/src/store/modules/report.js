@@ -106,9 +106,7 @@ export default {
         ]);
 
         const hydricResourcesRaw = mockedHydricResources[showingDataFormatUrl];
-        const hydricResources = hydricResourcesRaw
-          .map(getValueBasic)
-          .map(formatLocation);
+        const hydricResources = ungroupData(hydricResourcesRaw);
 
         commit("SET_REPORTS_DATA", {
           hydricResources,

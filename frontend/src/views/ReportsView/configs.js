@@ -136,9 +136,10 @@ ReportsConfigsInstance.addChart("registereds", {
     valueKey: "VolumePorArea",
   })
   .addChart("hydricResources", {
-    component: BarChart,
+    component: StackedBarChart,
     title: "Corte hídrico (m³/ha)",
     seriesName: "Volume por área",
+    stackKey: "Cultura",
     valueKey: "CorteHidrico",
   });
 

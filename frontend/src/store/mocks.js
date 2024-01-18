@@ -561,619 +561,96 @@ export const reportsDataDefault = {
 };
 
 export const mockedHydricResources = {
-  basin: [
-    {
-      Nome: "Alto Jaguaribe",
-      Tipo: "bacia",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 20437072,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 2417.294,
-      },
-      VolumePorArea: 8454.525,
-    },
-    {
-      Nome: "Baixo Jaguaribe",
-      Tipo: "bacia",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 96903890,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 22695.6,
-      },
-      VolumePorArea: 4269.721,
-    },
-    {
-      Nome: "Médio Jaguaribe",
-      Tipo: "bacia",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 15773000,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 1306.4788,
-      },
-      VolumePorArea: 12072.909,
-    },
-  ],
-  county: [
-    {
-      Nome: "Acopiara",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 297696,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 15.799999,
-      },
-      VolumePorArea: 18841.52,
-    },
-    {
-      Nome: "Aiuaba",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 113569,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 35.1,
-      },
-      VolumePorArea: 3235.5842,
-    },
-    {
-      Nome: "Altaneira",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 30960,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 17,
-      },
-      VolumePorArea: 1821.1765,
-    },
-    {
-      Nome: "Alto Santo",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 195240,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 122.99998,
-      },
-      VolumePorArea: 1587.3174,
-    },
-    {
-      Nome: "Antonina do Norte",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 21804,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 11.01,
-      },
-      VolumePorArea: 1980.3815,
-    },
-    {
-      Nome: "Aracati",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 3054396,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 15532.3955,
-      },
-      VolumePorArea: 196.6468,
-    },
-    {
-      Nome: "Araripe",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 315360,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 9.299999,
-      },
-      VolumePorArea: 33909.68,
-    },
-    {
-      Nome: "Arneiroz",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 49344,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 22.5,
-      },
-      VolumePorArea: 2193.0667,
-    },
-    {
-      Nome: "Assaré",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 1063620,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 36,
-      },
-      VolumePorArea: 29545,
-    },
-    {
-      Nome: "Campos Sales",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 506656,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 38.1,
-      },
-      VolumePorArea: 13298.059,
-    },
-    {
-      Nome: "Cariús",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 2531870,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 256.50006,
-      },
-      VolumePorArea: 9870.836,
-    },
-    {
-      Nome: "Catarina",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 181530,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 22.100002,
-      },
-      VolumePorArea: 8214.026,
-    },
-    {
-      Nome: "Deputado Irapuan Pinheiro",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 299016,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 33,
-      },
-      VolumePorArea: 9061.091,
-    },
-    {
-      Nome: "Ererê",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 246648,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 46.950005,
-      },
-      VolumePorArea: 5253.418,
-    },
-    {
-      Nome: "Farias Brito",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 283200,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 25.7,
-      },
-      VolumePorArea: 11019.455,
-    },
-    {
-      Nome: "Fortim",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 25920,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 9.5,
-      },
-      VolumePorArea: 2728.4211,
-    },
-    {
-      Nome: "Icapuí",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 284400,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 14.5,
-      },
-      VolumePorArea: 19613.793,
-    },
-    {
-      Nome: "Icó",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 3624730,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 487.7,
-      },
-      VolumePorArea: 7432.2944,
-    },
-    {
-      Nome: "Iguatu",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 5720255,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 423.20032,
-      },
-      VolumePorArea: 13516.66,
-    },
-    {
-      Nome: "Iracema",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 126768,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 31.9,
-      },
-      VolumePorArea: 3973.9185,
-    },
-    {
-      Nome: "Itaiçaba",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 1722240,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 24,
-      },
-      VolumePorArea: 71760,
-    },
-    {
-      Nome: "Jaguaretama",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 716064,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 21.8,
-      },
-      VolumePorArea: 32846.973,
-    },
-    {
-      Nome: "Jaguaribara",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 6173904,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 309,
-      },
-      VolumePorArea: 19980.271,
-    },
-    {
-      Nome: "Jaguaribe",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 7366536,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 521,
-      },
-      VolumePorArea: 14139.225,
-    },
-    {
-      Nome: "Jaguaruana",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 6177600,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 98,
-      },
-      VolumePorArea: 63036.734,
-    },
-    {
-      Nome: "Jucás",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 2845086.2,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 276.1002,
-      },
-      VolumePorArea: 10304.543,
-    },
-    {
-      Nome: "Limoeiro do Norte",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 41901192,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 4109.8,
-      },
-      VolumePorArea: 10195.434,
-    },
-    {
-      Nome: "Milhã",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 63216,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 21.63,
-      },
-      VolumePorArea: 2922.6077,
-    },
-    {
-      Nome: "Nova Olinda",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 301116,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 22.600006,
-      },
-      VolumePorArea: 13323.713,
-    },
-    {
-      Nome: "Orós",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 992010,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 212.20004,
-      },
-      VolumePorArea: 4674.8813,
-    },
-    {
-      Nome: "Palhano",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 23040,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 0,
-      },
-      VolumePorArea: 0,
-    },
-    {
-      Nome: "Parambu",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 13200,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 8.6,
-      },
-      VolumePorArea: 1534.8837,
-    },
-    {
-      Nome: "Pereiro",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 35928,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 118.899994,
-      },
-      VolumePorArea: 302.1699,
-    },
-    {
-      Nome: "Potengi",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 71136,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 48.300003,
-      },
-      VolumePorArea: 1472.7949,
-    },
-    {
-      Nome: "Potiretama",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 16200,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 2.8999996,
-      },
-      VolumePorArea: 5586.2075,
-    },
-    {
-      Nome: "Quixelô",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 236118,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 68.17999,
-      },
-      VolumePorArea: 3463.1567,
-    },
-    {
-      Nome: "Quixeré",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 316946.44,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 259,
-      },
-      VolumePorArea: 1223.7314,
-    },
-    {
-      Nome: "Russas",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 43399444,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 2648.4,
-      },
-      VolumePorArea: 16387.043,
-    },
-    {
-      Nome: "Saboeiro",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 343290.5,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 37.599995,
-      },
-      VolumePorArea: 9130.067,
-    },
-    {
-      Nome: "Solonópole",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 74784,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 22.7,
-      },
-      VolumePorArea: 3294.4492,
-    },
-    {
-      Nome: "São João do Jaguaribe",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 50400,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 10,
-      },
-      VolumePorArea: 5040,
-    },
-    {
-      Nome: "Tabuleiro do Norte",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 408296,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 43.699997,
-      },
-      VolumePorArea: 9343.158,
-    },
-    {
-      Nome: "Tarrafas",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 711715,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 329.30002,
-      },
-      VolumePorArea: 2161.2966,
-    },
-    {
-      Nome: "Tauá",
-      Tipo: "municipio",
-      CorteHidrico: {
-        unidade: "m³",
-        valor: 182810,
-      },
-      AreaIrrigadaTotal: {
-        unidade: "ha",
-        valor: 14.4,
-      },
-      VolumePorArea: 12695.14,
-    },
-  ],
+  basin: {
+    "Alto Jaguaribe": [
+      {
+        Cultura: "ABACATE",
+        CorteHidrico: 11459,
+      },
+      {
+        Cultura: "AÇAI",
+        CorteHidrico: 18832,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 359,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 2847,
+      },
+      {
+        Cultura: "ARROZ",
+        CorteHidrico: 5749,
+      },
+      {
+        Cultura: "ATA",
+        CorteHidrico: 2431,
+      },
+      {
+        Cultura: "CAJU",
+        CorteHidrico: 0,
+      },
+    ],
+    "Baixo Jaguaribe": [
+      {
+        Cultura: "ABACATE",
+        CorteHidrico: 2128,
+      },
+      {
+        Cultura: "AÇAI",
+        CorteHidrico: 3080,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 257,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 700,
+      },
+      {
+        Cultura: "ARROZ",
+        CorteHidrico: 1160,
+      },
+      {
+        Cultura: "ATA",
+        CorteHidrico: 454,
+      },
+      {
+        Cultura: "CAJU",
+        CorteHidrico: 0,
+      },
+    ],
+    "Médio Jaguaribe": [
+      {
+        Cultura: "ABACATE",
+        CorteHidrico: 9199,
+      },
+      {
+        Cultura: "AÇAI",
+        CorteHidrico: 9273,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 339,
+      },
+      {
+        Cultura: "ACEROLA",
+        CorteHidrico: 1393,
+      },
+      {
+        Cultura: "ARROZ",
+        CorteHidrico: 1818,
+      },
+      {
+        Cultura: "ATA",
+        CorteHidrico: 1082,
+      },
+      {
+        Cultura: "CAJU",
+        CorteHidrico: 0,
+      },
+    ],
+  },
 };

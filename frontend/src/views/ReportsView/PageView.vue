@@ -148,9 +148,15 @@ const groupReportsTemp = ref({ ...groupReports.value });
 const showingDataFormatTemp = ref({ ...showingDataFormat.value });
 
 const showingDataOptions = computed(() =>
-  totalGroupment.filter((opt) =>
-    groupReportsTemp.value.value === 2 ? true : opt.value != 3
-  )
+  totalGroupment.filter((opt) => {
+    if (groupReportsTemp.value.value === 2) {
+      return true;
+    } else if (groupReportsTemp.value.value === 5) {
+      return opt.value < 2;
+    } else {
+      return opt.value != 3;
+    }
+  })
 );
 
 const showConsuming = computed(() => showingDataFormat.value.value === 3);
