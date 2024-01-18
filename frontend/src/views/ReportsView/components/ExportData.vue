@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-lg-12 mb-2">
-      <TableReport
+      <BaseTable
         v-for="(report, i) in currentReportTables"
         :key="report.title"
         :class="i ? 'mt-4' : ''"
