@@ -67,7 +67,8 @@ watch(
   () => props.modelValue,
   (val) => {
     inputValue.value = val;
-  }
+  },
+  { immediate: true }
 );
 </script>
 

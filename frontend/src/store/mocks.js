@@ -565,31 +565,27 @@ export const mockedHydricResources = {
     "Alto Jaguaribe": [
       {
         Cultura: "ABACATE",
-        CorteHidrico: 11459,
+        CorteHidrico: 11,
       },
       {
         Cultura: "AÇAI",
-        CorteHidrico: 18832,
+        CorteHidrico: 18,
       },
       {
         Cultura: "ACEROLA",
-        CorteHidrico: 359,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 2847,
+        CorteHidrico: 28,
       },
       {
         Cultura: "ARROZ",
-        CorteHidrico: 5749,
+        CorteHidrico: 57,
       },
       {
         Cultura: "ATA",
-        CorteHidrico: 2431,
+        CorteHidrico: 24,
       },
       {
         Cultura: "CAJU",
-        CorteHidrico: 0,
+        CorteHidrico: 30,
       },
     ],
     "Baixo Jaguaribe": [
@@ -604,10 +600,6 @@ export const mockedHydricResources = {
       {
         Cultura: "ACEROLA",
         CorteHidrico: 257,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 700,
       },
       {
         Cultura: "ARROZ",

@@ -4,6 +4,7 @@ import StackedBarChart from "@/components/charts/StackedBarChart.vue";
 const labelBy = {
   month: { type: "month", key: "Mes" },
   creation: { type: "value", key: "TipoCriacao" },
+  farmName: { type: "value", key: "Cultura" },
   value: "valor",
 };
 
@@ -18,6 +19,8 @@ class ReportsBaseConfigs {
     valueKey,
     stackKey,
     labelBy,
+    isHorizontal = false,
+    height = 270,
   }) {
     return {
       component,
@@ -28,6 +31,8 @@ class ReportsBaseConfigs {
       labelBy,
       width: 400,
       id: `chart-item-${this.id++}`,
+      isHorizontal,
+      height,
     };
   }
 
@@ -65,6 +70,7 @@ ReportsConfigsInstance.addChart("registereds", {
     seriesName: "Animais",
     stackKey: "TipoCriacao",
     valueKey: "Quantidade",
+    height: 380,
   })
   .addChart("animalsByType", {
     component: BarChart,
@@ -73,6 +79,7 @@ ReportsConfigsInstance.addChart("registereds", {
     valueKey: "Consumo",
     stackKey: "TipoCriacao",
     labelBy: labelBy.creation,
+    height: 380,
   })
   .addChart("underVolTanks", {
     component: StackedBarChart,
@@ -136,11 +143,13 @@ ReportsConfigsInstance.addChart("registereds", {
     valueKey: "VolumePorArea",
   })
   .addChart("hydricResources", {
-    component: StackedBarChart,
+    component: BarChart,
     title: "Corte hídrico (m³/ha)",
     seriesName: "Volume por área",
-    stackKey: "Cultura",
     valueKey: "CorteHidrico",
+    isHorizontal: true,
+    labelBy: labelBy.farmName,
+    height: 380,
   });
 
 export const reportsBaseConfigs = ReportsConfigsInstance.data;

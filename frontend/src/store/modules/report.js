@@ -7,6 +7,7 @@ export default {
   state: () => ({
     isLoadingReport: false,
     reportsData: reportsDataDefault,
+    currentBasinName: "",
   }),
   mutations: {
     ["SET_REPORTS_DATA"](state, data) {
@@ -17,6 +18,9 @@ export default {
     },
     ["SET_LOADING_REPORT"](state, bool) {
       state.isLoadingReport = bool;
+    },
+    ["SET_CURRENT_BASIN_NAME"](state, basinName) {
+      state.currentBasinName = basinName;
     },
   },
   actions: {
@@ -106,7 +110,16 @@ export default {
         ]);
 
         const hydricResourcesRaw = mockedHydricResources[showingDataFormatUrl];
-        const hydricResources = ungroupData(hydricResourcesRaw);
+        const basinKey = Object.keys(hydricResourcesRaw)[0];
+        commit("SET_CURRENT_BASIN_NAME", basinKey);
+
+        const hydricResources = hydricResourcesRaw[basinKey]
+          .map(getValueBasic)
+          .map(formatLocation)
+          .map((c) => {
+            c.Bacia = basinKey;
+            return c;
+          });
 
         commit("SET_REPORTS_DATA", {
           hydricResources,

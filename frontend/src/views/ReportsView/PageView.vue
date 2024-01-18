@@ -262,6 +262,19 @@ watch(
 );
 
 watch(
+  () => store.state.report.currentBasinName,
+  (newVal) => {
+    if (newVal) {
+      hydrographicBasinTemp.value = [
+        hydrographicBasinOptions.value.find((b) => b.title === newVal),
+      ];
+      hydrographicBasin.value = hydrographicBasinTemp.value;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
   () => hydrographicBasinTemp.value,
   (newVal) => {
     if (newVal.length) {

@@ -127,7 +127,6 @@ const title = computed(() => ({
 
 const options = computed(() => ({
   chart: {
-    // group: "chart",
     id: props.id,
     toolbar: {
       show: true,
