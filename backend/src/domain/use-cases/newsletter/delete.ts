@@ -25,6 +25,20 @@ export class DeleteNews
 
     const successLog = `Notícia deletada com sucessso.`;
 
+    const jobId = await this.repository.getIdJobFromNews(request.Id);
+
+    if (jobId !== null) {
+      await this.repository.deleteJobFromNews(request.Id);
+
+      console.log("[DeleteNews] Delete job from News");
+
+      const deleteJobOrError = await this.deleteJobUseCase.execute({
+        id: jobId,
+      });
+
+      console.log(deleteJobOrError.value);
+    }
+
     this.addLog({
       action: "delete",
       table: DATABASES.NEWSLETTER.NEWS,

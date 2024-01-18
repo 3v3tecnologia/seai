@@ -40,6 +40,12 @@ export class CreateNews
       return left(jobOrError.value);
     }
 
+    const job = jobOrError.value;
+
+    console.log("[CreateNews] : Deletando notícia");
+
+    await this.repository.associateJobToNews(job.id, newsId);
+
     this.addLog({
       action: "create",
       table: DATABASES.NEWSLETTER.NEWS,

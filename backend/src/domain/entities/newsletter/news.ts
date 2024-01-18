@@ -6,7 +6,7 @@ export type Content = {
     Email: string;
     Organ: string;
   };
-  // SendDate: string;
+  SendDate?: string;
   Description: string | null;
   // LocationName: string;
   Data?: any;
