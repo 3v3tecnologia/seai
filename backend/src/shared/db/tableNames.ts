@@ -8,6 +8,7 @@ export const DATABASES = {
     NEWS: "News",
     SENDER: "Sender",
     SUBSCRIBER: "Subscriber",
+    NEWS_JOBS: "NewsJobs",
   },
   BACKGROUND_JOBS: {
     DATABASE: "postgres",

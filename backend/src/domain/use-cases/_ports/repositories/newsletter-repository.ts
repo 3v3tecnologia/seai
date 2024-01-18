@@ -187,4 +187,7 @@ export interface NewsRepositoryProtocol {
   getAll(
     request: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response;
+  associateJobToNews(id_job: string, id_news: number): Promise<void>;
+  deleteJobFromNews(id_news: number): Promise<void>;
+  getIdJobFromNews(id_news: number): Promise<string | null>;
 }

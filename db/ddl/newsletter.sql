@@ -31,6 +31,11 @@ CREATE TABLE "News" (
 	CONSTRAINT "News_pkey" PRIMARY KEY ("Id")
 );
 
+CREATE TABLE "NewsJob"(
+    "Fk_Job" uuid NOT NULL,
+    "Fk_News" int4 NOT NULL
+);
+
 -- public."News" foreign keys
 
 ALTER TABLE "News" ADD CONSTRAINT "News_Fk_Sender_fkey" FOREIGN KEY ("Fk_Sender") REFERENCES "Sender"("Id");
