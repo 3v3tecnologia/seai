@@ -176,6 +176,24 @@ const animals = computed(() => [
   },
 ]);
 
+const hydricResources = computed(() => [
+  {
+    title: "Animais",
+    columns: [
+      basicColumns.value[0],
+      {
+        title: "Cultura",
+        field: "Cultura",
+      },
+      {
+        title: "Corte hídrico (m³/ha)",
+        field: "CorteHidrico",
+      },
+    ],
+    data: props.data.hydricResources,
+  },
+]);
+
 const generalReports = computed(() => [
   {
     title: "Quantidade de recenseados",
@@ -237,6 +255,8 @@ const currentReportTables = computed(() => {
     return aquaReports.value;
   } else if (props.currentReport.value === 4) {
     return indicators.value;
+  } else if (props.currentReport.value === 5) {
+    return hydricResources.value;
   }
 
   return [];
