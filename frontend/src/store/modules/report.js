@@ -1,5 +1,5 @@
 import http from "@/http";
-import { reportsDataDefault } from "../mocks";
+import { reportsDataDefault, mockedHydricResources } from "../mocks";
 import { dataFormatUrl } from "@/constants";
 import { formatLocation, getValueBasic, ungroupData } from "@/helpers/dto";
 
@@ -25,15 +25,15 @@ export default {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
-        const {
-          data: { data: workersCount },
-        } = await http.get(`/census/workers/${showingDataFormatUrl}`);
-        const {
-          data: { data: captationCount },
-        } = await http.get(`/census/captation/${showingDataFormatUrl}`);
-        const {
-          data: { data: registeredCount },
-        } = await http.get(`/census/census-takers/${showingDataFormatUrl}`);
+        const responses = await Promise.all([
+          await http.get(`/census/workers/${showingDataFormatUrl}`),
+          await http.get(`/census/captation/${showingDataFormatUrl}`),
+          await http.get(`/census/census-takers/${showingDataFormatUrl}`),
+        ]);
+
+        const [workersCount, captationCount, registeredCount] = responses.map(
+          (c) => c.data.data
+        );
 
         commit("SET_REPORTS_DATA", {
           workersCount,
@@ -49,12 +49,12 @@ export default {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
-        const {
-          data: { data: tankCaptation },
-        } = await http.get(`/census/captation/tank/${showingDataFormatUrl}`);
-        const {
-          data: { data: aquaculture },
-        } = await http.get(`/census/aquaculture/${showingDataFormatUrl}`);
+        const responses = await Promise.all([
+          await http.get(`/census/captation/tank/${showingDataFormatUrl}`),
+          await http.get(`/census/aquaculture/${showingDataFormatUrl}`),
+        ]);
+
+        const [tankCaptation, aquaculture] = responses.map((c) => c.data.data);
 
         commit("SET_REPORTS_DATA", {
           tankCaptation,
@@ -69,31 +69,49 @@ export default {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
-        const {
-          data: { data: securityWater },
-        } = await http.get(
-          `/census/indicator/security/water/${showingDataFormatUrl}`
-        );
+        const responses = await Promise.all([
+          await http.get(
+            `/census/indicator/security/water/${showingDataFormatUrl}`
+          ),
+          await http.get(
+            `/census/indicator/security/social/${showingDataFormatUrl}`
+          ),
+          await http.get(
+            `/census/indicator/security/economic/${showingDataFormatUrl}`
+          ),
+        ]);
 
-        const {
-          data: { data: securitySocial },
-        } = await http.get(
-          `/census/indicator/security/social/${showingDataFormatUrl}`
-        );
-
-        const {
-          data: { data: securityEconomic },
-        } = await http.get(
-          `/census/indicator/security/economic/${showingDataFormatUrl}`
+        const [securityWater, securitySocial, securityEconomic] = responses.map(
+          (c) => c.data.data.map(getValueBasic).map(formatLocation)
         );
 
         commit("SET_REPORTS_DATA", {
-          securityWater: securityWater.map(getValueBasic).map(formatLocation),
-          securitySocial: securitySocial.map(getValueBasic).map(formatLocation),
-          securityEconomic: securityEconomic
-            .map(getValueBasic)
-            .map(formatLocation),
+          securityWater,
+          securitySocial,
+          securityEconomic,
           securityProductive: [],
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_REPORT_RESOURCES"]({ state, commit }, filters) {
+      try {
+        const showingDataFormat = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+
+        const responses = await Promise.all([
+          await http.get(`/census/captation/tank/${showingDataFormatUrl}`),
+          await http.get(`/census/aquaculture/${showingDataFormatUrl}`),
+        ]);
+
+        const hydricResourcesRaw = mockedHydricResources[showingDataFormatUrl];
+        const hydricResources = hydricResourcesRaw
+          .map(getValueBasic)
+          .map(formatLocation);
+
+        commit("SET_REPORTS_DATA", {
+          hydricResources,
         });
       } catch (e) {
         console.error(e);
@@ -128,6 +146,8 @@ export default {
           await dispatch("FETCH_REPORT_AQUACULTURE", filters);
         } else if (groupmentParam === 4) {
           await dispatch("FETCH_REPORT_INDICATORS", filters);
+        } else if (groupmentParam === 5) {
+          await dispatch("FETCH_REPORT_RESOURCES", filters);
         }
       } catch (e) {
         console.error(e);

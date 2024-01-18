@@ -197,93 +197,82 @@ const securityWater = computed(() => {
   };
 });
 
-const chartsGroups = computed(() =>
+const chartsGroups = computed(() => [
   [
-    [
-      {
-        ...reportsBaseConfigs.registereds,
-        data: registeredCount.value.data,
-      },
-      {
-        ...reportsBaseConfigs.workers,
-        data: workersCount.value.data,
-      },
-      {
-        ...reportsBaseConfigs.superMonthVol,
-        stackKey: currentValueKeyLocation.value,
-        data: captationCountSuper.value.data,
-      },
-      {
-        ...reportsBaseConfigs.superMonthFlow,
-        stackKey: currentValueKeyLocation.value,
-        data: captationCountSuper.value.data,
-      },
-      {
-        ...reportsBaseConfigs.underMonthVol,
-        stackKey: currentValueKeyLocation.value,
-        data: captationCountUnder.value.data,
-      },
-      {
-        ...reportsBaseConfigs.underMonthFlow,
-        stackKey: currentValueKeyLocation.value,
-        data: captationCountUnder.value.data,
-      },
-    ],
-    [
-      {
-        ...(props.currentDataFormat.value === 3
-          ? reportsBaseConfigs.animalsByType
-          : reportsBaseConfigs.animals),
-        data: animals.value.data,
-      },
-    ],
-    [
-      {
-        ...reportsBaseConfigs.underVolTanks,
-        stackKey: currentValueKeyLocation.value,
-        data: aquacultureUnder.value.data,
-      },
-      {
-        ...reportsBaseConfigs.tanks,
-        data: aquacultureCount.value.data,
-      },
-      {
-        ...reportsBaseConfigs.underFlowTanks,
-        stackKey: currentValueKeyLocation.value,
-        data: aquacultureSuper.value.data,
-      },
-    ],
-    [
-      {
-        ...reportsBaseConfigs.secEconomic,
-        data: securityEconomic.value.data,
-      },
-      {
-        ...reportsBaseConfigs.secSocial,
-        data: securitySocial.value.data,
-      },
-      {
-        ...reportsBaseConfigs.secHydro,
-        data: securityWater.value.data,
-      },
-    ],
-    [
-      {
-        ...reportsBaseConfigs.cutHydro,
-        data: registeredCount.value.data,
-      },
-    ],
-  ].map((sub, i) => {
-    sub.map((chart, j) => {
-      chart.id = `chart-item-${i}-${j}`;
-      chart.width = 400;
-
-      return chart;
-    });
-
-    return sub;
-  })
-);
+    {
+      ...reportsBaseConfigs.registereds,
+      data: registeredCount.value.data,
+    },
+    {
+      ...reportsBaseConfigs.workers,
+      data: workersCount.value.data,
+    },
+    {
+      ...reportsBaseConfigs.superMonthVol,
+      stackKey: currentValueKeyLocation.value,
+      data: captationCountSuper.value.data,
+    },
+    {
+      ...reportsBaseConfigs.superMonthFlow,
+      stackKey: currentValueKeyLocation.value,
+      data: captationCountSuper.value.data,
+    },
+    {
+      ...reportsBaseConfigs.underMonthVol,
+      stackKey: currentValueKeyLocation.value,
+      data: captationCountUnder.value.data,
+    },
+    {
+      ...reportsBaseConfigs.underMonthFlow,
+      stackKey: currentValueKeyLocation.value,
+      data: captationCountUnder.value.data,
+    },
+  ],
+  [
+    {
+      ...(props.currentDataFormat.value === 3
+        ? reportsBaseConfigs.animalsByType
+        : reportsBaseConfigs.animals),
+      data: animals.value.data,
+    },
+  ],
+  [
+    {
+      ...reportsBaseConfigs.underVolTanks,
+      stackKey: currentValueKeyLocation.value,
+      data: aquacultureUnder.value.data,
+    },
+    {
+      ...reportsBaseConfigs.tanks,
+      data: aquacultureCount.value.data,
+    },
+    {
+      ...reportsBaseConfigs.underFlowTanks,
+      stackKey: currentValueKeyLocation.value,
+      data: aquacultureSuper.value.data,
+    },
+  ],
+  [
+    {
+      ...reportsBaseConfigs.secEconomic,
+      data: securityEconomic.value.data,
+    },
+    {
+      ...reportsBaseConfigs.secSocial,
+      data: securitySocial.value.data,
+    },
+    {
+      ...reportsBaseConfigs.secHydro,
+      data: securityWater.value.data,
+    },
+  ],
+  [
+    {
+      ...reportsBaseConfigs.hydricResources,
+      data: props.data.hydricResources,
+    },
+  ],
+]);
 
 watch(
   () => isLoadingReport.value,

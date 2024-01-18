@@ -9,6 +9,7 @@ const labelBy = {
 
 class ReportsBaseConfigs {
   data = {};
+  id = 1;
 
   formatConfiguration({
     component,
@@ -25,6 +26,8 @@ class ReportsBaseConfigs {
       valueKey,
       stackKey,
       labelBy,
+      width: 400,
+      id: `chart-item-${this.id++}`,
     };
   }
 
@@ -36,6 +39,7 @@ class ReportsBaseConfigs {
 }
 
 const ReportsConfigsInstance = new ReportsBaseConfigs();
+
 ReportsConfigsInstance.addChart("registereds", {
   component: BarChart,
   title: "Recenseados (quantidade)",
@@ -131,11 +135,11 @@ ReportsConfigsInstance.addChart("registereds", {
     seriesName: "Volume por área",
     valueKey: "VolumePorArea",
   })
-  .addChart("cutHydro", {
+  .addChart("hydricResources", {
     component: BarChart,
     title: "Corte hídrico (m³/ha)",
     seriesName: "Volume por área",
-    valueKey: "VolumePorArea",
+    valueKey: "CorteHidrico",
   });
 
 export const reportsBaseConfigs = ReportsConfigsInstance.data;
