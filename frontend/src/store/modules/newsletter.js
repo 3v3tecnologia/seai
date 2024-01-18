@@ -111,6 +111,8 @@ export default {
             throw new Error("Erro ao encontrar notícia.");
           }
 
+          console.log("newsletter", JSON.parse(JSON.stringify(newsletter)));
+
           newsletter = unwrapNewsLetter(newsletter);
           newsletter.FullTime = formatDateWithHour(
             newsletter.Time,

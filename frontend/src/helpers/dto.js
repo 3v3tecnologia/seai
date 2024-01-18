@@ -124,8 +124,8 @@ export const unwrapNewsLetter = (newsletterFromApi) => {
     Title: newsletterFromApi.Title,
     Description: newsletterFromApi.Description,
     Auth: newsletterFromApi.Author.Organ,
-    Time: "2023-08-22",
-    Hour: "23",
+    Time: newsletterFromApi.Time,
+    Hour: newsletterFromApi.Hour,
   };
 };
 
