@@ -7,3 +7,5 @@ export * from "./user-manager-read";
 export * from "./user-manager-write";
 export * from "./register-manager-read";
 export * from "./register-manager-write";
+export * from "./jobs-read";
+export * from "./jobs-write";

@@ -240,6 +240,14 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
           });
 
         await trx("User_Access")
+          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.JOBS].id })
+          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
+          .update({
+            Read: data.modules[Modules.JOBS].read,
+            Write: data.modules[Modules.JOBS].write,
+          });
+
+        await trx("User_Access")
           .where({
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,

@@ -13,34 +13,67 @@ import {
   makeUpdateCronController,
   makeUpdateJobController,
 } from "../factories/controllers/jobs";
-import { authorization } from "../http-middlewares";
+import {
+  authorization,
+  jobsReadAccessAuth,
+  jobsWriteAccessAuth,
+} from "../http-middlewares";
 
 export const backgroundJobsRouter = (): Router => {
   const router = Router();
-  router.post("/", authorization, adaptRoute(makeCreateJobController()));
-  router.put("/", authorization, adaptRoute(makeUpdateJobController()));
-  router.delete("/", authorization, adaptRoute(makeDeleteJobController()));
+  router.post(
+    "/",
+    authorization,
+    jobsWriteAccessAuth,
+    adaptRoute(makeCreateJobController())
+  );
+  router.put(
+    "/",
+    authorization,
+    jobsWriteAccessAuth,
+    adaptRoute(makeUpdateJobController())
+  );
+  router.delete(
+    "/",
+    authorization,
+    jobsWriteAccessAuth,
+    adaptRoute(makeDeleteJobController())
+  );
   router.get(
     "/states",
     authorization,
+    jobsReadAccessAuth,
     adaptRoute(makeFetchJobsStatesController())
   );
-  router.get("/", authorization, adaptRoute(makeFetchJobsController()));
+  router.get(
+    "/",
+    authorization,
+    jobsReadAccessAuth,
+    adaptRoute(makeFetchJobsController())
+  );
   //CRON
-  router.get("/schedule", authorization, adaptRoute(makeFetchCronController()));
+  router.get(
+    "/schedule",
+    authorization,
+    jobsReadAccessAuth,
+    adaptRoute(makeFetchCronController())
+  );
   router.post(
     "/schedule",
     authorization,
+    jobsWriteAccessAuth,
     adaptRoute(makeCreateCronController())
   );
   router.put(
     "/schedule",
     authorization,
+    jobsWriteAccessAuth,
     adaptRoute(makeUpdateCronController())
   );
   router.delete(
     "/schedule",
     authorization,
+    jobsWriteAccessAuth,
     adaptRoute(makeDeleteCronController())
   );
 

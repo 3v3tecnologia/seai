@@ -25,6 +25,11 @@ describe("#User entity", () => {
             read: false,
             write: false,
           },
+          jobs: {
+            id: 4,
+            read: false,
+            write: false,
+          },
         },
       });
 
@@ -51,6 +56,11 @@ describe("#User entity", () => {
           user: {
             id: 3,
             read: true,
+            write: false,
+          },
+          jobs: {
+            id: 4,
+            read: false,
             write: false,
           },
         },
@@ -81,6 +91,11 @@ describe("#User entity", () => {
           user: {
             id: 3,
             read: true,
+            write: false,
+          },
+          jobs: {
+            id: 4,
+            read: false,
             write: false,
           },
         },
@@ -120,6 +135,11 @@ describe("#User entity", () => {
             read: false,
             write: false,
           },
+          jobs: {
+            id: 4,
+            read: false,
+            write: false,
+          },
         },
       });
 
@@ -147,6 +167,11 @@ describe("#User entity", () => {
           },
           user: {
             id: 3,
+            read: false,
+            write: false,
+          },
+          jobs: {
+            id: 4,
             read: false,
             write: false,
           },

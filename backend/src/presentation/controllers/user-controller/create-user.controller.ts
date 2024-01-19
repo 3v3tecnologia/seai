@@ -56,6 +56,7 @@ export namespace CreateUserController {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;
       [Modules.USER]: Required<SystemModulesPermissions>;
+      [Modules.JOBS]: Required<SystemModulesPermissions>;
     };
   };
 }

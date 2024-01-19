@@ -19,6 +19,7 @@ export enum Modules {
   NEWS = "news",
   REGISTER = "register",
   USER = "user",
+  JOBS = "jobs",
 }
 
 export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
@@ -98,6 +99,16 @@ export class SystemModules {
         argumentName: "permissão para escrita ",
         type: "boolean",
       },
+      {
+        argument: modules[Modules.JOBS].read,
+        argumentName: "permissão para leitura de tarefas automatizadas",
+        type: "boolean",
+      },
+      {
+        argument: modules[Modules.JOBS].write,
+        argumentName: "permissão para escrita para tarefas automatizadas",
+        type: "boolean",
+      },
     ]);
 
     if (isSatisfiedTypes.isLeft()) {
@@ -148,6 +159,7 @@ export class SystemModules {
       newUserModuleAccess[Modules.NEWS].id,
       newUserModuleAccess[Modules.REGISTER].id,
       newUserModuleAccess[Modules.USER].id,
+      newUserModuleAccess[Modules.JOBS].id,
     ];
 
     // evitar ter que salvar usuário com módulos que não existem

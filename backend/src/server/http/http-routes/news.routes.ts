@@ -5,6 +5,7 @@ import {
   userWriteAccessAuth,
   userReadAccessAuth,
   authorization,
+  newsReadAccessAuth,
 } from "../http-middlewares";
 
 import {
@@ -14,6 +15,7 @@ import {
   makeFetchByIdNewsletterController,
   makeUpdateNewsletterController,
 } from "../factories/controllers/newsletter";
+import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
 export const newsRouter = (): Router => {
   const router = Router();
@@ -21,35 +23,35 @@ export const newsRouter = (): Router => {
   router.post(
     "/",
     authorization,
-    userWriteAccessAuth,
+    newsWriteAccessAuth,
     adaptRoute(makeCreateNewsletter())
   );
 
   router.put(
     "/:id",
     authorization,
-    userWriteAccessAuth,
+    newsWriteAccessAuth,
     adaptRoute(makeUpdateNewsletterController())
   );
 
   router.delete(
     "/:id",
     authorization,
-    userWriteAccessAuth,
+    newsWriteAccessAuth,
     adaptRoute(makeDeleteNewsletterController())
   );
 
   router.get(
     "/:id",
     authorization,
-    userReadAccessAuth,
+    newsReadAccessAuth,
     adaptRoute(makeFetchByIdNewsletterController())
   );
 
   router.get(
     "/",
     authorization,
-    userReadAccessAuth,
+    newsReadAccessAuth,
     adaptRoute(makeFetchAllNewsletterController())
   );
 
