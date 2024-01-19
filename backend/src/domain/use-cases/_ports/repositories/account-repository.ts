@@ -54,6 +54,9 @@ export namespace AccountRepository {
   export interface DeleteById {
     deleteById(id_user: number): Promise<boolean>;
   }
+  export interface DeleteByEmail {
+    deleteByEmail(email: string): Promise<boolean>;
+  }
 
   export interface GetById {
     getById(

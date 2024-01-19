@@ -34,7 +34,7 @@ export const userRouter = (): Router => {
   );
 
   router.delete(
-    "/delete/:id",
+    "/delete",
     authorization,
     userWriteAccessAuth,
     adaptRoute(makeDeleteUserController())

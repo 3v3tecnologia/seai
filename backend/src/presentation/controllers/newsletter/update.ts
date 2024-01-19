@@ -1,23 +1,24 @@
 import { HttpResponse } from "../ports";
 
-import { UpdateNews } from "../../../domain/use-cases/newsletter";
+import { UpdateNewsUseCaseProtocol } from "../../../domain/use-cases/newsletter";
 import { forbidden, ok, serverError } from "../helpers";
 
 export class UpdateController {
-  private useCase: UpdateNews;
+  private useCase: UpdateNewsUseCaseProtocol.UseCase;
 
-  constructor(useCase: UpdateNews) {
+  constructor(useCase: UpdateNewsUseCaseProtocol.UseCase) {
     this.useCase = useCase;
   }
 
   async handle(request: UpdateController.Request): Promise<HttpResponse> {
     try {
-      const createdOrError = await this.useCase.create({
+      const createdOrError = await this.useCase.execute({
         Id: request.id,
         Data: request.Data,
         Description: request.Description,
         FK_Author: request.FK_Author,
         Title: request.Title,
+        SendDate: request.SendDate,
       });
 
       if (createdOrError.isLeft()) {
@@ -41,6 +42,6 @@ export namespace UpdateController {
     Description: string | null;
     Data: any;
     LocationName?: string;
-    SendDate?: string;
+    SendDate: string;
   };
 }

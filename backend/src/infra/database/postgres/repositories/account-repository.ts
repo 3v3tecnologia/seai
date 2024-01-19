@@ -370,6 +370,11 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
     return true;
   }
 
+  async deleteByEmail(email: string): Promise<boolean> {
+    await governmentDb("User").where("Email", email).del();
+    return true;
+  }
+
   async getById(
     id_user: number
   ): Promise<Required<AccountRepository.FullUserData> | null> {

@@ -48,7 +48,7 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
 export namespace FetchJobUseCaseProtocol {
   export type Request = {
     id?: string;
-  } & InputWithPagination & { queue?: string; state?: string };
+  } & Partial<InputWithPagination> & { queue?: string; state?: string };
 
   export type Response = OutputWithPagination<any[]> | null | any;
 

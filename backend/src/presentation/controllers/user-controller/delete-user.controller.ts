@@ -17,7 +17,17 @@ export class DeleteUserController extends CommandController<
   }
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
-    const result = await this.deleteUser.execute(request.id);
+    const dto = {
+      id: request.id,
+    };
+
+    if (request.email) {
+      Object.assign(dto, {
+        email: request.email,
+      });
+    }
+
+    const result = await this.deleteUser.execute(dto);
 
     if (result.isLeft()) {
       return forbidden(result.value);
@@ -31,5 +41,6 @@ export namespace DeleteUserController {
   export type Request = {
     accountId: number;
     id: number;
+    email?: string;
   };
 }

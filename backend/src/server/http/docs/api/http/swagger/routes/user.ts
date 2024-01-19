@@ -432,16 +432,25 @@ export const USER = {
     delete: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Delete user account by  id",
-      description: "Delete user account by id",
+      summary: "Delete user account by  id or email",
+      description: "Delete user account by or email",
       parameters: [
         {
           name: "id",
-          in: "path",
+          in: "query",
           description: "User Id",
-          required: true,
+          required: false,
           schema: {
             type: "number",
+          },
+        },
+        {
+          name: "name",
+          in: "query",
+          description: "User name",
+          required: false,
+          schema: {
+            type: "string",
           },
         },
       ],
