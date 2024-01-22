@@ -9,4 +9,5 @@ export default {
   submitDataKey: "CREATE_NEWSLETTER",
   headerLabel,
   finishedDataButton: newsletter.finishedDataButton,
+  navBarTab: newsletter.navBarTab,
 };

@@ -1,3 +1,4 @@
+import { route } from "./common";
 const getDataKey = "GET_CURRENT_BODY";
 
 const submitDataKey = "UPDATE_BODY";
@@ -6,31 +7,11 @@ const storeDataKey = "currentBody";
 
 const headerLabel = "Editando órgão meteorológico";
 
-const fields = [
-  {
-    label: "Nome",
-    formKey: "Name",
-    type: "text",
-  },
-  {
-    label: "Host",
-    formKey: "Host",
-    type: "text",
-    nullable: true,
-  },
-  {
-    label: "Senha",
-    formKey: "Password",
-    type: "password",
-    nullable: true,
-  },
-];
-
 export default {
   getDataKey,
   storeDataKey,
   submitDataKey,
   headerLabel,
-  fields,
-  navBarTab: 1,
+  fields: route.fields,
+  navBarTab: route.navBarTab,
 };

@@ -33,7 +33,7 @@
               class="margin-inputs d-block p-input-icon-right p-float-label"
             >
               <i
-                v-if="field.type === 'password'"
+                v-if="field.type === 'password' || field.subtype === 'password'"
                 @click="() => clickEyePassword(field)"
                 :class="`pi ${field.tmp_pass ? 'pi-eye-slash' : 'pi-eye'}`"
               />
@@ -132,6 +132,8 @@ const store = useStore();
 
 const clickEyePassword = (field) => {
   field.tmp_pass = !field.tmp_pass;
+  field.subtype = "password";
+  field.type = field.type === "password" ? "text" : "password";
 };
 
 const props = defineProps({

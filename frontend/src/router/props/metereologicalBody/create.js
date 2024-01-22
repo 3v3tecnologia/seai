@@ -1,4 +1,5 @@
 const submitDataKey = "CREATE_BODY";
+import { route } from "./common";
 
 const headerLabel = "Criando órgão meteorológico";
 
@@ -27,5 +28,6 @@ export default {
   storeDataKey: "",
   submitDataKey,
   headerLabel,
-  fields,
+  fields: route.fields,
+  navBarTab: route.navBarTab,
 };
