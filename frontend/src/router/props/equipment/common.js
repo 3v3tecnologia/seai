@@ -3,36 +3,48 @@ export const route = {
 
   fields: [
     {
-      label: "Título",
-      formKey: "Title",
+      label: "Nome",
+      formKey: "Name",
       type: "text",
     },
     {
-      formKey: "SendDate",
-      component: {
-        name: "FilterDate",
-        props: {
-          label: "Data de envio",
-          showTime: true,
-          selectionMode: "single",
-          stepMinute: 1,
-        },
-      },
-    },
-    {
-      label: "Descrição",
-      formKey: "Description",
+      label: "Id externo",
+      formKey: "Code",
       type: "text",
     },
     {
-      formKey: "Text",
-      colSize: 12,
-      component: {
-        name: "FieldEditor",
-        props: {
-          label: "Mensagem",
-        },
-      },
+      label: "Nome do órgão",
+      formKey: "Organ",
+      type: "text",
+      getListKey: "FETCH_BODIES_OPTIONS",
+      getterKey: "bodiesOptions",
+    },
+    {
+      label: "Tipo de equipamento",
+      formKey: "NomeTipoEquipamento",
+      type: "text",
+      getListKey: "FETCH_EQUIPMENT_TYPE_OPTIONS",
+      getterKey: "equipmentTypeOptions",
+    },
+    {
+      label: "Nome da localização",
+      formKey: "LocationName",
+      type: "text",
+    },
+    {
+      label: "Altitude",
+      formKey: "Altitude",
+      type: "number",
+    },
+    {
+      label: "Latitude",
+      formKey: "x",
+      type: "number",
+    },
+    {
+      label: "Longitude",
+      formKey: "y",
+      type: "number",
     },
   ],
 };
