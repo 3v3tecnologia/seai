@@ -33,13 +33,14 @@
       :get-data-key="getDataKey"
       :delete-data-key="deleteDataKey"
       :api-pagination="apiPagination"
+      selectable
     />
   </BasicContentWrapper>
 </template>
 
 <script lang="ts" setup>
 import { useStore } from "vuex";
-import CrudTable from "@/components/CrudTable.vue";
+import CrudTable from "@/components/tables/CrudTable.vue";
 import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { accessStoreKey } from "@/helpers/dto";

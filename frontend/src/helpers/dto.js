@@ -150,7 +150,7 @@ export const decodeByteArr = (data) => {
   return decodeBin(bin);
 };
 
-export const encodeBin = (inputString) => {
+export const encodeBin = (inputString = "") => {
   // Encode the input string to Base64
   const base64Encoded = btoa(unescape(encodeURIComponent(inputString)));
 
@@ -162,7 +162,10 @@ export const encodeBin = (inputString) => {
 
 export const getUnixTime = (timestamp) => moment(timestamp).valueOf();
 
-export const toTimestamp = (date) => moment(date).format("YYYY-MM-DD hh:mm");
+export const toTimestamp = (date) => {
+  moment.locale("pt-br");
+  return moment(date).format();
+};
 
 export const mapOptions = (options) => {
   const mapedCronsOptionsTemp = {};

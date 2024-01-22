@@ -23,6 +23,8 @@ export const route = {
       label: "Descrição",
       formKey: "Description",
       type: "text",
+      min: 1,
+      max: 50,
     },
     {
       formKey: "Text",

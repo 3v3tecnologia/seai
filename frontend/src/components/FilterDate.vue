@@ -73,7 +73,11 @@ const dates = ref();
 
 const emit = defineEmits(["update:modelValue"]);
 
-watch(dates, (val) => {
+watch(dates, (val, oldVal) => {
+  if (val && !oldVal) {
+    return;
+  }
+
   let emitedVal = val;
 
   if (!emitedVal) {

@@ -97,6 +97,7 @@
         :has-api-filters="hasApiFilters"
         :get-data-key="getDataKey"
         :data="data"
+        :selectable="selectable"
         :columns="columns"
         :action-text="actionText"
       />
@@ -118,7 +119,7 @@ import BaseDropdown from "@/components/BaseDropdown.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import FilterDate from "@/components/FilterDate.vue";
-import BaseTable from "@/components/BaseTable.vue";
+import BaseTable from "@/components/tables/BaseTable.vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { toast } from "vue3-toastify";
@@ -139,6 +140,10 @@ const store = useStore();
 
 const props = defineProps({
   hideSearch: {
+    type: Boolean,
+    default: false,
+  },
+  selectable: {
     type: Boolean,
     default: false,
   },

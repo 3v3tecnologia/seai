@@ -50,6 +50,9 @@ export default {
     {
       title: "Observação",
       field: "output",
+      formatter: (col) => {
+        return col._cell.value?.value;
+      },
     },
   ],
 };

@@ -59,8 +59,12 @@
                 :required="!field.nullable"
                 :type="field.type || 'text'"
                 :input-id="field.formKey"
-                :minlength="field.requireMinMax ? 5 : null"
-                :maxlength="field.requireMinMax ? 25 : null"
+                :minlength="
+                  field.requireMinMax || field.min ? field.min || 5 : null
+                "
+                :maxlength="
+                  field.requireMinMax || field.max ? field.max || 25 : null
+                "
                 class="w-100"
               />
 

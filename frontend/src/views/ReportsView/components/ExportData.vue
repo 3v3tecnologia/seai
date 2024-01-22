@@ -11,16 +11,11 @@
         is-report
       />
     </div>
-    <div class="col-lg-12">
-      <div class="wrapper-table">
-        <div ref="table" />
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import BaseTable from "@/components/BaseTable.vue";
+import BaseTable from "@/components/tables/BaseTable.vue";
 import { toast } from "vue3-toastify";
 import { ref, defineProps, computed } from "vue";
 

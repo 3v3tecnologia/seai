@@ -22,6 +22,10 @@
       <div ref="table" />
     </div>
 
+    <div class="wrapper-table w-100 mt-3 d-none">
+      <div ref="tabDownload" />
+    </div>
+
     <BasePagination
       v-model="pageNumber"
       class="w-100"
@@ -54,16 +58,20 @@ const pageNumber = ref(1);
 
 const table = ref(null);
 const tabulator = ref(null);
+
+const tabDownload = ref(null);
+const tabulatorDownload = ref(null);
+
 const fileName = () => {
   return props.title.toLowerCase().split(" ").join("_");
 };
 
 const downloadCSV = () => {
-  tabulator.value.download("csv", `${fileName()}.csv`, { bom: true });
+  tabulatorDownload.value.download("csv", `${fileName()}.csv`, { bom: true });
 };
 
 const downloadXLSX = () => {
-  tabulator.value.download("xlsx", `${fileName()}.xlsx`, {
+  tabulatorDownload.value.download("xlsx", `${fileName()}.xlsx`, {
     sheetName: fileName(),
     bom: true,
   });
@@ -87,6 +95,10 @@ const props = defineProps({
     default: null,
   },
   isReport: {
+    type: Boolean,
+    default: false,
+  },
+  selectable: {
     type: Boolean,
     default: false,
   },
@@ -225,6 +237,16 @@ const updateSelecteds = (selecteds) => {
 onMounted(() => {
   tabulator.value = new Tabulator(table.value, {
     data: dataShowing.value,
+    reactiveData: false,
+    columns: columnsDTO.value,
+    layout: "fitColumns",
+    validationMode: "highlight",
+  });
+
+  console.log("2tf", tabDownload.value);
+
+  tabulatorDownload.value = new Tabulator(tabDownload.value, {
+    data: props.data,
     reactiveData: false,
     columns: columnsDTO.value,
     layout: "fitColumns",
