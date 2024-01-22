@@ -2,7 +2,6 @@ import { formatDateWithHour } from "@/helpers/date";
 import {
   decodeByteArr,
   encodeBin,
-  getUnixTime,
   toTimestamp,
   unwrapNewsLetter,
 } from "@/helpers/dto";
@@ -55,7 +54,7 @@ export default {
             Title: form.Title,
             Description: form.Description,
             Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+            SendDate: toTimestamp(form.SendDate),
           };
 
           await http.post(`/news/`, newsletter);
@@ -78,7 +77,7 @@ export default {
             SendDate: toTimestamp(form.SendDate),
           };
 
-          console.log(newsletter.SendDate);
+          console.log("what the hell", form);
 
           await http.put(`/news/${form.Id}`, newsletter);
           toast.success("Notícia atualizada com sucesso.");

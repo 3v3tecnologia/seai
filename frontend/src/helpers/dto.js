@@ -163,10 +163,7 @@ export const encodeBin = (inputString) => {
 
 export const getUnixTime = (timestamp) => moment(timestamp).valueOf();
 
-export const toTimestamp = (date) => {
-  console.log(date);
-  return moment(date).format("MM/DD/YYYY hh:mm a");
-};
+export const toTimestamp = (date) => moment(date).format("YYYY-MM-DD hh:mm");
 
 export const mapOptions = (options) => {
   const mapedCronsOptionsTemp = {};

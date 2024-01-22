@@ -1,6 +1,5 @@
 <template>
   <span class="p-float-label w-100 margin-top-mob wrapper-filter">
-    {{ dates }}
     <Calendar
       v-model="dates"
       inputId="date-range-read"
@@ -70,7 +69,6 @@ const props = defineProps({
   },
 });
 
-// const valFormated = computed(() => moment(dates.value).format(props.dateFormat));
 const dates = ref();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -78,9 +76,15 @@ const emit = defineEmits(["update:modelValue"]);
 watch(dates, (val) => {
   let emitedVal = val;
 
-  if (typeof val != "string" && !emitedVal?.length) {
+  if (!emitedVal) {
     emitedVal = [];
   }
+
+  console.log(
+    "emitindo valor",
+    emitedVal,
+    moment(emitedVal).format("MM/DD/YYYY hh:mm")
+  );
 
   emit("update:modelValue", emitedVal);
 });
@@ -88,8 +92,8 @@ watch(dates, (val) => {
 watch(
   () => props.modelValue,
   (val) => {
-    if (typeof val === "string" && val != dates.value) {
-      const formattedDate = moment(val).format("DD/MM/YYYY HH:00");
+    if (typeof val === "string" && val != dates.value && val) {
+      const formattedDate = new Date(val);
 
       dates.value = formattedDate;
     }
