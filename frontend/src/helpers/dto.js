@@ -112,7 +112,6 @@ export const ungroupData = (items) => {
 };
 
 export const columnFullDateFormat = (col) => {
-  console.log("aaaa", col._cell.value);
   return col._cell.value
     ? moment(col._cell.value).format("DD/MM/YYYY HH:ss")
     : "";

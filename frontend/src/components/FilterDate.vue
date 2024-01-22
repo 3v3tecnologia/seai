@@ -80,12 +80,6 @@ watch(dates, (val) => {
     emitedVal = [];
   }
 
-  console.log(
-    "emitindo valor",
-    emitedVal,
-    moment(emitedVal).format("MM/DD/YYYY hh:mm")
-  );
-
   emit("update:modelValue", emitedVal);
 });
 

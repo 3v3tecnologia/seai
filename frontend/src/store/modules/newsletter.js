@@ -77,8 +77,6 @@ export default {
             SendDate: toTimestamp(form.SendDate),
           };
 
-          console.log("what the hell", form);
-
           await http.put(`/news/${form.Id}`, newsletter);
           toast.success("Notícia atualizada com sucesso.");
         } catch (e) {
