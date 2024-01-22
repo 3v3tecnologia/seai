@@ -561,88 +561,90 @@ export const reportsDataDefault = {
 };
 
 export const mockedHydricResources = {
-  basin: {
-    "Alto Jaguaribe": [
-      {
-        Cultura: "ABACATE",
-        CorteHidrico: 11,
-      },
-      {
-        Cultura: "AÇAI",
-        CorteHidrico: 18,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 28,
-      },
-      {
-        Cultura: "ARROZ",
-        CorteHidrico: 57,
-      },
-      {
-        Cultura: "ATA",
-        CorteHidrico: 24,
-      },
-      {
-        Cultura: "CAJU",
-        CorteHidrico: 30,
-      },
-    ],
-    "Baixo Jaguaribe": [
-      {
-        Cultura: "ABACATE",
-        CorteHidrico: 2128,
-      },
-      {
-        Cultura: "AÇAI",
-        CorteHidrico: 3080,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 257,
-      },
-      {
-        Cultura: "ARROZ",
-        CorteHidrico: 1160,
-      },
-      {
-        Cultura: "ATA",
-        CorteHidrico: 454,
-      },
-      {
-        Cultura: "CAJU",
-        CorteHidrico: 0,
-      },
-    ],
-    "Médio Jaguaribe": [
-      {
-        Cultura: "ABACATE",
-        CorteHidrico: 9199,
-      },
-      {
-        Cultura: "AÇAI",
-        CorteHidrico: 9273,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 339,
-      },
-      {
-        Cultura: "ACEROLA",
-        CorteHidrico: 1393,
-      },
-      {
-        Cultura: "ARROZ",
-        CorteHidrico: 1818,
-      },
-      {
-        Cultura: "ATA",
-        CorteHidrico: 1082,
-      },
-      {
-        Cultura: "CAJU",
-        CorteHidrico: 0,
-      },
-    ],
-  },
+  "Alto Jaguaribe": [
+    {
+      Cultura: "ABACATE",
+      CorteHidrico: 11,
+    },
+    {
+      Cultura: "AÇAI",
+      CorteHidrico: 18,
+    },
+    {
+      Cultura: "ACEROLA",
+      CorteHidrico: 28,
+    },
+    {
+      Cultura: "ARROZ",
+      CorteHidrico: 57,
+    },
+    {
+      Cultura: "ATA",
+      CorteHidrico: 24,
+    },
+    {
+      Cultura: "CAJU",
+      CorteHidrico: 30,
+    },
+  ],
+  "Baixo Jaguaribe": [
+    {
+      Cultura: "ABACATE",
+      CorteHidrico: 2128,
+    },
+    {
+      Cultura: "AÇAI",
+      CorteHidrico: 3080,
+    },
+    {
+      Cultura: "ACEROLA",
+      CorteHidrico: 257,
+    },
+    {
+      Cultura: "ARROZ",
+      CorteHidrico: 1160,
+    },
+    {
+      Cultura: "ATA",
+      CorteHidrico: 454,
+    },
+    {
+      Cultura: "CAJU",
+      CorteHidrico: 0,
+    },
+  ],
+  "Médio Jaguaribe": [
+    {
+      Cultura: "ABACATE",
+      CorteHidrico: 9199,
+    },
+    {
+      Cultura: "AÇAI",
+      CorteHidrico: 9273,
+    },
+    {
+      Cultura: "ACEROLA",
+      CorteHidrico: 339,
+    },
+    {
+      Cultura: "ACEROLA",
+      CorteHidrico: 1393,
+    },
+    {
+      Cultura: "ARROZ",
+      CorteHidrico: 1818,
+    },
+    {
+      Cultura: "ATA",
+      CorteHidrico: 1082,
+    },
+    {
+      Cultura: "CAJU",
+      CorteHidrico: 0,
+    },
+  ],
+};
+
+export const reportsDataAllDefault = {
+  hydricResources: null,
 };

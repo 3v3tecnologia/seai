@@ -1,5 +1,6 @@
 <template>
   <span class="p-float-label w-100 margin-top-mob wrapper-filter">
+    {{ dates }}
     <Calendar
       v-model="dates"
       inputId="date-range-read"

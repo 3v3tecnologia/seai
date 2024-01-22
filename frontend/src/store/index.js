@@ -311,7 +311,7 @@ export const store = createStore({
     async ["DELETE_USERS"]({ commit }, ids) {
       try {
         await Promise.allSettled(
-          ids.map(async (id) => await http.delete(`/user/delete/${id}`))
+          ids.map(async (id) => await http.delete(`/user/delete?id=${id}`))
         );
 
         toast.success("Sucesso ao deletar usuário(s)");

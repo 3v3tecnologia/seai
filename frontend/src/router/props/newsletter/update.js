@@ -13,7 +13,7 @@ const fields = [
     type: "text",
   },
   {
-    formKey: "Time",
+    formKey: "SendDate",
     component: {
       name: "FilterDate",
       props: {

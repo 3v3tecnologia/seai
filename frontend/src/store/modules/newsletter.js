@@ -3,6 +3,7 @@ import {
   decodeByteArr,
   encodeBin,
   getUnixTime,
+  toTimestamp,
   unwrapNewsLetter,
 } from "@/helpers/dto";
 import http from "@/http";
@@ -35,7 +36,7 @@ export default {
 
           commit("SET_LIST", {
             data: newsletters.map(unwrapNewsLetter).map((n) => {
-              n.FullTime = formatDateWithHour(n.Time, n.Hour);
+              // n.FullTime = formatDateWithHour(n.Time, n.Hour);
 
               return n;
             }),
@@ -74,8 +75,10 @@ export default {
             Title: form.Title,
             Description: form.Description,
             Data: encodeBin(form.Text),
-            SendDate: getUnixTime(form.Time),
+            SendDate: toTimestamp(form.SendDate),
           };
+
+          console.log(newsletter.SendDate);
 
           await http.put(`/news/${form.Id}`, newsletter);
           toast.success("Notícia atualizada com sucesso.");
@@ -112,10 +115,10 @@ export default {
           }
 
           newsletter = unwrapNewsLetter(newsletter);
-          newsletter.FullTime = formatDateWithHour(
-            newsletter.Time,
-            newsletter.Hour
-          );
+          // newsletter.FullTime = formatDateWithHour(
+          //   newsletter.Time,
+          //   newsletter.Hour
+          // );
 
           newsletter.Text = decodeByteArr(newsletter.Data);
 

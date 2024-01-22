@@ -32,7 +32,7 @@ export default {
     },
     {
       title: "Data de envio",
-      field: "FullTime",
+      field: "SendDate",
       formatter: columnFullDateFormat,
     },
     {

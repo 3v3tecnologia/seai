@@ -1,5 +1,9 @@
 import http from "@/http";
-import { reportsDataDefault, mockedHydricResources } from "../mocks";
+import {
+  reportsDataDefault,
+  mockedHydricResources,
+  reportsDataAllDefault,
+} from "../mocks";
 import { dataFormatUrl } from "@/constants";
 import { formatLocation, getValueBasic, ungroupData } from "@/helpers/dto";
 
@@ -8,6 +12,7 @@ export default {
     isLoadingReport: false,
     reportsData: reportsDataDefault,
     currentBasinName: "",
+    reportsDataAll: reportsDataAllDefault,
   }),
   mutations: {
     ["SET_REPORTS_DATA"](state, data) {
@@ -21,6 +26,12 @@ export default {
     },
     ["SET_CURRENT_BASIN_NAME"](state, basinName) {
       state.currentBasinName = basinName;
+    },
+    ["SET_REPORTS_DATA_ALL"](state, data) {
+      state.reportsDataAll = {
+        ...reportsDataAllDefault,
+        ...data,
+      };
     },
   },
   actions: {
@@ -104,15 +115,34 @@ export default {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
+        const hydrographicBasinIndexes = Object.keys(filters.hydrographicBasin);
+        const hydrographicBasinTitle =
+          filters.hydrographicBasin?.[
+            hydrographicBasinIndexes[hydrographicBasinIndexes.length - 1]
+          ]?.title;
+
         const responses = await Promise.all([
           await http.get(`/census/captation/tank/${showingDataFormatUrl}`),
           await http.get(`/census/aquaculture/${showingDataFormatUrl}`),
         ]);
 
-        const hydricResourcesRaw = mockedHydricResources[showingDataFormatUrl];
-        const basinKey = Object.keys(hydricResourcesRaw)[0];
-        commit("SET_CURRENT_BASIN_NAME", basinKey);
+        if (!state.reportsDataAll.hydroResourcesAll) {
+          commit("SET_REPORTS_DATA_ALL", {
+            hydricResources: mockedHydricResources,
+          });
+        }
 
+        const hydricResourcesRaw = state.reportsDataAll.hydricResources;
+
+        // "random" key
+        let basinKey =
+          hydrographicBasinTitle ?? Object.keys(hydricResourcesRaw)[0];
+
+        if (basinKey == state.currentBasinName) {
+          return;
+        }
+
+        commit("SET_CURRENT_BASIN_NAME", basinKey);
         const hydricResources = hydricResourcesRaw[basinKey]
           .map(getValueBasic)
           .map(formatLocation)

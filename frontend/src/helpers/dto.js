@@ -112,6 +112,7 @@ export const ungroupData = (items) => {
 };
 
 export const columnFullDateFormat = (col) => {
+  console.log("aaaa", col._cell.value);
   return col._cell.value
     ? moment(col._cell.value).format("DD/MM/YYYY HH:ss")
     : "";
@@ -161,6 +162,11 @@ export const encodeBin = (inputString) => {
 };
 
 export const getUnixTime = (timestamp) => moment(timestamp).valueOf();
+
+export const toTimestamp = (date) => {
+  console.log(date);
+  return moment(date).format("MM/DD/YYYY hh:mm a");
+};
 
 export const mapOptions = (options) => {
   const mapedCronsOptionsTemp = {};

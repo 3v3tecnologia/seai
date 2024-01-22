@@ -174,6 +174,7 @@ const props = defineProps({
 const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },
   groupReports: { ...groupReports.value },
+  hydrographicBasin: { ...hydrographicBasin.value },
 }));
 
 const hydrographicBasinName = computed(() =>
@@ -230,6 +231,8 @@ const applyFilters = () => {
   showingDataFormat.value = showingDataFormatTemp.value;
   hydrographicBasin.value = hydrographicBasinTemp.value;
   city.value = cityTemp.value;
+
+  store.commit("SET_CURRENT_BASIN_NAME", hydrographicBasin.value[0] || "");
 };
 
 watch(
@@ -246,7 +249,10 @@ watch(
 watch(
   () => groupReportsTemp,
   async (newVal) => {
-    if (newVal.value.value !== 2 && showingDataFormatTemp.value.value === 3) {
+    const isLeavingAnimalType =
+      newVal.value.value !== 2 && showingDataFormatTemp.value.value === 3;
+    const isEnteringBasinOnly = newVal.value.value == 5;
+    if (isLeavingAnimalType || isEnteringBasinOnly) {
       showingDataFormatTemp.value = totalGroupment[0];
     }
   },
@@ -266,9 +272,10 @@ watch(
   (newVal) => {
     if (newVal) {
       hydrographicBasinTemp.value = [
-        hydrographicBasinOptions.value.find((b) => b.title === newVal),
+        hydrographicBasinOptions.value.find(
+          (b) => b.title === newVal || newVal.title
+        ),
       ];
-      hydrographicBasin.value = hydrographicBasinTemp.value;
     }
   },
   { immediate: true }

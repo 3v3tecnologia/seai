@@ -5,6 +5,9 @@ export function formatDate(time) {
 }
 
 export function formatDateWithHour(time, hour) {
+  if (!time || (!hour && ![0, "0"].includes(hour))) {
+    return "";
+  }
   const usedHour = hour || hour === 0 ? hour : moment().hour();
   const baseDate = moment(time);
 
