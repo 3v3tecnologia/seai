@@ -29,7 +29,97 @@ export class UpdateNews
     this.fetchJob = fetchJob;
     this.updateJob = updateJob;
   }
-  async create(
+
+  private async createNewsletterJob(
+    request: UpdateNewsUseCaseProtocol.Request
+  ) {
+    const jobOrError = await this.scheduleJob.execute({
+      name: "send-newsletter",
+      data: {
+        id: request.Id,
+      },
+      priority: 1,
+      retryDelay: 60,
+      retryLimit: 3,
+      startAfter: request.SendDate,
+    });
+
+    if (jobOrError.isLeft()) {
+      return left(jobOrError.value);
+    }
+
+    const job = jobOrError.value;
+
+    await this.repository.associateJobToNews(job.id, request.Id);
+
+    return right("Job de notícia agendado com sucesso!");
+  }
+
+  private async updateNewsletterJob(
+    oldJob: {
+      id: string;
+      name: string;
+      priority: number;
+      retryDelay: number;
+      retryLimit: number;
+    },
+    toUpdate: {
+      NewsId: number;
+      SendDate?: string;
+    }
+  ) {
+    console.log("Atualizando job", oldJob);
+
+    return await this.updateJob.execute({
+      id: oldJob.id,
+      data: toUpdate.NewsId
+        ? {
+            id: toUpdate.NewsId,
+          }
+        : null,
+      name: oldJob.name,
+      priority: oldJob.priority,
+      retryDelay: oldJob.retryDelay,
+      retryLimit: oldJob.retryLimit,
+      startAfter: toUpdate.SendDate,
+      state: "created",
+    });
+  }
+
+  private async createOrScheduleJob(
+    request: UpdateNewsUseCaseProtocol.Request
+  ) {
+    const associatedJobId = await this.repository.getIdJobFromNews(request.Id);
+    console.log("[associatedJobId] ", associatedJobId);
+    if (associatedJobId === null) {
+      return await this.createNewsletterJob(request);
+    }
+
+    const jobOrError = await this.fetchJob.execute({
+      id: associatedJobId,
+    });
+
+    if (jobOrError.isLeft()) {
+      return await this.createNewsletterJob(request);
+    }
+
+    const oldJob = jobOrError.value;
+
+    console.log("[oldJob] ", oldJob);
+
+    const currentDate = new Date().getTime();
+
+    const newSendDate = new Date(request.SendDate).getTime();
+
+    const isSendDateToFuture = currentDate - newSendDate < 0;
+
+    return await this.updateNewsletterJob(oldJob, {
+      NewsId: request.Id,
+      SendDate: isSendDateToFuture ? request.SendDate : oldJob.startafter,
+    });
+  }
+
+  async execute(
     request: UpdateNewsUseCaseProtocol.Request
   ): UpdateNewsUseCaseProtocol.Response {
     const alreadyExistsNews = await this.repository.getById({
@@ -40,64 +130,11 @@ export class UpdateNews
       return left(new Error(`Notícia não encontrada.`));
     }
 
-    if (alreadyExistsNews.SendDate !== request.SendDate) {
-      const associatedJobId = await this.repository.getIdJobFromNews(
-        request.Id
-      );
+    const updatedOrError = await this.createOrScheduleJob(request);
 
-      if (associatedJobId) {
-        const jobOrError = await this.fetchJob.execute({
-          id: associatedJobId,
-          limit: 1,
-          pageNumber: 1,
-        });
-
-        if (jobOrError.isRight()) {
-          console.log("Atualizando job");
-          const jobData = jobOrError.value;
-
-          await this.updateJob.execute({
-            id: jobData.Id,
-            data: request.Data,
-            name: jobData.Name,
-            priority: jobData.Priority,
-            retryDelay: jobData.RetryDelay,
-            retryLimit: jobData.RetryLimit,
-            startAfter: request.SendDate,
-            state: "created",
-          });
-        } else {
-          const jobOrError = await this.scheduleJob.execute({
-            name: "send-newsletter",
-            data: {
-              id: request.Id,
-            },
-            priority: 1,
-            retryDelay: 60,
-            retryLimit: 3,
-            startAfter: request.SendDate,
-          });
-
-          if (jobOrError.isLeft()) {
-            console.log("Falha ao agendar job de notícia ", request.Id);
-          }
-        }
-      } else {
-        const jobOrError = await this.scheduleJob.execute({
-          name: "send-newsletter",
-          data: {
-            id: request.Id,
-          },
-          priority: 1,
-          retryDelay: 60,
-          retryLimit: 3,
-          startAfter: request.SendDate,
-        });
-
-        if (jobOrError.isLeft()) {
-          console.log("Falha ao agendar job de notícia ", request.Id);
-        }
-      }
+    if (updatedOrError.isLeft()) {
+      console.error("Falha ao reagendar ou criar jobs");
+      console.error(updatedOrError.value);
     }
 
     await this.repository.update(request);
@@ -122,12 +159,12 @@ export namespace UpdateNewsUseCaseProtocol {
     Description: string | null;
     Data: any;
     LocationName?: string;
-    SendDate?: string;
+    SendDate: string;
   };
 
   export type Response = Promise<Either<Error, string>>;
 
   export interface UseCase {
-    create(request: Request): Response;
+    execute(request: Request): Response;
   }
 }

@@ -15,12 +15,12 @@ export class NewsMapper {
       UpdatedAt: row.UpdatedAt,
     };
 
-    if(row.Content){
+    if (row.Content) {
       Object.assign(domain, {
-        Data: row.Content ,
+        Data: row.Content,
       });
     }
 
-    return domain
+    return domain;
   }
 }

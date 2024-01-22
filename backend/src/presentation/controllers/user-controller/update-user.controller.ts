@@ -23,17 +23,7 @@ export class UpdateUserController extends CommandController<
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
-      const {
-        id,
-        accountId,
-        email,
-        modules,
-        type,
-        name,
-        password,
-        confirmPassword,
-        login,
-      } = request;
+      const { id, accountId, email, modules } = request;
 
       const dto = {
         id: Number(accountId) || Number(id),
@@ -80,6 +70,7 @@ export namespace UpdateUserController {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;
       [Modules.USER]: Required<SystemModulesPermissions>;
+      [Modules.JOBS]: Required<SystemModulesPermissions>;
     };
   };
 }

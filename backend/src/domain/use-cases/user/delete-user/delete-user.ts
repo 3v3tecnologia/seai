@@ -3,9 +3,8 @@ import { Command } from "../../_ports/core/command";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { FailToDeleteUserError } from "./errors/fail-to-delete-user-error";
 import { UserNotFoundError } from "./errors/user-not-found-error";
-import { DeleteUserProtocol } from "./protocol";
 
-export class DeleteUser extends Command implements DeleteUserProtocol {
+export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
 
   constructor(accountRepository: AccountRepositoryProtocol) {
@@ -13,9 +12,15 @@ export class DeleteUser extends Command implements DeleteUserProtocol {
     this.accountRepository = accountRepository;
   }
   async execute(
-    user_id: number
+    request: DeleteUserProtocol.Request
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
-    const account = await this.accountRepository.getById(user_id);
+    let account = null;
+
+    if (request.email) {
+      account = await this.accountRepository.getByEmail(request.email);
+    } else {
+      account = await this.accountRepository.getById(request.id);
+    }
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -36,5 +41,18 @@ export class DeleteUser extends Command implements DeleteUserProtocol {
     });
 
     return right("Usuário deletado com sucesso");
+  }
+}
+
+export namespace DeleteUserProtocol {
+  export type Request = {
+    id: number;
+    email?: string;
+  };
+
+  export interface UseCase {
+    execute(
+      request: Request
+    ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>>;
   }
 }

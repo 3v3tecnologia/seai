@@ -14,7 +14,7 @@ export class FetchNewsByIdController {
     request: FetchNewsByIdController.Request
   ): Promise<HttpResponse> {
     try {
-      const createdOrError = await this.useCase.create({
+      const createdOrError = await this.useCase.execute({
         Id: request.id,
       });
 

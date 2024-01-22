@@ -264,7 +264,7 @@ export class DbBackgroundJobsRepository
       });
     }
 
-    console.log(data)
+    console.log(data);
 
     await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
       .update(data)
@@ -286,6 +286,7 @@ export class DbBackgroundJobsRepository
   async getJobById(
     id: JobsRepositoryDTO.FetchById.Request
   ): JobsRepositoryDTO.FetchById.Response {
+    console.log("[getJobById] id ", id);
     const result = await backgroundJobsDb
       .select(
         "id",
@@ -310,7 +311,6 @@ export class DbBackgroundJobsRepository
       .where({
         id,
       });
-      
 
     if (!result.length) {
       return null;
