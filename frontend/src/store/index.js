@@ -18,6 +18,7 @@ import {
 import { defaultOption } from "@/constants";
 
 import http from "@/http";
+import { clearToken, storeToken } from "@/helpers/auth";
 
 export const key = Symbol();
 
@@ -122,6 +123,7 @@ export const store = createStore({
   },
   actions: {
     ["SIGN_OUT"]({ commit }) {
+      clearToken();
       commit("SET_USER", null);
     },
     async ["SEND_EMAIL_CHANGE_PASSWORD"](context, { email }) {
@@ -141,6 +143,7 @@ export const store = createStore({
         const userName = data?.data?.userName;
 
         if (token) {
+          storeToken(token);
           const userLogged = {
             login: userName,
             token,
@@ -476,10 +479,24 @@ export const store = createStore({
         console.error(e);
       }
     },
-    async ["GET_PROFILE"]({ commit }, id) {
+    async ["GET_PROFILE"]({ commit }, token) {
+      console.log("to passando o token viu filhao", token);
+      if (token && token.length) {
+        setAxiosHeader(token);
+      }
+
       const {
         data: { data },
       } = await http.get(`/user/profile`);
+
+      if (token) {
+        const userLogged = {
+          login: data.name,
+          token,
+        };
+
+        commit("SET_USER", userLogged);
+      }
 
       commit("SET_CURRENT_PROFILE", data);
     },

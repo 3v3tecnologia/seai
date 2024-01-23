@@ -12,6 +12,7 @@ import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 import store from "../store";
 import routeProps from "./props";
 import { isLocalhost } from "@/helpers/url";
+import { retrieveToken } from "@/helpers/auth";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -210,13 +211,11 @@ router.beforeEach(async (to: any, from, next) => {
     "retrieve-account": true,
   };
 
-  if (!auth && isLocalhost()) {
+  const token = retrieveToken();
+  if (!auth && token) {
     // TODO
     // IMPLEMENT TOKEN REFRESH
-    await store.dispatch("LOGIN_USER", {
-      login: "admin",
-      password: "1234567",
-    });
+    await store.dispatch("GET_PROFILE", token);
   }
 
   auth = store.state.auth;
