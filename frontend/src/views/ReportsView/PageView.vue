@@ -220,12 +220,21 @@ const reportsData = computed(() => {
 
   Object.keys(reportsDataRaw).forEach(
     (key) =>
-      (filteredData[key] = reportsDataRaw[key].filter((d) => {
-        const includesBasin = hydrographicBasinName.value.includes(d["Bacia"]);
-        const includesCity = citiesName.value.includes(d["Municipio"]);
+      (filteredData[key] = reportsDataRaw[key]
+        .filter((d) => {
+          if (hydrographicBasinName.value?.length) {
+            return hydrographicBasinName.value.includes(d["Bacia"]);
+          }
 
-        return includesBasin || includesCity;
-      }))
+          return true;
+        })
+        .filter((d) => {
+          if (citiesName.value?.length) {
+            return citiesName.value.includes(d["Municipio"]);
+          }
+
+          return true;
+        }))
   );
 
   return filteredData;
