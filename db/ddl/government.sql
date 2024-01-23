@@ -65,3 +65,25 @@ CREATE TABLE "FAQ_Category"(
    "Fk_FAQ" INTEGER REFERENCES "FAQ"("Id")  ON DELETE CASCADE,
 	"Fk_Category" INTEGER REFERENCES "Category"("Id")  ON DELETE CASCADE
 );
+
+CREATE TABLE "API_Key" (
+	"Id" int4 NOT NULL,
+	"Key" varchar(254) NOT NULL,
+	"Type" varchar(20) NOT NULL DEFAULT 'EXTERNAL'::character varying,
+	"Enabled" bool NULL,
+	"CreatedAt" timestamp NOT NULL DEFAULT now(),
+	"UpdatedAt" timestamp NOT NULL DEFAULT now(),
+	CONSTRAINT "Api_Key_Key_key" UNIQUE ("Key"),
+	CONSTRAINT "Api_Key_pkey" PRIMARY KEY ("Id")
+);
+
+CREATE TABLE "API_Key" (
+	"Id" int4 NOT NULL,
+	"Key" varchar(254) NOT NULL,
+	"Type" varchar(20) NOT NULL DEFAULT 'EXTERNAL'::character varying,
+	"Enabled" bool NULL,
+	"CreatedAt" timestamp NOT NULL DEFAULT now(),
+	"UpdatedAt" timestamp NOT NULL DEFAULT now(),
+	CONSTRAINT "Api_Key_Key_key" UNIQUE ("Key"),
+	CONSTRAINT "Api_Key_pkey" PRIMARY KEY ("Id")
+);

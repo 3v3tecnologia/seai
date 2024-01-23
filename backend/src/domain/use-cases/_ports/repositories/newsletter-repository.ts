@@ -113,7 +113,7 @@ export namespace SubscriberRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      Id: number;
+      Email: string;
     };
     export type Response = Promise<void>;
   }
@@ -127,9 +127,9 @@ export namespace SubscriberRepositoryDTO {
     export type Response = Promise<void>;
   }
 
-  export namespace GetById {
+  export namespace GetByEmail {
     export type Request = {
-      Id: number;
+      Email: string;
     };
     export type Response = Promise<Required<Subscriber> | null>;
   }
@@ -163,9 +163,9 @@ export interface SubscriberRepositoryProtocol {
   delete(
     request: SubscriberRepositoryDTO.Delete.Request
   ): SubscriberRepositoryDTO.Delete.Response;
-  getById(
-    request: SubscriberRepositoryDTO.GetById.Request
-  ): SubscriberRepositoryDTO.GetById.Response;
+  getByEmail(
+    request: SubscriberRepositoryDTO.GetByEmail.Request
+  ): SubscriberRepositoryDTO.GetByEmail.Response;
   getAll(
     request: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response;
