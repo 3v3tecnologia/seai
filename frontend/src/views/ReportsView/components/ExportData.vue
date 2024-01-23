@@ -53,7 +53,7 @@ const basicColumns = computed(() => [
   {
     title: "Bacia",
     field: "Bacia",
-    visible: true,
+    visible: props.showBasin || props.showCities,
   },
   {
     title: "Municipio",

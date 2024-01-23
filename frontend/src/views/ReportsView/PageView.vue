@@ -5,7 +5,6 @@
         class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center"
       >
         <div class="d-flex justify-content-between w-100-mob">
-          <!-- <div class="pt-3 pb-2"></div> -->
           <BaseDropdown
             v-model="groupReportsTemp"
             :options="groupReportsOptions"
@@ -27,6 +26,7 @@
           <BaseCheckBox
             inline-label
             remove-margin
+            :disabled="disabledBasins.temp"
             v-model="hydrographicBasinTemp"
             :options="hydrographicBasinOptions"
             label="Bacias hidrográficas"
@@ -39,7 +39,7 @@
             inline-labe
             remove-margin
             v-model="cityTemp"
-            :disabled="showingDataFormatTemp.value === 1"
+            :disabled="disabledCities.temp"
             :options="cityOptions"
             label="Municípios"
             placeholder="Municípios"
@@ -163,6 +163,33 @@ const showConsuming = computed(() => showingDataFormat.value.value === 3);
 const showBasin = computed(() => showingDataFormat.value.value === 1);
 const showCities = computed(() => showingDataFormat.value.value === 2);
 
+const disabledCities = computed(() => {
+  const checkDisabled = (dataFormat) => {
+    const isBasin = dataFormat.value.value === 1;
+    const isEspecialAgrouped = dataFormat.value.value === 3;
+
+    return isBasin || isEspecialAgrouped;
+  };
+
+  return {
+    temp: checkDisabled(showingDataFormatTemp),
+    loaded: checkDisabled(showingDataFormat),
+  };
+});
+
+const disabledBasins = computed(() => {
+  const checkDisabled = (dataFormat) => {
+    const isTypeAgrouped = dataFormat.value.value === 3;
+
+    return isTypeAgrouped;
+  };
+
+  return {
+    temp: checkDisabled(showingDataFormatTemp),
+    loaded: checkDisabled(showingDataFormat),
+  };
+});
+
 store.dispatch("FETCH_PLACES_OPTIONS");
 
 const props = defineProps({
@@ -238,9 +265,14 @@ const applyFilters = () => {
 watch(
   () => showingDataFormat,
   async (val) => {
-    if (val.value.value === 1) {
+    if (disabledCities.value.loaded) {
       city.value = [];
       cityTemp.value = city.value;
+    }
+
+    if (disabledBasins.value.loaded) {
+      hydrographicBasin.value = [];
+      hydrographicBasinTemp.value = hydrographicBasin.value;
     }
   },
   { deep: true }
@@ -270,8 +302,6 @@ watch(
 watch(
   () => store.state.report.currentBasinFilter,
   (newVal) => {
-    console.log("aaaaaaaaaaaaaa hjahaha", newVal);
-
     hydrographicBasinTemp.value = newVal;
   },
   { immediate: true }

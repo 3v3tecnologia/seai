@@ -192,7 +192,10 @@ export default {
         } = await http.get(`/census/animals/${showingDataFormatUrl}`);
 
         commit("SET_REPORTS_DATA", {
-          animals: showingDataFormat === 3 ? animals : ungroupData(animals),
+          animals:
+            showingDataFormat === 3
+              ? animals
+              : ungroupData(animals, showingDataFormatUrl),
         });
       } catch (e) {
         console.error(e);

@@ -93,14 +93,19 @@ export const formatLocation = (item) => {
   return item;
 };
 
-export const ungroupData = (items) => {
+export const ungroupData = (items, showingDataFormatUrl) => {
   const keys = Object.keys(items);
   const totalData = [];
 
   keys.forEach((key) => {
     const data = items[key].map((i) => {
-      i.Bacia = key;
-      i.Municipio = key;
+      if (showingDataFormatUrl === "basin") {
+        i.Bacia = key;
+        i.Municipio = null;
+      } else {
+        i.Bacia = items[key].Municipio;
+        i.Municipio = key;
+      }
 
       return i;
     });
