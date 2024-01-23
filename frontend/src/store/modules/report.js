@@ -11,7 +11,7 @@ export default {
   state: () => ({
     isLoadingReport: false,
     reportsData: reportsDataDefault,
-    currentBasinName: "",
+    currentBasinFilter: [],
     reportsDataAll: reportsDataAllDefault,
   }),
   mutations: {
@@ -24,8 +24,8 @@ export default {
     ["SET_LOADING_REPORT"](state, bool) {
       state.isLoadingReport = bool;
     },
-    ["SET_CURRENT_BASIN_NAME"](state, basinName) {
-      state.currentBasinName = basinName;
+    ["SET_CURRENT_BASIN_NAME"](state, basins) {
+      state.currentBasinFilter = basins;
     },
     ["SET_REPORTS_DATA_ALL"](state, data) {
       state.reportsDataAll = {
@@ -114,12 +114,15 @@ export default {
       try {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+        const lastBasin =
+          state.currentBasinFilter[state.currentBasinFilter.length - 1];
 
         const hydrographicBasinIndexes = Object.keys(filters.hydrographicBasin);
-        const hydrographicBasinTitle =
+        const lastHydrographicBasin =
           filters.hydrographicBasin?.[
             hydrographicBasinIndexes[hydrographicBasinIndexes.length - 1]
-          ]?.title;
+          ];
+        const hydrographicBasinTitle = lastHydrographicBasin?.title;
 
         const responses = await Promise.all([
           await http.get(`/census/captation/tank/${showingDataFormatUrl}`),
@@ -138,11 +141,11 @@ export default {
         let basinKey =
           hydrographicBasinTitle ?? Object.keys(hydricResourcesRaw)[0];
 
-        if (basinKey == state.currentBasinName) {
+        if (basinKey == lastBasin) {
           return;
         }
 
-        commit("SET_CURRENT_BASIN_NAME", basinKey);
+        commit("SET_CURRENT_BASIN_NAME", [lastHydrographicBasin]);
         const hydricResources = hydricResourcesRaw[basinKey]
           .map(getValueBasic)
           .map(formatLocation)

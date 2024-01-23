@@ -243,8 +243,6 @@ onMounted(() => {
     validationMode: "highlight",
   });
 
-  console.log("2tf", tabDownload.value);
-
   tabulatorDownload.value = new Tabulator(tabDownload.value, {
     data: props.data,
     reactiveData: false,

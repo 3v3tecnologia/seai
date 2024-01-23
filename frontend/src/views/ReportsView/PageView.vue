@@ -232,7 +232,7 @@ const applyFilters = () => {
   hydrographicBasin.value = hydrographicBasinTemp.value;
   city.value = cityTemp.value;
 
-  store.commit("SET_CURRENT_BASIN_NAME", hydrographicBasin.value[0] || "");
+  store.commit("SET_CURRENT_BASIN_NAME", hydrographicBasin.value);
 };
 
 watch(
@@ -268,15 +268,9 @@ watch(
 );
 
 watch(
-  () => store.state.report.currentBasinName,
+  () => store.state.report.currentBasinFilter,
   (newVal) => {
-    if (newVal) {
-      hydrographicBasinTemp.value = [
-        hydrographicBasinOptions.value.find(
-          (b) => b.title === newVal || newVal.title
-        ),
-      ];
-    }
+    hydrographicBasinTemp.value = newVal;
   },
   { immediate: true }
 );
