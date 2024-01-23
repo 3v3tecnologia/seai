@@ -224,7 +224,9 @@ const columnsDTO = computed(() => {
 watch(
   () => columnsDTO.value,
   (newValue) => {
-    tabulator.value?.setColumns(newValue);
+    if (tabulator.value?.initialized) {
+      tabulator.value?.setColumns(newValue);
+    }
   }
 );
 

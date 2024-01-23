@@ -205,13 +205,13 @@ const reportsData = computed(() => {
 });
 
 const hydrographicBasinOptions = computed(
-  () => store.state.hydrographicBasinOptions
+  () => store.state.report.hydrographicBasinOptions
 );
 
 const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const cityOptions = computed(() => {
-  return store.state.cityOptions.filter((val) => {
+  return store.state.report.cityOptions.filter((val) => {
     if (hydrographicBasinTemp.value.length) {
       return hydrographicBasinTemp.value.find((v) => v.value == val.IdBacia);
     }
@@ -270,6 +270,8 @@ watch(
 watch(
   () => store.state.report.currentBasinFilter,
   (newVal) => {
+    console.log("aaaaaaaaaaaaaa hjahaha", newVal);
+
     hydrographicBasinTemp.value = newVal;
   },
   { immediate: true }
@@ -294,9 +296,9 @@ watch(
   () => props.showingTab,
   async (val) => {
     if (val === "charts") {
-      store.commit("SET_CURRENT_TAB", 4);
+      store.commit("SET_CURRENT_TAB", 5);
     } else {
-      store.commit("SET_CURRENT_TAB", 3);
+      store.commit("SET_CURRENT_TAB", 4);
     }
   },
   { immediate: true }

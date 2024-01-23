@@ -9,12 +9,27 @@ import { formatLocation, getValueBasic, ungroupData } from "@/helpers/dto";
 
 export default {
   state: () => ({
+    cityOptions: [],
+    hydrographicBasinOptions: [
+      {
+        title: "Alto Jaguaribe",
+        value: 1,
+      },
+      {
+        title: "Baixo Jaguaribe",
+        value: 2,
+      },
+    ],
     isLoadingReport: false,
     reportsData: reportsDataDefault,
     currentBasinFilter: [],
     reportsDataAll: reportsDataAllDefault,
   }),
   mutations: {
+    ["SET_OPTIONS"](state, { basins, cities }) {
+      state.cityOptions = cities;
+      state.hydrographicBasinOptions = basins;
+    },
     ["SET_REPORTS_DATA"](state, data) {
       state.reportsData = {
         ...reportsDataDefault,
@@ -110,7 +125,7 @@ export default {
         console.error(e);
       }
     },
-    async ["FETCH_REPORT_RESOURCES"]({ state, commit }, filters) {
+    async ["FETCH_REPORT_RESOURCES"]({ state, commit, dispatch }, filters) {
       try {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
@@ -138,14 +153,20 @@ export default {
         const hydricResourcesRaw = state.reportsDataAll.hydricResources;
 
         // "random" key
-        let basinKey =
-          hydrographicBasinTitle ?? Object.keys(hydricResourcesRaw)[0];
+        let basinKey = hydrographicBasinTitle;
+        let currentBasinFilter = [lastHydrographicBasin];
 
-        if (basinKey == lastBasin) {
-          return;
+        if (!basinKey) {
+          // await dispatch("FETCH_PLACES_OPTIONS");
+
+          // random key
+          basinKey = Object.keys(hydricResourcesRaw)[0];
+          currentBasinFilter = [
+            state.hydrographicBasinOptions.find((b) => b.title === basinKey),
+          ];
         }
 
-        commit("SET_CURRENT_BASIN_NAME", [lastHydrographicBasin]);
+        commit("SET_CURRENT_BASIN_NAME", currentBasinFilter);
         const hydricResources = hydricResourcesRaw[basinKey]
           .map(getValueBasic)
           .map(formatLocation)
@@ -197,6 +218,31 @@ export default {
         console.error(e);
       } finally {
         commit("SET_LOADING_REPORT", false);
+      }
+    },
+    async ["FETCH_PLACES_OPTIONS"]({ commit }) {
+      try {
+        const placesDTO = (places) => {
+          return places.map((place) => ({
+            value: place["Id"],
+            title: place["Local"],
+            IdBacia: place["IdBacia"] || place["Id"],
+          }));
+        };
+
+        const { data } = await http.get(`/census/locations`);
+
+        let [basins, cities] = [data.data.Bacia, data.data.Municipio];
+        [basins, cities] = [placesDTO(basins), placesDTO(cities)];
+
+        commit("SET_OPTIONS", {
+          basins,
+          cities,
+        });
+
+        return true;
+      } catch (e) {
+        console.error(e);
       }
     },
   },
