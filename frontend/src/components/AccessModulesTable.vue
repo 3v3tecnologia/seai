@@ -84,6 +84,13 @@ const modulesOptions = ref([
     access: JSON.parse(JSON.stringify(baseAccessModules)),
     isDisabled: true,
   },
+  {
+    id: 4,
+    title: "Rotina de dados",
+    value: "jobs",
+    access: JSON.parse(JSON.stringify(baseAccessModules)),
+    isDisabled: true,
+  },
 ]);
 
 const accessDTO = computed(() => {
@@ -174,8 +181,8 @@ watch(
     }
 
     modulesOptions.value.forEach((module) => {
-      const read = getOption(val[module.value].read);
-      const write = getOption(val[module.value].write);
+      const read = getOption(val?.[module.value]?.read);
+      const write = getOption(val?.[module.value]?.write);
 
       module.access.read = read;
       module.access.register = write;
@@ -191,10 +198,12 @@ watch(
     const optionDefault = optionsSelect[permissionOptionIndex];
 
     if (permissionOptionIndex) {
-      const userPermission = modulesOptions.value[2].access;
-
-      userPermission.read = optionDefault;
-      userPermission.register = optionDefault;
+      modulesOptions.value
+        .filter((m, i) => i >= 2)
+        .map((m) => {
+          m.access.read = optionDefault;
+          m.access.register = optionDefault;
+        });
     } else {
       modulesOptions.value.forEach((item) => {
         const itemPermission = item.access;

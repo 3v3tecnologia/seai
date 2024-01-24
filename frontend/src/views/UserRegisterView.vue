@@ -78,17 +78,29 @@ const userId = ref(currentRoute.params.id || "");
 watch(
   () => isCreating.value,
   async (val) => {
-    if (!val) {
-      await store.dispatch("GET_CURRENT_USER", userId.value);
+    try {
+      if (!val) {
+        await store.dispatch("GET_CURRENT_USER", userId.value);
 
-      if (currentUser.value) {
-        acessData.value = currentUser.value.modules;
-        form.value.email = currentUser.value.email;
-        form.value.name = currentUser.value.name;
-        form.value.login = currentUser.value.login;
-        form.value.type =
-          currentUser.value.type === "admin" ? optionsUser[1] : optionsUser[0];
+        if (currentUser.value) {
+          acessData.value = currentUser.value.modules;
+          form.value.email = currentUser.value.email;
+          form.value.name = currentUser.value.name;
+          form.value.login = currentUser.value.login;
+          form.value.type =
+            currentUser.value.type === "admin"
+              ? optionsUser[1]
+              : optionsUser[0];
+        }
       }
+    } catch (e) {
+      toast.error(
+        "Erro ao buscar usuário, redirecionando para criação de usuário"
+      );
+
+      setTimeout(() => {
+        router.push({ name: "create-user" });
+      }, 1000);
     }
   },
   { immediate: true }
