@@ -18,6 +18,7 @@ import {
   makeDeleteNewsletterSubscriberController,
   makeFetchNewsletterSubscribersController,
 } from "../factories/controllers/newsletter";
+
 import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
 export const newsRouter = (): Router => {
@@ -65,13 +66,13 @@ export const newsRouter = (): Router => {
   );
 
   router.delete(
-    "/unsubscribe",
+    "/subscribe/delete",
     authorization,
     adaptRoute(makeDeleteNewsletterSubscriberController())
   );
 
   router.get(
-    "/subscribers",
+    "/subscriber/list",
     authorization,
     adaptRoute(makeFetchNewsletterSubscribersController())
   );
