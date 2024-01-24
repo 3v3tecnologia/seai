@@ -480,25 +480,30 @@ export const store = createStore({
       }
     },
     async ["GET_PROFILE"]({ commit }, token) {
-      console.log("to passando o token viu filhao", token);
-      if (token && token.length) {
-        setAxiosHeader(token);
+      try {
+        if (token && token.length) {
+          setAxiosHeader(token);
+        }
+
+        const {
+          data: { data },
+        } = await http.get(`/user/profile`);
+
+        if (token) {
+          const userLogged = {
+            login: data.name,
+            token,
+          };
+
+          commit("SET_USER", userLogged);
+        }
+
+        commit("SET_CURRENT_PROFILE", data);
+      } catch (e) {
+        clearToken();
+
+        toast.error("Erro de autenticação");
       }
-
-      const {
-        data: { data },
-      } = await http.get(`/user/profile`);
-
-      if (token) {
-        const userLogged = {
-          login: data.name,
-          token,
-        };
-
-        commit("SET_USER", userLogged);
-      }
-
-      commit("SET_CURRENT_PROFILE", data);
     },
     async ["GET_USERS"]({ commit }) {
       try {
