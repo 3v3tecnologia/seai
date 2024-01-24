@@ -412,10 +412,18 @@ export const store = createStore({
       }
     },
     async ["GET_CURRENT_USER"]({ commit }, id) {
-      const {
-        data: { data },
-      } = await http.get(`/user/list?userId=${id}`);
-      commit("SET_CURRENT_USER", data);
+      try {
+        const {
+          data: { data },
+        } = await http.get(`/user/list?userId=${id}`);
+        commit("SET_CURRENT_USER", data);
+
+        if (!data) {
+          throw new Error("Usuário não encontrado");
+        }
+      } catch (e) {
+        throw new Error("Usuário não encontrado");
+      }
     },
     async ["GET_CURRENT_BODY"]({ state, commit, dispatch }, id) {
       try {
