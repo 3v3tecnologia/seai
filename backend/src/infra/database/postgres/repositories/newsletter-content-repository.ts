@@ -12,7 +12,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(
     request: ContentRepositoryDTO.Create.Request
   ): ContentRepositoryDTO.Create.Response {
-    console.log(request);
     const result = await newsletterDb
       .insert({
         Fk_Sender: request.FK_Author,
@@ -37,7 +36,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       .returning("*")
       .into(DATABASES.NEWSLETTER.NEWS_JOBS);
 
-    console.log("[associateJobToNews] :: ", result);
   }
 
   async deleteJobFromNews(id_news: number): Promise<void> {
@@ -47,7 +45,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       })
       .delete();
 
-    console.log("[deleteJobFromNews] :: ", result);
   }
 
   async getIdJobFromNews(id_news: number): Promise<string | null> {

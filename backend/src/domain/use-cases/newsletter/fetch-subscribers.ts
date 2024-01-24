@@ -18,6 +18,7 @@ export class FetchSubscribers
   async execute(
     request: FetchSubscribersUseCaseProtocol.Request
   ): Promise<Either<Error, any | null>> {
+    console.log("[FetchSubscribers] ",request)
     if (request.email) {
       const subscriber = await this.repository.getByEmail({
         Email: request.email,
