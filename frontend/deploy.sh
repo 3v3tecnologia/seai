@@ -12,4 +12,4 @@ git commit -m 'build';
 git push;
 
 ssh server3v3@3v3.farm -p3031
-cd Documentos/seai-software/seai; git pull;
+# cd Documentos/seai-software/seai; git pull;
