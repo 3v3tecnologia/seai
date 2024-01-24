@@ -71,7 +71,7 @@ export const newsRouter = (): Router => {
   );
 
   router.get(
-    "/subscribers/list",
+    "/subscribers",
     authorization,
     adaptRoute(makeFetchNewsletterSubscribersController())
   );

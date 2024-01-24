@@ -344,4 +344,109 @@ export const NEWSLETTER = {
       },
     },
   },
+  [`${BASE_URL.V1}/news/subscribers`]: {
+    get: {
+      tags: TAGS,
+      summary: "Get subscribers or subcriber",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "email",
+          in: "query",
+          description: "Email",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      Data: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            Id: "number",
+                            Author: {
+                              type: "object",
+                              properties: {
+                                Id: "number",
+                                Email: "string",
+                                Organ: "string",
+                              },
+                            },
+                            Title: "string",
+                            Data: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  type: "string",
+                                  data: {
+                                    type: "array",
+                                    items: {
+                                      type: "number",
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                            Description: "string",
+                            CreatedAt: "string",
+                            UpdatedAt: "string",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    Id: 4,
+                    Author: {
+                      Id: 1,
+                      Email: "testSender@gmail.com",
+                      Organ: "FUNCEME",
+                    },
+                    Title: "TESTINHO",
+                    Description: "Testinho",
+                    CreatedAt: "2023-12-12T11:24:24.600Z",
+                    UpdatedAt: "2023-12-12T11:24:24.600Z",
+                    Data: {
+                      type: "Buffer",
+                      data: [
+                        100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 104, 116,
+                        109, 108, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117,
+                        116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 67,
+                        105, 65, 103, 73, 67, 65, 56, 97, 68, 69, 43, 77, 49,
+                        89, 122, 73, 70, 86, 83, 84, 68, 119, 118, 97, 68, 69,
+                        43, 67, 105, 65, 103, 73, 67, 65, 56, 89, 83, 66, 111,
+                        99, 109, 86, 109, 80, 87, 104, 48, 100, 72, 65, 54, 76,
+                        121, 57, 122, 98, 50, 90, 48, 100, 50, 70, 121, 90, 83,
+                        52, 122, 100, 106, 77, 117, 90, 109, 70, 121, 98, 84,
+                        53, 87, 97, 88, 78, 112, 100, 71, 85, 103, 89, 83, 66,
+                        122, 98, 50, 90, 48, 100, 50, 70, 121, 90, 84, 119, 118,
+                        89, 84, 52, 75,
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
 };
