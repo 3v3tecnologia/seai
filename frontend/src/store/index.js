@@ -13,9 +13,10 @@ import {
   getValue,
   objectToParams,
   setAxiosHeader,
+  unwrapEquip,
 } from "@/helpers/dto";
 
-import { defaultOption } from "@/constants";
+import { defaultOption, limit } from "@/constants";
 
 import http from "@/http";
 import { clearToken, storeToken } from "@/helpers/auth";
@@ -430,17 +431,11 @@ export const store = createStore({
     },
     async ["GET_CURRENT_EQUIPMENT"]({ state, commit, dispatch }, id) {
       try {
-        await dispatch("GET_EQUIPMENTS");
-
         const {
-          data: {
-            data: { Equipments: equipments },
-          },
-        } = await http.get(`/equipments/${id}`);
+          data: { data: equipment },
+        } = await http.get(`/equipments?equipmentId=${id}`);
 
-        const equipment = state.equipments.data.find((c) => c.Id == id);
-
-        commit("SET_CURRENT_EQUIPMENT", equipment);
+        commit("SET_CURRENT_EQUIPMENT", unwrapEquip(equipment));
       } catch (e) {
         console.error(e);
       }
@@ -530,16 +525,7 @@ export const store = createStore({
           },
         } = await http.get(`/equipments/`);
 
-        const equipmentType = ["Estação", "Pluviômetro"];
-
-        equipments.map((equip) => {
-          equip.Location = equip.Location?.Name;
-          equip.Organ = equip.Organ.Name;
-          equip.Type = equip.Type.Name || "station";
-          equip.NomeTipoEquipamento =
-            equip.Type === "pluviometer" ? equipmentType[1] : equipmentType[0];
-          return equip;
-        });
+        equipments.map(unwrapEquip);
 
         commit("SET_EQUIPMENTS", {
           data: equipments,
@@ -555,13 +541,14 @@ export const store = createStore({
         toast.error("Erro ao buscar equipamentos");
       }
     },
-    async ["GET_STATION_READS"]({ commit }, filters = {}) {
+    async ["GET_STATION_READS"]({ state, commit, dispatch }, filters = {}) {
       try {
         const params = {
           idEquipment: filters._itemId,
           start: filters.start,
           end: filters.end,
           pageNumber: filters.pageNumber,
+          limit,
         };
 
         const {
@@ -576,6 +563,8 @@ export const store = createStore({
         } = await http.get(
           `/equipments/measures/stations${objectToParams(params)}`
         );
+
+        await dispatch("GET_EQUIPMENT_NAME_FORMATTED", params.idEquipment);
 
         commit("SET_STATION_READS", {
           data: reads.map((c) => {
@@ -596,14 +585,28 @@ export const store = createStore({
         toast.error("Erro ao buscar dados de leitura");
       }
     },
-    async ["GET_PLUVIOMETER_READS"]({ commit }, filters = {}) {
+    async ["GET_EQUIPMENT_NAME_FORMATTED"](
+      { state, commit, dispatch },
+      idEquipment
+    ) {
+      await dispatch("GET_CURRENT_EQUIPMENT", idEquipment);
+
+      const { Organ, NomeTipoEquipamento, Name } = state.currentEquipment;
+
+      const nameShowing = `${NomeTipoEquipamento} ${Organ} | ${Name}`;
+      commit("SET_PAGE_TITLE", nameShowing);
+    },
+    async ["GET_PLUVIOMETER_READS"]({ state, commit, dispatch }, filters = {}) {
       try {
         const params = {
           idEquipment: filters._itemId,
           start: filters.start,
           end: filters.end,
+          limit,
           pageNumber: filters.pageNumber,
         };
+
+        await dispatch("GET_EQUIPMENT_NAME_FORMATTED", params.idEquipment);
 
         const {
           data: {

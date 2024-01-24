@@ -30,6 +30,17 @@ export function checkMissingColumn(row, valueKey) {
   return !value;
 }
 
+export const unwrapEquip = (equip) => {
+  const equipmentType = ["Estação", "Pluviômetro"];
+
+  equip.Location = equip.Location?.Name;
+  equip.Organ = equip.Organ.Name;
+  equip.Type = equip.Type.Name || "station";
+  equip.NomeTipoEquipamento =
+    equip.Type === "pluviometer" ? equipmentType[1] : equipmentType[0];
+  return equip;
+};
+
 export function objectToParams(obj) {
   const validParams = [];
 

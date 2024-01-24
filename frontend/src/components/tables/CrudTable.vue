@@ -48,7 +48,7 @@
           </div>
         </div>
         <div
-          class="d-flex justify-content-center justify-content-lg-start align-items-center"
+          class="d-flex justify-content-start justify-content-lg-center justify-content-lg-start align-items-center"
         >
           <button @click="handleEditUser" class="btn btn-info">
             <span class="mr-lg-2 d-none d-lg-inline-block">

@@ -12,6 +12,8 @@ export const defaultPagination = {
   itemPerPage: 5,
 };
 
+export const limit = defaultPagination.itemPerPage;
+
 export const dataFormatUrl = {
   1: "basin",
   2: "county",

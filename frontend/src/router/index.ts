@@ -218,6 +218,8 @@ router.beforeEach(async (to: any, from, next) => {
     await store.dispatch("GET_PROFILE", token);
   }
 
+  await store.dispatch("CLEAR_PAGE_TITLE");
+
   auth = store.state.auth;
 
   if (!openRoutes[to.name] && !auth) {

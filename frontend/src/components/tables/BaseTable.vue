@@ -29,6 +29,7 @@
     <BasePagination
       v-model="pageNumber"
       class="w-100"
+      :is-loading="isLoading"
       :total-items="currentPagination.totalItems"
       :current-showing-items="dataShowing"
       :collection-text="actionText"
@@ -121,6 +122,7 @@ const paramId = computed(() => currentRoute.params.id || "");
 const currentRouteName = computed(() => currentRoute.name || "");
 const store = useStore();
 const baseTimeout = ref(null);
+const isLoading = ref(true);
 
 const currentPagination = computed(() => {
   let { itemPerPage } = defaultPagination;
@@ -180,12 +182,16 @@ watch(
 );
 
 const getData = async () => {
+  isLoading.value = true;
+
   baseTimeout.value = setTimeout(async () => {
     await store.dispatch(props.getDataKey, {
       _itemId: paramId.value,
       pageNumber: pageNumber.value,
       ...mapedFiltersTable.value,
     });
+
+    isLoading.value = false;
   }, 300);
 };
 
