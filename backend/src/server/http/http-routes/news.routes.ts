@@ -25,6 +25,24 @@ export const newsRouter = (): Router => {
   const router = Router();
 
   router.post(
+    "/enroll",
+    authorization,
+    adaptRoute(makeCreateNewsletterSubscriberController())
+  );
+
+  router.delete(
+    "/unregister",
+    authorization,
+    adaptRoute(makeDeleteNewsletterSubscriberController())
+  );
+
+  router.get(
+    "/registered/list",
+    authorization,
+    adaptRoute(makeFetchNewsletterSubscribersController())
+  );
+
+  router.post(
     "/",
     authorization,
     newsWriteAccessAuth,
@@ -57,24 +75,6 @@ export const newsRouter = (): Router => {
     authorization,
     newsReadAccessAuth,
     adaptRoute(makeFetchAllNewsletterController())
-  );
-
-  router.post(
-    "/subscribe",
-    authorization,
-    adaptRoute(makeCreateNewsletterSubscriberController())
-  );
-
-  router.delete(
-    "/subscribe/delete",
-    authorization,
-    adaptRoute(makeDeleteNewsletterSubscriberController())
-  );
-
-  router.get(
-    "/subscriber/list",
-    authorization,
-    adaptRoute(makeFetchNewsletterSubscribersController())
   );
 
   return router;
