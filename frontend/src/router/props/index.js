@@ -22,6 +22,7 @@ import statusCreate from "./status/create";
 
 export default {
   user,
+  profile,
   reads: {
     station: {
       list: stationReads,
@@ -32,7 +33,11 @@ export default {
       update: pluviometerReadsUpdate,
     },
   },
-  equipments,
+  equipments: {
+    list: equipments,
+    update: editEquipment,
+    create: createEquipment,
+  },
   newsletter: {
     list: newsletter,
     update: newsletterUpdate,
@@ -48,10 +53,9 @@ export default {
     update: statusUpdate,
     create: statusCreate,
   },
-  metereologicalBodies,
-  profile,
-  editBody,
-  createBody,
-  editEquipment,
-  createEquipment,
+  metereologicalBodies: {
+    list: metereologicalBodies,
+    update: editBody,
+    create: createBody,
+  },
 };

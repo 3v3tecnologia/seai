@@ -15,7 +15,7 @@ export const accessStoreKey = (store, keys) => {
     return tempStore[keys];
   }
 
-  keys.forEach((key) => {
+  keys?.forEach((key) => {
     tempStore = tempStore[key];
   });
   return tempStore;

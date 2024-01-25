@@ -1,10 +1,10 @@
 export default {
   state: () => ({
-    pageTitle: "",
+    pageExtraTitle: "",
   }),
   mutations: {
     ["SET_PAGE_TITLE"](state, title) {
-      state.pageTitle = title;
+      state.pageExtraTitle = title;
     },
   },
   actions: {

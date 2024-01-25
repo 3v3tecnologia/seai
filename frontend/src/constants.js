@@ -88,3 +88,8 @@ export const defaultStatus = {
   retrydelay: 60,
   retrylimit: 3,
 };
+
+export const actionPrefix = {
+  edit: "Editar",
+  create: "Criar",
+};

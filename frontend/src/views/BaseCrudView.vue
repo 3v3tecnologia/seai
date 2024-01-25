@@ -1,7 +1,7 @@
 <template>
   <BasicContentWrapper>
-    <div
-      v-if="headerLabels.length && false"
+    <!-- <div
+      v-if="headerLabels?.length false"
       class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-4 mb-lg-5"
     >
       <div
@@ -16,10 +16,10 @@
           {{ counter.title }}
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="crud-page-title d-flex mb-3">
-      {{ pageTitle }}
+      {{ pageExtraTitle }}
     </div>
 
     <CrudTable
@@ -125,7 +125,7 @@ const props = defineProps({
 // const paramId = computed(() => currentRoute.params.id || "");
 const filtersUsers = ref({});
 
-const pageTitle = computed(() => store.state.page.pageTitle);
+const pageExtraTitle = computed(() => store.state.page.pageExtraTitle);
 const data = computed(() => accessStoreKey(store.state, props.storeDataKey));
 const apiPagination = computed(() => data.value.apiPagination);
 </script>

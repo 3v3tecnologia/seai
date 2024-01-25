@@ -73,7 +73,7 @@
             <font-awesome-icon class="text-white" icon="fa-solid fa-trash" />
           </button>
 
-          <div v-if="actionRoutes.create" class="d-flex justify-content-end">
+          <div v-if="actionRoutes?.create" class="d-flex justify-content-end">
             <router-link
               :to="{ name: actionRoutes.create }"
               class="ml-4 btn btn-success text-white"
