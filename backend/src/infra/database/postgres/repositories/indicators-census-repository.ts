@@ -441,77 +441,88 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
   }
   async getWaterSecurityByCounty(): Promise<Array<WaterSecurityByCountyData> | null> {
     const data = await censusDb.raw(`
-          WITH ConsumoAnualMunicipio AS (
-      SELECT
-        Consumos."Município" as "Municipio",
-        (Consumos."Vol_Sup" + Consumos."Vol_Sub") AS "Consumo total"
-      FROM
-        (
-          SELECT
-            Municipio."Municipio" AS "Município",
-            sum(CapMedia."VolumeMes") AS "Vol_Sup",
-            (
+           WITH ConsumoAnualMunicipio AS (
               SELECT
-                sum(CapMedia."VolumeMes") AS "Volume total"
+                Consumos."Município" as "Municipio",
+                Consumos."Bacia" as "Bacia",
+                (Consumos."Vol_Sup" + Consumos."Vol_Sub") AS "Consumo total"
               FROM
-                "Subterranea" Sub
-                INNER JOIN "CaptacaoMedia" CapMedia ON CapMedia."Id" = Sub."Captacao_Id"
-                INNER JOIN "RecursoHidrico" RhSub ON RhSub."Id" = Sub."Rh_Id"
-                INNER JOIN "Municipios" Sub_Municipio ON Sub_Municipio."Id" = RhSub."Municipio_Id"
-              WHERE
-                Sub_Municipio."Municipio" = Municipio."Municipio"
+                (
+                  SELECT
+                    Municipio."Municipio" AS "Município",
+                    Bacia."Bacia" AS "Bacia",
+                    sum(CapMedia."VolumeMes") AS "Vol_Sup",
+                    (
+                      SELECT
+                        sum(CapMedia."VolumeMes") AS "Volume total"
+                      FROM
+                        "Subterranea" Sub
+                        INNER JOIN "CaptacaoMedia" CapMedia ON CapMedia."Id" = Sub."Captacao_Id"
+                        INNER JOIN "RecursoHidrico" RhSub ON RhSub."Id" = Sub."Rh_Id"
+                        INNER JOIN "Municipios" Sub_Municipio ON Sub_Municipio."Id" = RhSub."Municipio_Id"
+                        INNER JOIN "Bacias" Bacia ON Bacia."Id" = Sub_Municipio."Bacia_Id"
+                      WHERE
+                        Sub_Municipio."Municipio" = Municipio."Municipio"
+                      GROUP BY
+                        Bacia."Id",
+                        RhSub."Municipio_Id"
+                    ) AS "Vol_Sub"
+                  FROM
+                    "Superficial" Sup
+                    INNER JOIN "CaptacaoMedia" CapMedia ON CapMedia."Id" = Sup."Captacao_Id"
+                    INNER JOIN "RecursoHidrico" RhSup ON RhSup."Id" = Sup."Rh_Id"
+                    INNER JOIN "Municipios" Municipio ON Municipio."Id" = RhSup."Municipio_Id"
+                    INNER JOIN "Bacias" Bacia ON Bacia."Id" = Municipio."Bacia_Id"
+                  GROUP BY
+                    Bacia."Id",
+                    Municipio."Municipio"
+                ) AS Consumos
+              ORDER BY
+                Consumos."Município"
+            ),
+            AreaIrrigadaTotal AS (
+              SELECT
+                Mun."Municipio",
+                Bacia."Bacia",
+                sum(CulturaIrrigada."AreaIrrigada") AS "Área irrigada total"
+              FROM
+                "CulturasIrrigadas" CulturaIrrigada
+                INNER JOIN "Irrigacao" Irrigacao ON Irrigacao."Id" = CulturaIrrigada."Irrigacao_Id"
+                INNER JOIN "Usos" Uso ON Uso."Id" = Irrigacao."Usos_Id"
+                INNER JOIN "Cadastro" Cad ON Cad."Id" = Uso."Cad_Id"
+                INNER JOIN "Contatos" Localizacao ON Localizacao."Id" = Cad."Localizacao_Id"
+                INNER JOIN "Municipios" Mun ON Mun."Id" = Localizacao."Municipio_Id"
+                INNER JOIN "Bacias" Bacia ON Mun."Bacia_Id" = Bacia."Id"
               GROUP BY
-                RhSub."Municipio_Id"
-            ) AS "Vol_Sub"
-          FROM
-            "Superficial" Sup
-            INNER JOIN "CaptacaoMedia" CapMedia ON CapMedia."Id" = Sup."Captacao_Id"
-            INNER JOIN "RecursoHidrico" RhSup ON RhSup."Id" = Sup."Rh_Id"
-            INNER JOIN "Municipios" Municipio ON Municipio."Id" = RhSup."Municipio_Id"
-          GROUP BY
-            Municipio."Municipio"
-        ) AS Consumos
-      ORDER BY
-        Consumos."Município"
-    ),
-    AreaIrrigadaTotal AS (
-      SELECT
-        Mun."Municipio",
-        sum(CulturaIrrigada."AreaIrrigada") AS "Área irrigada total"
-      FROM
-        "CulturasIrrigadas" CulturaIrrigada
-        INNER JOIN "Irrigacao" Irrigacao ON Irrigacao."Id" = CulturaIrrigada."Irrigacao_Id"
-        INNER JOIN "Usos" Uso ON Uso."Id" = Irrigacao."Usos_Id"
-        INNER JOIN "Cadastro" Cad ON Cad."Id" = Uso."Cad_Id"
-        INNER JOIN "Contatos" Localizacao ON Localizacao."Id" = Cad."Localizacao_Id"
-        INNER JOIN "Municipios" Mun ON Mun."Id" = Localizacao."Municipio_Id"
-      GROUP BY
-        Mun."Municipio"
-    )
-    SELECT
-      Consumos."Municipio",
-      Consumos."Consumo total" as "ConsumoTotal",
-      Consumos."Área irrigada total" as "AreaIrrigadaTotal",
-      CASE
-        WHEN Consumos."Área irrigada total" > 0 THEN Consumos."Consumo total" / Consumos."Área irrigada total"
-        ELSE 0
-      END AS "m³/ha"
-    FROM
-      (
-        SELECT
-          ConsumoAgua."Consumo total",
-          ConsumoAgua."Municipio",
-          (
+                Bacia."Bacia",
+                Mun."Municipio"
+            )
             SELECT
-              AreaIrrigada."Área irrigada total"
+              Consumos."Municipio",
+              Consumos."Bacia",
+              Consumos."Consumo total" as "ConsumoTotal",
+              Consumos."Área irrigada total" as "AreaIrrigadaTotal",
+              CASE
+                WHEN Consumos."Área irrigada total" > 0 THEN Consumos."Consumo total" / Consumos."Área irrigada total"
+                ELSE 0
+              END AS "m³/ha"
             FROM
-              AreaIrrigadaTotal AS AreaIrrigada
-            WHERE
-              AreaIrrigada."Municipio" = ConsumoAgua."Municipio"
-          ) AS "Área irrigada total"
-        FROM
-          ConsumoAnualMunicipio AS consumoAgua
-      ) AS Consumos
+              (
+                SELECT
+                  ConsumoAgua."Consumo total",
+                  ConsumoAgua."Municipio",
+                  ConsumoAgua."Bacia",
+                  (
+                    SELECT
+                      AreaIrrigada."Área irrigada total"
+                    FROM
+                      AreaIrrigadaTotal AS AreaIrrigada
+                    WHERE
+                      AreaIrrigada."Municipio" = ConsumoAgua."Municipio"
+                  ) AS "Área irrigada total"
+                FROM
+                  ConsumoAnualMunicipio AS consumoAgua
+              ) AS Consumos
   `);
 
     if (!data.rowCount) {
@@ -521,6 +532,7 @@ export class KnexIndicatorsRepository implements IndicatorsRepositoryProtocol {
     return data.rows.map((row: any) => ({
       Nome: row.Municipio,
       Tipo: "municipio",
+      Bacia: row.Bacia,
       ConsumoTotal: {
         unidade: "m³",
         valor: Number(row.ConsumoTotal),
