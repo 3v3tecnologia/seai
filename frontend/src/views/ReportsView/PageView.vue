@@ -51,7 +51,7 @@
 
           <button
             @click="applyFilters"
-            :disabled="isLoadingReport"
+            :disabled="disabledGenerateReport"
             class="btn btn-success px-2 py-2"
           >
             Gerar relatório
@@ -202,11 +202,42 @@ const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },
   groupReports: { ...groupReports.value },
   hydrographicBasin: { ...hydrographicBasin.value },
+  city: { ...city.value },
+}));
+
+const filtersRequestTemp = computed(() => ({
+  showingDataFormat: { ...showingDataFormatTemp.value },
+  groupReports: { ...groupReportsTemp.value },
+  hydrographicBasin: { ...hydrographicBasinTemp.value },
 }));
 
 const hydrographicBasinName = computed(() =>
   hydrographicBasin.value.map((d) => d["title"])
 );
+
+const concatValuesFilters = (filter) =>
+  Object.values(filter)
+    .map(
+      (v) =>
+        v.value ||
+        Object.values(v)
+          .map((c) => c.value)
+          .join("")
+    )
+    .join("");
+
+const hasChanges = computed(() => {
+  const conactenedFiltersTemp = concatValuesFilters({
+    ...filtersRequestTemp.value,
+    city: { ...cityTemp.value },
+  });
+  const conactenedFilters = concatValuesFilters({
+    ...filtersRequest.value,
+    city: { ...city.value },
+  });
+
+  return conactenedFilters != conactenedFiltersTemp;
+});
 
 const citiesName = computed(() => city.value.map((d) => d["title"]));
 
@@ -246,6 +277,10 @@ const hydrographicBasinOptions = computed(
 
 const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
+const disabledGenerateReport = computed(
+  () => isLoadingReport.value || !hasChanges.value
+);
+
 const cityOptions = computed(() => {
   return store.state.report.cityOptions.filter((val) => {
     if (hydrographicBasinTemp.value.length) {
@@ -270,6 +305,8 @@ const applyFilters = () => {
 
   store.commit("SET_CURRENT_BASIN_NAME", hydrographicBasin.value);
 };
+
+applyFilters();
 
 watch(
   () => showingDataFormat,
