@@ -24,6 +24,8 @@ export const CAPTATION_TANK = {
                       items: {
                         type: "object",
                         properties: {
+                          Municipio: "string",
+                          Bacia: "string",
                           Mes: "string",
                           Captação: "string",
                           Tanques: "number",
@@ -36,16 +38,20 @@ export const CAPTATION_TANK = {
                 example: {
                   data: [
                     {
+                      Municipio: "Itaiçaba",
+                      Bacia: "Baixo Jaguaribe",
                       Mes: "Fevereiro",
-                      Captação: null,
-                      Tanques: 1,
-                      "Volume/tanque": 0,
+                      Captação: "Superficial",
+                      Tanques: 166,
+                      "Volume/tanque": 218.25,
                     },
                     {
-                      Mes: "Maio",
-                      Captação: null,
-                      Tanques: 4,
-                      "Volume/tanque": 0,
+                      Municipio: "Alto Santo",
+                      Bacia: "Médio Jaguaribe",
+                      Mes: "Abril",
+                      Captação: "Subterrânea",
+                      Tanques: 1,
+                      "Volume/tanque": 450,
                     },
                   ],
                 },

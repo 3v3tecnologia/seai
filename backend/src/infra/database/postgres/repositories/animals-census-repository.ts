@@ -110,34 +110,38 @@ export class KnexAnimalsCensusRepository
 
   async getByCity(): Promise<AnimalsByCityData | null> {
     const data = await censusDb.raw(`
-      select
-        m."Municipio",
-        a."TipoCriacao",
-        sum(a."NumCabecasAno") as "Qtd"
-      from
-        "Municipios" m
-      inner join
-      "RecursoHidrico" rh
-      on
-        m."Id" = rh."Municipio_Id"
-      inner join
-      "Cadastro" c
-      on
-        c."Id" = rh."Cad_Id"
-      inner join
-      "Usos" u
-      on
-        u."Cad_Id" = c."Id"
-      inner join
-      "Animais" a
-      on
-        u."Id" = a."Usos_Id"
-      group by
-        m."Municipio",
-        a."TipoCriacao"
-      order by
-        "TipoCriacao",
-        "Municipio";
+      SELECT
+              b."Bacia" ,
+              m."Municipio",
+              a."TipoCriacao",
+              sum(a."NumCabecasAno") AS "Qtd"
+      FROM
+              "Municipios" m
+      INNER JOIN "Bacias" b 
+      ON b."Id" = m."Bacia_Id" 
+      INNER JOIN
+            "RecursoHidrico" rh
+            ON
+              m."Id" = rh."Municipio_Id"
+      INNER JOIN
+            "Cadastro" c
+            ON
+              c."Id" = rh."Cad_Id"
+      INNER JOIN
+            "Usos" u
+            ON
+              u."Cad_Id" = c."Id"
+      INNER JOIN
+            "Animais" a
+            ON
+              u."Id" = a."Usos_Id"
+      GROUP BY
+              b."Bacia" ,
+              m."Municipio",
+              a."TipoCriacao"
+      ORDER BY
+              "TipoCriacao",
+              "Municipio";
     `);
 
     if (!data.rowCount) {
@@ -145,6 +149,7 @@ export class KnexAnimalsCensusRepository
     }
 
     const mappedData = data.rows.map((data: any) => ({
+      Bacia: data.Bacia,
       Municipio: data.Municipio,
       TipoCriacao: data.TipoCriacao,
       Quantidade: Number(data.Qtd),
@@ -153,12 +158,18 @@ export class KnexAnimalsCensusRepository
     const toDomain = {};
 
     mappedData.forEach(
-      (item: { Municipio: string; TipoCriacao: string; Quantidade: number }) => {
+      (item: {
+        Bacia: string;
+        Municipio: string;
+        TipoCriacao: string;
+        Quantidade: number;
+      }) => {
         if (Reflect.has(toDomain, item.Municipio)) {
           Reflect.get(toDomain, item.Municipio).push({
             ...{
               TipoCriacao: item.TipoCriacao,
               Quantidade: item.Quantidade,
+              Bacia: item.Bacia,
             },
           });
         } else {
@@ -166,6 +177,7 @@ export class KnexAnimalsCensusRepository
             {
               TipoCriacao: item.TipoCriacao,
               Quantidade: item.Quantidade,
+              Bacia: item.Bacia,
             },
           ]);
         }

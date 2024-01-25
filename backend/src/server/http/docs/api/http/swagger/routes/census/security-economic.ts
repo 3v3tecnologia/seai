@@ -96,16 +96,32 @@ export const SECURITY_ECONOMIC = {
                 example: {
                   data: [
                     {
-                      Municipio: "Nova Olinda",
-                      AreaIrrigada: 22.6,
-                      Rentabilidade: 1600520,
-                      "R$/ha": 70819.2,
+                      Tipo: "municipio",
+                      Nome: "Nova Olinda",
+                      Bacia: "Alto Jaguaribe",
+                      AreaIrrigada: {
+                        unidade: "ha",
+                        valor: 22.6,
+                      },
+                      Rentabilidade: {
+                        unidade: "R$",
+                        valor: 1600520,
+                      },
+                      RentabilidadePorArea: 70819.2,
                     },
                     {
-                      Municipio: "Jucás",
-                      AreaIrrigada: 262.8,
-                      Rentabilidade: 13143100,
-                      "R$/ha": 50011.6,
+                      Tipo: "municipio",
+                      Nome: "Jucás",
+                      Bacia: "Alto Jaguaribe",
+                      AreaIrrigada: {
+                        unidade: "ha",
+                        valor: 262.8,
+                      },
+                      Rentabilidade: {
+                        unidade: "R$",
+                        valor: 13143100,
+                      },
+                      RentabilidadePorArea: 50011.6,
                     },
                   ],
                 },

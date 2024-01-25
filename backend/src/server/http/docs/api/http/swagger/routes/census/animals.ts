@@ -176,6 +176,7 @@ export const ANIMALS = {
                               items: {
                                 type: "object",
                                 properties: {
+                                  Bacia: "string",
                                   TipoCriacao: "string",
                                   Quantidade: "number",
                                 },
@@ -193,30 +194,17 @@ export const ANIMALS = {
                       {
                         TipoCriacao: "Aves",
                         Quantidade: 147,
+                        Bacia: "Alto Jaguaribe",
                       },
                       {
                         TipoCriacao: "Bovinos",
                         Quantidade: 387,
+                        Bacia: "Alto Jaguaribe",
                       },
                       {
                         TipoCriacao: "Equinos",
                         Quantidade: 0,
-                      },
-                      {
-                        TipoCriacao: "Caprinos",
-                        Quantidade: 20,
-                      },
-                      {
-                        TipoCriacao: "Ovinos",
-                        Quantidade: 56,
-                      },
-                      {
-                        TipoCriacao: "Suínos",
-                        Quantidade: 0,
-                      },
-                      {
-                        TipoCriacao: "Outros",
-                        Quantidade: 0,
+                        Bacia: "Alto Jaguaribe",
                       },
                     ],
                   },

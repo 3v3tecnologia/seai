@@ -1,8 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import {
-  DeleteNewsletterSubscriber,
-  SubscribeToNews,
+  DeleteNewsletterSubscriber
 } from "../../../domain/use-cases/newsletter";
 import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";

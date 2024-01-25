@@ -21,8 +21,8 @@ export class SubscribeToNewsController extends CommandController<
   ): Promise<HttpResponse> {
     try {
       const createdOrError = await this.useCase.execute({
-        Email: request.email,
-        Name: request.name,
+        Email: request.Email,
+        Name: request.Name,
       });
 
       if (createdOrError.isLeft()) {
@@ -42,7 +42,7 @@ export class SubscribeToNewsController extends CommandController<
 export namespace SubscribeToNewsControllerProtocol {
   export type Request = {
     accountId: number;
-    email: string;
-    name: string;
+    Email: string;
+    Name: string;
   };
 }

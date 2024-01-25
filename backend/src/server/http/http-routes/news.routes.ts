@@ -18,10 +18,29 @@ import {
   makeDeleteNewsletterSubscriberController,
   makeFetchNewsletterSubscribersController,
 } from "../factories/controllers/newsletter";
+
 import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
 export const newsRouter = (): Router => {
   const router = Router();
+
+  router.post(
+    "/enroll",
+    authorization,
+    adaptRoute(makeCreateNewsletterSubscriberController())
+  );
+
+  router.delete(
+    "/unregister",
+    authorization,
+    adaptRoute(makeDeleteNewsletterSubscriberController())
+  );
+
+  router.get(
+    "/registered/list",
+    authorization,
+    adaptRoute(makeFetchNewsletterSubscribersController())
+  );
 
   router.post(
     "/",
@@ -56,24 +75,6 @@ export const newsRouter = (): Router => {
     authorization,
     newsReadAccessAuth,
     adaptRoute(makeFetchAllNewsletterController())
-  );
-
-  router.post(
-    "/subscribe",
-    authorization,
-    adaptRoute(makeCreateNewsletterSubscriberController())
-  );
-
-  router.delete(
-    "/unsubscribe",
-    authorization,
-    adaptRoute(makeDeleteNewsletterSubscriberController())
-  );
-
-  router.get(
-    "/subscribers/list",
-    authorization,
-    adaptRoute(makeFetchNewsletterSubscribersController())
   );
 
   return router;

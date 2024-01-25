@@ -18,6 +18,10 @@
       </div>
     </div>
 
+    <div class="crud-page-title d-flex mb-3">
+      {{ pageTitle }}
+    </div>
+
     <CrudTable
       v-model="filtersUsers"
       :hide-search="hideSearch"
@@ -121,6 +125,7 @@ const props = defineProps({
 // const paramId = computed(() => currentRoute.params.id || "");
 const filtersUsers = ref({});
 
+const pageTitle = computed(() => store.state.page.pageTitle);
 const data = computed(() => accessStoreKey(store.state, props.storeDataKey));
 const apiPagination = computed(() => data.value.apiPagination);
 </script>

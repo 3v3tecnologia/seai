@@ -77,6 +77,7 @@ export const AQUACULTURE = {
                         type: "object",
                         properties: {
                           Municipio: "string",
+                          Bacia: "string",
                           Tanques: "number",
                         },
                       },
@@ -87,51 +88,13 @@ export const AQUACULTURE = {
                   data: [
                     {
                       Municipio: "Jaguaruana",
+                      Bacia: "Baixo Jaguaribe",
                       Tanques: 562,
                     },
                     {
                       Municipio: "Aracati",
+                      Bacia: "Baixo Jaguaribe",
                       Tanques: 390,
-                    },
-                    {
-                      Municipio: "Orós",
-                      Tanques: 239,
-                    },
-                    {
-                      Municipio: "Russas",
-                      Tanques: 206,
-                    },
-                    {
-                      Municipio: "Itaiçaba",
-                      Tanques: 166,
-                    },
-                    {
-                      Municipio: "Jaguaribe",
-                      Tanques: 42,
-                    },
-                    {
-                      Municipio: "Icapuí",
-                      Tanques: 22,
-                    },
-                    {
-                      Municipio: "Cariús",
-                      Tanques: 10,
-                    },
-                    {
-                      Municipio: "Limoeiro do Norte",
-                      Tanques: 9,
-                    },
-                    {
-                      Municipio: "Quixeré",
-                      Tanques: 4,
-                    },
-                    {
-                      Municipio: "Palhano",
-                      Tanques: 4,
-                    },
-                    {
-                      Municipio: "Alto Santo",
-                      Tanques: 1,
                     },
                   ],
                 },

@@ -42,20 +42,24 @@ export class KnexCensusTakersRepository
   }
   async getByCounty(): Promise<Array<CensusTakersByCountyData> | null> {
     const data = await censusDb.raw(`
-      select
+      SELECT
         m."Municipio",
-        count(m."Municipio") as "Qtd"
-      from
-        "Municipios" m
-      inner join
-        "RecursoHidrico" rh
-      on
-        m."Id" = rh."Municipio_Id"
-      group by
-        "Municipio"
-      order by
-        "Qtd"
-      desc;
+        b."Bacia" ,
+        count(m."Municipio") AS "Qtd"
+      FROM
+              "Municipios" m
+      INNER JOIN "Bacias" b 
+      ON b."Id"  = m."Bacia_Id" 
+      INNER JOIN
+              "RecursoHidrico" rh
+            ON
+              m."Id" = rh."Municipio_Id"
+      GROUP BY
+              "Bacia",
+              "Municipio"
+      ORDER BY
+              "Qtd"
+            DESC;
   `);
 
     if (!data.rowCount) {
@@ -63,6 +67,7 @@ export class KnexCensusTakersRepository
     }
 
     return data.rows.map((row: any) => ({
+      Bacia: row.Bacia,
       Municipio: row.Municipio,
       Quantidade: Number(row.Qtd),
     }));

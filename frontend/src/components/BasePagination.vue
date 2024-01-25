@@ -2,9 +2,17 @@
   <div
     class="base-pagination d-flex flex-column flex-lg-row align-items-center justify-content-between px-2 py-2 w-100"
   >
-    <div class="mt-2 mb-3">
-      Exibindo {{ currentShowingItems.length }} de {{ totalItems }}
-      {{ loweredCollectionText }}s
+    <div class="ml-lg-4 my-3">
+      <span v-if="currentShowingItems.length || isLoading">
+        Exibindo {{ currentShowingItems.length }} de {{ totalItems }}
+        {{ loweredCollectionText }}s
+      </span>
+      <span v-else class="font-weight-bold">
+        <i class="pi pi-exclamation-circle" />
+        <font-awesome-icon icon="" />
+
+        Não existem dados correspondentes a esta busca
+      </span>
     </div>
     <div class="mb-1">
       <div class="navigation-items">
@@ -38,6 +46,10 @@ const props = defineProps({
   apiPagination: {
     type: Object,
     required: false,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
   totalItems: {
     type: Number,

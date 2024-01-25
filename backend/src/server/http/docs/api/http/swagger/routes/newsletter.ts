@@ -4,8 +4,10 @@ import { BASE_URL } from "../commons/baseURL";
 
 const TAGS = ["News"];
 
+const URL = `${BASE_URL.V1}/news`;
+
 export const NEWSLETTER = {
-  [`${BASE_URL.V1}/news`]: {
+  [`${URL}`]: {
     get: {
       tags: TAGS,
       summary: "Get all news",
@@ -239,7 +241,7 @@ export const NEWSLETTER = {
       },
     },
   },
-  [`${BASE_URL.V1}/news/{id}`]: {
+  [`${URL}/{id}`]: {
     get: {
       tags: TAGS,
       summary: "Get news by ID",
@@ -335,6 +337,151 @@ export const NEWSLETTER = {
                       ],
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/registered/list`]: {
+    get: {
+      tags: TAGS,
+      summary: "Get subscribers or subcriber",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "email",
+          in: "query",
+          description: "Email",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                example: {
+                  data: {
+                    Data: [
+                      {
+                        Id: 1,
+                        Email: "tester@gmail.com",
+                        Name: "Tester",
+                        CreatedAt: "2024-01-23T20:07:44.973Z",
+                        UpdatedAt: "2024-01-23T20:07:44.973Z",
+                      },
+                      {
+                        Id: 3,
+                        Email: "tester2@gmail.com",
+                        Name: "Tester",
+                        CreatedAt: "2024-01-23T20:08:53.246Z",
+                        UpdatedAt: "2024-01-23T20:08:53.246Z",
+                      },
+                    ],
+                    Pagination: {
+                      PageLimitRows: 50,
+                      PageNumber: 1,
+                      QtdRows: 2,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/enroll`]: {
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Create news",
+      description: "SendDate is Unix Timestamp",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                Email: "string",
+                Name: "string",
+              },
+              example: {
+                Email: "tester2@gmail.com",
+                Name: "Tester",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário inscrito com sucesso na lista de emails",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/unregister`]: {
+    delete: {
+      tags: TAGS,
+      summary: "Delete news",
+      description: "Delete news by id",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "email",
+          in: "path",
+          description: "Subscriber email",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário deletado com sucesso da lista de emails",
                 },
               },
             },

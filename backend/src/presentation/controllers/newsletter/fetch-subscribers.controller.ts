@@ -1,21 +1,14 @@
 import { HttpResponse } from "../ports";
 
 import { FetchSubscribersUseCaseProtocol } from "../../../domain/use-cases/newsletter";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 
-export class FetchNewsletterSubscribersController extends CommandController<
-  FetchNewsletterSubscribersControllerProtocol.Request,
-  HttpResponse
-> {
+export class FetchNewsletterSubscribersController  {
   private useCase: FetchSubscribersUseCaseProtocol.UseCase;
 
   constructor(
     useCase: FetchSubscribersUseCaseProtocol.UseCase,
-    userLogs: RegisterUserLogs
   ) {
-    super(userLogs);
     this.useCase = useCase;
   }
 
@@ -28,6 +21,12 @@ export class FetchNewsletterSubscribersController extends CommandController<
         limit: request.limit,
         pageNumber: request.pageNumber,
       });
+
+      console.log("[FetchNewsletterSubscribersController] ",{
+        email: request.email,
+        limit: request.limit,
+        pageNumber: request.pageNumber,
+      })
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);

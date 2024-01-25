@@ -76,6 +76,7 @@ export const CENSUS_TAKERS = {
                       items: {
                         type: "object",
                         properties: {
+                          Bacia: "string",
                           Municipio: "string",
                           Quantidade: "number",
                         },
@@ -86,14 +87,17 @@ export const CENSUS_TAKERS = {
                 example: {
                   data: [
                     {
+                      Bacia: "Baixo Jaguaribe",
                       Municipio: "Limoeiro do Norte",
                       Quantidade: 389,
                     },
                     {
+                      Bacia: "Baixo Jaguaribe",
                       Municipio: "Russas",
                       Quantidade: 378,
                     },
                     {
+                      Bacia: "Alto Jaguaribe",
                       Municipio: "Iguatu",
                       Quantidade: 230,
                     },

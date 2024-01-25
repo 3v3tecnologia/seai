@@ -48,11 +48,12 @@
           </div>
         </div>
         <div
-          class="d-flex justify-content-center justify-content-lg-start align-items-center"
+          class="d-flex justify-content-start justify-content-lg-center justify-content-lg-start align-items-center"
         >
           <button @click="handleEditUser" class="btn btn-info">
             <span class="mr-lg-2 d-none d-lg-inline-block">
-              Editar {{ actionText }}
+              Editar
+              <!-- {{ actionText }} -->
             </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-pen" />
           </button>
@@ -66,7 +67,8 @@
             class="ml-4 btn btn-danger"
           >
             <span class="mr-lg-2 d-none d-lg-inline-block">
-              Excluir {{ actionText }}(s)
+              Excluir
+              <!-- {{ actionText }}(s) -->
             </span>
             <font-awesome-icon class="text-white" icon="fa-solid fa-trash" />
           </button>
@@ -77,7 +79,8 @@
               class="ml-4 btn btn-success text-white"
             >
               <span class="mr-lg-2 d-none d-lg-inline-block">
-                Criar {{ actionText }}
+                Criar
+                <!-- {{ actionText }} -->
               </span>
               <font-awesome-icon class="text-white" icon="fa-solid fa-plus" />
             </router-link>
@@ -294,7 +297,8 @@ watch(
 const handleDeleteUsers = () => {
   if (!selectedUsers.value.length) {
     showConfirmModal.value = false;
-    return toast.warning(`Não há ${props.actionText} selecionado.`);
+    // return toast.warning(`Não há ${props.actionText} selecionado`);
+    return toast.warning(`Não há item selecionado`);
   }
 
   showConfirmModal.value = true;
@@ -304,9 +308,10 @@ const handleEditUser = () => {
   const id = selectedUsers.value[0]?.id ?? selectedUsers.value[0]?.Id;
 
   if (!selectedUsers.value.length) {
-    return toast.warning(`Não há ${props.actionText} selecionado.`);
+    // return toast.warning(`Não há ${props.actionText} selecionado`);
+    return toast.warning(`Não há item selecionado`);
   } else if (selectedUsers.value.length > 1) {
-    return toast.warning(`Selecione apenas um ${props.actionText}.`);
+    return toast.warning(`Selecione apenas um item`);
   }
 
   router.push({
