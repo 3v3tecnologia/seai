@@ -3,6 +3,7 @@
     <div class="col-lg-12 mb-2">
       <BaseTable
         v-for="(report, i) in currentReportTables"
+        :selectable="false"
         :key="report.title"
         :class="i ? 'mt-4' : ''"
         :data="report.data"
