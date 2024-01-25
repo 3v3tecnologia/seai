@@ -24,6 +24,7 @@ export const WORKERS = {
                       items: {
                         type: "object",
                         properties: {
+                          Bacia: "string",
                           Municipio: "string",
                           Tipo: "number",
                           "Média de trabalhadores": "number",
@@ -35,12 +36,14 @@ export const WORKERS = {
                 example: {
                   data: [
                     {
-                      Municipio: "Iguatu",
+                      Bacia: "Alto Jaguaribe",
+                      Municipio: "Potengi",
                       Tipo: "Pessoa Física",
                       "Média de trabalhadores": 0,
                     },
                     {
-                      Municipio: "Potiretama",
+                      Bacia: "Alto Jaguaribe",
+                      Municipio: "Tarrafas",
                       Tipo: "Pessoa Física",
                       "Média de trabalhadores": 0,
                     },

@@ -88,7 +88,9 @@ export const SECURITY_SOCIAL = {
                       items: {
                         type: "object",
                         properties: {
-                          Municipio: "string",
+                          Nome: "string",
+                          Bacia: "string",
+                          Tipo: "string",
                           AreaIrrigada: "number",
                           EmpregosPJ: "number",
                           EmpregosPF: "number",
@@ -101,25 +103,22 @@ export const SECURITY_SOCIAL = {
                 example: {
                   data: [
                     {
-                      Municipio: "Fortim",
+                      Nome: "Fortim",
+                      Bacia: "Baixo Jaguaribe",
+                      Tipo: "municipio",
                       AreaIrrigada: 9.5,
                       EmpregosPJ: 19,
                       EmpregosPF: 0,
-                      "Empregos/ha": 2,
+                      EmpregosPorArea: 2,
                     },
                     {
-                      Municipio: "Quixeré",
+                      Nome: "Quixeré",
+                      Bacia: "Baixo Jaguaribe",
+                      Tipo: "municipio",
                       AreaIrrigada: 259,
                       EmpregosPJ: 389,
                       EmpregosPF: 0,
-                      "Empregos/ha": 1.5,
-                    },
-                    {
-                      Municipio: "Icapuí",
-                      AreaIrrigada: 14.5,
-                      EmpregosPJ: 21,
-                      EmpregosPF: 0,
-                      "Empregos/ha": 1.45,
+                      EmpregosPorArea: 1.5,
                     },
                   ],
                 },
