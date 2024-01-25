@@ -101,7 +101,7 @@ const props = defineProps({
   },
   selectable: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   actionText: {
     type: String,
@@ -249,6 +249,7 @@ onMounted(() => {
     columns: columnsDTO.value,
     layout: "fitColumns",
     validationMode: "highlight",
+    selectable: props.selectable,
   });
 
   tabulatorDownload.value = new Tabulator(tabDownload.value, {
