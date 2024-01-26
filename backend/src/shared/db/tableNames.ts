@@ -3,6 +3,7 @@ export const DATABASES = {
   LOGS: "logs",
   CENSUS: "census",
   EQUIPMENTS: "equipments",
+  API_KEY: "API_Key",
   NEWSLETTER: {
     DATABASE: "newsletter",
     NEWS: "News",

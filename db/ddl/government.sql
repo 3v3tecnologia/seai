@@ -67,18 +67,7 @@ CREATE TABLE "FAQ_Category"(
 );
 
 CREATE TABLE "API_Key" (
-	"Id" int4 NOT NULL,
-	"Key" varchar(254) NOT NULL,
-	"Type" varchar(20) NOT NULL DEFAULT 'EXTERNAL'::character varying,
-	"Enabled" bool NULL,
-	"CreatedAt" timestamp NOT NULL DEFAULT now(),
-	"UpdatedAt" timestamp NOT NULL DEFAULT now(),
-	CONSTRAINT "Api_Key_Key_key" UNIQUE ("Key"),
-	CONSTRAINT "Api_Key_pkey" PRIMARY KEY ("Id")
-);
-
-CREATE TABLE "API_Key" (
-	"Id" int4 NOT NULL,
+	"Id" INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
 	"Key" varchar(254) NOT NULL,
 	"Type" varchar(20) NOT NULL DEFAULT 'EXTERNAL'::character varying,
 	"Enabled" bool NULL,
