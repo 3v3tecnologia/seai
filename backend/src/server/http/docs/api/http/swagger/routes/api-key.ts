@@ -4,7 +4,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 
 const TAGS = ["Api Access key"];
 
-export const MEASURES = {
+export const API_KEY = {
   [`${BASE_URL.V1}/accessKey`]: {
     get: {
       tags: TAGS,
