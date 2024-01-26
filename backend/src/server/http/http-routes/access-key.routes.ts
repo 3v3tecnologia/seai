@@ -7,6 +7,8 @@ import {
   makeFetchAccessKeyByIdController,
   makeRegisterAccessKeyController,
   makeUpdateAccessKeyController,
+  makeDeleteAccessKeyController,
+  makeFetchAccessKeysController,
 } from "../factories/controllers/access-key";
 
 import { newsWriteAccessAuth } from "../http-middlewares/news-write";
@@ -26,6 +28,14 @@ export const accessKeyRouter = (): Router => {
     authorization,
     adaptRoute(makeFetchAccessKeyByIdController())
   );
+
+  router.delete(
+    "/:id",
+    authorization,
+    adaptRoute(makeDeleteAccessKeyController())
+  );
+
+  router.get("/", authorization, adaptRoute(makeFetchAccessKeysController()));
 
   router.post(
     "/",

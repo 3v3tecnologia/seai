@@ -1,4 +1,5 @@
 import { Either, right } from "../../../shared/Either";
+import { ApiKey } from "../../entities/apiKey/api-key";
 import { AccessKeyRepositoryProtocol } from "../_ports/repositories/acess-key.repository";
 
 export class FetchAccessKeyById
@@ -26,19 +27,7 @@ export namespace FetchAccessKeyByIdUseCaseProtocol {
     Id: number;
   };
 
-  export type Response = Promise<
-    Either<
-      Error,
-      {
-        Id: number;
-        Key: string;
-        Type: string;
-        Enabled: boolean;
-        CreatedAt: string;
-        UpdatedAt: string;
-      } | null
-    >
-  >;
+  export type Response = Promise<Either<Error, ApiKey | null>>;
 
   export interface UseCase {
     execute(request: Request): Response;

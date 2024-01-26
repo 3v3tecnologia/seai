@@ -1,3 +1,6 @@
+import { ApiKey } from "../../../entities/apiKey/api-key";
+import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+
 export namespace AccessKeyRepositoryDTO {
   export namespace Create {
     export type Request = {
@@ -19,20 +22,31 @@ export namespace AccessKeyRepositoryDTO {
 
     export type Response = Promise<void>;
   }
+  export namespace Delete {
+    export type Request = {
+      Id: number;
+    };
+
+    export type Response = Promise<void>;
+  }
 
   export namespace GetById {
     export type Request = {
       Id: number;
     };
 
-    export type Response = Promise<{
-      Id: number;
+    export type Response = Promise<Required<ApiKey> | null>;
+  }
+  export namespace GetAll {
+    export type Request = InputWithPagination;
+    export type Response = Promise<OutputWithPagination<Array<ApiKey>> | null>;
+  }
+  export namespace GetByKey {
+    export type Request = {
       Key: string;
-      Type: string;
-      Enabled: boolean;
-      CreatedAt: string;
-      UpdatedAt: string;
-    } | null>;
+    };
+
+    export type Response = Promise<Required<ApiKey> | null>;
   }
 }
 
@@ -40,10 +54,19 @@ export interface AccessKeyRepositoryProtocol {
   create(
     request: AccessKeyRepositoryDTO.Create.Request
   ): AccessKeyRepositoryDTO.Create.Response;
+  delete(
+    request: AccessKeyRepositoryDTO.Delete.Request
+  ): AccessKeyRepositoryDTO.Delete.Response;
   update(
     request: AccessKeyRepositoryDTO.Update.Request
   ): AccessKeyRepositoryDTO.Update.Response;
   getById(
     request: AccessKeyRepositoryDTO.GetById.Request
   ): AccessKeyRepositoryDTO.GetById.Response;
+  getByKey(
+    request: AccessKeyRepositoryDTO.GetByKey.Request
+  ): AccessKeyRepositoryDTO.GetByKey.Response;
+  getAll(
+    request: AccessKeyRepositoryDTO.GetAll.Request
+  ): AccessKeyRepositoryDTO.GetAll.Response;
 }

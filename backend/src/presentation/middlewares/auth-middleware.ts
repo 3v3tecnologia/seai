@@ -32,8 +32,8 @@ export class AuthMiddleware implements Middleware {
       const { authType, accessToken, url, method } = request;
 
       if (this.isReadOnlyURL(method, url)) {
-        const apiKey = await this.apiKeyRepository.getById({
-          Id: 1,
+        const apiKey = await this.apiKeyRepository.getByKey({
+          Key: accessToken,
         });
 
         if (apiKey !== null && apiKey.Enabled) {
