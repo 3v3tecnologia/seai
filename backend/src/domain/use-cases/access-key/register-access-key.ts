@@ -34,7 +34,10 @@ export class RegisterAccessKey
       description: successMessage,
     });
 
-    return right(accessId);
+    return right({
+      message: successMessage,
+      id: accessId,
+    });
   }
 }
 
