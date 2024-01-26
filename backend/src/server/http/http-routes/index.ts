@@ -5,3 +5,4 @@ export * from "./census.routes";
 export * from "./news.routes";
 export * from "./equipments.routes";
 export * from "./background-jobs.routes";
+export * from "./access-key.routes";
