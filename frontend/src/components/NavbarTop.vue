@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div class="w-100">
+    <div v-if="auth?.login" class="w-100">
       <TabMenu v-model:activeIndex="active" :model="itemsRoutes" class="mb-2">
         <template #item="{ label, item, props }">
           <router-link
