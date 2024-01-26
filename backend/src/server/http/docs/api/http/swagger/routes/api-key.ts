@@ -9,7 +9,7 @@ export const API_KEY = {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Get apy key by id",
+      summary: "Get all apy keys",
       parameters: [
         {
           name: "pageNumber",
