@@ -55,6 +55,15 @@ export class KnexAccountRepository implements AccountRepositoryProtocol {
         })
         .into("User_Access");
 
+      await trx
+        .insert({
+          Fk_User: user_id,
+          Fk_Module: data.modules[Modules.JOBS].id,
+          Read: data.modules[Modules.JOBS].read,
+          Write: data.modules[Modules.JOBS].write,
+        })
+        .into("User_Access");
+
       id_user = user_id;
     });
 
