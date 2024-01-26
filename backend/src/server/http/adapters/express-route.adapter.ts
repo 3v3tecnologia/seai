@@ -8,6 +8,7 @@ export const adaptRoute = (controller: Controller) => {
       ...(request.body || {}),
       ...(request.params || {}),
       ...(request.query || {}),
+      url: request.originalUrl,
       accountId: request.accountId,
       accessToken: request.accessToken || null,
     };

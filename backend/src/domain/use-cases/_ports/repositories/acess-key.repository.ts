@@ -25,7 +25,14 @@ export namespace AccessKeyRepositoryDTO {
       Id: number;
     };
 
-    export type Response = Promise<any | null>;
+    export type Response = Promise<{
+      Id: number;
+      Key: string;
+      Type: string;
+      Enabled: boolean;
+      CreatedAt: string;
+      UpdatedAt: string;
+    } | null>;
   }
 }
 
