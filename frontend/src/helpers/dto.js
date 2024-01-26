@@ -107,12 +107,6 @@ export const formatLocation = (item) => {
 export const ungroupData = (items, showingDataFormatUrl) => {
   const keys = Object.keys(items);
   const totalData = [];
-  console.log(
-    "ungrouping by",
-    showingDataFormatUrl,
-    JSON.parse(JSON.stringify(items)),
-    keys
-  );
 
   keys.forEach((key) => {
     const data = items[key].map((i) => {

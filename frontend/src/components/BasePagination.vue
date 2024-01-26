@@ -78,6 +78,11 @@ const totalPages = computed(() => {
 
   return basePagination || 1;
 });
+
+const isOutOfBoundsPagination = computed(
+  () => currentPage.value > pagesShowing.value.length
+);
+
 const currentPage = ref(1);
 const pages = computed(() =>
   [...Array(totalPages.value).keys()].map((c) => c + 1)
@@ -143,6 +148,15 @@ watch(
   () => props.modelValue,
   (val) => {
     setPage(val);
+  }
+);
+
+watch(
+  () => isOutOfBoundsPagination.value,
+  (val) => {
+    if (val) {
+      setPage(pagesShowing.value[pagesShowing.value.length - 1]);
+    }
   }
 );
 </script>

@@ -1,3 +1,4 @@
+import moment from "moment";
 import { mapOptions } from "./helpers/dto";
 
 export const itemsPerGraph = 10;
@@ -80,6 +81,10 @@ export const defaultCron = {
   retryLimit: 3,
   created_on: "",
   updated_on: "",
+};
+
+export const defaultNewsletter = {
+  SendDate: moment().add(1, "days").format(),
 };
 
 export const defaultStatus = {
