@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { toast } from "vue3-toastify";
 
 const extractBaseUrl = () => {
   // const urlObj = new URL(window.location.href);
@@ -23,5 +24,21 @@ const httpClient: AxiosInstance = axios.create({
     "Content-type": "application/json",
   },
 });
+
+httpClient.interceptors.response.use(
+  function (response) {
+    // Optional: Do something with response data
+    return response;
+  },
+  function (error) {
+    if (error.response.status == 401) {
+      toast.error("Sem permissão de acesso para este recurso");
+    } else if (error.response.status == 404) {
+      toast.error("Recurso não encontrado");
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default httpClient;

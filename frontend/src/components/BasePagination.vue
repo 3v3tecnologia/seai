@@ -99,9 +99,7 @@ const pagesShowing = computed(() =>
     }
 
     initialPage = leftPagesGap + currentPage.value;
-
     initialPage = initialPage - 2 < 1 ? 1 : initialPage - 2;
-
     finalPage = initialPage + pagesButtonsMax - 1;
 
     return page >= initialPage && page <= finalPage;

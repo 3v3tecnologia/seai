@@ -11,9 +11,9 @@ import CreateUserView from "../views/UserRegisterView.vue";
 import InitialRegisterUserInfos from "../views/InitialRegisterUserInfos.vue";
 import store from "../store";
 import routeProps from "./props";
-import { isLocalhost } from "@/helpers/url";
 import { retrieveToken } from "@/helpers/auth";
-import { actionPrefix } from "@/constants";
+import { actionPrefix, modulesSystem, modulesSystemLevel } from "@/constants";
+import { toast } from "vue3-toastify";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -114,6 +114,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit-newsletter",
     meta: {
       title: `${actionPrefix.edit} notícia`,
+      modulesNeeded: [modulesSystem.news, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.newsletter.update,
@@ -123,6 +124,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "newsletter",
     meta: {
       title: `Notícias`,
+      modulesNeeded: [modulesSystem.news, modulesSystemLevel.read],
     },
     component: BaseCrudView,
     props: routeProps.newsletter.list,
@@ -132,6 +134,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "create-newsletter",
     meta: {
       title: `${actionPrefix.create} notícia`,
+      modulesNeeded: [modulesSystem.news, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.newsletter.create,
@@ -186,6 +189,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "create-user",
     meta: {
       title: `${actionPrefix.create} usuário`,
+      modulesNeeded: [modulesSystem.user, modulesSystemLevel.write],
     },
     component: CreateUserView,
   },
@@ -194,6 +198,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit-user",
     meta: {
       title: `${actionPrefix.edit} usuário`,
+      modulesNeeded: [modulesSystem.user, modulesSystemLevel.write],
     },
     component: CreateUserView,
   },
@@ -210,6 +215,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "users",
     meta: {
       title: `Usuários`,
+      modulesNeeded: [modulesSystem.user, modulesSystemLevel.read],
     },
     component: BaseCrudView,
     props: routeProps.user,
@@ -227,6 +233,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "cron",
     meta: {
       title: `Rotina de dados`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.read],
     },
     component: BaseCrudView,
     props: routeProps.cron.list,
@@ -236,6 +243,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit-cron",
     meta: {
       title: `${actionPrefix.edit} rotina de dados`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.cron.update,
@@ -245,6 +253,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "create-cron",
     meta: {
       title: `${actionPrefix.create} rotina de dados`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.cron.create,
@@ -254,6 +263,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "status",
     meta: {
       title: `Status de rotina`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.read],
     },
     component: BaseCrudView,
     props: routeProps.status.list,
@@ -263,6 +273,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit-status",
     meta: {
       title: `${actionPrefix.edit} status`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.status.update,
@@ -272,6 +283,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "create-status",
     meta: {
       title: `${actionPrefix.create} status`,
+      modulesNeeded: [modulesSystem.jobs, modulesSystemLevel.write],
     },
     component: BaseForm,
     props: routeProps.status.create,
@@ -292,6 +304,7 @@ const router = createRouter({
 
 router.beforeEach(async (to: any, from, next) => {
   let auth = store.state.auth;
+  let profile: any = store.state.profile;
 
   const openRoutes: { [x: string]: boolean } = {
     "initial-register-infos": true,
@@ -302,16 +315,30 @@ router.beforeEach(async (to: any, from, next) => {
 
   const token = retrieveToken();
   if (!auth && token) {
-    // TODO
-    // IMPLEMENT TOKEN REFRESH
     await store.dispatch("GET_PROFILE", token);
+    auth = store.state.auth;
+    profile = store.state.profile;
   }
 
   await store.dispatch("CLEAR_PAGE_TITLE");
 
-  auth = store.state.auth;
+  const modulesNeeded = to.meta.modulesNeeded;
 
-  if (!openRoutes[to.name] && !auth) {
+  if (
+    profile &&
+    modulesNeeded &&
+    !profile?.modules?.[modulesNeeded[0]][modulesNeeded[1]]
+  ) {
+    if (from.path == "/") {
+      toast.error("Sem permissão para acessar este módulo");
+
+      setTimeout(() => {
+        router.push("reports");
+      }, 3000);
+    }
+
+    console.log(to, from);
+  } else if (!openRoutes[to.name] && !auth) {
     next("/login");
   } else {
     next();

@@ -98,3 +98,15 @@ export const actionPrefix = {
   edit: "Editar",
   create: "Criar",
 };
+
+export const modulesSystem = {
+  jobs: "jobs",
+  register: "register",
+  user: "user",
+  news: "news",
+};
+
+export const modulesSystemLevel = {
+  read: "read",
+  write: "write",
+};

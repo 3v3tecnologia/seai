@@ -4,7 +4,6 @@
       class="p-3 bg-white d-flex align-items-center justify-content-between w-100"
     >
       <LogoProject title-size="md" />
-
       <div class="align-items-center d-flex font-weight-bold pl-3">
         <div
           class="d-flex align-items-center justify-content-center"
@@ -35,12 +34,7 @@
     <div v-if="auth?.login" class="w-100">
       <TabMenu v-model:activeIndex="active" :model="itemsRoutes" class="mb-2">
         <template #item="{ label, item, props }">
-          <router-link
-            v-if="item.route"
-            v-slot="routerProps"
-            :to="item.route"
-            custom
-          >
+          <router-link v-if="item.route" v-slot="routerProps" :to="item.route">
             <a
               :href="routerProps.href"
               v-bind="props.action"
@@ -59,6 +53,7 @@
 <script lang="ts" setup>
 import TabMenu from "primevue/tabmenu";
 import LogoProject from "@/components/LogoProject.vue";
+import { modulesSystem } from "@/constants";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
@@ -72,6 +67,7 @@ const currentRouteName = route.name;
 const store = useStore();
 
 const auth = computed(() => store.state.auth);
+const authUser = computed(() => store.state.profile);
 
 const signOut = () => store.dispatch("SIGN_OUT");
 
@@ -87,6 +83,7 @@ const itemsRoutesRaw = [
   {
     label: "Usuários",
     route: "/users",
+    modulesNeeded: modulesSystem.user,
   },
   {
     label: "Órgãos meteorológicos",
@@ -99,6 +96,7 @@ const itemsRoutesRaw = [
   {
     label: "Notícias",
     route: "/newsletter",
+    modulesNeeded: modulesSystem.news,
   },
   {
     label: "Relatórios",
@@ -111,16 +109,18 @@ const itemsRoutesRaw = [
   {
     label: "Rotina de dados",
     route: "/cron",
+    modulesNeeded: modulesSystem.jobs,
   },
   {
     label: "Status de rotinas",
     route: "/status",
+    modulesNeeded: modulesSystem.jobs,
   },
 ];
 
 const itemsRoutes = computed(() =>
-  itemsRoutesRaw.map((v) => {
-    if (!auth.value) {
+  itemsRoutesRaw.map((v: any) => {
+    if (v.modulesNeeded && !authUser.value?.modules[v?.modulesNeeded]?.read) {
       v.disabled = true;
     } else {
       v.disabled = false;
@@ -128,37 +128,6 @@ const itemsRoutes = computed(() =>
     return v;
   })
 );
-
-// const slicedRoutes = [];
-// const sliceCount = 3;
-// const arrRowsCount = Math.ceil(itemsRoutes.length / 3);
-
-// for (let i = 0; i < arrRowsCount; i++) {
-//   const slicedItem = [];
-
-//   for (let j = 0; j < sliceCount; j++) {
-//     const indexToPush = i * sliceCount + j;
-
-//     slicedItem[j] = itemsRoutes[indexToPush];
-//   }
-
-//   slicedRoutes.push(slicedItem);
-// }
-// onMounted(() => {
-//   active.value = slicedRoutes.findIndex(
-//     (item) => route.path === router.resolve(item.route).path
-//   );
-// });
-
-// watch(
-//   route,
-//   () => {
-//     active.value = slicedRoutes.findIndex(
-//       (item) => route.path === router.resolve(item.route).path
-//     );
-//   },
-//   { immediate: true }
-// );
 </script>
 
 <style lang="scss" scoped>
@@ -184,4 +153,9 @@ const itemsRoutes = computed(() =>
 .p-menuitem-link {
   height: 100%;
 }
+
+// .disabled-tab {
+//   opacity: 0.5;
+//   pointer-events: none;
+// }
 </style>
