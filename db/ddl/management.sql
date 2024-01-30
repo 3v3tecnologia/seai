@@ -68,3 +68,4 @@ CREATE TABLE "Physics_Characteristics"(
   "UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY("Id")
 );
+
