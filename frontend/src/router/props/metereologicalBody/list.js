@@ -5,7 +5,6 @@ export default {
   getDataKey: "FETCH_BODIES_OPTIONS",
   deleteDataKey: "DELETE_BODIES",
   storeDataKey: "metereologicalBodies",
-  navBarTab: 1,
   stateFilters: [],
   filters: [],
   searchFilter: searchFilter,

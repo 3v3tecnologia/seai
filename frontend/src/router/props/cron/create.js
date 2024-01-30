@@ -10,6 +10,5 @@ export default {
   submitDataKey: "CREATE_CRON",
   headerLabel,
   finishedDataButton: route.finishedDataButton,
-  navBarTab: route.navBarTab,
   defaultValue: defaultCron,
 };

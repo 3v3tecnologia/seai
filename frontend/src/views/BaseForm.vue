@@ -176,15 +176,15 @@ const props = defineProps({
   },
 });
 
-watch(
-  () => props.navBarTab,
-  (val) => {
-    if (val || val === 0) {
-      store.commit("SET_CURRENT_TAB", val);
-    }
-  },
-  { immediate: true }
-);
+// watch(
+//   () => props.navBarTab,
+//   (val) => {
+//     if (val || val === 0) {
+//       store.commit("SET_CURRENT_TAB", val);
+//     }
+//   },
+//   { immediate: true }
+// );
 
 watch(
   currentRoute,

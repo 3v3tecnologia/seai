@@ -6,7 +6,6 @@ const searchFilter = ["Auth", "Title"];
 
 export default {
   actionText: "notícia",
-  navBarTab: 3,
   getDataKey: "GET_NEWSLETTERS",
   hasApiFilters: true,
   deleteDataKey: "DELETE_NEWSLETTER",

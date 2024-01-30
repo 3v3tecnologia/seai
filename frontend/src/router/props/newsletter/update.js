@@ -19,5 +19,4 @@ export default {
   finishedDataButton,
   headerLabel,
   fields: route.fields,
-  navBarTab: route.navBarTab,
 };

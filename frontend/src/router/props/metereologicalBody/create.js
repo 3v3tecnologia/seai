@@ -29,5 +29,4 @@ export default {
   submitDataKey,
   headerLabel,
   fields: route.fields,
-  navBarTab: route.navBarTab,
 };

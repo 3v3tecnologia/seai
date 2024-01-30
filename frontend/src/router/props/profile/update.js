@@ -31,7 +31,6 @@ const finishedDataButton = {
 
 export default {
   getDataKey,
-  navBarTab: -1,
   storeDataKey,
   submitDataKey,
   headerLabel,

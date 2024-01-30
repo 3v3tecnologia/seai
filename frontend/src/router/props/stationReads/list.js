@@ -19,7 +19,6 @@ export default {
     create: "",
   },
   headerLabels: [],
-  navBarTab: 2,
   columns: [
     {
       formatter: "rowSelection",

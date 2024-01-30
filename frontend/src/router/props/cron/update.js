@@ -21,5 +21,4 @@ export default {
       return c;
     }
   }),
-  navBarTab: route.navBarTab,
 };

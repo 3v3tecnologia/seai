@@ -1,6 +1,4 @@
 export const route = {
-  navBarTab: 7,
-
   fields: [
     {
       label: "Título",

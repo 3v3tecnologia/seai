@@ -14,7 +14,6 @@ const searchFilter = ["name", "output"];
 
 export default {
   actionText: "rotina",
-  navBarTab: route.navBarTab,
   getDataKey: "GET_STATUS",
   hasApiFilters: true,
   deleteDataKey: "DELETE_STATUS",

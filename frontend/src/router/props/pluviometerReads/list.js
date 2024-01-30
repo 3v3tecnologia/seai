@@ -8,7 +8,6 @@ export default {
   getDataKey: "GET_PLUVIOMETER_READS",
   deleteDataKey: "",
   storeDataKey: "readsPluviometer",
-  navBarTab: 2,
   hideSearch: true,
   showDateRangeFilter: true,
   hasApiFilters: true,

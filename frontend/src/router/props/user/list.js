@@ -26,7 +26,6 @@ export default {
   getDataKey: "GET_USERS",
   deleteDataKey: "DELETE_USERS",
   storeDataKey: "users",
-  navBarTab: 0,
   filters: [usersOptionsFilter],
   searchFilter: usersSearchFilter,
   actionRoutes: {

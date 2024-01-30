@@ -11,6 +11,5 @@ export default {
   submitDataKey: "CREATE_STATUS",
   headerLabel,
   finishedDataButton: status.finishedDataButton,
-  navBarTab: route.navBarTab,
   defaultValue: defaultStatus,
 };

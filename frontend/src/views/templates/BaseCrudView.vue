@@ -51,16 +51,6 @@ import { accessStoreKey } from "@/helpers/dto";
 
 const store = useStore();
 
-watch(
-  () => props.navBarTab,
-  (val) => {
-    if (val || val === 0) {
-      store.commit("SET_CURRENT_TAB", val);
-    }
-  },
-  { immediate: true }
-);
-
 const props = defineProps({
   headerLabels: {
     type: Array,

@@ -58,6 +58,7 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import routes from "@/router/routes";
 
 const router = useRouter();
 const route = useRoute();
@@ -73,50 +74,24 @@ const signOut = () => store.dispatch("SIGN_OUT");
 
 const active = computed({
   set(val) {
-    store.commit("SET_CURRENT_TAB", val);
+    // store.commit("SET_CURRENT_TAB", val);
   },
   get() {
     return store.state.currentTab;
   },
 });
-const itemsRoutesRaw = [
-  {
-    label: "Usuários",
-    route: "/users",
-    modulesNeeded: modulesSystem.user,
-  },
-  {
-    label: "Órgãos meteorológicos",
-    route: "/meteorological-bodies",
-  },
-  {
-    label: "Equipamentos e leituras",
-    route: "/equipments",
-  },
-  {
-    label: "Notícias",
-    route: "/newsletter",
-    modulesNeeded: modulesSystem.news,
-  },
-  {
-    label: "Relatórios",
-    route: "/reports",
-  },
-  {
-    label: "Gráficos",
-    route: "/charts",
-  },
-  {
-    label: "Rotina de dados",
-    route: "/cron",
-    modulesNeeded: modulesSystem.jobs,
-  },
-  {
-    label: "Status de rotinas",
-    route: "/status",
-    modulesNeeded: modulesSystem.jobs,
-  },
-];
+
+const itemsRoutesRaw = routes
+  .filter((f: any) => f.meta?.ShowNav)
+  .map((f) => {
+    return {
+      label: f.meta?.title,
+      route: f.path,
+      navBarTab: f?.meta?.navBarTab,
+      modulesNeeded: f?.meta?.modulesNeeded?.[0] ?? null,
+    };
+  })
+  .sort((a, b) => a.navBarTab - b.navBarTab);
 
 const itemsRoutes = computed(() =>
   itemsRoutesRaw.map((v: any) => {

@@ -11,5 +11,4 @@ export default {
   headerLabel,
   finishedDataButton: newsletter.finishedDataButton,
   defaultValue: defaultNewsletter,
-  navBarTab: newsletter.navBarTab,
 };

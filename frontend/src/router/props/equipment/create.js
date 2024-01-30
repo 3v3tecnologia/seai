@@ -9,5 +9,4 @@ export default {
   headerLabel,
   finishedDataButton: editEquipment.finishedDataButton,
   fields: editEquipment.fields,
-  navBarTab: editEquipment.navBarTab,
 };
