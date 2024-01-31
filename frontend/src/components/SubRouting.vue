@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column align-items-start">
     <span class="label-access"> Acessar </span>
-    <div class="mt-3">
+    <div class="mt-2">
       <router-link
         class="nav p-2"
         v-for="(route, i) in routes"
@@ -28,7 +28,6 @@ const props = defineProps({
 <style lang="scss">
 .label-access {
   color: #6c757d;
-  font-size: 1.1rem;
 }
 
 .nav {
