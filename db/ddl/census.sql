@@ -889,24 +889,3 @@ COPY "Hidroquimica" (
 	"ColiformesTotais" --G0343
 )
 FROM '/var/lib/postgres/data/Hidroquimica.csv' DELIMITER ';' CSV HEADER;
-
-CREATE TABLE "Estudo"(
-	"Id_Bacia" INTEGER NOT NULL,
-	"Id_Cultura" INTEGER NOT NULL,
-	"Cultivo" INTEGER NOT NULL,
-	"ProdutividadePorQuilo" REAL NOT NULL,
-	"ProdutividadePorMetros" REAL NOT NULL
-);
-
-CREATE TABLE "Pesos"(
-	"Id_Bacia" INTEGER NOT NULL,
-	"Id_Cultura" INTEGER NOT NULL,
-	"SegurancaProdutivaPorQuilo" REAL DEFAULT NULL,
-	"SegurancaProdutivaPorMetros" REAL DEFAULT NULL,
-	"SegurancaEconomicaPorMetros" REAL DEFAULT NULL,
-	"SegurancaEconomicaPorHectar" REAL DEFAULT NULL,
-	"SegurancaSocialPorMetros" REAL DEFAULT NULL,
-	"SegurancaSocialPorHectar" REAL DEFAULT NULL,
-	"SegurancaHidricaPorHectar" REAL DEFAULT NULL,
-	"SegurancaHidricaPorMetros" REAL DEFAULT NULL
-);
