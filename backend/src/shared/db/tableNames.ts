@@ -19,4 +19,17 @@ export const DATABASES = {
       JOB: "pgboss.job",
     },
   },
+  MANAGEMENT: {
+    DATABASE: "management",
+    SCHEMA: "public",
+    TABLES: {
+      STUDIES: "Estudos",
+      WEIGHTS: "Pesos",
+      PHYSICS_CHARACTERISTICS: "Physics_Characteristics",
+      CHEMICAL_CHARACTERISTICS: "Chemical_Characteristics",
+      CROP_CYCLE: "Crop_Cycle",
+      SOIL: "Soil",
+      CROP: "Crop",
+    },
+  },
 };
