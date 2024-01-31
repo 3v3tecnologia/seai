@@ -5,7 +5,7 @@ import {
 import { censusDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
-export class ManagementStudiesRepository
+export class DbManagementStudiesRepository
   implements ManagementStudiesRepositoryProtocol
 {
   async create(
