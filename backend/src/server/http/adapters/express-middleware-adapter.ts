@@ -7,11 +7,15 @@ export const adaptMiddleware = (middleware: Middleware) => {
 
     const splittedHeader = headerToken?.split(" ");
 
+    const authType = splittedHeader?.[0];
     const token = splittedHeader?.[1];
 
     const req = {
       accountId: request.accountId,
       accessToken: token,
+      authType,
+      url: request.originalUrl,
+      method: request.method,
       ...request.headers,
       ...(request.query || {}),
       ...(request.params || {}),

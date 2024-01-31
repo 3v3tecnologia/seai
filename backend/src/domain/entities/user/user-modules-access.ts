@@ -47,6 +47,7 @@ export class SystemModules {
       { argument: modules[Modules.NEWS], argumentName: Modules.NEWS },
       { argument: modules[Modules.REGISTER], argumentName: Modules.REGISTER },
       { argument: modules[Modules.USER], argumentName: Modules.USER },
+      { argument: modules[Modules.JOBS], argumentName: Modules.JOBS },
     ]);
 
     if (isNullOrUndefinedArgs.isLeft()) {

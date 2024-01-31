@@ -35,7 +35,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       })
       .returning("*")
       .into(DATABASES.NEWSLETTER.NEWS_JOBS);
-
   }
 
   async deleteJobFromNews(id_news: number): Promise<void> {
@@ -44,7 +43,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Fk_News: id_news,
       })
       .delete();
-
   }
 
   async getIdJobFromNews(id_news: number): Promise<string | null> {
@@ -76,6 +74,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Content: request.Data,
       });
   }
+
   async delete(
     request: ContentRepositoryDTO.Delete.Request
   ): ContentRepositoryDTO.Delete.Response {
@@ -83,6 +82,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       .where({ Id: request.Id })
       .delete();
   }
+
   async getById(
     request: ContentRepositoryDTO.GetById.Request
   ): ContentRepositoryDTO.GetById.Response {
@@ -112,6 +112,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     return NewsMapper.toDomain(result.rows[0]);
   }
+
   async getAll(
     request: InputWithPagination
   ): ContentRepositoryDTO.GetAll.Response {

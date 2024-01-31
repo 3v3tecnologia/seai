@@ -26,6 +26,7 @@ export class SignUpController extends CommandController<
       // await this.userLogs.log(request.accountId, this.signUp.useCaseLogs());
       return ok(result.value);
     } catch (error) {
+      console.error(error);
       return serverError(error as Error);
     }
   }

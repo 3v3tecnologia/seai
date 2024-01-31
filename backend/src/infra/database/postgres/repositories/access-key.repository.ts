@@ -1,9 +1,11 @@
+import { ApiKeyMapper } from "../../../../domain/entities/apiKey/mapper/api-key-mapper";
 import {
   AccessKeyRepositoryDTO,
   AccessKeyRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/acess-key.repository";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { governmentDb } from "../connection/knexfile";
+import { withPagination } from "./mapper/WithPagination";
 
 export class DbAccessKeyRepository implements AccessKeyRepositoryProtocol {
   async create(
@@ -40,6 +42,16 @@ export class DbAccessKeyRepository implements AccessKeyRepositoryProtocol {
       });
   }
 
+  async delete(
+    request: AccessKeyRepositoryDTO.Update.Request
+  ): AccessKeyRepositoryDTO.Update.Response {
+    await governmentDb(DATABASES.API_KEY)
+      .where({
+        Id: request.Id,
+      })
+      .del();
+  }
+
   async getById(
     request: AccessKeyRepositoryDTO.GetById.Request
   ): AccessKeyRepositoryDTO.GetById.Response {
@@ -54,13 +66,45 @@ export class DbAccessKeyRepository implements AccessKeyRepositoryProtocol {
       return null;
     }
 
-    return {
-      Id: result.Id,
-      Key: result.Key,
-      Type: result.Type,
-      Enabled: result.Enabled,
-      CreatedAt: result.CreatedAt,
-      UpdatedAt: result.UpdatedAt,
-    };
+    return ApiKeyMapper.toDomain(result);
+  }
+
+  async getAll(
+    request: AccessKeyRepositoryDTO.GetAll.Request
+  ): AccessKeyRepositoryDTO.GetAll.Response {
+    const result = await governmentDb.raw(`
+      SELECT 
+          "Id", "Key", "Type", "Enabled", "CreatedAt", "UpdatedAt" 
+      FROM "${DATABASES.API_KEY}" 
+      LIMIT ${request.limit} OFFSET  ${request.pageNumber}
+    `);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+    const data = result.rows.map((row: any) => ApiKeyMapper.toDomain(row));
+
+    return withPagination(data, {
+      count: result.rows.length,
+      limit: request.limit,
+      offset: request.pageNumber,
+    });
+  }
+
+  async getByKey(
+    request: AccessKeyRepositoryDTO.GetByKey.Request
+  ): AccessKeyRepositoryDTO.GetByKey.Response {
+    const result = await governmentDb(DATABASES.API_KEY)
+      .select("*")
+      .where({
+        Key: request.Key,
+      })
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    return ApiKeyMapper.toDomain(result);
   }
 }
