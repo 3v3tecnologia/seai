@@ -12,47 +12,39 @@ import { DbIndicatorsRepository } from "../../../../../infra/database/postgres/r
 export class SecurityIndicatorsUseCaseFactory {
   private static repository = new DbIndicatorsRepository();
   // Remove from here ??
-  static makeFetchLocations = (): FetchCensusLocations => {
+  static makeFetchLocations(): FetchCensusLocations {
     return new FetchCensusLocations(this.repository);
-  };
+  }
 
-  static makeFetchEconomicSecurityByBasin =
-    (): FetchEconomicSecurityCensusByBasin => {
-      return new FetchEconomicSecurityCensusByBasin(this.repository);
-    };
+  static makeFetchEconomicSecurityByBasin(): FetchEconomicSecurityCensusByBasin {
+    return new FetchEconomicSecurityCensusByBasin(this.repository);
+  }
 
-  static makeFetchEconomicSecurityByCounty =
-    (): FetchEconomicSecurityCensusByCounty => {
-      return new FetchEconomicSecurityCensusByCounty(this.repository);
-    };
+  static makeFetchEconomicSecurityByCounty(): FetchEconomicSecurityCensusByCounty {
+    return new FetchEconomicSecurityCensusByCounty(this.repository);
+  }
 
-  static makeFetchProductivitySecurityByBasin =
-    (): FetchProductivitySecurityCensusByBasin => {
-      return new FetchProductivitySecurityCensusByBasin(this.repository);
-    };
+  static makeFetchProductivitySecurityByBasin(): FetchProductivitySecurityCensusByBasin {
+    return new FetchProductivitySecurityCensusByBasin(this.repository);
+  }
 
-  static makeFetchProductivitySecurityByCounty =
-    (): FetchProductivitySecurityCensusByCounty => {
-      return new FetchProductivitySecurityCensusByCounty(this.repository);
-    };
+  static makeFetchProductivitySecurityByCounty(): FetchProductivitySecurityCensusByCounty {
+    return new FetchProductivitySecurityCensusByCounty(this.repository);
+  }
 
-  static makeFetchSocialSecurityByBasin =
-    (): FetchSocialSecurityCensusByBasin => {
-      return new FetchSocialSecurityCensusByBasin(this.repository);
-    };
+  static makeFetchSocialSecurityByBasin(): FetchSocialSecurityCensusByBasin {
+    return new FetchSocialSecurityCensusByBasin(this.repository);
+  }
 
-  static makeFetchSocialSecurityByCounty =
-    (): FetchSocialSecurityCensusByCounty => {
-      return new FetchSocialSecurityCensusByCounty(this.repository);
-    };
+  static makeFetchSocialSecurityByCounty(): FetchSocialSecurityCensusByCounty {
+    return new FetchSocialSecurityCensusByCounty(this.repository);
+  }
 
-  static makeFetchWaterSecurityByBasin =
-    (): FetchWaterSecurityCensusByBasin => {
-      return new FetchWaterSecurityCensusByBasin(this.repository);
-    };
+  static makeFetchWaterSecurityByBasin(): FetchWaterSecurityCensusByBasin {
+    return new FetchWaterSecurityCensusByBasin(this.repository);
+  }
 
-  static makeFetchWaterSecurityByCounty =
-    (): FetchWaterSecurityCensusByCounty => {
-      return new FetchWaterSecurityCensusByCounty(this.repository);
-    };
+  static makeFetchWaterSecurityByCounty(): FetchWaterSecurityCensusByCounty {
+    return new FetchWaterSecurityCensusByCounty(this.repository);
+  }
 }

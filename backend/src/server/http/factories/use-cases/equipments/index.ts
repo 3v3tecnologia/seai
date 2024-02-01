@@ -17,62 +17,61 @@ import { DbEquipmentsRepository } from "../../../../../infra/database/postgres/r
 export class EquipmentsUseCasesFactory {
   private static repository = new DbEquipmentsRepository();
 
-  static makeCreateEquipment = (): CreateEquipments => {
+  static makeCreateEquipment(): CreateEquipments {
     const repository = new DbEquipmentsRepository();
     return new CreateEquipments(this.repository);
-  };
+  }
 
-  static makeUpdateEquipment = (): UpdateEquipment => {
+  static makeUpdateEquipment(): UpdateEquipment {
     return new UpdateEquipment(this.repository);
-  };
+  }
 
-  static makeCreateMeteorologicalOrgan = (): CreateMeteorologicalOrgan => {
+  static makeCreateMeteorologicalOrgan(): CreateMeteorologicalOrgan {
     return new CreateMeteorologicalOrgan(this.repository);
-  };
+  }
 
-  static makeDeleteEquipment = (): DeleteEquipment => {
+  static makeDeleteEquipment(): DeleteEquipment {
     return new DeleteEquipment(this.repository);
-  };
+  }
 
-  static makeDeleteMeteorologicalOrgan = (): DeleteMeteorologicalOrgan => {
+  static makeDeleteMeteorologicalOrgan(): DeleteMeteorologicalOrgan {
     const repository = new DbEquipmentsRepository();
     return new DeleteMeteorologicalOrgan(this.repository);
-  };
+  }
 
-  static makeFetchEquipments = (): FetchEquipments => {
+  static makeFetchEquipments(): FetchEquipments {
     return new FetchEquipments(this.repository);
-  };
+  }
 
-  static makeFetchMeteorologicalOrgan = (): FetchMeteorologicalOrgans => {
+  static makeFetchMeteorologicalOrgan(): FetchMeteorologicalOrgans {
     return new FetchMeteorologicalOrgans(this.repository);
-  };
+  }
 
-  static makeFetchPluviometerReadsByIdRead =
-    (): FetchPluviometerReadsByIdRead => {
-      return new FetchPluviometerReadsByIdRead(this.repository);
-    };
+  static makeFetchPluviometerReadsByIdRead(): FetchPluviometerReadsByIdRead {
+    return new FetchPluviometerReadsByIdRead(this.repository);
+  }
 
-  static makeFetchPluviometersReads = (): FetchPluviometersReads => {
+  static makeFetchPluviometersReads(): FetchPluviometersReads {
     return new FetchPluviometersReads(this.repository);
-  };
+  }
 
-  static makeFetchStationReadsByIdRead = (): FetchStationReadsByIdRead => {
+  static makeFetchStationReadsByIdRead(): FetchStationReadsByIdRead {
     return new FetchStationReadsByIdRead(this.repository);
-  };
+  }
 
-  static makeFetchStationsReads = (): FetchStationsReads => {
+  static makeFetchStationsReads(): FetchStationsReads {
     return new FetchStationsReads(this.repository);
-  };
+  }
 
-  static makeUpdateMeteorologicalOrgan = (): UpdateMeteorologicalOrgan => {
+  static makeUpdateMeteorologicalOrgan(): UpdateMeteorologicalOrgan {
     return new UpdateMeteorologicalOrgan(this.repository);
-  };
+  }
 
-  static makeUpdatePluviometerMeasures = (): UpdatePluviometerMeasures => {
+  static makeUpdatePluviometerMeasures(): UpdatePluviometerMeasures {
     return new UpdatePluviometerMeasures(this.repository);
-  };
+  }
 
-  static makeUpdateStationMeasures = (): UpdateStationMeasures => {
+  static makeUpdateStationMeasures(): UpdateStationMeasures {
     return new UpdateStationMeasures(this.repository);
-  };
+  }
 }
