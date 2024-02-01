@@ -1,13 +1,13 @@
-import { FetchCensusLocations } from "../../../../../domain/use-cases/indicators-census/fetch-census-locations";
-import { FetchEconomicSecurityCensusByBasin } from "../../../../../domain/use-cases/indicators-census/fetch-economic-security-by-basin";
-import { FetchEconomicSecurityCensusByCounty } from "../../../../../domain/use-cases/indicators-census/fetch-economic-security-by-county";
-import { FetchProductivitySecurityCensusByBasin } from "../../../../../domain/use-cases/indicators-census/fetch-productivity-security-by-basin";
-import { FetchProductivitySecurityCensusByCounty } from "../../../../../domain/use-cases/indicators-census/fetch-productivity-security-by-county";
-import { FetchSocialSecurityCensusByBasin } from "../../../../../domain/use-cases/indicators-census/fetch-social-security-by-basin";
-import { FetchSocialSecurityCensusByCounty } from "../../../../../domain/use-cases/indicators-census/fetch-social-security-by-county";
-import { FetchWaterSecurityCensusByBasin } from "../../../../../domain/use-cases/indicators-census/fetch-water-security-by-basin";
-import { FetchWaterSecurityCensusByCounty } from "../../../../../domain/use-cases/indicators-census/fetch-water-security-by-county";
-import { DbIndicatorsRepository } from "../../../../../infra/database/postgres/repositories/security-indicators.repository";
+import { FetchCensusLocations } from "../../../../domain/use-cases/indicators-census/fetch-census-locations";
+import { FetchEconomicSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-economic-security-by-basin";
+import { FetchEconomicSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-economic-security-by-county";
+import { FetchProductivitySecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-productivity-security-by-basin";
+import { FetchProductivitySecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-productivity-security-by-county";
+import { FetchSocialSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-social-security-by-basin";
+import { FetchSocialSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-social-security-by-county";
+import { FetchWaterSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-water-security-by-basin";
+import { FetchWaterSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-water-security-by-county";
+import { DbIndicatorsRepository } from "../../../../infra/database/postgres/repositories/security-indicators.repository";
 
 export class SecurityIndicatorsUseCaseFactory {
   private static repository = new DbIndicatorsRepository();

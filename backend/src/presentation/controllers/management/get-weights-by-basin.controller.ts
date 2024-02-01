@@ -12,7 +12,7 @@ export class GetManagementWeightsByBasinController {
   }
 
   async handle(
-    request: GetManagementStudiesByBasinControllerProtocol.Request
+    request: GetManagementWeightsByBasinControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
       const deletedOrError = await this.useCase.execute({
@@ -33,7 +33,7 @@ export class GetManagementWeightsByBasinController {
   }
 }
 
-export namespace GetManagementStudiesByBasinControllerProtocol {
+export namespace GetManagementWeightsByBasinControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;

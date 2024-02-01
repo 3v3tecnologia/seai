@@ -1,16 +1,18 @@
-import { DeleteManagementStudiesByBasinController } from "../../../../presentation/controllers/management/delete-management-studies-by-basin.controller";
-import { DeleteManagementWeightsByBasinController } from "../../../../presentation/controllers/management/delete-weights-by-basin.controller";
-import { GetManagementStudiesByBasinController } from "../../../../presentation/controllers/management/get-studies-by-basin.controller";
-import { GetManagementWeightsByBasinController } from "../../../../presentation/controllers/management/get-weights-by-basin.controller";
-import { InsertManagementStudiesByBasinController } from "../../../../presentation/controllers/management/insert-studies.controller";
-import { InsertManagementWeightsByBasinController } from "../../../../presentation/controllers/management/insert-weights.controller";
+import {
+  DeleteManagementStudiesByBasinController,
+  DeleteManagementWeightsByBasinController,
+  GetManagementStudiesByBasinController,
+  GetManagementWeightsByBasinController,
+  InsertManagementStudiesByBasinController,
+  InsertManagementWeightsByBasinController,
+} from "../../../../presentation/controllers/management";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
-import { SystemLogsUseCaseFactory } from "../use-cases";
 import {
   ManagementUseCasesFactory,
   ManagementWeightsUseCasesFactory,
-} from "../use-cases/management";
+  SystemLogsUseCaseFactory,
+} from "../use-cases";
 
 export class ManagementControllersFactory {
   static makeDeleteStudiesByBasin(): Controller {

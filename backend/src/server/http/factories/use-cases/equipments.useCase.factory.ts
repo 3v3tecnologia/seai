@@ -1,18 +1,20 @@
-import { CreateEquipments } from "../../../../../domain/use-cases/equipments/create-equipment";
-import { CreateMeteorologicalOrgan } from "../../../../../domain/use-cases/equipments/create-meteorological-organ";
-import { DeleteEquipment } from "../../../../../domain/use-cases/equipments/delete-equipment";
-import { DeleteMeteorologicalOrgan } from "../../../../../domain/use-cases/equipments/delete-meteorological-organ";
-import { FetchEquipments } from "../../../../../domain/use-cases/equipments/fetch-equipments";
-import { FetchMeteorologicalOrgans } from "../../../../../domain/use-cases/equipments/fetch-meteorologial-organs";
-import { FetchPluviometerReadsByIdRead } from "../../../../../domain/use-cases/equipments/fetch-pluviometer-reads-by-id-read";
-import { FetchPluviometersReads } from "../../../../../domain/use-cases/equipments/fetch-pluviometers-reads";
-import { FetchStationReadsByIdRead } from "../../../../../domain/use-cases/equipments/fetch-station-reads-by-id-read";
-import { FetchStationsReads } from "../../../../../domain/use-cases/equipments/fetch-stations-reads";
-import { UpdateEquipment } from "../../../../../domain/use-cases/equipments/update-equipment";
-import { UpdateMeteorologicalOrgan } from "../../../../../domain/use-cases/equipments/update-meteorological-organ";
-import { UpdatePluviometerMeasures } from "../../../../../domain/use-cases/equipments/update-pluviometer-measures";
-import { UpdateStationMeasures } from "../../../../../domain/use-cases/equipments/update-station-measures";
-import { DbEquipmentsRepository } from "../../../../../infra/database/postgres/repositories/equipments-repository";
+import {
+  CreateEquipments,
+  CreateMeteorologicalOrgan,
+  DeleteEquipment,
+  DeleteMeteorologicalOrgan,
+  FetchEquipments,
+  FetchMeteorologicalOrgans,
+  FetchPluviometerReadsByIdRead,
+  FetchPluviometersReads,
+  FetchStationReadsByIdRead,
+  FetchStationsReads,
+  UpdateEquipment,
+  UpdateMeteorologicalOrgan,
+  UpdatePluviometerMeasures,
+  UpdateStationMeasures,
+} from "../../../../domain/use-cases/equipments";
+import { DbEquipmentsRepository } from "../../../../infra/database/postgres/repositories/equipments-repository";
 
 export class EquipmentsUseCasesFactory {
   private static repository = new DbEquipmentsRepository();

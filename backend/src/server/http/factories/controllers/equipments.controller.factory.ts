@@ -11,12 +11,14 @@ import {
   FetchStationsReadsController,
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
-} from "../../../../presentation/controllers/equipments-controller";
-import { UpdatePluviometerController } from "../../../../presentation/controllers/equipments-controller/update-pluviometer-measures.controller";
-import { UpdateStationMeasuresController } from "../../../../presentation/controllers/equipments-controller/update-station-measures.controller";
+} from "../../../../presentation/controllers/equipments";
+import { UpdatePluviometerController } from "../../../../presentation/controllers/equipments/update-pluviometer-measures.controller";
+import { UpdateStationMeasuresController } from "../../../../presentation/controllers/equipments/update-station-measures.controller";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import { SystemLogsUseCaseFactory } from "../use-cases";
-import { EquipmentsUseCasesFactory } from "../use-cases/equipments";
+import {
+  EquipmentsUseCasesFactory,
+  SystemLogsUseCaseFactory,
+} from "../use-cases";
 
 export class EquipmentsControllerFactory {
   static makeCreateEquipments(): Controller {

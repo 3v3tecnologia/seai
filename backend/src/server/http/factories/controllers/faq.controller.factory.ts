@@ -1,13 +1,15 @@
-import { CreateFaqCategoryController } from "../../../../presentation/controllers/faq-controller/create-category.controller";
-import { CreateFaqController } from "../../../../presentation/controllers/faq-controller/create.controller";
-import { DeleteFaqCategoryController } from "../../../../presentation/controllers/faq-controller/delete-category.controller";
-import { DeleteFaqController } from "../../../../presentation/controllers/faq-controller/delete.controller";
-import { FetchFaqByCategoryController } from "../../../../presentation/controllers/faq-controller/fetch-by-category.controller";
-import { FetchFaqByIdController } from "../../../../presentation/controllers/faq-controller/fetch-by-id.controller";
-import { FetchFaqCategoriesController } from "../../../../presentation/controllers/faq-controller/fetch-categories.controller";
-import { FetchFaqWithCategoriesController } from "../../../../presentation/controllers/faq-controller/fetch-with-categories.controller";
-import { UpdateFaqCategoryController } from "../../../../presentation/controllers/faq-controller/update-faq-category.controller";
-import { UpdateFaqController } from "../../../../presentation/controllers/faq-controller/update.controller";
+import {
+  CreateFaqCategoryController,
+  CreateFaqController,
+  DeleteFaqCategoryController,
+  DeleteFaqController,
+  FetchFaqByCategoryController,
+  FetchFaqByIdController,
+  FetchFaqCategoriesController,
+  FetchFaqWithCategoriesController,
+  UpdateFaqCategoryController,
+  UpdateFaqController,
+} from "../../../../presentation/controllers/faq";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
 import { FaqUseCasesFactory, SystemLogsUseCaseFactory } from "../use-cases";

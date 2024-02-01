@@ -29,6 +29,6 @@ export class FetchFaqWithCategoriesController
   }
 }
 
-export namespace FetchFaqByCategoryController {
+export namespace FetchFaqWithCategoryController {
   export type Request = {};
 }

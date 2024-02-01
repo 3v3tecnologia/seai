@@ -1,16 +1,18 @@
-import { UserUseCasesFactory } from "../use-cases/user/index";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import { CreateUserController } from "../../../../presentation/controllers/user-controller/create-user.controller";
-import { DeleteUserController } from "../../../../presentation/controllers/user-controller/delete-user.controller";
-import { FetchUserByIdController } from "../../../../presentation/controllers/user-controller/fetch-user-by-id";
-import { FetchUserController } from "../../../../presentation/controllers/user-controller/fetch-user.controller";
-import { ForgotPasswordController } from "../../../../presentation/controllers/user-controller/forgot-password.controller";
-import { ResetPasswordController } from "../../../../presentation/controllers/user-controller/reset-password.controller";
-import { SignInController } from "../../../../presentation/controllers/user-controller/sign-in.controller";
-import { SignUpController } from "../../../../presentation/controllers/user-controller/sign-up.controller";
-import { UpdateUserController } from "../../../../presentation/controllers/user-controller/update-user.controller";
+
 import { makeLogControllerDecorator } from "../decorators";
-import { SystemLogsUseCaseFactory } from "../use-cases";
+import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
+import {
+  CreateUserController,
+  DeleteUserController,
+  FetchUserByIdController,
+  FetchUserController,
+  ForgotPasswordController,
+  ResetPasswordController,
+  SignInController,
+  SignUpController,
+  UpdateUserController,
+} from "../../../../presentation/controllers/user";
 
 export class UserControllersFactory {
   static makeCreateUser(): Controller {
