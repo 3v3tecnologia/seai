@@ -5,7 +5,7 @@ import { SignIn } from "../../../domain/use-cases/user/sign-in";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 export class SignInController
-  implements Controller<CreateUserController.Request, HttpResponse>
+  implements Controller<SignInControllerProtocol.Request, HttpResponse>
 {
   private signIn: SignIn;
 
@@ -13,7 +13,9 @@ export class SignInController
     this.signIn = signIn;
   }
 
-  async handle(request: CreateUserController.Request): Promise<HttpResponse> {
+  async handle(
+    request: SignInControllerProtocol.Request
+  ): Promise<HttpResponse> {
     try {
       if (!request.login) {
         return badRequest(new Error("É necessário informar o login"));
@@ -36,7 +38,7 @@ export class SignInController
   }
 }
 
-export namespace CreateUserController {
+export namespace SignInControllerProtocol {
   export type Request = {
     login: string;
     password: string;

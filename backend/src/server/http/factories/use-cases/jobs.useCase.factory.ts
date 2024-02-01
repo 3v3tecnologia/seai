@@ -17,9 +17,9 @@ import {
   UpdateCronUseCaseProtocol,
   UpdateJob,
   UpdateJobUseCaseProtocol,
-} from "../../../../../domain/use-cases/jobs";
+} from "../../../../domain/use-cases/jobs";
 
-import { DbBackgroundJobsRepository } from "../../../../../infra/database/postgres/repositories/background-jobs-repository";
+import { DbBackgroundJobsRepository } from "../../../../infra/database/postgres/repositories/background-jobs-repository";
 
 export class JobsUseCasesFactory {
   static repository = new DbBackgroundJobsRepository();

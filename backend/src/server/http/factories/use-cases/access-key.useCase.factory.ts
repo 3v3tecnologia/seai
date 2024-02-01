@@ -9,8 +9,8 @@ import {
   RegisterAccessKeyUseCaseProtocol,
   UpdateAccessKeyUseCaseProtocol,
   UpdateRegisterAccessKey,
-} from "../../../../../domain/use-cases/access-key";
-import { DbAccessKeyRepository } from "../../../../../infra/database/postgres/repositories/access-key.repository";
+} from "../../../../domain/use-cases/access-key";
+import { DbAccessKeyRepository } from "../../../../infra/database/postgres/repositories/access-key.repository";
 
 export class AccessKeyUseCasesFactory {
   private static repository = new DbAccessKeyRepository();

@@ -1,16 +1,18 @@
-import { FetchAnimalsCensusByBasinController } from "../../../../presentation/controllers/census/fetch-animals-by-basin.controller";
-import { FetchAnimalsCensusByCityController } from "../../../../presentation/controllers/census/fetch-animals-by-city.controller";
-import { FetchAnimalsConsumptionCensusController } from "../../../../presentation/controllers/census/fetch-animals-consumption.controller";
-import { FetchAquacultureByBasinController } from "../../../../presentation/controllers/census/fetch-aquaculture-by-basin.controller";
-import { FetchAquacultureByCountyController } from "../../../../presentation/controllers/census/fetch-aquaculture-takers-by-county.controller";
-import { FetchCaptationByBasinController } from "../../../../presentation/controllers/census/fetch-captation-by-basin.controller";
-import { FetchCaptationByCountyController } from "../../../../presentation/controllers/census/fetch-captation-by-county.controller";
-import { FetchCaptationTankByBasinController } from "../../../../presentation/controllers/census/fetch-captation-tank-by-basin.controller";
-import { FetchCaptationTankByCountyController } from "../../../../presentation/controllers/census/fetch-captation-tank-by-county.controller";
-import { FetchCensusTakersByBasinController } from "../../../../presentation/controllers/census/fetch-census-takers-by-basin.controller";
-import { FetchCensusTakersByCountyController } from "../../../../presentation/controllers/census/fetch-census-takers-by-county.controller";
-import { FetchWorkersByBasinController } from "../../../../presentation/controllers/census/fetch-workers-census-by-basin.controller";
-import { FetchWorkersByCountyController } from "../../../../presentation/controllers/census/fetch-workers-census-by-county.controller";
+import {
+  FetchAnimalsCensusByBasinController,
+  FetchAnimalsCensusByCityController,
+  FetchAnimalsConsumptionCensusController,
+  FetchAquacultureByBasinController,
+  FetchAquacultureByCountyController,
+  FetchCaptationByBasinController,
+  FetchCaptationByCountyController,
+  FetchCaptationTankByBasinController,
+  FetchCaptationTankByCountyController,
+  FetchCensusTakersByBasinController,
+  FetchCensusTakersByCountyController,
+  FetchWorkersByBasinController,
+  FetchWorkersByCountyController,
+} from "../../../../presentation/controllers/census";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
 import {

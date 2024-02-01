@@ -7,8 +7,7 @@ import {
 } from "../../../../presentation/controllers/api-key";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
-
-import { AccessKeyUseCasesFactory } from "../use-cases/access-key";
+import { AccessKeyUseCasesFactory } from "../use-cases";
 
 export class AccessKeyControllerFactory {
   static makeDelete(): Controller {

@@ -5,7 +5,7 @@ import { FetchUserById } from "../../../domain/use-cases/user/fetch-user-by-id/f
 import { forbidden, ok, serverError } from "../helpers";
 
 export class FetchUserByIdController
-  implements Controller<FetchUserController.Request, HttpResponse>
+  implements Controller<FetchUserByIdControllerProtocol.Request, HttpResponse>
 {
   private loadUser: FetchUserById;
 
@@ -13,7 +13,9 @@ export class FetchUserByIdController
     this.loadUser = loadUser;
   }
 
-  async handle(request: FetchUserController.Request): Promise<HttpResponse> {
+  async handle(
+    request: FetchUserByIdControllerProtocol.Request
+  ): Promise<HttpResponse> {
     try {
       const dto = {
         userId: request.id || request.accountId,
@@ -31,7 +33,7 @@ export class FetchUserByIdController
   }
 }
 
-export namespace FetchUserController {
+export namespace FetchUserByIdControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;

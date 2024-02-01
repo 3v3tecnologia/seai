@@ -9,12 +9,12 @@ import {
   FetchFaqWithCategories,
   UpdateFaq,
   UpdateFaqCategory,
-} from "../../../../../domain/use-cases/faq";
-import { FetchFaqByCategoryProtocol } from "../../../../../domain/use-cases/faq/fetch-faq-by-category/ports/fetch-faq-by-category";
-import { FetchFaqByIdProtocol } from "../../../../../domain/use-cases/faq/fetch-faq-by-id/ports/fetch-faq-by-id";
-import { FetchFaqCategoriesProtocol } from "../../../../../domain/use-cases/faq/fetch-faq-categories/ports/fetch-faq-categories";
-import { FetchFaqWithCategoriesProtocol } from "../../../../../domain/use-cases/faq/fetch-faq-with-categories/ports/fetch-faq-with-categories";
-import { DbFaqRepository } from "../../../../../infra/database/postgres/repositories/faq-repository";
+} from "../../../../domain/use-cases/faq";
+import { FetchFaqByCategoryProtocol } from "../../../../domain/use-cases/faq/fetch-faq-by-category/ports/fetch-faq-by-category";
+import { FetchFaqByIdProtocol } from "../../../../domain/use-cases/faq/fetch-faq-by-id/ports/fetch-faq-by-id";
+import { FetchFaqCategoriesProtocol } from "../../../../domain/use-cases/faq/fetch-faq-categories/ports/fetch-faq-categories";
+import { FetchFaqWithCategoriesProtocol } from "../../../../domain/use-cases/faq/fetch-faq-with-categories/ports/fetch-faq-with-categories";
+import { DbFaqRepository } from "../../../../infra/database/postgres/repositories/faq-repository";
 
 export class FaqUseCasesFactory {
   private static repository = new DbFaqRepository();
