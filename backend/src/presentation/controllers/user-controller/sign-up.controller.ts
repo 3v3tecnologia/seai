@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { SignUp } from "../../../domain/use-cases/user/sign-up";
 import { forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";

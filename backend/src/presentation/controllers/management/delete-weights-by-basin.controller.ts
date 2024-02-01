@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
-import { DeleteManagementWeightsByBasin } from "../../../domain/use-cases/management/delete-weights-by-basin.useCase";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { DeleteManagementWeightsByBasin } from "../../../domain/use-cases/management/delete-weights-by-basin";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 

@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { ok, badRequest, serverError } from "../helpers";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { UpdateStationMeasures } from "../../../domain/use-cases/equipments/update-station-measures";
 
 export class UpdateStationMeasuresController

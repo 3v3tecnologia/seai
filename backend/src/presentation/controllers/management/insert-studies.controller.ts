@@ -1,5 +1,5 @@
-import { InsertManagementStudiesByBasin } from "../../../domain/use-cases/management/insert-studies.useCase";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { InsertManagementStudiesByBasin } from "../../../domain/use-cases/management/insert-studies";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { HttpResponse } from "../ports";
 import { CommandController } from "../ports/command-controller";

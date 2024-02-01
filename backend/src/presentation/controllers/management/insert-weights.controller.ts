@@ -1,5 +1,5 @@
-import { InsertManagementWeightsByBasin } from "../../../domain/use-cases/management/insert-weights.useCase";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { InsertManagementWeightsByBasin } from "../../../domain/use-cases/management/insert-weights";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { HttpResponse } from "../ports";
 import { CommandController } from "../ports/command-controller";

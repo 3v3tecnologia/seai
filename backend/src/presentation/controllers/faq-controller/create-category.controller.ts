@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import { CreateFaqCategory } from "../../../domain/use-cases/faq/create-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, created, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 

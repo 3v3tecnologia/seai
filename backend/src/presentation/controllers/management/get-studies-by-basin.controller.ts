@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { GetManagementStudiesByBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-studies-by-basin.useCase";
+import { GetManagementStudiesByBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-studies-by-basin";
 import { created, forbidden, serverError } from "../helpers";
 import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 

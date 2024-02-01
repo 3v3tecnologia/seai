@@ -6,7 +6,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/animal-census-repository";
 import { censusDb } from "../connection/knexfile";
 
-export class KnexAnimalsCensusRepository
+export class DbAnimalsCensusRepository
   implements AnimalsCensusRepositoryProtocol
 {
   async getConsumption(): Promise<Array<AnimalsConsumptionData> | null> {

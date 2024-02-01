@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { DeleteEquipment } from "../../../domain/use-cases/equipments/delete-equipment";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, ok, serverError } from "../helpers";
 
 export class DeleteEquipmentController

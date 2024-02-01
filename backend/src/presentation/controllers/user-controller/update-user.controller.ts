@@ -5,7 +5,7 @@ import {
   Modules,
   SystemModulesPermissions,
 } from "../../../domain/entities/user/user-modules-access";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { UpdateUser } from "../../../domain/use-cases/user/update-user";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";

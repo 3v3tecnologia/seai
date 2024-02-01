@@ -2,15 +2,7 @@ import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
 import { authorization } from "../http-middlewares";
-
-import {
-  makeDeleteStudiesByBasinController,
-  makeGetStudiesByBasinController,
-  makeDeleteWeightsByBasinController,
-  makeGetWeightsByBasinController,
-  makeInsertManagementStudiesController,
-  makeInsertManagementWeightsController,
-} from "../factories/controllers/management";
+import { ManagementControllersFactory } from "../factories/controllers";
 
 export const managementRouter = (): Router => {
   const router = Router();
@@ -18,37 +10,37 @@ export const managementRouter = (): Router => {
   router.post(
     "/weights",
     authorization,
-    adaptRoute(makeInsertManagementWeightsController())
+    adaptRoute(ManagementControllersFactory.makeInsertManagementWeights())
   );
 
   router.get(
     "/weights/:id",
     authorization,
-    adaptRoute(makeGetWeightsByBasinController())
+    adaptRoute(ManagementControllersFactory.makeGetWeightsByBasin())
   );
 
   router.delete(
     "/weights/:id",
     authorization,
-    adaptRoute(makeDeleteWeightsByBasinController())
+    adaptRoute(ManagementControllersFactory.makeDeleteWeightsByBasin())
   );
 
   router.post(
     "/studies",
     authorization,
-    adaptRoute(makeInsertManagementStudiesController())
+    adaptRoute(ManagementControllersFactory.makeInsertManagementStudies())
   );
 
   router.get(
     "/studies/:id",
     authorization,
-    adaptRoute(makeGetStudiesByBasinController())
+    adaptRoute(ManagementControllersFactory.makeGetStudiesByBasin())
   );
 
   router.delete(
     "/studies/:id",
     authorization,
-    adaptRoute(makeDeleteStudiesByBasinController())
+    adaptRoute(ManagementControllersFactory.makeDeleteStudiesByBasin())
   );
 
   return router;

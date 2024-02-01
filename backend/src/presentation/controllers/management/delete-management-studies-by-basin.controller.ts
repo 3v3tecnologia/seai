@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
-import { DeleteManagementStudiesByBasin } from "../../../domain/use-cases/management/delete-management-studies-by-basin.useCase";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { DeleteManagementStudiesByBasin } from "../../../domain/use-cases/management/delete-management-studies-by-basin";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 

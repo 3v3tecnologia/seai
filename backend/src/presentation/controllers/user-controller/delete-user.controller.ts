@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-user";
 import { forbidden, ok } from "../helpers";
 import { CommandController } from "../ports/command-controller";
