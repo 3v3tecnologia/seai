@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchEquipmentLogs } from "../../../domain/use-cases/use-cases-logs/fetch-equipment-logs";
+import { FetchEquipmentLogs } from "../../../domain/use-cases/system-logs/fetch-equipment-logs";
 import { noContent, ok, serverError } from "../helpers";
 
 export class FetchEquipmentLogsController

@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import { DeleteNews } from "../../../domain/use-cases/newsletter/delete";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 

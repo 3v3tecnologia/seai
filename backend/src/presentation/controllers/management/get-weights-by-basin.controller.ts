@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
-import { GetManagementWeightsByBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-weights-by-basin.useCase";
+import { GetManagementWeightsByBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-weights-by-basin";
 import { created, forbidden, serverError } from "../helpers";
 
 export class GetManagementWeightsByBasinController {

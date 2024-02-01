@@ -1,7 +1,7 @@
 import { CaptationCensusRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/captation-repository";
 import { censusDb } from "../connection/knexfile";
 
-export class KnexCaptationCensusRepository
+export class DbCaptationCensusRepository
   implements CaptationCensusRepositoryProtocol
 {
   async getFlowAndVolumeAvgByBasin(): Promise<Array<any> | null> {
@@ -69,6 +69,7 @@ export class KnexCaptationCensusRepository
       ["Volume médio"]: Number(row["Volume médio (m³)"]),
     }));
   }
+
   async getFlowAndVolumeAvgByCounty(): Promise<Array<any> | null> {
     const data = await censusDb.raw(`
     SELECT

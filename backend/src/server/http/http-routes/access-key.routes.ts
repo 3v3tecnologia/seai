@@ -1,15 +1,9 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import { authorization, newsReadAccessAuth } from "../http-middlewares";
+import { authorization } from "../http-middlewares";
 
-import {
-  makeFetchAccessKeyByIdController,
-  makeRegisterAccessKeyController,
-  makeUpdateAccessKeyController,
-  makeDeleteAccessKeyController,
-  makeFetchAccessKeysController,
-} from "../factories/controllers/access-key";
+import { AccessKeyControllerFactory } from "../factories/controllers";
 
 import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
@@ -20,27 +14,31 @@ export const accessKeyRouter = (): Router => {
     "/:id",
     authorization,
     newsWriteAccessAuth,
-    adaptRoute(makeUpdateAccessKeyController())
+    adaptRoute(AccessKeyControllerFactory.makeUpdate())
   );
 
   router.get(
     "/:id",
     authorization,
-    adaptRoute(makeFetchAccessKeyByIdController())
+    adaptRoute(AccessKeyControllerFactory.makeFetchAccessKeyById())
   );
 
   router.delete(
     "/:id",
     authorization,
-    adaptRoute(makeDeleteAccessKeyController())
+    adaptRoute(AccessKeyControllerFactory.makeDelete())
   );
 
-  router.get("/", authorization, adaptRoute(makeFetchAccessKeysController()));
+  router.get(
+    "/",
+    authorization,
+    adaptRoute(AccessKeyControllerFactory.makeFetchAccessKeys())
+  );
 
   router.post(
     "/",
     authorization,
-    adaptRoute(makeRegisterAccessKeyController())
+    adaptRoute(AccessKeyControllerFactory.makeRegister())
   );
 
   return router;

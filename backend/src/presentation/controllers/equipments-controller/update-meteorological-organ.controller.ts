@@ -3,7 +3,7 @@ import { Controller } from "../ports/controllers";
 
 import { MeteorologicalOrganEntity } from "../../../domain/entities/equipments/MetereologicalOrgan";
 import { UpdateMeteorologicalOrgan } from "../../../domain/use-cases/equipments/update-meteorological-organ";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { Notification } from "../../../shared/notification/notification";
 import { badRequest, ok, serverError } from "../helpers";
 

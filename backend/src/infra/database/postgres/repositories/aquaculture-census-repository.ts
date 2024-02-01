@@ -5,7 +5,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/aquaculture-census-repository";
 import { censusDb } from "../connection/knexfile";
 
-export class KnexAquacultureCensusRepository
+export class DbAquacultureCensusRepository
   implements AquacultureCensusRepositoryProtocol
 {
   async getMonthlyVolumePerTanksByCounty(): Promise<Array<any> | null> {

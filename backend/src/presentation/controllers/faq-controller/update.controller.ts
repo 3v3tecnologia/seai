@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import { UpdateFaq } from "../../../domain/use-cases/faq/update-faq/update-faq";
-import { RegisterUserLogs } from "../../../domain/use-cases/use-cases-logs/register-user-logs";
+import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
 
