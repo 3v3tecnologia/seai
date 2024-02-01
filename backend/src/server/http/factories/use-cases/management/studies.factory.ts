@@ -9,17 +9,15 @@ import { DbManagementStudiesRepository } from "../../../../../infra/database/pos
 export class ManagementUseCasesFactory {
   private static repository = new DbManagementStudiesRepository();
 
-  static makeDeleteManagementStudiesByBasin =
-    (): DeleteManagementStudiesByBasin => {
-      return new DeleteManagementStudiesByBasin(this.repository);
-    };
+  static makeDeleteManagementStudiesByBasin(): DeleteManagementStudiesByBasin {
+    return new DeleteManagementStudiesByBasin(this.repository);
+  }
 
-  static makeGetManagementStudiesByBasin =
-    (): GetManagementStudiesByBasinUseCaseProtocol.UseCase => {
-      return new GetManagementStudiesByBasin(this.repository);
-    };
+  static makeGetManagementStudiesByBasin(): GetManagementStudiesByBasinUseCaseProtocol.UseCase {
+    return new GetManagementStudiesByBasin(this.repository);
+  }
 
-  static makeInsertManagementStudies = (): InsertManagementStudiesByBasin => {
+  static makeInsertManagementStudies(): InsertManagementStudiesByBasin {
     return new InsertManagementStudiesByBasin(this.repository);
-  };
+  }
 }

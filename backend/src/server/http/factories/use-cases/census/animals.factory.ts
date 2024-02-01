@@ -5,16 +5,15 @@ import { DbAnimalsCensusRepository } from "../../../../../infra/database/postgre
 
 export class AnimalsUseCasesFactory {
   private static repository = new DbAnimalsCensusRepository();
-  static makeFetchAnimalsCensusByBasin = (): FetchAnimalsCensusByBasin => {
+  static makeFetchAnimalsCensusByBasin(): FetchAnimalsCensusByBasin {
     return new FetchAnimalsCensusByBasin(this.repository);
-  };
+  }
 
-  static makeFetchAnimalsCensusByCity = (): FetchAnimalsCensusByCity => {
+  static makeFetchAnimalsCensusByCity(): FetchAnimalsCensusByCity {
     return new FetchAnimalsCensusByCity(this.repository);
-  };
+  }
 
-  static makeFetchAnimalsCensusConsumption =
-    (): FetchAnimalsCensusByConsumption => {
-      return new FetchAnimalsCensusByConsumption(this.repository);
-    };
+  static makeFetchAnimalsCensusConsumption(): FetchAnimalsCensusByConsumption {
+    return new FetchAnimalsCensusByConsumption(this.repository);
+  }
 }
