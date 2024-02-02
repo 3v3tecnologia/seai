@@ -16,7 +16,7 @@ export class GetManagementWeightsByBasinController {
   ): Promise<HttpResponse> {
     try {
       const deletedOrError = await this.useCase.execute({
-        Id: request.id,
+        Id: Number(request.id),
         limit: request.limit,
         pageNumber: request.pageNumber,
       });

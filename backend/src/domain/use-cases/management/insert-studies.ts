@@ -17,18 +17,20 @@ export class InsertManagementStudiesByBasin
   async execute(
     request: InsertManagementStudiesByBasinUseCaseProtocol.Request
   ): InsertManagementStudiesByBasinUseCaseProtocol.Response {
-    if (Reflect.has(request, "Id") && request.Id) {
-      this.addLog({
-        action: "delete",
-        table: "Estudos",
-        description: "Sucesso ao apagar dados dados.",
-      });
-      await this.repository.delete({
-        Id_Bacia: request.Id,
-      });
-    }
+    await this.repository.delete({
+      Id_Bacia: request.Id_Bacia,
+    });
 
-    const result = await this.repository.create(request.Data);
+    this.addLog({
+      action: "delete",
+      table: "Estudos",
+      description: "Sucesso ao apagar dados dados.",
+    });
+
+    const result = await this.repository.create({
+      Id_Bacia: request.Id_Bacia,
+      Data: request.Data,
+    });
 
     this.addLog({
       action: "create",
@@ -42,8 +44,13 @@ export class InsertManagementStudiesByBasin
 
 export namespace InsertManagementStudiesByBasinUseCaseProtocol {
   export type Request = {
-    Id?: number;
-    Data: Array<ManagementCensusStudy>;
+    Id_Bacia: number;
+    Data: Array<{
+      Id_Cultura: number;
+      Safra: number;
+      Cultivo: number;
+      Produtividade: Array<number>;
+    }>;
   };
 
   export type Response = Promise<Either<Error, string>>;

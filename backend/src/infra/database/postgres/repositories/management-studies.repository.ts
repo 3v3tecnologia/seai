@@ -2,7 +2,7 @@ import {
   ManagementStudiesRepositoryDTO,
   ManagementStudiesRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/management-studies.repository";
-import { censusDb } from "../connection/knexfile";
+import { managementDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
 export class DbManagementStudiesRepository
@@ -11,8 +11,18 @@ export class DbManagementStudiesRepository
   async create(
     request: ManagementStudiesRepositoryDTO.Create.Request
   ): ManagementStudiesRepositoryDTO.Create.Response {
-    const result = await censusDb
-      .batchInsert("Estudo", request)
+    const toPersistency = request.Data.map((data) => {
+      return {
+        Id_Bacia: request.Id_Bacia,
+        Id_Cultura: data.Id_Cultura,
+        Safra: data.Safra,
+        Cultivo: data.Cultivo,
+        ProdutividadePorQuilo: data.Produtividade[0],
+        ProdutividadePorMetros: data.Produtividade[1],
+      };
+    });
+    const result = await managementDb
+      .batchInsert("Estudos", toPersistency)
       .returning("Id_Bacia");
 
     console.log("[ManagementStudiesRepository] :: RESULT ", result);
@@ -21,21 +31,15 @@ export class DbManagementStudiesRepository
   async delete(
     request: ManagementStudiesRepositoryDTO.Delete.Request
   ): ManagementStudiesRepositoryDTO.Delete.Response {
-    const result = await censusDb("Estudo")
-      .where({
-        Id_Bacia: request.Id_Bacia,
-      })
-      .del();
-
-    console.log("[ManagementStudiesRepository] :: RESULT ", result);
+    await managementDb("Estudos").where("Id_Bacia", request.Id_Bacia).del();
   }
 
   async getByBasin(
     request: ManagementStudiesRepositoryDTO.GetByBasin.Request
   ): ManagementStudiesRepositoryDTO.GetByBasin.Response {
-    const result = await censusDb
+    const result = await managementDb
       .select("*")
-      .from("Estudo")
+      .from("Estudos")
       .where({
         Id_Bacia: request.Id_Bacia,
       })
@@ -52,9 +56,18 @@ export class DbManagementStudiesRepository
       return {
         Id_Bacia: Number(row.Id_Bacia),
         Id_Cultura: Number(row.Id_Cultura),
+        Safra: Number(row.Safra),
         Cultivo: Number(row.Cultivo),
-        ProdutividadePorQuilo: Number(row.ProdutividadePorQuilo),
-        ProdutividadePorMetros: Number(row.ProdutividadePorMetros),
+        Produtividade: [
+          {
+            Valor: Number(row.ProdutividadePorQuilo),
+            Unidade: "kg/ha",
+          },
+          {
+            Valor: Number(row.ProdutividadePorMetros),
+            Unidadte: "m³/ha",
+          },
+        ],
       };
     });
 

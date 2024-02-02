@@ -12,16 +12,19 @@ export class GetManagementStudiesByBasin
     this.repository = repository;
   }
 
+  private formatPaginationInput(page: number, limit: number) {
+    return {
+      pageNumber: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 40,
+    };
+  }
+
   async execute(
     request: GetManagementStudiesByBasinUseCaseProtocol.Request
   ): GetManagementStudiesByBasinUseCaseProtocol.Response {
-    const pageNumber = request.pageNumber ? Number(request.pageNumber) : 40;
-    const limit = request.limit ? Number(request.limit) : 40;
-
     const result = await this.repository.getByBasin({
       Id_Bacia: request.Id,
-      limit,
-      pageNumber,
+      ...this.formatPaginationInput(request.pageNumber, request.limit),
     });
 
     return right(result);

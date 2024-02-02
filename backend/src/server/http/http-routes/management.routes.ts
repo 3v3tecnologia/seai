@@ -8,7 +8,7 @@ export const managementRouter = (): Router => {
   const router = Router();
 
   router.post(
-    "/weights",
+    "/weights/:id",
     authorization,
     adaptRoute(ManagementControllersFactory.makeInsertManagementWeights())
   );
@@ -26,7 +26,7 @@ export const managementRouter = (): Router => {
   );
 
   router.post(
-    "/studies",
+    "/studies/:id",
     authorization,
     adaptRoute(ManagementControllersFactory.makeInsertManagementStudies())
   );

@@ -15,6 +15,9 @@ export class DeleteManagementStudiesByBasin
   async execute(
     request: DeleteManagementStudiesByBasinUseCaseProtocol.Request
   ): DeleteManagementStudiesByBasinUseCaseProtocol.Response {
+    console.log({
+      Id_Bacia: request.Id,
+    });
     const result = await this.repository.delete({
       Id_Bacia: request.Id,
     });

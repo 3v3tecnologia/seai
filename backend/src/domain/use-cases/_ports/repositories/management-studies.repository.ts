@@ -3,7 +3,15 @@ import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
 
 export namespace ManagementStudiesRepositoryDTO {
   export namespace Create {
-    export type Request = Array<ManagementCensusStudy>;
+    export type Request = {
+      Id_Bacia: number;
+      Data: Array<{
+        Id_Cultura: number;
+        Safra: number;
+        Cultivo: number;
+        Produtividade: Array<number>;
+      }>;
+    };
 
     export type Response = Promise<void>;
   }

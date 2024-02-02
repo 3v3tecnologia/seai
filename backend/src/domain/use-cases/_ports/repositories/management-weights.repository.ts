@@ -1,9 +1,18 @@
-import { ManagementWeight } from "../../../entities/management/weights";
+import { ManagementWeights } from "../../../entities/management/weights";
 import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
 
 export namespace ManagementWeightsRepositoryDTO {
   export namespace Create {
-    export type Request = Array<ManagementWeight>;
+    export type Request = {
+      Id_Bacia: number;
+      Data: Array<{
+        Id_Cultura: number;
+        Produtividade: Array<number>;
+        Rentabilidade: Array<number>;
+        Empregos: Array<number>;
+        ConsumoHidrico: Array<number>;
+      }>;
+    };
 
     export type Response = Promise<void>;
   }
@@ -20,7 +29,7 @@ export namespace ManagementWeightsRepositoryDTO {
     export type Request = { Id_Bacia: number } & InputWithPagination;
 
     export type Response = Promise<OutputWithPagination<
-      Array<ManagementWeight>
+      Array<ManagementWeights>
     > | null>;
   }
 }

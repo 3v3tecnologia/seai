@@ -1,7 +1,12 @@
+export type ManagementStudyIndicator = {
+  Value: number | null;
+  Unidade: string;
+};
+
 export interface ManagementCensusStudy {
-  Id_Bacia: number;
+  // Id_Bacia: number;
   Id_Cultura: number;
+  Safra: number;
   Cultivo: number;
-  ProdutividadePorQuilo: number | null;
-  ProdutividadePorMetros: number | null;
+  Produtividade: Array<ManagementStudyIndicator>;
 }

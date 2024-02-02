@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementWeight } from "../../entities/management/weights";
+import { ManagementWeights } from "../../entities/management/weights";
 import { ManagementWeightsRepositoryProtocol } from "../_ports/repositories/management-weights.repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
 
@@ -15,7 +15,7 @@ export class GetManagementWeightsByBasin
   async execute(
     request: GetManagementWeightsByBasinUseCaseProtocol.Request
   ): GetManagementWeightsByBasinUseCaseProtocol.Response {
-    const pageNumber = request.pageNumber ? Number(request.pageNumber) : 40;
+    const pageNumber = request.pageNumber ? Number(request.pageNumber) : 1;
     const limit = request.limit ? Number(request.limit) : 40;
 
     const result = await this.repository.getByBasin({
@@ -34,7 +34,7 @@ export namespace GetManagementWeightsByBasinUseCaseProtocol {
   } & InputWithPagination;
 
   export type Response = Promise<
-    Either<Error, OutputWithPagination<Array<ManagementWeight>> | null>
+    Either<Error, OutputWithPagination<Array<ManagementWeights>> | null>
   >;
 
   export interface UseCase {
