@@ -23,7 +23,7 @@ export class InsertManagementWeightsByBasinController extends CommandController<
   ): Promise<HttpResponse> {
     try {
       const deletedOrError = await this.useCase.execute({
-        Id: request.id,
+        Id_Bacia: Number(request.id),
         Data: request.Data,
       });
 
@@ -45,6 +45,12 @@ export namespace InsertManagementWeightsByBasinByBasinControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Data: any;
+    Data: Array<{
+      Id_Cultura: number;
+      Produtividade: Array<number>;
+      Rentabilidade: Array<number>;
+      Empregos: Array<number>;
+      ConsumoHidrico: Array<number>;
+    }>;
   };
 }

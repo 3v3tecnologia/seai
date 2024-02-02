@@ -72,6 +72,7 @@ CREATE TABLE "Physics_Characteristics"(
 CREATE TABLE "Estudos"(
 	"Id_Bacia" INTEGER NOT NULL,
 	"Id_Cultura" INTEGER NOT NULL,
+	"Safra" INTEGER NOT NULL,
 	"Cultivo" INTEGER NOT NULL,
 	"ProdutividadePorQuilo" REAL NOT NULL,
 	"ProdutividadePorMetros" REAL NOT NULL

@@ -1,6 +1,4 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementCensusStudy } from "../../entities/management/study";
-import { ManagementWeight } from "../../entities/management/weights";
 import { Command } from "../_ports/core/command";
 import { ManagementWeightsRepositoryProtocol } from "../_ports/repositories/management-weights.repository";
 
@@ -18,18 +16,17 @@ export class InsertManagementWeightsByBasin
   async execute(
     request: InsertManagementWeightsByBasinUseCaseProtocol.Request
   ): InsertManagementWeightsByBasinUseCaseProtocol.Response {
-    if (Reflect.has(request, "Id") && request.Id) {
-      this.addLog({
-        action: "delete",
-        table: "Pesos",
-        description: "Sucesso ao apagar dados dados.",
-      });
-      await this.repository.delete({
-        Id_Bacia: request.Id,
-      });
-    }
+    await this.repository.delete({
+      Id_Bacia: request.Id_Bacia,
+    });
 
-    const result = await this.repository.create(request.Data);
+    this.addLog({
+      action: "delete",
+      table: "Pesos",
+      description: "Sucesso ao apagar dados.",
+    });
+
+    const result = await this.repository.create(request);
 
     this.addLog({
       action: "create",
@@ -43,8 +40,14 @@ export class InsertManagementWeightsByBasin
 
 export namespace InsertManagementWeightsByBasinUseCaseProtocol {
   export type Request = {
-    Id?: number;
-    Data: Array<ManagementWeight>;
+    Id_Bacia: number;
+    Data: Array<{
+      Id_Cultura: number;
+      Produtividade: Array<number>;
+      Rentabilidade: Array<number>;
+      Empregos: Array<number>;
+      ConsumoHidrico: Array<number>;
+    }>;
   };
 
   export type Response = Promise<Either<Error, string>>;
