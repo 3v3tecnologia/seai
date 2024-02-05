@@ -118,10 +118,10 @@ import {
   computed,
   getCurrentInstance,
 } from "vue";
-import BaseDropdown from "@/components/BaseDropdown.vue";
-import DeleteModal from "@/components/DeleteModal.vue";
-import BaseInput from "@/components/BaseInput.vue";
-import FilterDate from "@/components/FilterDate.vue";
+import BaseDropdown from "@/components/form/BaseDropdown.vue";
+import DeleteModal from "@/components/form/DeleteModal.vue";
+import BaseInput from "@/components/form/BaseInput.vue";
+import FilterDate from "@/components/form/FilterDate.vue";
 import BaseTable from "@/components/tables/BaseTable.vue";
 import { useRoute, useRouter } from "vue-router";
 

@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import NavbarTop from "@/components/NavbarTop.vue";
+import NavbarTop from "@/components/navigation/NavbarTop.vue";
 </script>
 
 <style lang="scss">

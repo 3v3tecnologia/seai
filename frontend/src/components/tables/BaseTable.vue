@@ -50,7 +50,7 @@ import {
   defineExpose,
 } from "vue";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import BasePagination from "@/components/BasePagination.vue";
+import BasePagination from "@/components/tables/BasePagination.vue";
 import { defaultPagination } from "@/constants";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";

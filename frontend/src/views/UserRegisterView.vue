@@ -40,11 +40,11 @@
 </template>
 
 <script setup>
-import AccessModulesTable from "@/components/AccessModulesTable.vue";
-import BaseInput from "@/components/BaseInput.vue";
-import BaseDropdown from "@/components/BaseDropdown.vue";
-import PrimaryButton from "@/components/PrimaryButton.vue";
-import FormWrapper from "@/components/FormWrapper.vue";
+import AccessModulesTable from "@/components/form/AccessModulesTable.vue";
+import BaseInput from "@/components/form/BaseInput.vue";
+import BaseDropdown from "@/components/form/BaseDropdown.vue";
+import PrimaryButton from "@/components/form/PrimaryButton.vue";
+import FormWrapper from "@/components/form/FormWrapper.vue";
 import { computed, watch } from "vue";
 import { ref } from "vue";
 import { useStore } from "vuex";

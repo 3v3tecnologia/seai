@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import BaseDropdown from "@/components/BaseDropdown.vue";
+import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import { defineProps, defineEmits, ref, watch, computed } from "vue";
 
 const optionsSelect = [

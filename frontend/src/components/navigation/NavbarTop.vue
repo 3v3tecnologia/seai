@@ -52,7 +52,7 @@
 
 <script lang="ts" setup>
 import TabMenu from "primevue/tabmenu";
-import LogoProject from "@/components/LogoProject.vue";
+import LogoProject from "@/components/videntity/LogoProject.vue";
 import { modulesSystem } from "@/constants";
 import { ref } from "vue";
 import { useStore } from "vuex";

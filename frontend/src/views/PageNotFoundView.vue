@@ -8,7 +8,7 @@
       <div class="h4 mt-2 message-not-found">Página não encontrada</div>
 
       <div class="mt-2">
-        <router-link outer-link class="rl-return h3 base-green" to="/">
+        <router-link class="rl-return h3 base-green" to="/">
           Retornar
         </router-link>
       </div>

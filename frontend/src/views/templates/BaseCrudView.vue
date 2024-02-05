@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import { useStore } from "vuex";
 import CrudTable from "@/components/tables/CrudTable.vue";
-import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
+import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { accessStoreKey } from "@/helpers/dto";
 

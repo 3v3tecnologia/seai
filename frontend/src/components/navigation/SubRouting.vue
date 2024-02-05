@@ -1,12 +1,13 @@
 <template>
   <div class="d-flex flex-column align-items-start">
     <span class="label-access"> Acessar </span>
-    <div class="mt-2">
+    <div class="wrapper-routes d-flex mt-2">
       <router-link
-        class="nav p-2"
-        v-for="(route, i) in routes"
+        v-for="(route, i) in routesShowing"
         :key="i"
         :to="route.name"
+        :class="{ disabled: route.disabled }"
+        class="nav p-2"
       >
         {{ route.label }}
       </router-link>
@@ -15,7 +16,20 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { computed, defineProps } from "vue";
+import { useRoute } from "vue-router";
+
+const router = useRoute();
+const currentRoute = computed(() => router.name);
+
+const routesShowing = computed(() =>
+  props.routes
+    .map((route) => {
+      route.disabled = route.name === currentRoute.value;
+      return route;
+    })
+    .sort((a, b) => a.disabled - b.disabled)
+);
 
 const props = defineProps({
   routes: {
@@ -46,6 +60,18 @@ const props = defineProps({
   &,
   &:hover {
     transition: all 0.3s;
+  }
+
+  &.disabled {
+    pointer-events: none !important;
+    filter: grayscale(70);
+  }
+}
+
+.wrapper-routes {
+  & > :not(:first-child) {
+    margin-left: 1rem;
+    display: inline-block;
   }
 }
 </style>

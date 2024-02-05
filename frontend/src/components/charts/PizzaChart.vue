@@ -14,7 +14,7 @@
 
 <script setup>
 import { computed, defineProps, ref, watch } from "vue";
-import CardChart from "@/components/CardChart.vue";
+import CardChart from "@/components/charts/CardChart.vue";
 
 const props = defineProps({
   data: {

@@ -88,10 +88,10 @@
 <script setup>
 import ChartReports from "./components/ChartReports.vue";
 import ExportData from "./components/ExportData.vue";
-import BaseDropdown from "@/components/BaseDropdown.vue";
-import SubRouting from "@/components/SubRouting.vue";
-import BaseCheckBox from "@/components/BaseCheckBox.vue";
-import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
+import BaseDropdown from "@/components/form/BaseDropdown.vue";
+import SubRouting from "@/components/navigation/SubRouting.vue";
+import BaseCheckBox from "@/components/form/BaseCheckBox.vue";
+import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { useStore } from "vuex";
 
@@ -159,21 +159,16 @@ const showBasin = computed(() => showingDataFormat.value.value === 1);
 const showCities = computed(() => showingDataFormat.value.value === 2);
 
 const currentRouteAccess = computed(() => {
-  if (props.showingTab === "charts") {
-    return [
-      {
-        label: "Exportação de dados",
-        name: "reports",
-      },
-    ];
-  } else {
-    return [
-      {
-        label: "Visualização de gráficos",
-        name: "charts",
-      },
-    ];
-  }
+  return [
+    {
+      label: "Exportação de dados",
+      name: "reports",
+    },
+    {
+      label: "Visualização de gráficos",
+      name: "charts",
+    },
+  ];
 });
 
 const disabledCities = computed(() => {

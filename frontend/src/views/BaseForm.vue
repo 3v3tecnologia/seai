@@ -109,16 +109,16 @@
 </template>
 
 <script setup>
-import PrimaryButton from "@/components/PrimaryButton.vue";
-import FormWrapper from "@/components/FormWrapper.vue";
+import PrimaryButton from "@/components/form/PrimaryButton.vue";
+import FormWrapper from "@/components/form/FormWrapper.vue";
 import { computed, ref, watch, defineProps } from "vue";
 import { useStore } from "vuex";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import { useRoute } from "vue-router";
-import BaseDropdown from "@/components/BaseDropdown.vue";
-import FilterDate from "@/components/FilterDate.vue";
-import FieldEditor from "@/components/FieldEditor.vue";
+import BaseDropdown from "@/components/form/BaseDropdown.vue";
+import FilterDate from "@/components/form/FilterDate.vue";
+import FieldEditor from "@/components/form/FieldEditor.vue";
 import { accessStoreKey } from "@/helpers/dto";
 
 const preBuiltComponents = {

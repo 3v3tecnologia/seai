@@ -11,7 +11,7 @@
 
 <script setup>
 import { computed, defineProps } from "vue";
-import CardChart from "@/components/CardChart.vue";
+import CardChart from "@/components/charts/CardChart.vue";
 
 import {
   dataLabels,

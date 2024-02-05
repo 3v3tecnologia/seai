@@ -139,7 +139,7 @@ const aquacultureCount = computed(() => {
   };
 });
 
-const aquacultureSuper = computed(() => {
+const aquacultureuper = computed(() => {
   const stackKey = currentValueKeyLocation.value;
   const valueKey = "Volume/tanque";
   const data = props.data.tankCaptation.filter(
@@ -249,7 +249,7 @@ const chartsGroups = computed(() => [
     {
       ...reportsBaseConfigs.underFlowTanks,
       stackKey: currentValueKeyLocation.value,
-      data: aquacultureSuper.value.data,
+      data: aquacultureuper.value.data,
     },
   ],
   [

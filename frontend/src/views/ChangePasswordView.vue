@@ -46,10 +46,10 @@
 </template>
 
 <script lang="ts" setup>
-import LogoProject from "@/components/LogoProject.vue";
-import BaseInput from "@/components/BaseInput.vue";
-import PrimaryButton from "@/components/PrimaryButton.vue";
-import FormWrapper from "@/components/FormWrapper.vue";
+import LogoProject from "@/components/videntity/LogoProject.vue";
+import BaseInput from "@/components/form/BaseInput.vue";
+import PrimaryButton from "@/components/form/PrimaryButton.vue";
+import FormWrapper from "@/components/form/FormWrapper.vue";
 import { defineProps } from "vue";
 import { ref } from "vue";
 import type { Ref } from "vue";

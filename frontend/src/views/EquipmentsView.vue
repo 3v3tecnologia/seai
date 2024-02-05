@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { useStore } from "vuex";
 import UsersTable from "@/components/UsersTable.vue";
-import BasicContentWrapper from "@/components/BasicContentWrapper.vue";
+import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import { computed, ref } from "vue";
 
 const store = useStore();

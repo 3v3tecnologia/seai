@@ -14,9 +14,9 @@
 
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import AuthForm from "@/components/AuthForm.vue"; // @ is an alias to /src
-import LogoProject from "@/components/LogoProject.vue"; // @ is an alias to /src
-import ButtonsAuth from "@/components/ButtonsAuth.vue"; // @ is an alias to /src
+import AuthForm from "@/components/form/AuthForm.vue"; // @ is an alias to /src
+import LogoProject from "@/components/videntity/LogoProject.vue"; // @ is an alias to /src
+import ButtonsAuth from "@/components/form/ButtonsAuth.vue"; // @ is an alias to /src
 import { computed, Ref, ref, watch } from "vue";
 
 const route = useRoute();
