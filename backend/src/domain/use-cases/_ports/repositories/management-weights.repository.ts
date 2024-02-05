@@ -4,13 +4,13 @@ import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
 export namespace ManagementWeightsRepositoryDTO {
   export namespace Create {
     export type Request = {
-      Id_Bacia: number;
+      Id_Basin: number;
       Data: Array<{
-        Id_Cultura: number;
-        Produtividade: Array<number>;
-        Rentabilidade: Array<number>;
-        Empregos: Array<number>;
-        ConsumoHidrico: Array<number>;
+        Id_Culture: number;
+        Productivity: Array<number>;
+        Profitability: Array<number>;
+        Jobs: Array<number>;
+        WaterConsumption: Array<number>;
       }>;
     };
 
@@ -19,18 +19,17 @@ export namespace ManagementWeightsRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      Id_Bacia: number;
+      Id_Basin: number;
     };
 
     export type Response = Promise<void>;
   }
 
   export namespace GetByBasin {
-    export type Request = { Id_Bacia: number } & InputWithPagination;
+    export type Request = { Id_Basin: number } & InputWithPagination;
 
-    export type Response = Promise<OutputWithPagination<
-      Array<ManagementWeights>
-    > | null>;
+    export type Response =
+      Promise<OutputWithPagination<ManagementWeights> | null>;
   }
 }
 

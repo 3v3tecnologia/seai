@@ -23,8 +23,8 @@ export const DATABASES = {
     DATABASE: "management",
     SCHEMA: "public",
     TABLES: {
-      STUDIES: "Estudos",
-      WEIGHTS: "Pesos",
+      STUDIES: "Studies",
+      WEIGHTS: "Weights",
       PHYSICS_CHARACTERISTICS: "Physics_Characteristics",
       CHEMICAL_CHARACTERISTICS: "Chemical_Characteristics",
       CROP_CYCLE: "Crop_Cycle",

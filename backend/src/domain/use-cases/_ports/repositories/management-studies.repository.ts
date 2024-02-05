@@ -4,12 +4,12 @@ import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
 export namespace ManagementStudiesRepositoryDTO {
   export namespace Create {
     export type Request = {
-      Id_Bacia: number;
+      Id_Basin: number;
       Data: Array<{
-        Id_Cultura: number;
-        Safra: number;
-        Cultivo: number;
-        Produtividade: Array<number>;
+        Id_Culture: number; // cultura
+        Harvest: number; //safra
+        Farm: number; //cultivo
+        Productivity: Array<number>;
       }>;
     };
 
@@ -18,18 +18,17 @@ export namespace ManagementStudiesRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      Id_Bacia: number;
+      Id_Basin: number;
     };
 
     export type Response = Promise<void>;
   }
 
   export namespace GetByBasin {
-    export type Request = { Id_Bacia: number } & InputWithPagination;
+    export type Request = { Id_Basin: number } & InputWithPagination;
 
-    export type Response = Promise<OutputWithPagination<
-      Array<ManagementCensusStudy>
-    > | null>;
+    export type Response =
+      Promise<OutputWithPagination<ManagementCensusStudy> | null>;
   }
 }
 

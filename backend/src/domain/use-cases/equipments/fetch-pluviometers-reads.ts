@@ -3,6 +3,7 @@ import { Either, right } from "../../../shared/Either";
 import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead";
 
 import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchPluviometersReads {
   private LIMIT: number = 40;
@@ -15,16 +16,9 @@ export class FetchPluviometersReads {
   async execute(
     request: FetchPluviometersReadsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchPluviometersReadsUseCaseProtocol.Response>> {
-    const pageNumber = request.pageNumber
-      ? Number(request.pageNumber)
-      : this.PAGE_NUMBER;
-
-    const limit = request.limit ? Number(request.limit) : this.LIMIT;
-
     const dto = {
       idEquipment: request.idEquipment,
-      pageNumber: request.pageNumber || 1,
-      limit,
+      ...formatPaginationInput(request.pageNumber, request.limit),
     };
 
     if (request.start) {
@@ -38,13 +32,13 @@ export class FetchPluviometersReads {
 
     const result = await this.measuresRepository.getPluviometersReads(dto);
 
-    let pages = result?.count ? Math.ceil(result.count / limit) : 0;
+    let pages = result?.count ? Math.ceil(result.count / dto.limit) : 0;
 
     return right({
       Measures: result?.data || [],
-      PageNumber: pageNumber,
+      PageNumber: dto.pageNumber,
       QtdRows: Number(result?.count) || 0,
-      PageLimitRows: limit,
+      PageLimitRows: dto.limit,
       QtdPages: pages,
     });
   }

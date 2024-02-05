@@ -69,24 +69,24 @@ CREATE TABLE "Physics_Characteristics"(
   PRIMARY KEY("Id")
 );
 
-CREATE TABLE "Estudos"(
-	"Id_Bacia" INTEGER NOT NULL,
-	"Id_Cultura" INTEGER NOT NULL,
-	"Safra" INTEGER NOT NULL,
-	"Cultivo" INTEGER NOT NULL,
-	"ProdutividadePorQuilo" REAL NOT NULL,
-	"ProdutividadePorMetros" REAL NOT NULL
+CREATE TABLE "Studies"(
+	"Id_Basin" INTEGER NOT NULL,
+	"Id_Culture" INTEGER NOT NULL, -- cultura
+	"Harvest" INTEGER NOT NULL, -- safra
+	"Farm" INTEGER NOT NULL, -- cultivo
+	"ProductivityPerKilo" REAL NOT NULL,
+	"ProductivityPerMeters" REAL NOT NULL
 );
 
-CREATE TABLE "Pesos"(
-	"Id_Bacia" INTEGER NOT NULL,
-	"Id_Cultura" INTEGER NOT NULL,
-	"SegurancaProdutivaPorQuilo" REAL DEFAULT NULL,
-	"SegurancaProdutivaPorMetros" REAL DEFAULT NULL,
-	"SegurancaEconomicaPorMetros" REAL DEFAULT NULL,
-	"SegurancaEconomicaPorHectar" REAL DEFAULT NULL,
-	"SegurancaSocialPorMetros" REAL DEFAULT NULL,
-	"SegurancaSocialPorHectar" REAL DEFAULT NULL,
-	"SegurancaHidricaPorHectar" REAL DEFAULT NULL,
-	"SegurancaHidricaPorMetros" REAL DEFAULT NULL
+CREATE TABLE "Weights"(
+	"Id_Basin" INTEGER NOT NULL,
+	"Id_Culture" INTEGER NOT NULL,
+	"ProductivityPerKilo" REAL DEFAULT NULL,
+	"ProductivityPerMeters" REAL DEFAULT NULL,
+	"ProfitabilityPerMeters" REAL DEFAULT NULL,
+	"ProfitabilityPerHectare" REAL DEFAULT NULL,
+	"JobsPerHectare" REAL DEFAULT NULL,
+	"JobsPerMeters" REAL DEFAULT NULL,
+	"WaterConsumptionPerHectare" REAL DEFAULT NULL,
+	"WaterConsumptionPerMeters" REAL DEFAULT NULL
 );
