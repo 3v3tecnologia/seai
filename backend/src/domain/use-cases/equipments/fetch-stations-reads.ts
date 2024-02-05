@@ -2,6 +2,7 @@ import { Either, right } from "../../../shared/Either";
 import { StationReadEntity } from "../../entities/equipments/StationRead";
 
 import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchStationsReads {
   private LIMIT: number = 40;
@@ -16,26 +17,21 @@ export class FetchStationsReads {
   async execute(
     request: FetchStationsReadsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchStationsReadsUseCaseProtocol.Response>> {
-    const pageNumber = request.pageNumber
-      ? Number(request.pageNumber)
-      : this.PAGE_NUMBER;
-    const limit = request.limit ? Number(request.limit) : this.LIMIT;
-    const time = Reflect.has(request, "time") ? request.time! : null;
-
-    const result = await this.equipmentMeasuresRepository.getStationsReads({
+    const dto = {
       idEquipment: request.idEquipment,
-      pageNumber,
-      limit,
-      time,
-    });
+      time: Reflect.has(request, "time") ? request.time! : null,
+      ...formatPaginationInput(request.pageNumber, request.limit),
+    };
 
-    let pages = result?.count ? Math.ceil(result.count / limit) : 0;
+    const result = await this.equipmentMeasuresRepository.getStationsReads(dto);
+
+    let pages = result?.count ? Math.ceil(result.count / dto.limit) : 0;
 
     return right({
       Measures: result?.data || [],
-      PageNumber: pageNumber,
+      PageNumber: dto.pageNumber,
       QtdRows: Number(result?.count) || 0,
-      PageLimitRows: limit,
+      PageLimitRows: dto.limit,
       QtdPages: pages,
     });
   }

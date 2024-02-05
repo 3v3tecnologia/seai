@@ -26,15 +26,8 @@ export class InsertManagementStudiesByBasinController extends CommandController<
   ): Promise<HttpResponse> {
     try {
       const dto: InsertManagementStudiesByBasinUseCaseProtocol.Request = {
-        Id_Bacia: request.id,
-        Data: request.Data.map((study) => {
-          return {
-            Id_Cultura: study.Id_Cultura,
-            Safra: study.Safra,
-            Cultivo: study.Cultivo,
-            Produtividade: study.Produtividade,
-          };
-        }),
+        Id_Basin: request.id,
+        Data: request.Data,
       };
 
       const successOrError = await this.useCase.execute(dto);
@@ -58,10 +51,10 @@ export namespace InsertManagementStudiesByBasinControllerProtocol {
     accountId: number;
     id: number;
     Data: Array<{
-      Id_Cultura: number;
-      Safra: number;
-      Cultivo: number;
-      Produtividade: Array<number>;
+      Id_Culture: number;
+      Harvest: number;
+      Farm: number;
+      Productivity: Array<number>;
     }>;
   };
 }

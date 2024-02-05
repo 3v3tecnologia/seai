@@ -39,7 +39,7 @@ export namespace NewsletterSenderRepositoryDTO {
   export namespace GetAll {
     export type Request = InputWithPagination;
     export type Response = Promise<OutputWithPagination<
-      Array<Required<Sender>>
+      Required<Sender>
     > | null>;
   }
 }
@@ -98,9 +98,7 @@ export namespace ContentRepositoryDTO {
 export namespace SubscriberRepositoryDTO {
   export namespace GetAll {
     export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<
-      Array<Subscriber>
-    > | null>;
+    export type Response = Promise<OutputWithPagination<Subscriber> | null>;
   }
 
   export namespace Create {

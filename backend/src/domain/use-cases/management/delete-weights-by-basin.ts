@@ -17,7 +17,7 @@ export class DeleteManagementWeightsByBasin
     request: DeleteManagementWeightsByBasinUseCaseProtocol.Request
   ): DeleteManagementWeightsByBasinUseCaseProtocol.Response {
     const result = await this.repository.delete({
-      Id_Bacia: request.Id,
+      Id_Basin: request.Id,
     });
 
     // this.addLog({

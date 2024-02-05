@@ -17,7 +17,7 @@ export class InsertManagementWeightsByBasin
     request: InsertManagementWeightsByBasinUseCaseProtocol.Request
   ): InsertManagementWeightsByBasinUseCaseProtocol.Response {
     await this.repository.delete({
-      Id_Bacia: request.Id_Bacia,
+      Id_Basin: request.Id_Basin,
     });
 
     this.addLog({
@@ -40,13 +40,13 @@ export class InsertManagementWeightsByBasin
 
 export namespace InsertManagementWeightsByBasinUseCaseProtocol {
   export type Request = {
-    Id_Bacia: number;
+    Id_Basin: number;
     Data: Array<{
-      Id_Cultura: number;
-      Produtividade: Array<number>;
-      Rentabilidade: Array<number>;
-      Empregos: Array<number>;
-      ConsumoHidrico: Array<number>;
+      Id_Culture: number;
+      Productivity: Array<number>;
+      Profitability: Array<number>;
+      Jobs: Array<number>;
+      WaterConsumption: Array<number>;
     }>;
   };
 

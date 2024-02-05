@@ -2,6 +2,7 @@ import { Either, right } from "../../../shared/Either";
 import { ManagementCensusStudy } from "../../entities/management/study";
 import { ManagementStudiesRepositoryProtocol } from "../_ports/repositories/management-studies.repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class GetManagementStudiesByBasin
   implements GetManagementStudiesByBasinUseCaseProtocol.UseCase
@@ -12,19 +13,12 @@ export class GetManagementStudiesByBasin
     this.repository = repository;
   }
 
-  private formatPaginationInput(page: number, limit: number) {
-    return {
-      pageNumber: page ? Number(page) : 1,
-      limit: limit ? Number(limit) : 40,
-    };
-  }
-
   async execute(
     request: GetManagementStudiesByBasinUseCaseProtocol.Request
   ): GetManagementStudiesByBasinUseCaseProtocol.Response {
     const result = await this.repository.getByBasin({
-      Id_Bacia: request.Id,
-      ...this.formatPaginationInput(request.pageNumber, request.limit),
+      Id_Basin: request.Id,
+      ...formatPaginationInput(request.pageNumber, request.limit),
     });
 
     return right(result);
@@ -37,7 +31,7 @@ export namespace GetManagementStudiesByBasinUseCaseProtocol {
   } & InputWithPagination;
 
   export type Response = Promise<
-    Either<Error, OutputWithPagination<Array<ManagementCensusStudy>> | null>
+    Either<Error, OutputWithPagination<ManagementCensusStudy> | null>
   >;
 
   export interface UseCase {

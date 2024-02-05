@@ -18,7 +18,7 @@ export class InsertManagementStudiesByBasin
     request: InsertManagementStudiesByBasinUseCaseProtocol.Request
   ): InsertManagementStudiesByBasinUseCaseProtocol.Response {
     await this.repository.delete({
-      Id_Bacia: request.Id_Bacia,
+      Id_Basin: request.Id_Basin,
     });
 
     this.addLog({
@@ -28,7 +28,7 @@ export class InsertManagementStudiesByBasin
     });
 
     const result = await this.repository.create({
-      Id_Bacia: request.Id_Bacia,
+      Id_Basin: request.Id_Basin,
       Data: request.Data,
     });
 
@@ -44,12 +44,12 @@ export class InsertManagementStudiesByBasin
 
 export namespace InsertManagementStudiesByBasinUseCaseProtocol {
   export type Request = {
-    Id_Bacia: number;
+    Id_Basin: number;
     Data: Array<{
-      Id_Cultura: number;
-      Safra: number;
-      Cultivo: number;
-      Produtividade: Array<number>;
+      Id_Culture: number;
+      Harvest: number;
+      Farm: number;
+      Productivity: Array<number>;
     }>;
   };
 

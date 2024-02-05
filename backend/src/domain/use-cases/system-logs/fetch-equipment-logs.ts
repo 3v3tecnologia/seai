@@ -1,5 +1,6 @@
 import { Either, right } from "../../../shared/Either";
 import { LogRepositoryProtocol } from "../_ports/repositories/log-repository";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchEquipmentLogs {
   private LIMIT: number = 40;
@@ -12,26 +13,21 @@ export class FetchEquipmentLogs {
   async execute(
     request: FetchEquipmentLogsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchEquipmentLogsUseCaseProtocol.Response>> {
-    const pageNumber = request.pageNumber
-      ? Number(request.pageNumber)
-      : this.PAGE_NUMBER;
-    const limit = request.limit ? Number(request.limit) : this.LIMIT;
-    const time = Reflect.has(request, "time") ? request.time! : null;
-
-    const result = await this.logRepository.fetchMeasuresByIdEquipment({
+    const dto = {
       id: request.id,
-      limit,
-      pageNumber,
-      time,
-    });
+      ...formatPaginationInput(request.pageNumber, request.limit),
+      time: Reflect.has(request, "time") ? request.time! : null,
+    };
 
-    let pages = result?.count ? Math.ceil(result.count / limit) : 0;
+    const result = await this.logRepository.fetchMeasuresByIdEquipment(dto);
+
+    let pages = result?.count ? Math.ceil(result.count / dto.limit) : 0;
 
     return right({
       Logs: result?.data || [],
-      PageNumber: pageNumber,
+      PageNumber: dto.pageNumber,
       QtdRows: Number(result?.count) || 0,
-      PageLimitRows: limit,
+      PageLimitRows: dto.limit,
       QtdPages: pages,
     });
   }
