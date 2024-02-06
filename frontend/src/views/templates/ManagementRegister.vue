@@ -4,6 +4,7 @@
       <div class="my-5 mb-lg-4">
         <SubRouting :routes="currentRouteAccess" />
       </div>
+      <ListCardManagement />
     </BasicContentWrapper>
   </div>
 </template>
@@ -12,6 +13,7 @@
 import { computed } from "vue";
 import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import SubRouting from "@/components/navigation/SubRouting.vue";
+import ListCardManagement from "@/components/cards/ListCardManagement.vue";
 
 const currentRouteAccess = computed(() => [
   {

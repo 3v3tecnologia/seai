@@ -13,7 +13,7 @@
 
 <script setup>
 import { computed, defineProps } from "vue";
-import CardChart from "@/components/charts/CardChart.vue";
+import CardChart from "@/components/cards/CardChart.vue";
 import {
   groupByKeyData,
   getUniqueStackKeys,

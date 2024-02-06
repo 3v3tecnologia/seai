@@ -22,6 +22,7 @@ import {
   faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
 
+import Tooltip from "primevue/tooltip";
 /* add icons to the library */
 library.add(faUserSecret, faPlus, faRefresh, faPen, faTrash, faSignOut);
 
@@ -29,6 +30,7 @@ createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)
   .use(store)
   .use(router)
+  .directive("tooltip", Tooltip)
   .use(PrimeVue, {
     locale: {
       dayNames: [

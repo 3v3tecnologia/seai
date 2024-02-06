@@ -33,6 +33,8 @@ router.beforeEach(async (to: any, from, next) => {
 
   const modulesNeeded = to.meta.modulesNeeded;
 
+  console.log("acessando url", modulesNeeded, profile);
+
   if (
     profile &&
     modulesNeeded &&
