@@ -1,14 +1,9 @@
+import managementList from "./managementList";
+
 export default {
-  titleKey: {
-    type: String,
-    required: true,
+  item: {
+    type: Object,
+    default: () => ({}),
   },
-  fields: {
-    type: Array,
-    default: () => [],
-  },
-  chips: {
-    type: Array,
-    default: () => [],
-  },
+  ...managementList,
 };

@@ -1,63 +1,7 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <div
-        class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center"
-      >
-        <div class="d-flex justify-content-between w-100-mob">
-          <BaseDropdown
-            v-model="groupReportsTemp"
-            :options="groupReportsOptions"
-            placeholder="Tipo de relatório"
-          />
-
-          <div class="px-2"></div>
-
-          <BaseDropdown
-            v-model="showingDataFormatTemp"
-            :options="showingDataOptions"
-            placeholder="Agrupamento"
-          />
-        </div>
-
-        <div class="d-flex flex-lg-row flex-column mt-3 mb-4 my-lg-0">
-          <div class="px-lg-2"></div>
-
-          <BaseCheckBox
-            inline-label
-            remove-margin
-            :disabled="disabledBasins.temp"
-            v-model="hydrographicBasinTemp"
-            :options="hydrographicBasinOptions"
-            label="Bacias hidrográficas"
-            placeholder="Bacias hidrográficas"
-          />
-
-          <div class="mt-3 my-lg-0 px-lg-2" />
-
-          <BaseCheckBox
-            inline-labe
-            remove-margin
-            v-model="cityTemp"
-            :disabled="disabledCities.temp"
-            :options="cityOptions"
-            label="Municípios"
-            placeholder="Municípios"
-          />
-        </div>
-
-        <div class="d-flex">
-          <div class="px-lg-4" />
-
-          <button
-            @click="applyFilters"
-            :disabled="disabledGenerateReport"
-            class="btn btn-success px-2 py-2"
-          >
-            Gerar relatório
-          </button>
-        </div>
-      </div>
+      <FiltersData :filters="filtersReport" v-model="filtersData" />
 
       <div class="my-5 mb-lg-4">
         <SubRouting :routes="currentRouteAccess" />
@@ -88,9 +32,8 @@
 <script setup>
 import ChartReports from "./components/ChartReports.vue";
 import ExportData from "./components/ExportData.vue";
-import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import SubRouting from "@/components/navigation/SubRouting.vue";
-import BaseCheckBox from "@/components/form/BaseCheckBox.vue";
+import FiltersData from "@/components/form/FiltersData.vue";
 import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import { computed, ref, defineProps, watch } from "vue";
 import { useStore } from "vuex";
@@ -136,6 +79,8 @@ const groupReportsOptions = [
     value: 5,
   },
 ];
+
+const filtersData = ref({});
 
 const groupReports = ref(groupReportsOptions[0]);
 
@@ -205,6 +150,23 @@ const props = defineProps({
     type: String,
   },
 });
+
+const filtersReport = [
+  {
+    label: "Tipo de relatório",
+    getDataKey: null,
+    accessState: null,
+    options: groupReportsOptions,
+    key: "groupReports",
+  },
+  {
+    label: "Agrupamento",
+    getDataKey: null,
+    accessState: null,
+    options: groupReportsOptions,
+    key: "groupReports",
+  },
+];
 
 const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },

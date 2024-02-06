@@ -33,8 +33,6 @@ router.beforeEach(async (to: any, from, next) => {
 
   const modulesNeeded = to.meta.modulesNeeded;
 
-  console.log("acessando url", modulesNeeded, profile);
-
   if (
     profile &&
     modulesNeeded &&
@@ -47,8 +45,6 @@ router.beforeEach(async (to: any, from, next) => {
         router.push("reports");
       }, 3000);
     }
-
-    console.log(to, from);
   } else if (!openRoutes[to.name] && !auth) {
     next("/login");
   } else {

@@ -1,6 +1,3 @@
-import { columnFullDateFormat } from "@/helpers/dto";
-import { route } from "./common";
-
 const searchFilter = ["name"];
 
 const stateOptionsFilters = [
@@ -19,6 +16,7 @@ export default {
   deleteDataKey: "DELETE_CRONS",
   storeDataKey: ["cron", "list"],
   filters: [],
+  titleKey: "Plant_Name",
   searchFilter: searchFilter,
   stateFilters: stateOptionsFilters,
   actionRoutes: {
@@ -26,25 +24,11 @@ export default {
     create: "create-cron",
   },
   headerLabels: [],
-  columns: [
-    {
-      formatter: "rowSelection",
-      titleFormatter: "rowSelection",
-      align: "center",
-      headerSort: false,
-      width: 80,
-    },
-    {
-      title: "Título",
-      field: "name",
-    },
-    {
-      title: "Recorrência",
-      field: "cron_text_formatted",
-    },
-    {
-      title: "Prioridade",
-      field: "priority",
-    },
+  chips: [{ key: "Basin" }],
+  fields: [
+    { label: "Total de ciclos ETR", key: "Etr_Cycle_Total" },
+    { label: "Total de ciclos ETP", key: "Etp_Cycle_Total" },
+    { label: "Total ET0 do ciclo", key: "Et0_Total" },
+    { label: "ETP máximo do ciclo", key: "Etp_Cycle_Maximium" },
   ],
 };

@@ -13,7 +13,7 @@
           hideDelay: 300,
         }"
       >
-        {{ item.Plant_Name }}
+        {{ item[titleKey] }}
       </h5>
 
       <span
@@ -54,13 +54,7 @@
 import { defineProps } from "vue";
 import propsManagement from "@/components/cards/props/managementCards";
 
-const props = defineProps({
-  item: {
-    type: Object,
-    default: () => ({}),
-  },
-  ...propsManagement,
-});
+const props = defineProps(propsManagement);
 
 const toCharAt = (string) => string.charCodeAt();
 

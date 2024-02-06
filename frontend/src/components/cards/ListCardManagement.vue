@@ -6,7 +6,7 @@
       class="col-lg-2 mt-lg-4"
       :class="{ 'mt-4': i }"
     >
-      <CardManagement :fields="fields" :item="item" :chips="chips" />
+      <CardManagement v-bind="props" :item="item" />
     </div>
   </div>
 </template>
@@ -14,22 +14,11 @@
 <script setup>
 import { defineProps } from "vue";
 import CardManagement from "./CardManagement.vue";
-import propsManagement from "@/components/cards/props/managementCards";
+import managementList from "@/components/cards/props/managementList";
 
-defineProps({
-  ...propsManagement,
-});
+const props = defineProps(managementList);
 
 const getUniqueKey = (item) => item.id || item.Id;
-
-const fields = [
-  { label: "Total de ciclos ETR", key: "Etr_Cycle_Total" },
-  { label: "Total de ciclos ETP", key: "Etp_Cycle_Total" },
-  { label: "Total ET0 do ciclo", key: "Et0_Total" },
-  { label: "ETP máximo do ciclo", key: "Etp_Cycle_Maximium" },
-];
-
-const chips = [{ key: "Basin" }];
 
 const items = [
   {
@@ -128,6 +117,5 @@ const items = [
     CreatedAt: new Date().toISOString(),
     UpdatedAt: new Date().toISOString(),
   },
-  // Adicione mais objetos conforme necessário
 ];
 </script>

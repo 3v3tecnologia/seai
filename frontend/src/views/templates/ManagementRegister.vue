@@ -4,16 +4,19 @@
       <div class="my-5 mb-lg-4">
         <SubRouting :routes="currentRouteAccess" />
       </div>
-      <ListCardManagement />
+      <ListCardManagement v-bind="props" />
     </BasicContentWrapper>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, defineProps } from "vue";
 import BasicContentWrapper from "@/components/spacing/BasicContentWrapper.vue";
 import SubRouting from "@/components/navigation/SubRouting.vue";
 import ListCardManagement from "@/components/cards/ListCardManagement.vue";
+import managementList from "@/components/cards/props/managementList";
+
+const props = defineProps(managementList);
 
 const currentRouteAccess = computed(() => [
   {
