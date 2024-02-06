@@ -15,7 +15,7 @@ export class DeleteManagementStudiesByBasin
   async execute(
     request: DeleteManagementStudiesByBasinUseCaseProtocol.Request
   ): DeleteManagementStudiesByBasinUseCaseProtocol.Response {
-    const result = await this.repository.delete({
+    const deleteLog = await this.repository.delete({
       Id_Basin: request.Id,
     });
 
@@ -25,7 +25,7 @@ export class DeleteManagementStudiesByBasin
     //   description: "Usuário deletado com sucesso da lista de emails",
     // });
 
-    return right("Dados apagados com sucesso");
+    return right(deleteLog.description);
   }
 }
 

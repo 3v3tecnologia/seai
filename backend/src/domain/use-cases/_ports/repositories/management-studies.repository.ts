@@ -1,19 +1,21 @@
 import { ManagementCensusStudy } from "../../../entities/management/study";
 import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { DatabaseOperationOutputLog } from "./dto/output";
+
+export type ManagementStudyToPersistency = {
+  Id_Basin: number;
+  Id_Culture: number;
+  Harvest: number;
+  Farm: number;
+  ProductivityPerKilo: number | null;
+  ProductivityPerMeters: number | null;
+};
 
 export namespace ManagementStudiesRepositoryDTO {
   export namespace Create {
-    export type Request = {
-      Id_Basin: number;
-      Data: Array<{
-        Id_Culture: number; // cultura
-        Harvest: number; //safra
-        Farm: number; //cultivo
-        Productivity: Array<number>;
-      }>;
-    };
+    export type Request = Array<ManagementCensusStudy>;
 
-    export type Response = Promise<void>;
+    export type Response = Promise<DatabaseOperationOutputLog>;
   }
 
   export namespace Delete {
@@ -21,7 +23,7 @@ export namespace ManagementStudiesRepositoryDTO {
       Id_Basin: number;
     };
 
-    export type Response = Promise<void>;
+    export type Response = Promise<DatabaseOperationOutputLog>;
   }
 
   export namespace GetByBasin {

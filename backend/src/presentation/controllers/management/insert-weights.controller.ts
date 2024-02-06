@@ -1,3 +1,4 @@
+import { ManagementWeights } from "../../../domain/entities/management/weights";
 import { InsertManagementWeightsByBasin } from "../../../domain/use-cases/management/insert-weights";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
@@ -24,7 +25,7 @@ export class InsertManagementWeightsByBasinController extends CommandController<
     try {
       const deletedOrError = await this.useCase.execute({
         Id_Basin: Number(request.id),
-        Data: request.Data,
+        Weights: request.Data,
       });
 
       if (deletedOrError.isLeft()) {
@@ -45,12 +46,6 @@ export namespace InsertManagementWeightsByBasinByBasinControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Data: Array<{
-      Id_Culture: number;
-      Productivity: Array<number>;
-      Profitability: Array<number>;
-      Jobs: Array<number>;
-      WaterConsumption: Array<number>;
-    }>;
+    Data: Array<ManagementWeights>;
   };
 }
