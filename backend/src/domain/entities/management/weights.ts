@@ -1,12 +1,12 @@
 export type ManagementWeightIndicatorValue = {
-  Valor: number;
-  Unidade: string;
+  Value: number | null;
+  Unity: string;
 };
 export interface ManagementWeights {
-  Id_Bacia: number;
-  Id_Cultura: number;
-  Produtividade: Array<ManagementWeightIndicatorValue>;
-  Rentabilidade: Array<ManagementWeightIndicatorValue>;
-  Empregos: Array<ManagementWeightIndicatorValue>;
-  ConsumoHidrico: Array<ManagementWeightIndicatorValue>;
+  Id_Basin: number;
+  Id_Culture: number;
+  Productivity: Array<ManagementWeightIndicatorValue>;
+  Profitability: Array<ManagementWeightIndicatorValue>;
+  Jobs: Array<ManagementWeightIndicatorValue>;
+  WaterConsumption: Array<ManagementWeightIndicatorValue>;
 }

@@ -17,7 +17,7 @@ export class GetManagementWeightsByBasin
     request: GetManagementWeightsByBasinUseCaseProtocol.Request
   ): GetManagementWeightsByBasinUseCaseProtocol.Response {
     const result = await this.repository.getByBasin({
-      Id_Basin: request.Id,
+      Id_Basin: request.Id_Basin,
       ...formatPaginationInput(request.pageNumber, request.limit),
     });
 
@@ -30,9 +30,27 @@ export class GetManagementWeightsByBasin
 
     const weights = result.Data;
 
-    // weights.forEach((farmWeight)=>{
-    //   const indicators = [...farmWeight.Produtividade,...farmWeight.Rentabilidade,...farmWeight.ConsumoHidrico,...farmWeight.Empregos]
-    // })
+    weights.forEach((farmWeight) => {
+      const indicators = [
+        ...farmWeight.Productivity,
+        ...farmWeight.Profitability,
+        ...farmWeight.WaterConsumption,
+        ...farmWeight.Jobs,
+      ];
+
+      console.log(indicators);
+
+      const R = indicators.reduce((prev, current) => {
+        if (current.Value) {
+          return (prev += current.Value);
+        }
+
+        return 0;
+      }, 0);
+
+      const WaterCut = (R - 1) * 100;
+      console.log(R, WaterCut);
+    });
 
     return right(result);
   }
@@ -40,7 +58,7 @@ export class GetManagementWeightsByBasin
 
 export namespace GetManagementWeightsByBasinUseCaseProtocol {
   export type Request = {
-    Id: number;
+    Id_Basin: number;
   } & InputWithPagination;
 
   export type Response = Promise<

@@ -16,17 +16,13 @@ export class DeleteManagementWeightsByBasin
   async execute(
     request: DeleteManagementWeightsByBasinUseCaseProtocol.Request
   ): DeleteManagementWeightsByBasinUseCaseProtocol.Response {
-    const result = await this.repository.delete({
+    const deleteLog = await this.repository.delete({
       Id_Basin: request.Id,
     });
 
-    // this.addLog({
-    //   action: "delete",
-    //   table: DATABASES.NEWSLETTER.SUBSCRIBER,
-    //   description: "Usuário deletado com sucesso da lista de emails",
-    // });
+    this.addLog(deleteLog);
 
-    return right("Dados apagados com sucesso");
+    return right(deleteLog.description);
   }
 }
 

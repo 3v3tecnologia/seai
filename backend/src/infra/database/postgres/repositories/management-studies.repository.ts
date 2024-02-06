@@ -1,3 +1,5 @@
+import { ManagementStudyMapper } from "../../../../domain/entities/management/mappers/study";
+import { DatabaseOperationOutputLogFactory } from "../../../../domain/use-cases/_ports/repositories/dto/output";
 import {
   ManagementStudiesRepositoryDTO,
   ManagementStudiesRepositoryProtocol,
@@ -12,21 +14,19 @@ export class DbManagementStudiesRepository
   async create(
     request: ManagementStudiesRepositoryDTO.Create.Request
   ): ManagementStudiesRepositoryDTO.Create.Response {
-    const toPersistency = request.Data.map((data) => {
-      return {
-        Id_Basin: request.Id_Basin,
-        Id_Culture: data.Id_Culture,
-        Harvest: data.Harvest,
-        Farm: data.Farm,
-        ProductivityPerKilo: data.Productivity[0],
-        ProductivityPerMeters: data.Productivity[1],
-      };
-    });
+    const toPersistency = request.map((data) =>
+      ManagementStudyMapper.toPersistency(data)
+    );
+
     const result = await managementDb
       .batchInsert(DATABASES.MANAGEMENT.TABLES.STUDIES, toPersistency)
       .returning("Id_Basin");
 
     console.log("[ManagementStudiesRepository] :: RESULT ", result);
+
+    return DatabaseOperationOutputLogFactory.insert(
+      DATABASES.MANAGEMENT.TABLES.STUDIES
+    );
   }
 
   async delete(
@@ -35,6 +35,10 @@ export class DbManagementStudiesRepository
     await managementDb(DATABASES.MANAGEMENT.TABLES.STUDIES)
       .where("Id_Basin", request.Id_Basin)
       .del();
+
+    return DatabaseOperationOutputLogFactory.delete(
+      DATABASES.MANAGEMENT.TABLES.STUDIES
+    );
   }
 
   async getByBasin(
@@ -55,24 +59,7 @@ export class DbManagementStudiesRepository
       return null;
     }
 
-    const data = result.map((row: any) => {
-      return {
-        Id_Basin: Number(row.Id_Basin),
-        Id_Culture: Number(row.Id_Culture),
-        Harvest: Number(row.Harvest),
-        Farm: Number(row.Farm),
-        Productivity: [
-          {
-            Value: Number(row.ProductivityPerKilo),
-            Unity: "kg/ha",
-          },
-          {
-            Value: Number(row.ProductivityPerMeters),
-            Unity: "m³/ha",
-          },
-        ],
-      };
-    });
+    const data = result.map((row: any) => ManagementStudyMapper.toDomain(row));
 
     return withPagination(data, {
       count: result.length,

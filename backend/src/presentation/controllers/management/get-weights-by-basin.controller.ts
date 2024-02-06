@@ -3,6 +3,7 @@ import { HttpResponse } from "../ports";
 import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 import { GetManagementWeightsByBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-weights-by-basin";
 import { created, forbidden, serverError } from "../helpers";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class GetManagementWeightsByBasinController {
   private useCase: GetManagementWeightsByBasinUseCaseProtocol.UseCase;
@@ -17,8 +18,7 @@ export class GetManagementWeightsByBasinController {
     try {
       const deletedOrError = await this.useCase.execute({
         Id: Number(request.id),
-        limit: request.limit,
-        pageNumber: request.pageNumber,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       });
 
       if (deletedOrError.isLeft()) {

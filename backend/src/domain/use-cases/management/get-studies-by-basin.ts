@@ -17,7 +17,7 @@ export class GetManagementStudiesByBasin
     request: GetManagementStudiesByBasinUseCaseProtocol.Request
   ): GetManagementStudiesByBasinUseCaseProtocol.Response {
     const result = await this.repository.getByBasin({
-      Id_Basin: request.Id,
+      Id_Basin: request.Id_Basin,
       ...formatPaginationInput(request.pageNumber, request.limit),
     });
 
@@ -27,7 +27,7 @@ export class GetManagementStudiesByBasin
 
 export namespace GetManagementStudiesByBasinUseCaseProtocol {
   export type Request = {
-    Id: number;
+    Id_Basin: number;
   } & InputWithPagination;
 
   export type Response = Promise<
