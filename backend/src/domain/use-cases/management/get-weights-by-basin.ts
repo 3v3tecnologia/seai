@@ -30,29 +30,12 @@ export class GetManagementWeightsByBasin
 
     const weights = result.Data;
 
-    weights.forEach((farmWeight) => {
-      const indicators = [
-        ...farmWeight.Productivity,
-        ...farmWeight.Profitability,
-        ...farmWeight.WaterConsumption,
-        ...farmWeight.Jobs,
-      ];
+    
 
-      console.log(indicators);
-
-      const R = indicators.reduce((prev, current) => {
-        if (current.Value) {
-          return (prev += current.Value);
-        }
-
-        return 0;
-      }, 0);
-
-      const WaterCut = (R - 1) * 100;
-      console.log(R, WaterCut);
+    return right({
+      Data: weights,
+      Pagination: result.Pagination
     });
-
-    return right(result);
   }
 }
 
