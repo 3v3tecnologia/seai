@@ -11,7 +11,7 @@
     />
     <label for="dd-city"
       >{{ placeholder }}
-      {{ inputValue.length ? `(${inputValue.length})` : "" }}</label
+      {{ inputValue?.length ? `(${inputValue.length})` : "" }}</label
     >
   </span>
 </template>

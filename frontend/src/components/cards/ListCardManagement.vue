@@ -3,7 +3,7 @@
     <div
       v-for="(item, i) in items"
       :key="getUniqueKey(item)"
-      class="col-lg-2 mt-lg-4"
+      class="col-lg-3 mt-lg-4"
       :class="{ 'mt-4': i }"
     >
       <CardManagement v-bind="props" :item="item" />

@@ -1,7 +1,11 @@
 <template>
   <div class="mb-5 pb-lg-5">
     <BasicContentWrapper>
-      <FiltersData :filters="filtersReport" v-model="filtersData" />
+      <FiltersData
+        v-model="filtersData"
+        :filters-dropdown="filtersDropdown"
+        :filters-checkbox="filtersCheckbox"
+      />
 
       <div class="my-5 mb-lg-4">
         <SubRouting :routes="currentRouteAccess" />
@@ -151,23 +155,6 @@ const props = defineProps({
   },
 });
 
-const filtersReport = [
-  {
-    label: "Tipo de relatório",
-    getDataKey: null,
-    accessState: null,
-    options: groupReportsOptions,
-    key: "groupReports",
-  },
-  {
-    label: "Agrupamento",
-    getDataKey: null,
-    accessState: null,
-    options: groupReportsOptions,
-    key: "groupReports",
-  },
-];
-
 const filtersRequest = computed(() => ({
   showingDataFormat: { ...showingDataFormat.value },
   groupReports: { ...groupReports.value },
@@ -244,6 +231,34 @@ const reportsData = computed(() => {
 const hydrographicBasinOptions = computed(
   () => store.state.report.hydrographicBasinOptions
 );
+
+const filtersDropdown = [
+  {
+    label: "Tipo de relatório",
+    options: groupReportsOptions,
+    key: "groupReportsTemp",
+  },
+  {
+    label: "Agrupamento",
+    options: showingDataOptions.value,
+    key: "showingDataFormatTemp",
+  },
+];
+
+const filtersCheckbox = computed(() => [
+  {
+    label: "Bacias hidrográficas",
+    options: hydrographicBasinOptions.value,
+    key: "hydrographicBasinTemp",
+    disabled: disabledBasins.value.temp,
+  },
+  {
+    label: "Municípios",
+    options: cityOptions.value,
+    key: "cityTemp",
+    disabled: disabledCities.value.temp,
+  },
+]);
 
 const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 

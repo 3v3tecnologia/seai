@@ -34,7 +34,12 @@
     <div v-if="auth?.login" class="w-100">
       <TabMenu v-model:activeIndex="active" :model="itemsRoutes" class="mb-2">
         <template #item="{ label, item, props }">
-          <router-link v-if="item.route" v-slot="routerProps" :to="item.route">
+          <router-link
+            v-if="item.route"
+            v-slot="routerProps"
+            :to="item.route"
+            class="h-100"
+          >
             <a
               :href="routerProps.href"
               v-bind="props.action"
