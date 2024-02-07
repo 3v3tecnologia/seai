@@ -46,6 +46,8 @@ export class CultureWeightsMapper {
           Unity: "ha",
         },
       ],
+      R: null,
+      WaterCut: null
     };
   }
 
