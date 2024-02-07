@@ -24,7 +24,7 @@
         class="ml-3 mt-3 mt-lg-0"
       />
 
-      <div class="d-flex ml-3 mt-4">
+      <div class="d-flex ml-3 mt-4 mt-lg-0">
         <button
           @click="applyFilters"
           :disabled="disabledApplyFilters"
