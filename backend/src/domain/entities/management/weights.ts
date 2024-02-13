@@ -1,60 +1,81 @@
 export type ManagementWeightIndicatorValue = {
-  Value: number | null;
-  Unity: string;
+  value: number | null;
+  unity: string;
 };
 export interface ManagementWeightsProtocol {
-  Id_Basin: number;
-  Id_Culture: number;
-  Productivity: Array<ManagementWeightIndicatorValue>;
-  Profitability: Array<ManagementWeightIndicatorValue>;
-  Jobs: Array<ManagementWeightIndicatorValue>;
-  WaterConsumption: Array<ManagementWeightIndicatorValue>;
-  // R: number | null;
-  // WaterCut: number | null;
+  id_basin: number;
+  id_culture: number;
+  productivity: Array<ManagementWeightIndicatorValue>;
+  profitability: Array<ManagementWeightIndicatorValue>;
+  jobs: Array<ManagementWeightIndicatorValue>;
+  waterConsumption: Array<ManagementWeightIndicatorValue>;
 }
 
-export class ManagementWeights{
-  private _props:ManagementWeightsProtocol;
-  private _average:number;
-  private _waterCut:number;
-  
-  constructor(props:ManagementWeightsProtocol){
-    this._props = props
-    this._average = ManagementWeights.calAverage(this);
+export class ManagementWeights {
+  private _idBasin: number;
+  private _idCulture: number;
+  private _productivity: Array<ManagementWeightIndicatorValue>;
+  private _profitability: Array<ManagementWeightIndicatorValue>;
+  private _jobs: Array<ManagementWeightIndicatorValue>;
+  private _waterConsumption: Array<ManagementWeightIndicatorValue>;
+  private _average: number;
+  private _waterCut: number;
+
+  constructor(props: ManagementWeightsProtocol) {
+    this._idBasin = props.id_basin;
+    this._idCulture = props.id_culture;
+    // TO-DO : Improve the weights indicators data structure
+    this._jobs = props.jobs;
+    this._productivity = props.productivity;
+    this._profitability = props.profitability;
+    this._waterConsumption = props.waterConsumption;
+
+    this._average = ManagementWeights.calcAverage([
+      ...this.jobs,
+      ...this.productivity,
+      ...this.profitability,
+      ...this.waterConsumption,
+    ]);
+
     this._waterCut = ManagementWeights.calcWaterCut(this._average);
   }
 
-  public getProductivity(){
-    return this._props.Productivity
-  }
-  public getProfitability(){
-    return this._props.Profitability
-  }
-  public getWaterConsumption(){
-    return this._props.WaterConsumption
-  }
-  public getJobs(){
-    return this._props.Jobs
+  public get idBasin() {
+    return this._idBasin;
   }
 
-  static calAverage(data:ManagementWeights){
-    const indicators = [
-      ...data.getJobs(),
-      ...data.getProductivity(),
-      ...data.getProfitability(),
-      ...data.getWaterConsumption(),
-    ];
-
-    return indicators.reduce((prev, current) => {
-      if (current.Value) {
-        return (prev += current.Value);
-      }
-
-      return 0;
-    }, 0) / indicators.length;
+  public get idCulture() {
+    return this._idCulture;
   }
 
-  static calcWaterCut(average:number){
+  public get productivity() {
+    return this._productivity;
+  }
+  public get profitability() {
+    return this._profitability;
+  }
+  public get waterConsumption() {
+    return this._waterConsumption;
+  }
+  public get jobs() {
+    return this._jobs;
+  }
+
+  public static calcAverage(
+    indicators: ManagementWeightIndicatorValue[]
+  ): number {
+    return (
+      indicators.reduce((prev, current) => {
+        if (current.value) {
+          return (prev += current.value);
+        }
+
+        return 0;
+      }, 0) / indicators.length
+    );
+  }
+
+  public static calcWaterCut(average: number) {
     return (average - 1) * 100;
   }
 }

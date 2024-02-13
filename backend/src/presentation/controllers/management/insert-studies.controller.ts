@@ -1,4 +1,8 @@
 import {
+  ManagementCensusStudy,
+  ManagementStudyIndicator,
+} from "../../../domain/entities/management/study";
+import {
   InsertManagementStudiesByBasin,
   InsertManagementStudiesByBasinUseCaseProtocol,
 } from "../../../domain/use-cases/management/insert-studies";
@@ -50,11 +54,6 @@ export namespace InsertManagementStudiesByBasinControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Data: Array<{
-      Id_Culture: number;
-      Harvest: number;
-      Farm: number;
-      Productivity: Array<number>;
-    }>;
+    Data: Array<ManagementCensusStudy>;
   };
 }

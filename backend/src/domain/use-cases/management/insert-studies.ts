@@ -1,5 +1,8 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementCensusStudy } from "../../entities/management/study";
+import {
+  ManagementCensusStudy,
+  ManagementStudyIndicator,
+} from "../../entities/management/study";
 import { Command } from "../_ports/core/command";
 import { ManagementStudiesRepositoryProtocol } from "../_ports/repositories/management-studies.repository";
 
