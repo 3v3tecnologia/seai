@@ -1,5 +1,4 @@
 import { CultureWeightsMapper } from "../../../src/domain/entities/management/mappers/weights";
-import { ManagementWeights } from "../../../src/domain/entities/management/weights";
 import { DatabaseOperationOutputLogFactory } from "../../../src/domain/use-cases/_ports/repositories/dto/output";
 import {
   CultureWeightsToPersistency,
@@ -41,27 +40,6 @@ export class InMemoryManagementWeightsRepository
     const weights = this.data.map((row: any) =>
       CultureWeightsMapper.toDomain(row)
     );
-
-    weights.forEach((farmWeight) => {
-      const indicators = [
-        ...farmWeight.Productivity,
-        ...farmWeight.Profitability,
-        ...farmWeight.WaterConsumption,
-        ...farmWeight.Jobs,
-      ];
-
-      const R = indicators.reduce((prev, current) => {
-        if (current.Value) {
-          return (prev += current.Value);
-        }
-
-        return 0;
-      }, 0) / indicators.length;
-
-      farmWeight.WaterCut = (R - 1) * 100;
-      farmWeight.R = (R - 1) * 100;
-
-    });
 
     return withPagination(weights, {
       count: weights.length,

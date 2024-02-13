@@ -20,8 +20,6 @@ describe("Management weights", () => {
       limit: 10,
       pageNumber: 1,
     });
-
-    console.log(result.value);
   });
   test.todo(
     "Should be to calculate weights when data provided by the repository is 'null'"

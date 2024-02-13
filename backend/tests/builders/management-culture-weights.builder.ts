@@ -1,98 +1,50 @@
 import { ManagementWeights } from "../../src/domain/entities/management/weights";
 
 export class ManagementCultureBuilder {
-  private culture: ManagementWeights = {
-    Id_Basin: 1,
-    Id_Culture: 1,
-    Productivity: [
+  private culture: ManagementWeights = new ManagementWeights({
+    id_basin: 1,
+    id_culture: 1,
+    productivity: [
       {
-        Value: 0.5,
-        Unity: "Kg/ha",
+        value: 0.5,
+        unity: "Kg/ha",
       },
       {
-        Value: 0.5,
-        Unity: "kg/m³",
-      },
-    ],
-    Profitability: [
-      {
-        Value: 0.5,
-        Unity: "R$/ha",
-      },
-      {
-        Value: 0.5,
-        Unity: "R$/m³",
+        value: 0.5,
+        unity: "kg/m³",
       },
     ],
-    Jobs: [
+    profitability: [
       {
-        Value: 0.5,
-        Unity: "1000m³",
+        value: 0.5,
+        unity: "R$/ha",
       },
       {
-        Value: 0.5,
-        Unity: "ha",
-      },
-    ],
-    WaterConsumption: [
-      {
-        Value: 0.5,
-        Unity: "m",
-      },
-      {
-        Value: 0.5,
-        Unity: "ha",
+        value: 0.5,
+        unity: "R$/m³",
       },
     ],
-    R: null,
-    WaterCut: null
-  };
-
-  public withNullIndicators(){
-    this.culture.Productivity =  [
+    jobs: [
       {
-        Value: null,
-        Unity: "R$/ha",
+        value: 0.5,
+        unity: "1000m³",
       },
       {
-        Value: null,
-        Unity: "R$/m³",
+        value: 0.5,
+        unity: "ha",
       },
-    ]
-
-    this.culture.WaterConsumption =  [
+    ],
+    waterConsumption: [
       {
-        Value: null,
-        Unity: "R$/ha",
-      },
-      {
-        Value: null,
-        Unity: "R$/m³",
-      },
-    ]
-
-    this.culture.Profitability = [
-      {
-        Value: null,
-        Unity: "R$/ha",
+        value: 0.5,
+        unity: "m",
       },
       {
-        Value: null,
-        Unity: "R$/m³",
+        value: 0.5,
+        unity: "ha",
       },
-    ]
-
-    this.culture.Jobs = [
-      {
-        Value: null,
-        Unity: "1000m³",
-      },
-      {
-        Value: null,
-        Unity: "ha",
-      },
-    ]
-  }
+    ],
+  });
 
   static create(): ManagementCultureBuilder {
     return new ManagementCultureBuilder();
