@@ -13,14 +13,4 @@ export default [
     component: ManagementRegister,
     props: cultureList,
   },
-  {
-    path: "/soil",
-    name: "soil",
-    meta: {
-      ShowNav: true,
-      title: `Solos`,
-      navBarTab: 8,
-    },
-    component: ManagementRegister,
-  },
 ];

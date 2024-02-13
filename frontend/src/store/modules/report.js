@@ -249,4 +249,10 @@ export default {
       }
     },
   },
+  getters: {
+    cityOptions(state) {
+      return state.currentBasinFilter;
+      // return state.cityOptions;
+    },
+  },
 };

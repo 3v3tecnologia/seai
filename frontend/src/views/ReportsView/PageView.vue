@@ -5,6 +5,8 @@
         v-model="filtersData"
         :filters-dropdown="filtersDropdown"
         :filters-checkbox="filtersCheckbox"
+        :disabled-submit="isLoadingReport"
+        @tempValues="setTempValues"
       />
 
       <div class="my-5 mb-lg-4">
@@ -232,7 +234,7 @@ const hydrographicBasinOptions = computed(
   () => store.state.report.hydrographicBasinOptions
 );
 
-const filtersDropdown = [
+const filtersDropdown = computed(() => [
   {
     label: "Tipo de relatório",
     options: groupReportsOptions,
@@ -243,7 +245,7 @@ const filtersDropdown = [
     options: showingDataOptions.value,
     key: "showingDataFormatTemp",
   },
-];
+]);
 
 const filtersCheckbox = computed(() => [
   {
@@ -257,14 +259,16 @@ const filtersCheckbox = computed(() => [
     options: cityOptions.value,
     key: "cityTemp",
     disabled: disabledCities.value.temp,
+    dependsOn: {
+      key: "hydrographicBasinTemp",
+      value: "IdBacia",
+    },
   },
 ]);
 
-const isLoadingReport = computed(() => store.state.report.isLoadingReport);
+const cityOptionsGetter = computed(() => store.getters.cityOptions);
 
-const disabledGenerateReport = computed(
-  () => isLoadingReport.value || !hasChanges.value
-);
+const isLoadingReport = computed(() => store.state.report.isLoadingReport);
 
 const cityOptions = computed(() => {
   return store.state.report.cityOptions.filter((val) => {
@@ -282,7 +286,11 @@ const city = ref([]);
 const hydrographicBasinTemp = ref([...hydrographicBasin.value]);
 const cityTemp = ref([...city.value]);
 
-const applyFilters = () => {
+const applyFilters = (value) => {
+  if (value) {
+    setTempValues(value);
+  }
+
   groupReports.value = groupReportsTemp.value;
   showingDataFormat.value = showingDataFormatTemp.value;
   hydrographicBasin.value = hydrographicBasinTemp.value;
@@ -292,6 +300,31 @@ const applyFilters = () => {
 };
 
 applyFilters();
+
+const setTempValues = (val) => {
+  let [
+    groupReportsTempLocal,
+    showingDataFormatTempLocal,
+    hydrographicBasinTempLocal,
+    cityTempLocal,
+  ] = [
+    val.groupReportsTemp,
+    val.showingDataFormatTemp,
+    val.hydrographicBasinTemp,
+    val.cityTemp,
+  ];
+
+  groupReportsTemp.value = groupReportsTempLocal;
+  showingDataFormatTemp.value = showingDataFormatTempLocal;
+
+  if (hydrographicBasinTempLocal) {
+    hydrographicBasinTemp.value = hydrographicBasinTempLocal;
+  }
+
+  if (cityTempLocal) {
+    cityTemp.value = cityTempLocal;
+  }
+};
 
 watch(
   () => showingDataFormat,
@@ -318,6 +351,14 @@ watch(
     if (isLeavingAnimalType || isEnteringBasinOnly) {
       showingDataFormatTemp.value = totalGroupment[0];
     }
+  },
+  { deep: true }
+);
+
+watch(
+  () => filtersData.value,
+  async (newVal) => {
+    applyFilters(newVal);
   },
   { deep: true }
 );
