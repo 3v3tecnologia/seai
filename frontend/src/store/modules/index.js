@@ -3,6 +3,7 @@ import status from "./status";
 import newsletter from "./newsletter";
 import report from "./report";
 import page from "./page";
+import culture from "./culture";
 
 export default {
   cron,
@@ -10,4 +11,5 @@ export default {
   newsletter,
   report,
   page,
+  culture,
 };

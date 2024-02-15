@@ -2,7 +2,42 @@
   <div
     class="wrapper-card-management d-flex flex-column align-items-start p-4 h-100"
   >
-    <div class="overlay-actions" :style="`${getOverlayStyle(chips[0])}`" />
+    <div
+      class="overlay-actions d-flex align-items-end"
+      style="
+        background: linear-gradient(
+            0deg,
+            rgb(0 0 0 / 35%),
+            rgba(101, 101, 108, 0) 80%
+          )
+          no-repeat;
+      "
+    >
+      <div class="d-flex align-items-end justify-content-between w-100 p-4">
+        <router-link
+          :to="{
+            name: 'edit-culture',
+            params: { id: item.id || item.Id },
+          }"
+          class="btn btn-info d-flex align-items-center"
+        >
+          <span class="mr-2"> Editar </span>
+
+          <font-awesome-icon class="text-white" icon="fa-solid fa-pen" />
+        </router-link>
+
+        <button
+          @click="deleteItem"
+          class="btn btn-danger d-flex align-items-center ml-lg-2 mt-2 mt-lg-0"
+          type="button"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >
+          <span class="mr-2"> Excluir </span>
+          <font-awesome-icon class="text-white" icon="fa-solid fa-trash" />
+        </button>
+      </div>
+    </div>
 
     <div class="d-flex align-items-center justify-content-between w-100">
       <h5
@@ -51,17 +86,21 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import propsManagement from "@/components/cards/props/managementCards";
 
 const props = defineProps(propsManagement);
 
 const toCharAt = (string) => string.charCodeAt();
 
+const emit = defineEmits(["selected-item"]);
+
+const deleteItem = () => emit("selected-item", props.item);
+
 const getHueChipAdded = (string) =>
   string
-    .split(" ")[0]
-    .split("")
+    ?.split(" ")?.[0]
+    ?.split("")
     .map(toCharAt)
     .reduce((a, b) => a + b);
 

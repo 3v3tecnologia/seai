@@ -1,23 +1,5 @@
 <template>
   <BasicContentWrapper>
-    <!-- <div
-      v-if="headerLabels?.length false"
-      class="users-count d-flex align-items-center justify-content-between p-lg-5 mb-4 mb-lg-5"
-    >
-      <div
-        class="wrapper-counter"
-        v-for="counter in headerLabels"
-        :key="counter.title"
-      >
-        <div class="counter">
-          {{ data?.[counter.key] }}
-        </div>
-        <div class="label">
-          {{ counter.title }}
-        </div>
-      </div>
-    </div> -->
-
     <div class="crud-page-title d-flex mb-3">
       {{ pageExtraTitle }}
     </div>

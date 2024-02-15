@@ -1,15 +1,4 @@
 <template>
-  <!-- Button trigger modal -->
-  <!-- <button
-    type="button"
-    class="btn btn-primary"
-    data-toggle="modal"
-    data-target="#exampleModal"
-  >
-    Launch demo modal
-  </button> -->
-
-  <!-- Modal -->
   <div
     class="modal fade"
     id="exampleModal"
@@ -33,20 +22,25 @@
         </div>
         <div class="modal-body">
           <div v-if="props.users.length === 1">
-            Será deletado <span class="font-weight-bold">1</span>
+            Será deletado/a <span class="font-weight-bold">1</span>
             {{ actionText }}
-            selecionado.
+            selecionado/a.
           </div>
           <div v-else>
-            Serão deletados
+            Serão deletados/as
             <span class="font-weight-bold">{{ props.users.length }}</span>
-            {{ actionText }}s selecionados.
+            {{ actionText }}s selecionados/as.
           </div>
           <div>Este processo não poderá ser desfeito.</div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button
+            @click="cancelDelete"
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+          >
             Cancelar
           </button>
           <button
@@ -64,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, onMounted, watch } from "vue";
+import { computed, defineProps, defineEmits } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
@@ -98,4 +92,8 @@ const deleteUsers = async () => {
   await store.dispatch(props.deleteDataKey, usersIds.value);
   await store.dispatch(props.getDataKey, usersIds.value);
 };
+
+const emit = defineEmits(["close-modal"]);
+
+const cancelDelete = () => emit("close-modal");
 </script>

@@ -11,4 +11,8 @@ export default {
     type: Array,
     default: () => [],
   },
+  filters: {
+    type: Object,
+    default: () => ({}),
+  },
 };

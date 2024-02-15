@@ -1,6 +1,8 @@
 import user from "./user/list";
 import equipments from "./equipment/list";
 import metereologicalBodies from "./metereologicalBody/list";
+import managementFarmUpdate from "./culture/update";
+import managementFarmCreate from "./culture/create";
 import profile from "./profile/update";
 import editBody from "./metereologicalBody/update";
 import createBody from "./metereologicalBody/create";
@@ -57,5 +59,9 @@ export default {
     list: metereologicalBodies,
     update: editBody,
     create: createBody,
+  },
+  managementFarm: {
+    update: managementFarmUpdate,
+    create: managementFarmCreate,
   },
 };

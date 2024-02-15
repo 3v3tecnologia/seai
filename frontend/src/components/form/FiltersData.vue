@@ -1,8 +1,19 @@
 <template>
   <div
     class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center"
+    @keydown.enter="applyFilters"
   >
     <div class="d-lg-flex align-items-center ml-n3 mt-n4 mt-lg-0">
+      <BaseInput
+        v-if="searchFilter"
+        remove-margin
+        v-model="filtersDataTemp[searchFilter.key]"
+        :placeholder="searchFilter.label || 'Buscar'"
+        input-type="text"
+        show-icon
+        class="mb-lg-0 ml-3 mt-3 mt-lg-0"
+      />
+
       <BaseDropdown
         v-for="filter in filtersDropdown"
         v-model="filtersDataTemp[filter.key]"
@@ -27,7 +38,7 @@
       <div class="d-flex ml-3 mt-4 mt-lg-0">
         <button
           @click="applyFilters"
-          :disabled="disabledSubmit || !hasChanges"
+          :disabled="isDisabledButton"
           class="btn btn-success px-2 py-2"
         >
           Buscar dados
@@ -38,12 +49,18 @@
 </template>
 
 <script setup>
+import BaseInput from "@/components/form/BaseInput.vue";
 import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import BaseCheckBox from "@/components/form/BaseCheckBox.vue";
 
 import { defineProps, ref, watch, defineEmits, computed } from "vue";
 
 const props = defineProps({
+  searchFilter: {
+    type: Object,
+    required: false,
+    default: null,
+  },
   filtersDropdown: {
     type: Array,
     required: false,
@@ -92,7 +109,15 @@ const seedFiltersCheckbox = () => {
   });
 };
 
+const isDisabledButton = computed(
+  () => props.disabledSubmit || !hasChanges.value
+);
+
 const applyFilters = () => {
+  if (isDisabledButton.value) {
+    return;
+  }
+
   filtersData.value = JSON.parse(JSON.stringify(filtersDataTemp.value));
 };
 
@@ -116,7 +141,9 @@ const concatValuesFilters = (filter) => {
   return Object.values(filter)
     .filter((c) => c)
     .map((c) => {
-      if (c.length) {
+      if (typeof c === "string") {
+        return c;
+      } else if (c.length) {
         return c.map((k) => k.value).join("");
       }
 
