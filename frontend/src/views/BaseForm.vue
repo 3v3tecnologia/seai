@@ -118,12 +118,14 @@ import InputNumber from "primevue/inputnumber";
 import { useRoute } from "vue-router";
 import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import FilterDate from "@/components/form/FilterDate.vue";
+import FarmDap from "@/components/form/FarmDap.vue";
 import FieldEditor from "@/components/form/FieldEditor.vue";
 import { accessStoreKey } from "@/helpers/dto";
 
 const preBuiltComponents = {
   FilterDate,
   FieldEditor,
+  FarmDap,
 };
 
 const currentRoute = useRoute();
@@ -286,8 +288,17 @@ const updateDropdownsValue = () => {
 watch(drodpDowns.value, updateDropdownsValue, { immediate: true, deep: true });
 
 const getConcatValuesForms = (formToCheck) => {
+  const flatTypes = ["string", "number"];
+  const isFlat = (field) => flatTypes.includes(typeof field);
+
   return Object.values(formToCheck)
-    .map((field) => field?.title ?? field)
+    .map((field) => {
+      if (isFlat(field)) {
+        return field;
+      }
+
+      return field.map((row) => Object.values(row).join("")).join("");
+    })
     .join("");
 };
 
@@ -304,19 +315,13 @@ const isNewForm = computed(() => {
 });
 
 const setFormWatcher = () => {
-  form.value = {
-    ...formData.value,
-  };
+  form.value = JSON.parse(JSON.stringify(formData.value));
 
-  oldForm.value = {
-    ...formData.value,
-  };
+  oldForm.value = JSON.parse(JSON.stringify(formData.value));
 };
 
 const updateOldForm = (hasSavedForm = false) => {
-  oldForm.value = {
-    ...form.value,
-  };
+  oldForm.value = JSON.parse(JSON.stringify(form.value));
 
   hasSaved.value = !!hasSavedForm;
 };
@@ -326,7 +331,7 @@ watch(
   () => {
     setFormWatcher();
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 watch(

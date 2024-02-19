@@ -4,5 +4,15 @@ export const route = {
     { label: "Total de ciclos ETP", formKey: "Etp_Cycle_Total" },
     { label: "Total ET0 do ciclo", formKey: "Et0_Total" },
     { label: "ETP máximo do ciclo", formKey: "Etp_Cycle_Maximium" },
+    {
+      formKey: "CropCycle",
+      colSize: 12,
+      component: {
+        name: "FarmDap",
+        props: {
+          label: "Tabela de cultura",
+        },
+      },
+    },
   ],
 };

@@ -110,3 +110,5 @@ export const modulesSystemLevel = {
   read: "read",
   write: "write",
 };
+
+export const farmsStageDefault = "Plantio";

@@ -132,7 +132,53 @@ export default {
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
-          ];
+          ].map((c, i) => {
+            c.CropCycle = [
+              {
+                Stage_Title: "Pré plantio",
+                Duration_In_Days: 5,
+                KC: 0.5,
+              },
+              {
+                Stage_Title: "Plantio",
+                Duration_In_Days: 5,
+                KC: 1,
+              },
+              {
+                Stage_Title: "Amadurecimento",
+                Duration_In_Days: 12,
+                KC: 1.2,
+              },
+              {
+                Stage_Title: "Pré colheita 1 ",
+                Duration_In_Days: 3,
+                KC: 0.8,
+              },
+              {
+                Stage_Title: "Pré colheita 2",
+                Duration_In_Days: 2,
+                KC: 0.8,
+              },
+              {
+                Stage_Title: "Pré colheita 3",
+                Duration_In_Days: 2,
+                KC: 0.8,
+              },
+              {
+                Stage_Title: "Pré colheita 4",
+                Duration_In_Days: 2,
+                KC: 0.8,
+              },
+            ].map((s, j) => {
+              s.id = j + 1;
+              s.Duration_In_Days += i;
+              s.KC += i;
+
+              return s;
+            });
+
+            return c;
+          });
 
           // const apiPagination = {
           //   pages,
@@ -140,7 +186,6 @@ export default {
           //   pageLimit,
           // };
 
-          console.log("setando dado de cultura", data);
           commit("SET_LIST_CULTURE", {
             data,
             // apiPagination,
@@ -216,7 +261,6 @@ export default {
     GET_CURRENT_CULTURE: {
       async handler({ commit, dispatch, state }, id) {
         try {
-          console.log("pegando cultura atual", id, state.list.data);
           await dispatch("GET_CULTURES");
 
           const culture = state.list.data.find((c) => c.id == id || c.Id == id);
@@ -227,8 +271,6 @@ export default {
           commit("SET_CURRENT_CULTURE", {});
           console.error(e);
           toast.error(e);
-        } finally {
-          console.log("saiu do get current culture");
         }
       },
     },

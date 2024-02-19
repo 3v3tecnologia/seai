@@ -2,7 +2,7 @@ import { route } from "./common";
 
 const getDataKey = "";
 const submitDataKey = "CREATE_CULTURE";
-const storeDataKey = ["culture", "update"];
+const storeDataKey = "";
 const headerLabel = "Criando cultura";
 
 const finishedDataButton = {

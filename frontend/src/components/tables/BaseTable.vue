@@ -1,5 +1,14 @@
 <template>
   <div class="w-100 d-flex flex-column align-items-start">
+    <div v-if="isEditable">
+      <button type="button" class="btn btn-success mr-4" @click="createNewLine">
+        Adicionar linha
+      </button>
+      <button type="button" class="btn btn-danger" @click="removeLine">
+        Remover linha
+      </button>
+    </div>
+
     <div
       v-if="isReport"
       class="w-100 d-flex flex-lg-row flex-column justify-content-lg-between align-items-lg-center"
@@ -27,6 +36,7 @@
     </div>
 
     <BasePagination
+      v-if="!hidePagination"
       v-model="pageNumber"
       class="w-100"
       :is-loading="isLoading"
@@ -58,6 +68,7 @@ import { useRoute } from "vue-router";
 const pageNumber = ref(1);
 
 const table = ref(null);
+
 const tabulator = ref(null);
 
 const tabDownload = ref(null);
@@ -86,6 +97,10 @@ const props = defineProps({
   apiPagination: {
     type: Object,
     required: false,
+  },
+  hidePagination: {
+    type: Boolean,
+    default: false,
   },
   getDataKey: {
     type: String,
@@ -119,10 +134,17 @@ const props = defineProps({
 
 const currentRoute = useRoute();
 const paramId = computed(() => currentRoute.params.id || "");
+const isEditable = computed(() => props.columns.find((c) => c.editor));
 const currentRouteName = computed(() => currentRoute.name || "");
+const biggestId = computed(
+  () => Math.max(...props.data.map((c) => c.id || c.Id).filter((c) => c)) || 1
+);
+
 const store = useStore();
 const baseTimeout = ref(null);
 const isLoading = ref(true);
+
+const newRowEmptyData = () => ({ id: biggestId.value + 1 });
 
 const currentPagination = computed(() => {
   let { itemPerPage } = defaultPagination;
@@ -147,11 +169,14 @@ const dataShowing = computed(() => {
 
 watch(
   () => dataShowing.value,
-  (val) => {
+  async (val) => {
     if (tabulator.value?.initialized) {
       tabulator.value?.setData(val);
+    } else {
+      setTimeout(() => tabulator.value?.setData(val), 200);
     }
-  }
+  },
+  { immediate: true }
 );
 
 const mapedFiltersTable = computed(() => {
@@ -211,6 +236,8 @@ watch(
 
     if (props.getDataKey) {
       await getData();
+    } else {
+      isLoading.value = false;
     }
   },
   { immediate: true, deep: true }
@@ -236,12 +263,44 @@ watch(
   }
 );
 
-const emit = defineEmits(["selected"]);
+const emit = defineEmits(["selected", "update:modelValue"]);
+
+const emitCurrentData = () =>
+  emit("update:modelValue", tabulator.value.getData());
+
+const createNewLine = async (e) => {
+  await tabulator.value.addRow(newRowEmptyData(), false);
+  emitCurrentData();
+};
+
+const removeLine = async () => {
+  const currentIdsMaped = {};
+  props.data.forEach((d) => (currentIdsMaped[d.id] = true));
+
+  const selectedIds = tabulator.value
+    .getSelectedData()
+    ?.map((c) => c.id)
+    ?.filter((c) => currentIdsMaped[c]);
+
+  const selectedLength = selectedIds?.length;
+  const totalDataLength = props.data.length;
+  if (!selectedLength) {
+    return;
+  }
+
+  await tabulator.value.deleteRow(selectedIds);
+  await tabulator.value.deselectRow(selectedIds);
+
+  if (selectedLength === totalDataLength) {
+    await createNewLine();
+  }
+
+  emitCurrentData();
+};
 
 const updateSelecteds = (selecteds) => {
   emit("selected", selecteds);
 };
-
 onMounted(() => {
   tabulator.value = new Tabulator(table.value, {
     data: dataShowing.value,
@@ -250,6 +309,7 @@ onMounted(() => {
     layout: "fitColumns",
     validationMode: "highlight",
     selectable: props.selectable,
+    selectableRowsPersistence: false,
   });
 
   tabulatorDownload.value = new Tabulator(tabDownload.value, {
