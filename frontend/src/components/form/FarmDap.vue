@@ -66,7 +66,7 @@ const columns = [
     title: "Duração (dias)",
     field: "Duration_In_Days",
     editor: "number",
-    mutator: (value) => Math.floor(value) || 1,
+    mutator: (value) => (value && value > 0 ? Math.floor(value) : 1),
     editorParams: {
       min: 1,
     },
@@ -79,7 +79,7 @@ const columns = [
       min: 0.1,
       step: 0.1,
     },
-    mutator: (value) => (value >= 0.1 ? value : 0.1),
+    mutator: (value) => (value > 0 ? value : 0),
   },
 ];
 
