@@ -297,7 +297,13 @@ const getConcatValuesForms = (formToCheck) => {
         return field;
       }
 
-      return field.map((row) => Object.values(row).join("")).join("");
+      let currentField = field;
+
+      if (!currentField.length) {
+        currentField = [currentField];
+      }
+
+      return currentField.map((row) => Object.values(row).join("")).join("");
     })
     .join("");
 };
