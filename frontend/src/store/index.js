@@ -152,6 +152,7 @@ export const store = createStore({
 
           commit("SET_USER", userLogged);
 
+          await store.dispatch("GET_PROFILE", token);
           return true;
         }
       } catch (e) {
@@ -500,6 +501,7 @@ export const store = createStore({
 
           commit("SET_USER", userLogged);
         }
+        console.log("realizou login", data);
 
         commit("SET_CURRENT_PROFILE", data);
       } catch (e) {
