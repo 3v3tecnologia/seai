@@ -501,7 +501,6 @@ export const store = createStore({
 
           commit("SET_USER", userLogged);
         }
-        console.log("realizou login", data);
 
         commit("SET_CURRENT_PROFILE", data);
       } catch (e) {

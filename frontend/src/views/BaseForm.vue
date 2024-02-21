@@ -74,7 +74,6 @@
             </span>
           </div>
         </div>
-
         <div class="py-2"></div>
       </template>
 
@@ -122,6 +121,8 @@ import FarmDap from "@/components/form/FarmDap.vue";
 import FieldEditor from "@/components/form/FieldEditor.vue";
 import { accessStoreKey } from "@/helpers/dto";
 
+const form = ref({});
+const oldForm = ref({});
 const preBuiltComponents = {
   FilterDate,
   FieldEditor,
@@ -268,9 +269,6 @@ const drodpDowns = computed(() =>
     })
 );
 
-const form = ref({});
-const oldForm = ref({});
-
 const updateDropdownsValue = () => {
   drodpDowns.value.forEach((field) => {
     const matchedResult = field.options.find((f) => f.title === field.value);
@@ -289,7 +287,7 @@ watch(drodpDowns.value, updateDropdownsValue, { immediate: true, deep: true });
 
 const getConcatValuesForms = (formToCheck) => {
   const flatTypes = ["string", "number"];
-  const isFlat = (field) => flatTypes.includes(typeof field);
+  const isFlat = (field) => flatTypes.includes(typeof field) || !field;
 
   return Object.values(formToCheck)
     .map((field) => {
@@ -309,7 +307,12 @@ const getConcatValuesForms = (formToCheck) => {
 };
 
 const changedForm = computed(() => {
-  const hasOldVal = Object.keys(oldForm.value).length;
+  const hasOldVal = !!(oldForm.value && Object.keys(oldForm.value).length);
+  console.log("old", hasOldVal, !!oldForm.value);
+
+  if (!hasOldVal) {
+    return false;
+  }
   const concatOldVal = getConcatValuesForms(oldForm.value);
   const concatNewVal = getConcatValuesForms(form.value);
 
@@ -317,11 +320,13 @@ const changedForm = computed(() => {
 });
 
 const isNewForm = computed(() => {
-  return !Object.keys(oldForm.value).length || props.defaultValue;
+  return (
+    !oldForm.value || !Object.keys(oldForm.value).length || props.defaultValue
+  );
 });
 
 const setFormWatcher = () => {
-  form.value = JSON.parse(JSON.stringify(formData.value));
+  form.value = formData.value ? JSON.parse(JSON.stringify(formData.value)) : {};
 
   oldForm.value = JSON.parse(JSON.stringify(formData.value));
 };
