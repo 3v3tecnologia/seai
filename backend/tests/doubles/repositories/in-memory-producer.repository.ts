@@ -17,13 +17,16 @@ type RawProducerProfitability = {
 export class InMemoryProducerRepository implements ProducerRepositoryProtocol {
   private _profitability: Array<RawProducerProfitability> = [];
   private _workers: Array<any>;
+  private _consumers: Array<any>;
 
   constructor(props: {
     profitability: Array<RawProducerProfitability>;
     workers?: Array<any>;
+    consumers?: Array<any>;
   }) {
     this._profitability = props.profitability;
     this._workers = props.workers || [];
+    this._consumers = props.consumers || [];
   }
 
   async getProfitabilityGroupByProducer(

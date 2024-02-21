@@ -53,8 +53,6 @@ export class GetCulturesIndicatorsFromBasin
       producers,
     });
 
-    console.log(basinIndicators.Cultures);
-
     return right(basinIndicators);
   }
 }

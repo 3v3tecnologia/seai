@@ -45,24 +45,8 @@ export class BasinIndicatorsByCulture {
     return this._id;
   }
 
-  public get Cultures(): Array<{
-    Name: string;
-    Social: number;
-    Economic: number;
-    Consumption: number;
-    Productivity: number;
-  }> {
-    return this._indicatorsPerBasin
-      ? Array.from(this._indicatorsPerBasin, ([name, value]) => {
-          return {
-            Name: name,
-            Consumption: value.Consumption,
-            Economic: value.Consumption,
-            Productivity: value.Productivity,
-            Social: value.Social,
-          };
-        })
-      : [];
+  public get Cultures() {
+    return this._indicatorsPerBasin;
   }
 
   public get GroupedCulturesByName() {
