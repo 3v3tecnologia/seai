@@ -184,7 +184,7 @@ watch(
   (newVal) => {
     paramId.value = newVal.params.id;
 
-    if (props.getDataKey) {
+    if (props.getDataKey && paramId.value) {
       store.dispatch(props.getDataKey, paramId.value);
     }
   },
@@ -308,7 +308,6 @@ const getConcatValuesForms = (formToCheck) => {
 
 const changedForm = computed(() => {
   const hasOldVal = !!(oldForm.value && Object.keys(oldForm.value).length);
-  console.log("old", hasOldVal, !!oldForm.value);
 
   if (!hasOldVal) {
     return false;
