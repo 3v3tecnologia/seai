@@ -169,6 +169,12 @@ watch(
 );
 
 watch(
+  () => props.modelValue,
+  (val) => (filtersDataTemp.value = JSON.parse(JSON.stringify(val))),
+  { deep: true }
+);
+
+watch(
   () => filtersDataTemp.value,
   (val) => {
     const dependendingFiltersCheckbox = props.filtersCheckbox.filter(

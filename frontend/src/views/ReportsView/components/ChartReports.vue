@@ -197,6 +197,16 @@ const securityWater = computed(() => {
   };
 });
 
+const secProd = computed(() => {
+  const valueKey = "PesoPorArea";
+  const data = props.data.securityProductive;
+
+  return {
+    data,
+    valueKey,
+  };
+});
+
 const chartsGroups = computed(() => [
   [
     {
@@ -264,6 +274,24 @@ const chartsGroups = computed(() => [
     {
       ...reportsBaseConfigs.secHydro,
       data: securityWater.value.data,
+    },
+  ],
+  [
+    {
+      ...reportsBaseConfigs.secCultureEconomic,
+      data: securityEconomic.value.data,
+    },
+    {
+      ...reportsBaseConfigs.secCultureSocial,
+      data: securitySocial.value.data,
+    },
+    {
+      ...reportsBaseConfigs.secCultureHydro,
+      data: securityWater.value.data,
+    },
+    {
+      ...reportsBaseConfigs.secCultureProd,
+      data: secProd.value.data,
     },
   ],
   [

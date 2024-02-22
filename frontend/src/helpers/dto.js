@@ -8,6 +8,9 @@ export const formatTemporaryToken = (token) => ({
   },
 });
 
+export const concatBasinValues = (basins) =>
+  basins.map((b) => b.value).join("");
+
 export const accessStoreKey = (store, keys) => {
   let tempStore = store;
 

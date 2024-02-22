@@ -5,7 +5,12 @@ import {
   reportsDataAllDefault,
 } from "../mocks";
 import { dataFormatUrl } from "@/constants";
-import { formatLocation, getValueBasic, ungroupData } from "@/helpers/dto";
+import {
+  concatBasinValues,
+  formatLocation,
+  getValueBasic,
+  ungroupData,
+} from "@/helpers/dto";
 
 export default {
   state: () => ({
@@ -40,7 +45,10 @@ export default {
       state.isLoadingReport = bool;
     },
     ["SET_CURRENT_BASIN_NAME"](state, basins) {
-      state.currentBasinFilter = basins;
+      const currentValues = concatBasinValues(state.currentBasinFilter);
+      const newValues = concatBasinValues(basins);
+
+      if (currentValues != newValues) state.currentBasinFilter = basins;
     },
     ["SET_REPORTS_DATA_ALL"](state, data) {
       state.reportsDataAll = {
@@ -125,19 +133,85 @@ export default {
         console.error(e);
       }
     },
+    async ["FETCH_REPORT_CULTURE_INDICATORS"]({ commit }, filters) {
+      try {
+        const showingDataFormat = filters.showingDataFormat.value;
+        const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
+
+        const responses = await Promise.all([
+          await http.get(
+            `/census/indicator/security/water/${showingDataFormatUrl}`
+          ),
+          await http.get(
+            `/census/indicator/security/social/${showingDataFormatUrl}`
+          ),
+          await http.get(
+            `/census/indicator/security/economic/${showingDataFormatUrl}`
+          ),
+        ]);
+
+        const [securityWater, securitySocial, securityEconomic] = responses.map(
+          (c) => c.data.data.map(getValueBasic).map(formatLocation)
+        );
+        const cultureSwapperMocked = (d) => {
+          const mockedMapping = {
+            "Alto Jaguaribe": "Banana",
+            "Médio Jaguaribe": "Laranja",
+            "Baixo Jaguaribe": "Limão",
+          };
+          return d.map((row) => {
+            row.Cultura = mockedMapping[row.Bacia];
+
+            return row;
+          });
+        };
+
+        const securityProductive = securityEconomic.map((s) => {
+          s.PesoPorArea = Math.floor(Math.sqrt(s.RentabilidadePorArea));
+          return s;
+        });
+
+        commit("SET_REPORTS_DATA", {
+          securityWater: cultureSwapperMocked(securityWater),
+          securitySocial: cultureSwapperMocked(securitySocial),
+          securityEconomic: cultureSwapperMocked(securityEconomic),
+          securityProductive: cultureSwapperMocked(securityProductive),
+        });
+        console.log(cultureSwapperMocked(securityWater));
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async ["FETCH_SINGLE_BASIN"]({ state, commit }, filters) {
+      const currentReportData = filters.currentReportData;
+      const hydrographicBasinIndexes = Object.keys(filters.hydrographicBasin);
+      const lastHydrographicBasin =
+        filters.hydrographicBasin?.[
+          hydrographicBasinIndexes[hydrographicBasinIndexes.length - 1]
+        ];
+
+      const hydrographicBasinTitle = lastHydrographicBasin?.title;
+
+      // "random" key
+      let basinKey = hydrographicBasinTitle;
+      let currentBasinFilter = [lastHydrographicBasin];
+
+      if (!basinKey) {
+        // await dispatch("FETCH_PLACES_OPTIONS");
+
+        // random key
+        basinKey = Object.keys(currentReportData)[0];
+        currentBasinFilter = [
+          state.hydrographicBasinOptions.find((b) => b.title === basinKey),
+        ];
+      }
+
+      commit("SET_CURRENT_BASIN_NAME", currentBasinFilter);
+    },
     async ["FETCH_REPORT_RESOURCES"]({ state, commit, dispatch }, filters) {
       try {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
-        const lastBasin =
-          state.currentBasinFilter[state.currentBasinFilter.length - 1];
-
-        const hydrographicBasinIndexes = Object.keys(filters.hydrographicBasin);
-        const lastHydrographicBasin =
-          filters.hydrographicBasin?.[
-            hydrographicBasinIndexes[hydrographicBasinIndexes.length - 1]
-          ];
-        const hydrographicBasinTitle = lastHydrographicBasin?.title;
 
         const responses = await Promise.all([
           await http.get(`/census/captation/tank/${showingDataFormatUrl}`),
@@ -152,21 +226,14 @@ export default {
 
         const hydricResourcesRaw = state.reportsDataAll.hydricResources;
 
+        await dispatch("FETCH_SINGLE_BASIN", {
+          ...filters,
+          currentReportData: hydricResourcesRaw,
+        });
+
         // "random" key
-        let basinKey = hydrographicBasinTitle;
-        let currentBasinFilter = [lastHydrographicBasin];
-
-        if (!basinKey) {
-          // await dispatch("FETCH_PLACES_OPTIONS");
-
-          // random key
-          basinKey = Object.keys(hydricResourcesRaw)[0];
-          currentBasinFilter = [
-            state.hydrographicBasinOptions.find((b) => b.title === basinKey),
-          ];
-        }
-
-        commit("SET_CURRENT_BASIN_NAME", currentBasinFilter);
+        let basinKey = state.currentBasinFilter[0].title;
+        console.log(basinKey);
         const hydricResources = hydricResourcesRaw[basinKey]
           .map(getValueBasic)
           .map(formatLocation)
@@ -215,6 +282,8 @@ export default {
         } else if (groupmentParam === 4) {
           await dispatch("FETCH_REPORT_INDICATORS", filters);
         } else if (groupmentParam === 5) {
+          await dispatch("FETCH_REPORT_CULTURE_INDICATORS", filters);
+        } else if (groupmentParam === 6) {
           await dispatch("FETCH_REPORT_RESOURCES", filters);
         }
       } catch (e) {

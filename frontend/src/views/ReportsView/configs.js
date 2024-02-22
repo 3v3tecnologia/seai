@@ -142,6 +142,44 @@ ReportsConfigsInstance.addChart("registereds", {
     seriesName: "Volume por área",
     valueKey: "VolumePorArea",
   })
+  .addChart("secProd", {
+    component: BarChart,
+    title: "Segurança Produtiva (kg/ha)",
+    seriesName: "Peso por área",
+    valueKey: "PesoPorArea",
+  })
+  .addChart("secCultureEconomic", {
+    component: BarChart,
+    title: "Segurança econômica (R$/ha)",
+    seriesName: "Rentabilidade por área",
+    valueKey: "RentabilidadePorArea",
+    labelBy: labelBy.farmName,
+    isHorizontal: true,
+  })
+  .addChart("secCultureSocial", {
+    component: BarChart,
+    title: "Segurança social (Emprego/ha)",
+    seriesName: "Empregos por área",
+    valueKey: "EmpregosPorArea",
+    labelBy: labelBy.farmName,
+    isHorizontal: true,
+  })
+  .addChart("secCultureHydro", {
+    component: BarChart,
+    title: "Segurança hídrica (m³/ha)",
+    seriesName: "Volume por área",
+    valueKey: "VolumePorArea",
+    labelBy: labelBy.farmName,
+    isHorizontal: true,
+  })
+  .addChart("secCultureProd", {
+    component: BarChart,
+    title: "Segurança Produtiva (kg/ha)",
+    seriesName: "Peso por área",
+    valueKey: "PesoPorArea",
+    labelBy: labelBy.farmName,
+    isHorizontal: true,
+  })
   .addChart("hydricResources", {
     component: BarChart,
     title: "Corte hídrico (m³/ha)",

@@ -77,12 +77,16 @@ const groupReportsOptions = [
     value: 3,
   },
   {
-    title: "Indicadores",
+    title: "Indicadores por localização",
     value: 4,
   },
   {
-    title: "Recursos hídricos",
+    title: "Indicadores por cultura",
     value: 5,
+  },
+  {
+    title: "Recursos hídricos",
+    value: 6,
   },
 ];
 
@@ -92,6 +96,8 @@ const groupReports = ref(groupReportsOptions[0]);
 
 const groupReportsTemp = ref({ ...groupReports.value });
 const showingDataFormatTemp = ref({ ...showingDataFormat.value });
+
+const currentBasinStore = computed(() => store.state.report.currentBasinFilter);
 
 const showingDataOptions = computed(() =>
   totalGroupment.filter((opt) => {
@@ -372,11 +378,10 @@ watch(
 );
 
 watch(
-  () => store.state.report.currentBasinFilter,
+  () => currentBasinStore.value,
   (newVal) => {
-    hydrographicBasinTemp.value = newVal;
-  },
-  { immediate: true }
+    filtersData.value.hydrographicBasinTemp = newVal;
+  }
 );
 
 watch(
