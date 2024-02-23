@@ -1,3 +1,4 @@
+import { InMemoryStudiesRepository } from "../../../../tests/doubles/repositories/in-memory-management-studies.repository";
 import { Either, right } from "../../../shared/Either";
 import { BasinIndicatorsByCulture } from "../../entities/management/basin-indicators-by-culture";
 import { Culture } from "../../entities/management/culture";
@@ -10,14 +11,14 @@ export class GetCulturesIndicatorsFromBasin
   implements GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase
 {
   private repository: ProducerRepositoryProtocol.Repository;
-  // private studiesRepository: ManagementStudiesRepositoryProtocol;
+  private studiesRepository: ManagementStudiesRepositoryProtocol;
 
   constructor(
-    repository: ProducerRepositoryProtocol.Repository
-    // studiesRepository: ManagementStudiesRepositoryProtocol
+    repository: ProducerRepositoryProtocol.Repository,
+    studiesRepository: ManagementStudiesRepositoryProtocol
   ) {
     this.repository = repository;
-    // this.studiesRepository = studiesRepository;
+    this.studiesRepository = studiesRepository;
   }
 
   async execute(
@@ -40,6 +41,10 @@ export class GetCulturesIndicatorsFromBasin
     const waterConsumptionByProducer = await this.repository.getConsume(
       request.IdBasin
     );
+
+    const studiesProductivity = await this.studiesRepository.getAllByBasin({
+      Id_Basin: request.IdBasin,
+    });
 
     const producers = result.map((producer) => {
       let workers = null;
@@ -87,6 +92,19 @@ export class GetCulturesIndicatorsFromBasin
       id: request.IdBasin,
       producers,
     });
+
+    if (studiesProductivity) {
+      for (const [study, value] of studiesProductivity) {
+        const culture = basinIndicators.Cultures?.get(study);
+
+        if (culture) {
+          const averageProductivity =
+            value.ProductivityPerKilo / value.ProductivityPerMeters;
+
+          culture.Productivity = culture.Consumption * averageProductivity;
+        }
+      }
+    }
 
     return right(basinIndicators);
   }

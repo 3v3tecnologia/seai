@@ -75,7 +75,7 @@ CREATE TABLE "Studies"(
 	"Harvest" INTEGER NOT NULL, -- safra
 	"Farm" INTEGER NOT NULL, -- cultivo
 	"ProductivityPerKilo" REAL NOT NULL,
-	"ProductivityPerMeters" REAL NOT NULL
+	"ProductivityPerMeters" REAL NOT NULL -- Consume
 );
 
 CREATE TABLE "Weights"(

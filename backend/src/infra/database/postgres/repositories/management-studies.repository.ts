@@ -53,8 +53,6 @@ export class DbManagementStudiesRepository
       .limit(request.limit)
       .offset(request.pageNumber);
 
-    console.log("[ManagementStudiesRepository] :: RESULT ", result);
-
     if (!result.length) {
       return null;
     }
@@ -66,5 +64,70 @@ export class DbManagementStudiesRepository
       limit: request.limit,
       offset: request.pageNumber,
     });
+  }
+
+  async getAllByBasin(
+    request: ManagementStudiesRepositoryDTO.GetAllByBasin.Request
+  ): ManagementStudiesRepositoryDTO.GetAllByBasin.Response {
+    const raw = await managementDb.raw(
+      `
+      SELECT
+          s."Id_Culture"  AS "Id_Culture",
+          s."Id_Basin" ,
+          c."Name" AS "Culture",
+          s."Harvest" ,
+          s."Farm" ,
+          s."ProductivityPerKilo" ,
+          s."ProductivityPerMeters"
+      FROM
+          "Studies" s
+      INNER JOIN "Crop" c 
+      ON
+          c."Id" = s."Id_Culture"
+      WHERE s."Id_Basin" = ?
+      `,
+      [request.Id_Basin]
+    );
+
+    console.log("[ManagementStudiesRepository] :: RESULT ", raw.rows);
+
+    if (!raw.rows.length) {
+      return null;
+    }
+
+    const result: Map<
+      string,
+      {
+        Id_Basin: number;
+        Id_Culture: number;
+        Harvest: number;
+        Farm: number;
+        ProductivityPerKilo: number | null;
+        ProductivityPerMeters: number | null;
+      }
+    > = new Map();
+
+    raw.rows.forEach((raw: any) => {
+      const culture = {
+        Id_Basin: raw.Id_Basin,
+        Id_Culture: raw.Id_Culture,
+        Harvest: raw.Harvest, //safra
+        Farm: raw.Farm, // cultivo
+        ProductivityPerKilo: raw.ProductivityPerKilo,
+        ProductivityPerMeters: raw.ProductivityPerMeters,
+      };
+
+      const name = raw.Culture;
+
+      // if (result.has(name)) {
+      //   result.get(name)?.Cultures.push(culture);
+
+      //   return;
+      // }
+
+      result.set(name, culture);
+    });
+
+    return result;
   }
 }

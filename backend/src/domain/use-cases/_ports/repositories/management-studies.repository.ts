@@ -7,15 +7,15 @@ export type ManagementStudyToPersistency = {
   Id_Culture: number;
   Harvest: number;
   Farm: number;
-  ProductivityPerKilo: number | null;
-  ProductivityPerMeters: number | null;
+  ProductivityPerKilo: number;
+  ProductivityPerMeters: number; // Consume
 };
 
 export namespace ManagementStudiesRepositoryDTO {
   export namespace Create {
     export type Request = Array<ManagementCensusStudy>;
 
-    export type Response = Promise<DatabaseOperationOutputLog>;
+    export type Response = Promise<DatabaseOperationOutputLog | null>;
   }
 
   export namespace Delete {
@@ -32,6 +32,15 @@ export namespace ManagementStudiesRepositoryDTO {
     export type Response =
       Promise<OutputWithPagination<ManagementCensusStudy> | null>;
   }
+
+  export namespace GetAllByBasin {
+    export type Request = { Id_Basin: number };
+
+    export type Response = Promise<Map<
+      string,
+      ManagementStudyToPersistency
+    > | null>;
+  }
 }
 
 export interface ManagementStudiesRepositoryProtocol {
@@ -44,4 +53,7 @@ export interface ManagementStudiesRepositoryProtocol {
   getByBasin(
     request: ManagementStudiesRepositoryDTO.GetByBasin.Request
   ): ManagementStudiesRepositoryDTO.GetByBasin.Response;
+  getAllByBasin(
+    request: ManagementStudiesRepositoryDTO.GetAllByBasin.Request
+  ): ManagementStudiesRepositoryDTO.GetAllByBasin.Response;
 }
