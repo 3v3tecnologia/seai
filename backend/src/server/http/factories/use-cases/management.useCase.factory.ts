@@ -8,8 +8,13 @@ import {
   InsertManagementStudiesByBasin,
   InsertManagementWeightsByBasin,
 } from "../../../../domain/use-cases/management";
+import {
+  GetCulturesIndicatorsFromBasin,
+  GetCulturesIndicatorsFromBasinUseCaseProtocol,
+} from "../../../../domain/use-cases/management/get-cultures-indicators-from-basin";
 import { DbManagementStudiesRepository } from "../../../../infra/database/postgres/repositories/management-studies.repository";
 import { DbManagementWeightsRepository } from "../../../../infra/database/postgres/repositories/management-weights.repository";
+import { DbProducerRepository } from "../../../../infra/database/postgres/repositories/producer.repository";
 
 export class ManagementUseCasesFactory {
   private static repository = new DbManagementStudiesRepository();
@@ -40,5 +45,17 @@ export class ManagementWeightsUseCasesFactory {
 
   static makeInsertManagementWeights(): InsertManagementWeightsByBasin {
     return new InsertManagementWeightsByBasin(this.repository);
+  }
+}
+
+// Remove from management
+export class CulturesUseCasesFactory {
+  private static repository = new DbProducerRepository();
+
+  static makeGetCultureIndicatorsFromBasin(): GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase {
+    return new GetCulturesIndicatorsFromBasin(
+      this.repository
+      // new DbManagementStudiesRepository()
+    );
   }
 }

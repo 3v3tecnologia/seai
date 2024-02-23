@@ -113,6 +113,30 @@ export class Culture {
     );
   }
 
+  public setConsumptionSecurity(totalConsume: number) {
+    if (this._percentageArea == null) {
+      return left(new Error("Percentage Area is required"));
+    }
+
+    this._consumptionSecurity = CalcIndicators.consumptionSecurity(
+      this._percentageArea,
+      totalConsume,
+      this._irrigatedArea
+    );
+  }
+
+  public setProductivitySecurity(totalProductivity: number) {
+    if (this._percentageArea == null) {
+      return left(new Error("Percentage Area is required"));
+    }
+
+    this._productivitySecurity = CalcIndicators.productivitySecurity(
+      this._percentageArea,
+      totalProductivity,
+      this._irrigatedArea
+    );
+  }
+
   public setPercentageArea(total: number) {
     this._percentageArea = this.calcPercentageArea(this.CultivatedArea, total);
   }

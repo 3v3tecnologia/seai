@@ -15,6 +15,22 @@ export class CalcIndicators {
     return percentage * profitabilityPerArea;
   }
 
+  public static consumptionSecurity(
+    percentage: number,
+    totalConsume: number,
+    area: number
+  ) {
+    return percentage * (totalConsume / area);
+  }
+
+  public static productivitySecurity(
+    percentage: number,
+    totalProductivity: number,
+    area: number
+  ) {
+    return percentage * (totalProductivity / area);
+  }
+
   public static socialSecurity(
     percentage: number,
     workersCount: number,
