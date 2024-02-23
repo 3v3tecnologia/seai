@@ -54,8 +54,8 @@ export class CulturesUseCasesFactory {
 
   static makeGetCultureIndicatorsFromBasin(): GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase {
     return new GetCulturesIndicatorsFromBasin(
-      this.repository
-      // new DbManagementStudiesRepository()
+      this.repository,
+      new DbManagementStudiesRepository()
     );
   }
 }

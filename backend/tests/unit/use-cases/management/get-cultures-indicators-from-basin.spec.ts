@@ -1,9 +1,10 @@
 import { BasinIndicatorsByCulture } from "../../../../src/domain/entities/management/basin-indicators-by-culture";
 import { GetCulturesIndicatorsFromBasin } from "../../../../src/domain/use-cases/management/get-cultures-indicators-from-basin";
+import { InMemoryStudiesRepository } from "../../../doubles/repositories/in-memory-management-studies.repository";
 import { InMemoryProducerRepository } from "../../../doubles/repositories/in-memory-producer.repository";
 
 describe("Farms indicators", () => {
-  test("Should be able to calculate profitability by producer with monoculture", async function () {
+  /*test.skip("Should be able to calculate profitability by producer with monoculture", async function () {
     const producerRepository = new InMemoryProducerRepository({
       profitability: [
         {
@@ -19,7 +20,12 @@ describe("Farms indicators", () => {
       ],
     });
 
-    const useCase = new GetCulturesIndicatorsFromBasin(producerRepository);
+    const studiesRepository = new InMemoryStudiesRepository();
+
+    const useCase = new GetCulturesIndicatorsFromBasin(
+      producerRepository,
+      studiesRepository
+    );
 
     const resultOrError = await useCase.execute({
       IdBasin: 1,
@@ -48,45 +54,70 @@ describe("Farms indicators", () => {
 
     expect(data.Id).toEqual(expected.Id);
     expect(data.Cultures).toEqual(expected.Cultures);
-  });
+  });*/
 
-  test.skip("Should be able to calculate profitability by producer with monoculture", async function () {
+  test("Should be able to calculate profitability by producer with monoculture", async function () {
     const producerRepository = new InMemoryProducerRepository({
       profitability: [
         {
-          IdProducer: 1667322811535,
-          TotalProfitability: 100000,
+          IdProducer: 1674825556279,
+          TotalProfitability: 22000,
           IdBasin: 1,
           Basin: "Alto Jaguaribe",
-          IrrigatedArea: 2,
-          CultivationPeriod: 12,
+          IrrigatedArea: 0.2,
+          CultivationPeriod: 8,
           IdCulture: 1,
-          Culture: "Banana",
+          Culture: "CHEIRO VERDE",
         },
         {
-          IdProducer: 1667322811535,
-          TotalProfitability: 10000,
+          IdProducer: 1674825556279,
+          TotalProfitability: 22000,
           IdBasin: 1,
           Basin: "Alto Jaguaribe",
-          IrrigatedArea: 4,
+          IrrigatedArea: 0.2,
+          CultivationPeriod: 8,
+          IdCulture: 2,
+          Culture: "BATATA",
+        },
+        {
+          IdProducer: 1674825556279,
+          TotalProfitability: 22000,
+          IdBasin: 1,
+          Basin: "Alto Jaguaribe",
+          IrrigatedArea: 0.5,
           CultivationPeriod: 12,
           IdCulture: 2,
-          Culture: "Feijão",
+          Culture: "BANANA",
         },
         {
-          IdProducer: 1667328714161,
-          TotalProfitability: 10000,
+          IdProducer: 1674825556279,
+          TotalProfitability: 22000,
+          IdBasin: 1,
+          Basin: "Alto Jaguaribe",
+          IrrigatedArea: 0.2,
+          CultivationPeriod: 8,
+          IdCulture: 2,
+          Culture: "ALFACE",
+        },
+        {
+          IdProducer: 1674912212406,
+          TotalProfitability: 35000,
           IdBasin: 1,
           Basin: "Alto Jaguaribe",
           IrrigatedArea: 1,
-          CultivationPeriod: 6,
+          CultivationPeriod: 12,
           IdCulture: 3,
-          Culture: "Banana",
+          Culture: "BANANA",
         },
       ],
     });
 
-    const useCase = new GetCulturesIndicatorsFromBasin(producerRepository);
+    const studiesRepository = new InMemoryStudiesRepository();
+
+    const useCase = new GetCulturesIndicatorsFromBasin(
+      producerRepository,
+      studiesRepository
+    );
 
     const resultOrError = await useCase.execute({
       IdBasin: 1,
@@ -122,6 +153,11 @@ describe("Farms indicators", () => {
 
     const data = resultOrError.value as BasinIndicatorsByCulture;
 
+    if (data.Cultures) {
+      for (const [key, value] of data.Cultures?.entries()) {
+        console.log(key, " ", value);
+      }
+    }
     expect(data.Id).toEqual(expected.Id);
     expect(data.Cultures).toEqual(expected.Cultures);
   });
