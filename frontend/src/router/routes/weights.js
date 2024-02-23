@@ -1,0 +1,17 @@
+import { actionPrefix } from "@/constants";
+import weightUpdate from "@/router/props/weight/update";
+import BaseForm from "@/views/BaseForm.vue";
+
+export default [
+  {
+    path: "/weight",
+    name: "weight",
+    meta: {
+      ShowNav: true,
+      title: `${actionPrefix.edit} pesos`,
+      navBarTab: 9,
+    },
+    component: BaseForm,
+    props: weightUpdate,
+  },
+];

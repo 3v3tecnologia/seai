@@ -4,6 +4,7 @@ import newsletter from "./newsletter";
 import report from "./report";
 import page from "./page";
 import culture from "./culture";
+import weight from "./weight";
 
 export default {
   cron,
@@ -12,4 +13,5 @@ export default {
   report,
   page,
   culture,
+  weight,
 };

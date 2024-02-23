@@ -50,6 +50,11 @@ const props = defineProps({
   },
 });
 
+const cultureColumn = {
+  title: "Cultura",
+  field: "Cultura",
+};
+
 const basicColumns = computed(() => [
   {
     title: "Bacia",
@@ -96,11 +101,10 @@ const aquaReports = computed(() => [
   },
 ]);
 
-const indicators = computed(() => [
+const indicatorsBase = computed(() => [
   {
     title: "Segurança econômica",
     columns: [
-      ...basicColumns.value,
       {
         title: "Rentabilidade",
         field: "Rentabilidade",
@@ -115,7 +119,6 @@ const indicators = computed(() => [
   {
     title: "Segurança social",
     columns: [
-      ...basicColumns.value,
       {
         title: "Empregos por pessoa física",
         field: "EmpregosPF",
@@ -134,7 +137,6 @@ const indicators = computed(() => [
   {
     title: "Segurança hídrica",
     columns: [
-      ...basicColumns.value,
       {
         title: "Consumo total",
         field: "ConsumoTotal",
@@ -147,6 +149,24 @@ const indicators = computed(() => [
     data: props.data.securityWater,
   },
 ]);
+
+const indicators = computed(() =>
+  indicatorsBase.value.map((indicator) => {
+    return {
+      ...indicator,
+      columns: [...basicColumns.value, ...indicator.columns],
+    };
+  })
+);
+
+const indicatorsCulture = computed(() =>
+  indicatorsBase.value.map((indicator) => {
+    return {
+      ...indicator,
+      columns: [basicColumns.value[0], cultureColumn, ...indicator.columns],
+    };
+  })
+);
 
 const animals = computed(() => [
   {
@@ -174,13 +194,10 @@ const animals = computed(() => [
 
 const hydricResources = computed(() => [
   {
-    title: "Animais",
+    title: "Corte hídrico",
     columns: [
       basicColumns.value[0],
-      {
-        title: "Cultura",
-        field: "Cultura",
-      },
+      cultureColumn,
       {
         title: "Corte hídrico (m³/ha)",
         field: "CorteHidrico",
@@ -252,6 +269,8 @@ const currentReportTables = computed(() => {
   } else if (props.currentReport.value === 4) {
     return indicators.value;
   } else if (props.currentReport.value === 5) {
+    return indicatorsCulture.value;
+  } else if (props.currentReport.value === 6) {
     return hydricResources.value;
   }
 
