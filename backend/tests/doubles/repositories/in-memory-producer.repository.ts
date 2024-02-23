@@ -1,7 +1,4 @@
-import {
-  ProducerRepositoryProtocol,
-  ProducerCultureProfitability,
-} from "../../../src/domain/use-cases/_ports/repositories/culture-irrigated.repository";
+import { ProducerRepositoryProtocol } from "../../../src/domain/use-cases/_ports/repositories/producer.repository";
 
 type RawProducerProfitability = {
   IdProducer: number;
@@ -14,7 +11,9 @@ type RawProducerProfitability = {
   TotalProfitability: number;
 };
 
-export class InMemoryProducerRepository implements ProducerRepositoryProtocol {
+export class InMemoryProducerRepository
+  implements ProducerRepositoryProtocol.Repository
+{
   private _profitability: Array<RawProducerProfitability> = [];
   private _workers: Array<any>;
   private _consumers: Array<any>;
@@ -29,16 +28,31 @@ export class InMemoryProducerRepository implements ProducerRepositoryProtocol {
     this._consumers = props.consumers || [];
   }
 
+  getSuperficialVolume(
+    basinId: number
+  ): Promise<ProducerRepositoryProtocol.VolumeByProducerOutput | null> {
+    throw new Error("Method not implemented.");
+  }
+
+  getUnderGroundVolume(
+    basinId: number
+  ): Promise<ProducerRepositoryProtocol.VolumeByProducerOutput | null> {
+    throw new Error("Method not implemented.");
+  }
+
   async getProfitabilityGroupByProducer(
     id_basin: number
-  ): Promise<Array<ProducerCultureProfitability> | null> {
+  ): Promise<Array<ProducerRepositoryProtocol.CultureProfitabilityOutput> | null> {
     const rawData = this._profitability.filter((profitability) => {
       return profitability.IdBasin == id_basin;
     });
 
     if (!rawData.length) return null;
 
-    const result: Map<number, ProducerCultureProfitability> = new Map();
+    const result: Map<
+      number,
+      ProducerRepositoryProtocol.CultureProfitabilityOutput
+    > = new Map();
 
     rawData.forEach((raw) => {
       const culture = {
@@ -64,16 +78,65 @@ export class InMemoryProducerRepository implements ProducerRepositoryProtocol {
     return Array.from(result.values());
   }
 
-  async getWorkers(id_basin: number): Promise<Map<number, number>> {
-    return new Map<number, number>([
-      [1667322811535, 20],
-      [1667328714161, 2],
+  async getWorkers(id_basin: number): Promise<
+    Map<
+      number,
+      {
+        IdBasin: number;
+        Workers: number;
+      }
+    >
+  > {
+    return new Map<
+      number,
+      {
+        IdBasin: number;
+        Workers: number;
+      }
+    >([
+      [
+        1667322811535,
+        {
+          IdBasin: 1,
+          Workers: 20,
+        },
+      ],
+      [
+        1667328714161,
+        {
+          IdBasin: 1,
+          Workers: 2,
+        },
+      ],
     ]);
   }
-  async getConsumer(id_basin: number): Promise<Map<number, number>> {
-    return new Map<number, number>([
-      [1667322811535, 20],
-      [1667328714161, 2],
+  async getConsume(
+    id_basin: number
+  ): Promise<ProducerRepositoryProtocol.ConsumeOutput> {
+    return new Map<
+      number,
+      {
+        IdBasin: number;
+        Volumes: Array<number>;
+        Consume: number;
+      }
+    >([
+      [
+        1667322811535,
+        {
+          IdBasin: 1,
+          Consume: 20,
+          Volumes: [10, 10],
+        },
+      ],
+      [
+        1667328714161,
+        {
+          IdBasin: 1,
+          Consume: 2,
+          Volumes: [1, 1],
+        },
+      ],
     ]);
   }
 }

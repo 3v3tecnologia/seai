@@ -2,16 +2,22 @@ import { Either, right } from "../../../shared/Either";
 import { BasinIndicatorsByCulture } from "../../entities/management/basin-indicators-by-culture";
 import { Culture } from "../../entities/management/culture";
 import { Producer } from "../../entities/management/producer";
-import { ProducerRepositoryProtocol } from "../_ports/repositories/culture-irrigated.repository";
+import { ManagementStudiesRepositoryProtocol } from "../_ports/repositories/management-studies.repository";
+import { ProducerRepositoryProtocol } from "../_ports/repositories/producer.repository";
 import { InputWithPagination } from "../helpers/dto";
 
 export class GetCulturesIndicatorsFromBasin
   implements GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase
 {
-  private repository: ProducerRepositoryProtocol;
+  private repository: ProducerRepositoryProtocol.Repository;
+  // private studiesRepository: ManagementStudiesRepositoryProtocol;
 
-  constructor(repository: ProducerRepositoryProtocol) {
+  constructor(
+    repository: ProducerRepositoryProtocol.Repository
+    // studiesRepository: ManagementStudiesRepositoryProtocol
+  ) {
     this.repository = repository;
+    // this.studiesRepository = studiesRepository;
   }
 
   async execute(
@@ -31,12 +37,41 @@ export class GetCulturesIndicatorsFromBasin
     );
 
     // Superficial + Subterrâneo
-    // const waterConsumptionByProducer = new Map<number, number>();
+    const waterConsumptionByProducer = await this.repository.getConsume(
+      request.IdBasin
+    );
 
     const producers = result.map((producer) => {
+      let workers = null;
+      let waterConsumption = null;
+
+      if (
+        socialSecurityByProducer &&
+        socialSecurityByProducer.has(producer.Id)
+      ) {
+        const worker = socialSecurityByProducer.get(producer.Id);
+
+        if (worker) {
+          workers = worker.Workers;
+        }
+      }
+
+      if (
+        waterConsumptionByProducer &&
+        waterConsumptionByProducer.has(producer.Id)
+      ) {
+        const consumption = waterConsumptionByProducer.get(producer.Id);
+
+        if (consumption) {
+          waterConsumption = consumption.Consume;
+        }
+      }
+
       return new Producer(producer.Id, {
         Profitability: producer.Profitability,
-        Workers: socialSecurityByProducer.get(producer.Id) || null,
+        Workers: workers,
+        WaterConsumption: waterConsumption,
+        Productivity: null,
         Cultures: producer.Cultures.map(
           (culture) =>
             new Culture(culture.Name, {
@@ -60,7 +95,7 @@ export class GetCulturesIndicatorsFromBasin
 export namespace GetCulturesIndicatorsFromBasinUseCaseProtocol {
   export type Request = {
     IdBasin: number;
-  } & Partial<InputWithPagination>;
+  };
 
   export type Response = Promise<
     Either<Error, BasinIndicatorsByCulture | null>

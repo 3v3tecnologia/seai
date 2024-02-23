@@ -37,6 +37,14 @@ export const managementRouter = (): Router => {
     adaptRoute(ManagementControllersFactory.makeGetStudiesByBasin())
   );
 
+  router.get(
+    "/cultures/:id",
+    authorization,
+    adaptRoute(
+      ManagementControllersFactory.makeGetCulturesIndicatorsFromBasin()
+    )
+  );
+
   router.delete(
     "/studies/:id",
     authorization,
