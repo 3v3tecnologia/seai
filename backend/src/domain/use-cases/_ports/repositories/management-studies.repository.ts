@@ -36,10 +36,7 @@ export namespace ManagementStudiesRepositoryDTO {
   export namespace GetAllByBasin {
     export type Request = { Id_Basin: number };
 
-    export type Response = Promise<Map<
-      string,
-      ManagementStudyToPersistency
-    > | null>;
+    export type Response = Promise<Map<string, any> | null>;
   }
 }
 

@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { IndicatorsRepositoryProtocol } from "../_ports/repositories/indicators-census-repository";
+import { IndicatorsRepositoryProtocol } from "../_ports/repositories/census-security-indicators.repository";
 
 export class FetchProductivitySecurityCensusByCounty {
   private readonly indicatorsCensusRepository: IndicatorsRepositoryProtocol;

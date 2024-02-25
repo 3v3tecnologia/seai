@@ -2,7 +2,7 @@ import { Either, right } from "../../../shared/Either";
 import {
   IndicatorsRepositoryProtocol,
   SocialSecurityByCountyData,
-} from "../_ports/repositories/indicators-census-repository";
+} from "../_ports/repositories/census-security-indicators.repository";
 
 export class FetchSocialSecurityCensusByCounty {
   private readonly indicatorsCensusRepository: IndicatorsRepositoryProtocol;

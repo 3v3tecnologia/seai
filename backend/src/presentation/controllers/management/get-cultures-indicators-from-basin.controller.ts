@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../../../domain/use-cases/management/get-cultures-indicators-from-basin";
+import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../../../domain/use-cases/census/fetch-cultures-indicators-by-basin";
 import { created, forbidden, ok, serverError } from "../helpers";
 
 export class GetCulturesIndicatorsFromBasinController {

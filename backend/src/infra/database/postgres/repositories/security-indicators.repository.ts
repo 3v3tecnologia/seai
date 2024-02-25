@@ -8,7 +8,7 @@ import {
   SocialSecurityByCountyData,
   WaterSecurityByBasinData,
   WaterSecurityByCountyData,
-} from "../../../../domain/use-cases/_ports/repositories/indicators-census-repository";
+} from "../../../../domain/use-cases/_ports/repositories/census-security-indicators.repository";
 import { censusDb } from "../connection/knexfile";
 
 export class DbIndicatorsRepository implements IndicatorsRepositoryProtocol {

@@ -1,12 +1,14 @@
 import { BasinIndicatorsByCulture } from "../../../../src/domain/entities/management/basin-indicators-by-culture";
-import { GetCulturesIndicatorsFromBasin } from "../../../../src/domain/use-cases/management/get-cultures-indicators-from-basin";
+import { GetCulturesIndicatorsFromBasin } from "../../../../src/domain/use-cases/census/fetch-cultures-indicators-by-basin";
 import { InMemoryStudiesRepository } from "../../../doubles/repositories/in-memory-management-studies.repository";
-import { InMemoryProducerRepository } from "../../../doubles/repositories/in-memory-producer.repository";
+import { InMemoryProfitabilitySecurityRepository } from "../../../doubles/repositories/in-memory-profitability.repository";
+import { InMemoryWaterSecurityRepository } from "../../../doubles/repositories/in-memory-water-security.repository";
+import { InMemoryWorkersSecurityRepository } from "../../../doubles/repositories/in-memory-workers.repository";
 
 describe("Farms indicators", () => {
-  /*test.skip("Should be able to calculate profitability by producer with monoculture", async function () {
-    const producerRepository = new InMemoryProducerRepository({
-      profitability: [
+  test("Should be able to calculate profitability by producer with monoculture", async function () {
+    const profitabilityRepository = new InMemoryProfitabilitySecurityRepository(
+      [
         {
           IdProducer: 1667322811535,
           TotalProfitability: 10000,
@@ -17,13 +19,17 @@ describe("Farms indicators", () => {
           IdCulture: 2,
           Culture: "Feijão",
         },
-      ],
-    });
+      ]
+    );
 
     const studiesRepository = new InMemoryStudiesRepository();
+    const socialSecurityRepository = new InMemoryWorkersSecurityRepository([]);
+    const waterSecurityRepository = new InMemoryWaterSecurityRepository([]);
 
     const useCase = new GetCulturesIndicatorsFromBasin(
-      producerRepository,
+      profitabilityRepository,
+      socialSecurityRepository,
+      waterSecurityRepository,
       studiesRepository
     );
 
@@ -54,11 +60,11 @@ describe("Farms indicators", () => {
 
     expect(data.Id).toEqual(expected.Id);
     expect(data.Cultures).toEqual(expected.Cultures);
-  });*/
+  });
 
   test("Should be able to calculate profitability by producer with monoculture", async function () {
-    const producerRepository = new InMemoryProducerRepository({
-      profitability: [
+    const profitabilityRepository = new InMemoryProfitabilitySecurityRepository(
+      [
         {
           IdProducer: 1674825556279,
           TotalProfitability: 22000,
@@ -109,13 +115,17 @@ describe("Farms indicators", () => {
           IdCulture: 3,
           Culture: "BANANA",
         },
-      ],
-    });
+      ]
+    );
 
     const studiesRepository = new InMemoryStudiesRepository();
+    const socialSecurityRepository = new InMemoryWorkersSecurityRepository([]);
+    const waterSecurityRepository = new InMemoryWaterSecurityRepository([]);
 
     const useCase = new GetCulturesIndicatorsFromBasin(
-      producerRepository,
+      profitabilityRepository,
+      socialSecurityRepository,
+      waterSecurityRepository,
       studiesRepository
     );
 
