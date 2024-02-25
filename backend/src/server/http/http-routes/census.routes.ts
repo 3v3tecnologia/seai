@@ -11,6 +11,14 @@ export const censusRouter = (): Router => {
   const router = Router();
 
   router.get(
+    "/cultures/:id",
+    authorization,
+    adaptRoute(
+      SecurityIndicatorsControllersFactory.makeGetCulturesIndicatorsFromBasin()
+    )
+  );
+
+  router.get(
     "/animals/consumption",
     authorization,
     adaptRoute(CensusControllersFactory.makeFetchAnimalsCensusByConsumption())

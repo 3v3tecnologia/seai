@@ -11,3 +11,4 @@ export * from "./fetch-census-takers-by-basin";
 export * from "./fetch-census-takers-by-county";
 export * from "./fetch-workers-by-basin";
 export * from "./fetch-workers-by-county";
+export * from "./fetch-cultures-indicators-by-basin";

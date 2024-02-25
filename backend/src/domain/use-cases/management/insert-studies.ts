@@ -28,9 +28,10 @@ export class InsertManagementStudiesByBasin
 
     const createLog = await this.repository.create(request.Data);
 
-    this.addLog(createLog);
+    // this.addLog(createLog);
 
-    return right(createLog.description);
+    return right("Sucesso ao inserir estudos.");
+    // return right(createLog.description);
   }
 }
 

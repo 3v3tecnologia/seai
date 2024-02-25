@@ -1,4 +1,3 @@
-import { ManagementStudyToPersistency } from "../../../use-cases/_ports/repositories/management-studies.repository";
 import { ManagementCensusStudy } from "../study";
 
 export class ManagementStudyMapper {
@@ -21,9 +20,7 @@ export class ManagementStudyMapper {
     };
   }
 
-  static toPersistency(
-    study: ManagementCensusStudy
-  ): ManagementStudyToPersistency {
+  static toPersistency(study: ManagementCensusStudy): any {
     return {
       Id_Basin: study.Id_Basin,
       Id_Culture: study.Id_Culture,

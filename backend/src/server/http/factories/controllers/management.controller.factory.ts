@@ -6,11 +6,9 @@ import {
   InsertManagementStudiesByBasinController,
   InsertManagementWeightsByBasinController,
 } from "../../../../presentation/controllers/management";
-import { GetCulturesIndicatorsFromBasinController } from "../../../../presentation/controllers/management/get-cultures-indicators-from-basin.controller";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
 import {
-  CulturesUseCasesFactory,
   ManagementUseCasesFactory,
   ManagementWeightsUseCasesFactory,
   SystemLogsUseCaseFactory,
@@ -62,12 +60,6 @@ export class ManagementControllersFactory {
         ManagementWeightsUseCasesFactory.makeInsertManagementWeights(),
         SystemLogsUseCaseFactory.makeRegisterUserLogs()
       )
-    );
-  }
-
-  static makeGetCulturesIndicatorsFromBasin(): Controller {
-    return new GetCulturesIndicatorsFromBasinController(
-      CulturesUseCasesFactory.makeGetCultureIndicatorsFromBasin()
     );
   }
 }

@@ -34,12 +34,6 @@ export class BasinIndicatorsByCulture {
   constructor(props: BasinIndicatorsByCultureProps) {
     this._id = props.id;
 
-    console.log(props);
-
-    props.producers.forEach((data) => {
-      console.log(data);
-    });
-
     this._groupedByCulture = this.groupCultureIndicatorsByCultureName(
       props.producers
     );

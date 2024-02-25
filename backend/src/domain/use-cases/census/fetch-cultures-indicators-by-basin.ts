@@ -1,52 +1,62 @@
-import { InMemoryStudiesRepository } from "../../../../tests/doubles/repositories/in-memory-management-studies.repository";
 import { Either, right } from "../../../shared/Either";
 import { BasinIndicatorsByCulture } from "../../entities/management/basin-indicators-by-culture";
 import { Culture } from "../../entities/management/culture";
 import { Producer } from "../../entities/management/producer";
 import { ManagementStudiesRepositoryProtocol } from "../_ports/repositories/management-studies.repository";
-import { ProducerRepositoryProtocol } from "../_ports/repositories/producer.repository";
-import { InputWithPagination } from "../helpers/dto";
+import { ProfitabilitySecurityRepositoryProtocol } from "../_ports/repositories/profitability-security.repository";
+import { WaterSecurityRepositoryProtocol } from "../_ports/repositories/water-security.repository";
+import { WorkersSecurityRepositoryProtocol } from "../_ports/repositories/workers-security.repository";
 
 export class GetCulturesIndicatorsFromBasin
   implements GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase
 {
-  private repository: ProducerRepositoryProtocol.Repository;
-  private studiesRepository: ManagementStudiesRepositoryProtocol;
+  private economicSecurityRepository: ProfitabilitySecurityRepositoryProtocol;
+  private socialSecurityRepository: WorkersSecurityRepositoryProtocol;
+  private waterSecurityRepository: WaterSecurityRepositoryProtocol;
+  private managementStudiesRepository: ManagementStudiesRepositoryProtocol;
 
   constructor(
-    repository: ProducerRepositoryProtocol.Repository,
+    economicSecurityRepository: ProfitabilitySecurityRepositoryProtocol,
+    socialSecurityRepository: WorkersSecurityRepositoryProtocol,
+    waterSecurityRepository: WaterSecurityRepositoryProtocol,
     studiesRepository: ManagementStudiesRepositoryProtocol
   ) {
-    this.repository = repository;
-    this.studiesRepository = studiesRepository;
+    this.economicSecurityRepository = economicSecurityRepository;
+    this.socialSecurityRepository = socialSecurityRepository;
+    this.waterSecurityRepository = waterSecurityRepository;
+    this.managementStudiesRepository = studiesRepository;
   }
 
   async execute(
     request: GetCulturesIndicatorsFromBasinUseCaseProtocol.Request
   ): GetCulturesIndicatorsFromBasinUseCaseProtocol.Response {
-    const result = await this.repository.getProfitabilityGroupByProducer(
-      request.IdBasin
-    );
+    const profitability =
+      await this.economicSecurityRepository.getByBasinGroupedByProducer(
+        request.IdBasin
+      );
 
-    if (result === null) {
+    if (profitability === null) {
       return right(null);
     }
 
     // Social indicator by producer
-    const socialSecurityByProducer = await this.repository.getWorkers(
-      request.IdBasin
-    );
+    const socialSecurityByProducer =
+      await this.socialSecurityRepository.getByBasinGroupedByProducer(
+        request.IdBasin
+      );
 
     // Superficial + Subterrâneo
-    const waterConsumptionByProducer = await this.repository.getConsume(
-      request.IdBasin
-    );
+    const waterConsumptionByProducer =
+      await this.waterSecurityRepository.getConsumeFromBasinGroupedByProducer(
+        request.IdBasin
+      );
 
-    const studiesProductivity = await this.studiesRepository.getAllByBasin({
-      Id_Basin: request.IdBasin,
-    });
+    const studiesProductivity =
+      await this.managementStudiesRepository.getAllByBasin({
+        Id_Basin: request.IdBasin,
+      });
 
-    const producers = result.map((producer) => {
+    const producers = profitability.map((producer) => {
       let workers = null;
       let waterConsumption = null;
 
