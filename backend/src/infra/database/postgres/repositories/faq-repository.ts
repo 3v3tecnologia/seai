@@ -5,7 +5,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/faq-repository";
 import { governmentDb } from "../connection/knexfile";
 
-export class KnexFaqRepository implements FaqRepositoryProtocol {
+export class DbFaqRepository implements FaqRepositoryProtocol {
   async add(data: {
     question: string;
     answer: string;

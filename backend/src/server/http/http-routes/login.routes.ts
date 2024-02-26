@@ -1,22 +1,25 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
-import {
-  makeForgotPasswordController,
-  makeResetUserController,
-  makeSignInController,
-  makeSignUpController,
-} from "../factories/controllers/user";
+
 import { authorization } from "../http-middlewares";
+import { UserControllersFactory } from "../factories/controllers";
 
 export const loginRouter = (): Router => {
   const router = Router();
   router.post(
     "/password/reset",
     authorization,
-    adaptRoute(makeResetUserController())
+    adaptRoute(UserControllersFactory.makeResetUser())
   );
-  router.post("/password/forgot", adaptRoute(makeForgotPasswordController()));
-  router.post("/sign-up", authorization, adaptRoute(makeSignUpController()));
-  router.post("/sign-in", adaptRoute(makeSignInController()));
+  router.post(
+    "/password/forgot",
+    adaptRoute(UserControllersFactory.makeForgotPassword())
+  );
+  router.post(
+    "/sign-up",
+    authorization,
+    adaptRoute(UserControllersFactory.makeSignUp())
+  );
+  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
   return router;
 };

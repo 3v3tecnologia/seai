@@ -5,6 +5,7 @@ import {
 } from "../../../domain/use-cases/helpers/dto";
 import { Either, left, right } from "../../../shared/Either";
 import { Subscriber } from "../../entities/newsletter/subscriber";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchSubscribers
   implements FetchSubscribersUseCaseProtocol.UseCase
@@ -18,7 +19,6 @@ export class FetchSubscribers
   async execute(
     request: FetchSubscribersUseCaseProtocol.Request
   ): Promise<Either<Error, any | null>> {
-    console.log("[FetchSubscribers] ",request)
     if (request.email) {
       const subscriber = await this.repository.getByEmail({
         Email: request.email,
@@ -31,14 +31,9 @@ export class FetchSubscribers
       return right(subscriber);
     }
 
-    const dto = {
-      limit: request.limit || 50,
-      pageNumber: request.pageNumber
-        ? (request.limit as number) * (request.pageNumber - 1)
-        : 0,
-    };
-
-    const data = await this.repository.getAll(dto);
+    const data = await this.repository.getAll(
+      formatPaginationInput(request.pageNumber, request.limit)
+    );
 
     return right(data);
   }
@@ -49,10 +44,7 @@ export namespace FetchSubscribersUseCaseProtocol {
     email?: string;
   } & Partial<InputWithPagination>;
 
-  export type Response =
-    | OutputWithPagination<Array<Subscriber>>
-    | null
-    | Subscriber;
+  export type Response = OutputWithPagination<Subscriber> | null | Subscriber;
 
   export interface UseCase {
     execute(request: Request): Promise<Either<Error, any | null>>;

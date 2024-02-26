@@ -68,3 +68,25 @@ CREATE TABLE "Physics_Characteristics"(
   "UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY("Id")
 );
+
+CREATE TABLE "Studies"(
+	"Id_Basin" INTEGER NOT NULL,
+	"Id_Culture" INTEGER NOT NULL, -- cultura
+	"Harvest" INTEGER NOT NULL, -- safra
+	"Farm" INTEGER NOT NULL, -- cultivo
+	"ProductivityPerKilo" REAL NOT NULL,
+	"ProductivityPerMeters" REAL NOT NULL -- Consume
+);
+
+CREATE TABLE "Weights"(
+	"Id_Basin" INTEGER NOT NULL,
+	"Id_Culture" INTEGER NOT NULL,
+	"ProductivityPerKilo" REAL DEFAULT NULL,
+	"ProductivityPerMeters" REAL DEFAULT NULL,
+	"ProfitabilityPerMeters" REAL DEFAULT NULL,
+	"ProfitabilityPerHectare" REAL DEFAULT NULL,
+	"JobsPerHectare" REAL DEFAULT NULL,
+	"JobsPerMeters" REAL DEFAULT NULL,
+	"WaterConsumptionPerHectare" REAL DEFAULT NULL,
+	"WaterConsumptionPerMeters" REAL DEFAULT NULL
+);

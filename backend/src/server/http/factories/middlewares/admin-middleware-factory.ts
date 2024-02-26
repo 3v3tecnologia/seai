@@ -1,4 +1,4 @@
-import { KnexAccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
+import { DbAccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
 import { AdminMiddleware } from "../../../../presentation/middlewares/admin-middleware";
 import { Middleware } from "../../../../presentation/middlewares/ports";
 
@@ -8,6 +8,6 @@ export const makeAdminMiddleware = (
     [key: string]: boolean;
   }
 ): Middleware => {
-  const accountRepository = new KnexAccountRepository();
+  const accountRepository = new DbAccountRepository();
   return new AdminMiddleware(accountRepository, module, access);
 };

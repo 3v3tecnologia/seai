@@ -2,17 +2,8 @@ import { Router } from "express";
 
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  makeCreateCronController,
-  makeCreateJobController,
-  makeDeleteCronController,
-  makeDeleteJobController,
-  makeFetchCronController,
-  makeFetchJobsController,
-  makeFetchJobsStatesController,
-  makeUpdateCronController,
-  makeUpdateJobController,
-} from "../factories/controllers/jobs";
+import { BackgroundJobsControllerFactory } from "../factories/controllers";
+
 import {
   authorization,
   jobsReadAccessAuth,
@@ -25,56 +16,56 @@ export const backgroundJobsRouter = (): Router => {
     "/",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeCreateJobController())
+    adaptRoute(BackgroundJobsControllerFactory.makeCreateJob())
   );
   router.put(
     "/",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeUpdateJobController())
+    adaptRoute(BackgroundJobsControllerFactory.makeUpdateJob())
   );
   router.delete(
     "/",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeDeleteJobController())
+    adaptRoute(BackgroundJobsControllerFactory.makeDeleteJob())
   );
   router.get(
     "/states",
     authorization,
     jobsReadAccessAuth,
-    adaptRoute(makeFetchJobsStatesController())
+    adaptRoute(BackgroundJobsControllerFactory.makeFetchJobsStates())
   );
   router.get(
     "/",
     authorization,
     jobsReadAccessAuth,
-    adaptRoute(makeFetchJobsController())
+    adaptRoute(BackgroundJobsControllerFactory.makeFetchJobs())
   );
   //CRON
   router.get(
     "/schedule",
     authorization,
     jobsReadAccessAuth,
-    adaptRoute(makeFetchCronController())
+    adaptRoute(BackgroundJobsControllerFactory.makeFetchCron())
   );
   router.post(
     "/schedule",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeCreateCronController())
+    adaptRoute(BackgroundJobsControllerFactory.makeCreateCron())
   );
   router.put(
     "/schedule",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeUpdateCronController())
+    adaptRoute(BackgroundJobsControllerFactory.makeUpdateCron())
   );
   router.delete(
     "/schedule",
     authorization,
     jobsWriteAccessAuth,
-    adaptRoute(makeDeleteCronController())
+    adaptRoute(BackgroundJobsControllerFactory.makeDeleteCron())
   );
 
   return router;

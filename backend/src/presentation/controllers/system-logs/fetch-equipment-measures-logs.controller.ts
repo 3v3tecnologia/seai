@@ -1,8 +1,9 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchEquipmentLogs } from "../../../domain/use-cases/use-cases-logs/fetch-equipment-logs";
+import { FetchEquipmentLogs } from "../../../domain/use-cases/system-logs/fetch-equipment-logs";
 import { noContent, ok, serverError } from "../helpers";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchEquipmentLogsController
   implements Controller<FetchEquipmentLogsController.Request, HttpResponse>
@@ -19,8 +20,7 @@ export class FetchEquipmentLogsController
     try {
       const dto = {
         id: request.id,
-        pageNumber: request.pageNumber || 1,
-        limit: request.limit,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       };
 
       if (request.start) {

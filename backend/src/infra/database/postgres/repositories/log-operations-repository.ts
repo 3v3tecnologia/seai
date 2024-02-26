@@ -4,7 +4,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/log-repository";
 import { logsDb } from "../connection/knexfile";
 
-export class KnexLogOperationsRepository implements LogRepositoryProtocol {
+export class DbLogOperationsRepository implements LogRepositoryProtocol {
   async logError(message: string): Promise<void> {
     // insert log in database
   }

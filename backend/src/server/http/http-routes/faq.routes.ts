@@ -5,19 +5,7 @@ import {
   authorization,
   registerManagerWriteAccessAuth,
 } from "../http-middlewares";
-
-import {
-  makeFetchFaqByCategoryController,
-  makeFetchFaqCategoriesController,
-} from "../factories/controllers/faq";
-import { makeCreateFaqCategoryController } from "../factories/controllers/faq/create-category-controller-factory";
-import { makeCreateFaqController } from "../factories/controllers/faq/create-faq-controller-factory";
-import { makeDeleteFaqCategoryController } from "../factories/controllers/faq/delete-faq-category-controller-factory";
-import { makeDeleteFaqController } from "../factories/controllers/faq/delete-faq-controller-factory";
-import { makeFetchFaqByIdController } from "../factories/controllers/faq/fetch-faq-by-id-controller-factory";
-import { makeFetchFaqsWithCategoryController } from "../factories/controllers/faq/fetch-faq-with-category-controller-factory";
-import { makeUpdateFaqCategoryController } from "../factories/controllers/faq/update-faq-category-controller-factory";
-import { makeUpdateFaqController } from "../factories/controllers/faq/update-faq-controller-factory";
+import { FaqControllersFactory } from "../factories/controllers";
 
 export const faqRouter = (): Router => {
   const router = Router();
@@ -25,63 +13,63 @@ export const faqRouter = (): Router => {
     "/create",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeCreateFaqController())
+    adaptRoute(FaqControllersFactory.makeCreateFaq())
   );
   router.put(
     "/update",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeUpdateFaqController())
+    adaptRoute(FaqControllersFactory.makeUpdateFaq())
   );
   router.delete(
     "/delete/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeDeleteFaqController())
+    adaptRoute(FaqControllersFactory.makeDeleteFaq())
   );
 
   router.get(
     "/list-by-categories",
     authorization,
-    adaptRoute(makeFetchFaqByCategoryController())
+    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
   );
   router.get(
     "/list-by-category/:id",
     authorization,
-    adaptRoute(makeFetchFaqByCategoryController())
+    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
   );
   router.get(
     "/list",
     authorization,
-    adaptRoute(makeFetchFaqsWithCategoryController())
+    adaptRoute(FaqControllersFactory.makeFetchFaqsWithCategory())
   );
   router.get(
     "/get/:id",
     authorization,
-    adaptRoute(makeFetchFaqByIdController())
+    adaptRoute(FaqControllersFactory.makeFetchFaqById())
   );
   router.get(
     "/category/list",
     authorization,
-    adaptRoute(makeFetchFaqCategoriesController())
+    adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
   );
   router.put(
     "/category/update",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeUpdateFaqCategoryController())
+    adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
   );
   router.post(
     "/category/create",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeCreateFaqCategoryController())
+    adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
   );
   router.delete(
     "/category/delete/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeDeleteFaqCategoryController())
+    adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
   );
 
   return router;

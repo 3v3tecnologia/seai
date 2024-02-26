@@ -67,7 +67,7 @@ export namespace ScheduleRepositoryDTO {
   }
   export namespace GetAll {
     export type Request = InputWithPagination & { queue?: string };
-    export type Response = Promise<OutputWithPagination<Array<any>> | null>;
+    export type Response = Promise<OutputWithPagination<any> | null>;
   }
 }
 
@@ -113,7 +113,7 @@ export namespace JobsRepositoryDTO {
       queue?: string;
       state?: string;
     };
-    export type Response = Promise<OutputWithPagination<Array<any>> | null>;
+    export type Response = Promise<OutputWithPagination<any> | null>;
   }
 
   export namespace FetchById {
