@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative w-100 mt-4">
-    <label v-if="label" class="font-weight-bold label">{{ label }} </label>
+    <label v-if="label" class="font-weight-bold label mb-0">{{ label }} </label>
     <BaseTable
       ref="refBaseTable"
       v-model="inputValue"
@@ -23,7 +23,7 @@ const emptyTableValue = [{ id: 1 }];
 const props = defineProps({
   label: {
     type: String,
-    required: true,
+    required: false,
   },
   modelValue: {
     type: Object,

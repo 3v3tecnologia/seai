@@ -3,69 +3,12 @@ import { farmsStageDefault } from "@/constants";
 export const route = {
   fields: [
     {
-      formKey: "Acronyms",
-      colSize: 12,
-      component: {
-        name: "BaseTable",
-        props: {
-          label: "",
-          selectable: false,
-          apiPagination: {},
-          hidePagination: true,
-          columns: [
-            {
-              title: "Sigla",
-              field: "acronym",
-            },
-            {
-              title: "Cabeçalho",
-              field: "text",
-            },
-          ],
-          data: [
-            {
-              text: "Ciclo da Cultura",
-              acronym: "CC",
-            },
-            {
-              text: "Segurança Produtiva (kg/ha)",
-              acronym: "SP1",
-            },
-            {
-              text: "Segurança Produtiva (kg/m³)",
-              acronym: "SP2",
-            },
-            {
-              text: "Segurança Econômica (R$/ha)",
-              acronym: "SE1",
-            },
-            {
-              text: "Segurança Econômica (R$/m³)",
-              acronym: "SE2",
-            },
-            {
-              text: "Segurança Social (Empregos/ha)",
-              acronym: "SS1",
-            },
-            {
-              text: "Segurança Social (Empregos/m³)",
-              acronym: "SS2",
-            },
-            {
-              text: "Segurança Hídrica (m³/ha)",
-              acronym: "SH",
-            },
-          ],
-        },
-      },
-    },
-    {
       formKey: "Weights",
       colSize: 12,
       component: {
         name: "FarmDap",
         props: {
-          label: "",
+          label: "Tabela de pesos",
           hasCrudRows: false,
           columns: [
             {
@@ -157,6 +100,64 @@ export const route = {
               editorParams: {
                 min: 0,
               },
+            },
+          ],
+        },
+      },
+    },
+    {
+      formKey: "Acronyms",
+      colSize: 12,
+      component: {
+        name: "BaseTable",
+        props: {
+          label: "Tabela de associações",
+          addMarginTop: true,
+          selectable: false,
+          apiPagination: {},
+          hidePagination: true,
+          columns: [
+            {
+              title: "Sigla",
+              field: "acronym",
+            },
+            {
+              title: "Cabeçalho",
+              field: "text",
+            },
+          ],
+          data: [
+            {
+              text: "Ciclo da Cultura",
+              acronym: "CC",
+            },
+            {
+              text: "Segurança Produtiva (kg/ha)",
+              acronym: "SP1",
+            },
+            {
+              text: "Segurança Produtiva (kg/m³)",
+              acronym: "SP2",
+            },
+            {
+              text: "Segurança Econômica (R$/ha)",
+              acronym: "SE1",
+            },
+            {
+              text: "Segurança Econômica (R$/m³)",
+              acronym: "SE2",
+            },
+            {
+              text: "Segurança Social (Empregos/ha)",
+              acronym: "SS1",
+            },
+            {
+              text: "Segurança Social (Empregos/m³)",
+              acronym: "SS2",
+            },
+            {
+              text: "Segurança Hídrica (m³/ha)",
+              acronym: "SH",
             },
           ],
         },

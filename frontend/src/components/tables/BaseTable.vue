@@ -1,5 +1,10 @@
 <template>
-  <div class="w-100 d-flex flex-column align-items-start">
+  <div
+    class="w-100 d-flex flex-column align-items-start"
+    :class="{ 'mt-4': addMarginTop }"
+  >
+    <label v-if="label" class="font-weight-bold label mb-0">{{ label }} </label>
+
     <div v-if="isEditable">
       <button type="button" class="btn btn-success mr-4" @click="createNewLine">
         Adicionar linha
@@ -90,6 +95,10 @@ const downloadXLSX = () => {
 };
 
 const props = defineProps({
+  label: {
+    type: String,
+    required: false,
+  },
   title: {
     type: String,
     default: "",
@@ -99,6 +108,10 @@ const props = defineProps({
     required: false,
   },
   hidePagination: {
+    type: Boolean,
+    default: false,
+  },
+  addMarginTop: {
     type: Boolean,
     default: false,
   },

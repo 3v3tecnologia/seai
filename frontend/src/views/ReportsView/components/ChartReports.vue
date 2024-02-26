@@ -293,8 +293,6 @@ const chartsGroups = computed(() => [
       ...reportsBaseConfigs.secCultureProd,
       data: secProd.value.data,
     },
-  ],
-  [
     {
       ...reportsBaseConfigs.hydricResources,
       data: props.data.hydricResources,

@@ -133,7 +133,10 @@ export default {
         console.error(e);
       }
     },
-    async ["FETCH_REPORT_CULTURE_INDICATORS"]({ commit }, filters) {
+    async ["FETCH_REPORT_CULTURE_INDICATORS"](
+      { state, commit, dispatch },
+      filters
+    ) {
       try {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
@@ -171,13 +174,36 @@ export default {
           return s;
         });
 
+        if (!state.reportsDataAll.hydroResourcesAll) {
+          commit("SET_REPORTS_DATA_ALL", {
+            hydricResources: mockedHydricResources,
+          });
+        }
+
+        const hydricResourcesRaw = state.reportsDataAll.hydricResources;
+
+        await dispatch("FETCH_SINGLE_BASIN", {
+          ...filters,
+          currentReportData: hydricResourcesRaw,
+        });
+
+        // "random" key
+        let basinKey = state.currentBasinFilter[0].title;
+        const hydricResources = hydricResourcesRaw[basinKey]
+          .map(getValueBasic)
+          .map(formatLocation)
+          .map((c) => {
+            c.Bacia = basinKey;
+            return c;
+          });
+
         commit("SET_REPORTS_DATA", {
           securityWater: cultureSwapperMocked(securityWater),
           securitySocial: cultureSwapperMocked(securitySocial),
           securityEconomic: cultureSwapperMocked(securityEconomic),
           securityProductive: cultureSwapperMocked(securityProductive),
+          hydricResources,
         });
-        console.log(cultureSwapperMocked(securityWater));
       } catch (e) {
         console.error(e);
       }
@@ -233,7 +259,7 @@ export default {
 
         // "random" key
         let basinKey = state.currentBasinFilter[0].title;
-        console.log(basinKey);
+
         const hydricResources = hydricResourcesRaw[basinKey]
           .map(getValueBasic)
           .map(formatLocation)

@@ -101,6 +101,21 @@ const aquaReports = computed(() => [
   },
 ]);
 
+const hydricResources = computed(() => [
+  {
+    title: "Corte hídrico",
+    columns: [
+      basicColumns.value[0],
+      cultureColumn,
+      {
+        title: "Corte hídrico (m³/ha)",
+        field: "CorteHidrico",
+      },
+    ],
+    data: props.data.hydricResources,
+  },
+]);
+
 const indicatorsBase = computed(() => [
   {
     title: "Segurança econômica",
@@ -159,14 +174,16 @@ const indicators = computed(() =>
   })
 );
 
-const indicatorsCulture = computed(() =>
-  indicatorsBase.value.map((indicator) => {
+const indicatorsCulture = computed(() => [
+  ...indicatorsBase.value.map((indicator) => {
     return {
       ...indicator,
       columns: [basicColumns.value[0], cultureColumn, ...indicator.columns],
     };
-  })
-);
+  }),
+
+  ...hydricResources.value,
+]);
 
 const animals = computed(() => [
   {
@@ -189,21 +206,6 @@ const animals = computed(() => [
       },
     ],
     data: props.data.animals,
-  },
-]);
-
-const hydricResources = computed(() => [
-  {
-    title: "Corte hídrico",
-    columns: [
-      basicColumns.value[0],
-      cultureColumn,
-      {
-        title: "Corte hídrico (m³/ha)",
-        field: "CorteHidrico",
-      },
-    ],
-    data: props.data.hydricResources,
   },
 ]);
 
