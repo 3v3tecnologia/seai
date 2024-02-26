@@ -9,6 +9,7 @@ import {
   newsRouter,
   backgroundJobsRouter,
   accessKeyRouter,
+  managementRouter,
 } from "./http-routes";
 
 export function setRoutes(app: Express): void {
@@ -22,6 +23,7 @@ export function setRoutes(app: Express): void {
   router.use("/news", newsRouter());
   router.use("/jobs", backgroundJobsRouter());
   router.use("/accessKey", accessKeyRouter());
+  router.use("/management", managementRouter());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });

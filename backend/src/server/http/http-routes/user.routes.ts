@@ -1,18 +1,12 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
-import {
-  makeCreateUserController,
-  makeDeleteUserController,
-  makeFetchUserByIdController,
-  makeGetUsersController,
-} from "../factories/controllers/user";
 
 import {
   userWriteAccessAuth,
   userReadAccessAuth,
   authorization,
 } from "../http-middlewares";
-import { makeUpdateUserController } from "../factories/controllers/user/update-user.controller-factory";
+import { UserControllersFactory } from "../factories/controllers";
 
 export const userRouter = (): Router => {
   const router = Router();
@@ -21,43 +15,47 @@ export const userRouter = (): Router => {
     "/register",
     authorization,
     userWriteAccessAuth,
-    adaptRoute(makeCreateUserController())
+    adaptRoute(UserControllersFactory.makeCreateUser())
   );
 
-  router.put("/profile", authorization, adaptRoute(makeUpdateUserController()));
+  router.put(
+    "/profile",
+    authorization,
+    adaptRoute(UserControllersFactory.makeUpdateUser())
+  );
 
   router.put(
     "/:id",
     authorization,
     userWriteAccessAuth,
-    adaptRoute(makeUpdateUserController())
+    adaptRoute(UserControllersFactory.makeUpdateUser())
   );
 
   router.delete(
     "/delete",
     authorization,
     userWriteAccessAuth,
-    adaptRoute(makeDeleteUserController())
+    adaptRoute(UserControllersFactory.makeDeleteUser())
   );
 
   router.get(
     "/get/:id",
     authorization,
     userReadAccessAuth,
-    adaptRoute(makeGetUsersController())
+    adaptRoute(UserControllersFactory.makeGetUsers())
   );
 
   router.get(
     "/list",
     authorization,
     userReadAccessAuth,
-    adaptRoute(makeGetUsersController())
+    adaptRoute(UserControllersFactory.makeGetUsers())
   );
 
   router.get(
     "/profile",
     authorization,
-    adaptRoute(makeFetchUserByIdController())
+    adaptRoute(UserControllersFactory.makeFetchUserById())
   );
 
   // router.get(

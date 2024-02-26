@@ -9,7 +9,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/account-repository";
 import { governmentDb } from "../connection/knexfile";
 
-export class KnexAccountRepository implements AccountRepositoryProtocol {
+export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
     type: UserType;

@@ -2,7 +2,7 @@ import { WorkersCensusRepositoryProtocol } from "../../../../domain/use-cases/_p
 
 import { censusDb } from "../connection/knexfile";
 
-export class KnexWorkersCensusRepository
+export class DbWorkersCensusRepository
   implements WorkersCensusRepositoryProtocol
 {
   async getByBasin(): Promise<Array<any> | null> {

@@ -9,6 +9,11 @@ export const governmentDb = knex(
 export const logsDb = knex(db_config[DATABASES.LOGS][env.environment]);
 
 export const censusDb = knex(db_config[DATABASES.CENSUS][env.environment]);
+
+export const managementDb = knex(
+  db_config[DATABASES.MANAGEMENT.DATABASE][env.environment]
+);
+
 export const equipments = knex(
   db_config[DATABASES.EQUIPMENTS][env.environment]
 );

@@ -7,23 +7,8 @@ import {
   registerManagerWriteAccessAuth,
 } from "../http-middlewares";
 
-import {
-  makeFetchEquipmentsController,
-  makeFetchPluviometersReadsController,
-  makeFetchStationsReadsController,
-  makeCreateEquipmentsController,
-  makeDeleteEquipmentController,
-  makeUpdateEquipmentController,
-  makeCreateMeteorologicalOrganController,
-  makeDeleteEquipmentsController,
-  makeFetchMeteorologicalOrganController,
-  makeUpdateEquipmentsController,
-  makeFetchPluviometerReadsByIdReadController,
-  makeFetchStationReadsByIdReadController,
-} from "../factories/controllers/equipments";
-import { makeFetchEquipmentMeasuresLogsController } from "../factories/controllers";
-import { makeUpdatePluviometerMeasuresController } from "../factories/controllers/equipments/update-pluviometer-measures-controller.factory";
-import { makeUpdateStationMeasuresController } from "../factories/controllers/equipments/update-station-measures-controller.factory";
+import { EquipmentsControllerFactory } from "../factories/controllers";
+import { SystemLogsControllersFactory } from "../factories/controllers";
 
 export const equipmentsRouter = (): Router => {
   const router = Router();
@@ -32,90 +17,94 @@ export const equipmentsRouter = (): Router => {
     "/organ",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeCreateMeteorologicalOrganController())
+    adaptRoute(EquipmentsControllerFactory.makeCreateMeteorologicalOrgan())
   );
 
   router.delete(
     "/organ/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeDeleteEquipmentsController())
+    adaptRoute(EquipmentsControllerFactory.makeDeleteMeteorologicalOrgan())
   );
 
   router.put(
     "/organ/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeUpdateEquipmentsController())
+    adaptRoute(EquipmentsControllerFactory.makeUpdateMeteorologicalOrgan())
   );
   router.get(
     "/organ",
     authorization,
-    adaptRoute(makeFetchMeteorologicalOrganController())
+    adaptRoute(EquipmentsControllerFactory.makeFetchMeteorologicalOrgan())
   );
   router.post(
     "/",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeCreateEquipmentsController())
+    adaptRoute(EquipmentsControllerFactory.makeCreateEquipments())
   );
 
   router.delete(
     "/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeDeleteEquipmentController())
+    adaptRoute(EquipmentsControllerFactory.makeDeleteEquipment())
   );
 
   router.put(
     "/:id",
     authorization,
     registerManagerWriteAccessAuth,
-    adaptRoute(makeUpdateEquipmentController())
+    adaptRoute(EquipmentsControllerFactory.makeUpdateEquipment())
   );
 
-  router.get("/", authorization, adaptRoute(makeFetchEquipmentsController()));
+  router.get(
+    "/",
+    authorization,
+    adaptRoute(EquipmentsControllerFactory.makeFetchEquipments())
+  );
 
   router.get(
     "/measures/pluviometers",
     authorization,
-    adaptRoute(makeFetchPluviometersReadsController())
+    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())
   );
 
   router.get(
     "/measures/pluviometer/:id",
     authorization,
-    adaptRoute(makeFetchPluviometerReadsByIdReadController())
+    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometerReadsByIdRead())
   );
 
   router.put(
     "/measures/pluviometer/:id",
     authorization,
-    adaptRoute(makeUpdatePluviometerMeasuresController())
+    adaptRoute(EquipmentsControllerFactory.makeUpdatePluviometerMeasures())
   );
 
   router.put(
     "/measures/station/:id",
     authorization,
-    adaptRoute(makeUpdateStationMeasuresController())
+    adaptRoute(EquipmentsControllerFactory.makeUpdateStationMeasures())
   );
 
   router.get(
     "/measures/stations",
     authorization,
-    adaptRoute(makeFetchStationsReadsController())
+    adaptRoute(EquipmentsControllerFactory.makeFetchStationsReads())
   );
 
   router.get(
     "/measures/station/:id",
     authorization,
-    adaptRoute(makeFetchStationReadsByIdReadController())
+    adaptRoute(EquipmentsControllerFactory.makeFetchStationReadsByIdRead())
   );
 
   router.get(
     "/logs/:id",
     authorization,
-    adaptRoute(makeFetchEquipmentMeasuresLogsController())
+    adaptRoute(SystemLogsControllersFactory.makeFetchEquipmentMeasuresLogs())
   );
 
   return router;

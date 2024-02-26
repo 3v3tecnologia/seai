@@ -1,24 +1,9 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  userWriteAccessAuth,
-  userReadAccessAuth,
-  authorization,
-  newsReadAccessAuth,
-} from "../http-middlewares";
+import { authorization, newsReadAccessAuth } from "../http-middlewares";
 
-import {
-  makeCreateNewsletter,
-  makeDeleteNewsletterController,
-  makeFetchAllNewsletterController,
-  makeFetchByIdNewsletterController,
-  makeUpdateNewsletterController,
-  makeCreateNewsletterSubscriberController,
-  makeDeleteNewsletterSubscriberController,
-  makeFetchNewsletterSubscribersController,
-} from "../factories/controllers/newsletter";
-
+import { NewsletterControllersFactory } from "../factories/controllers";
 import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
 export const newsRouter = (): Router => {
@@ -27,54 +12,54 @@ export const newsRouter = (): Router => {
   router.post(
     "/enroll",
     authorization,
-    adaptRoute(makeCreateNewsletterSubscriberController())
+    adaptRoute(NewsletterControllersFactory.makeCreateNewsletterSubscriber())
   );
 
   router.delete(
     "/unregister",
     authorization,
-    adaptRoute(makeDeleteNewsletterSubscriberController())
+    adaptRoute(NewsletterControllersFactory.makeDeleteNewsletterSubscriber())
   );
 
   router.get(
     "/registered/list",
     authorization,
-    adaptRoute(makeFetchNewsletterSubscribersController())
+    adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribers())
   );
 
   router.post(
     "/",
     authorization,
     newsWriteAccessAuth,
-    adaptRoute(makeCreateNewsletter())
+    adaptRoute(NewsletterControllersFactory.makeCreateNewsletter())
   );
 
   router.put(
     "/:id",
     authorization,
     newsWriteAccessAuth,
-    adaptRoute(makeUpdateNewsletterController())
+    adaptRoute(NewsletterControllersFactory.makeUpdateNewsletter())
   );
 
   router.delete(
     "/:id",
     authorization,
     newsWriteAccessAuth,
-    adaptRoute(makeDeleteNewsletterController())
+    adaptRoute(NewsletterControllersFactory.makeDeleteNewsletter())
   );
 
   router.get(
     "/:id",
     authorization,
     newsReadAccessAuth,
-    adaptRoute(makeFetchByIdNewsletterController())
+    adaptRoute(NewsletterControllersFactory.makeFetchByIdNewsletter())
   );
 
   router.get(
     "/",
     authorization,
     newsReadAccessAuth,
-    adaptRoute(makeFetchAllNewsletterController())
+    adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
   );
 
   return router;

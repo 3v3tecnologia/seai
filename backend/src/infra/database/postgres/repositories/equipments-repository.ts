@@ -11,7 +11,7 @@ import { equipments } from "../connection/knexfile";
 /*
   TO-DO : Create domain layer
 */
-export class KnexEquipmentsRepository
+export class DbEquipmentsRepository
   implements
     EquipmentsRepositoryProtocol,
     EquipmentsMeasuresRepositoryProtocol,

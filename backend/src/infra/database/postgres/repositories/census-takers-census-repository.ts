@@ -6,7 +6,7 @@ import {
 
 import { censusDb } from "../connection/knexfile";
 
-export class KnexCensusTakersRepository
+export class DbCensusTakersRepository
   implements CensusTakersRepositoryProtocol
 {
   async getByBasin(): Promise<Array<CensusTakersByBasinData> | null> {

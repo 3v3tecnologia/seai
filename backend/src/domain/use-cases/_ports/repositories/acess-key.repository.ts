@@ -39,7 +39,7 @@ export namespace AccessKeyRepositoryDTO {
   }
   export namespace GetAll {
     export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<Array<ApiKey>> | null>;
+    export type Response = Promise<OutputWithPagination<ApiKey> | null>;
   }
   export namespace GetByKey {
     export type Request = {
