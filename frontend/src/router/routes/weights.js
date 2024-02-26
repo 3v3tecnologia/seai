@@ -8,7 +8,7 @@ export default [
     name: "weight",
     meta: {
       ShowNav: true,
-      title: `${actionPrefix.edit} pesos`,
+      title: "Pesos",
       navBarTab: 9,
     },
     component: BaseForm,

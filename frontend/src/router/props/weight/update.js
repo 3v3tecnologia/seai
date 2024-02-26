@@ -17,4 +17,5 @@ export default {
   finishedDataButton,
   headerLabel,
   fields: route.fields,
+  workWithoutId: true,
 };

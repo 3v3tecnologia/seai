@@ -119,6 +119,7 @@ import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import FilterDate from "@/components/form/FilterDate.vue";
 import FarmDap from "@/components/form/FarmDap.vue";
 import FieldEditor from "@/components/form/FieldEditor.vue";
+import BaseTable from "@/components/tables/BaseTable.vue";
 import { accessStoreKey } from "@/helpers/dto";
 
 const form = ref({});
@@ -126,6 +127,7 @@ const oldForm = ref({});
 const preBuiltComponents = {
   FilterDate,
   FieldEditor,
+  BaseTable,
   FarmDap,
 };
 
@@ -169,6 +171,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  workWithoutId: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   fields: {
     type: Array,
     required: true,
@@ -184,7 +191,7 @@ watch(
   (newVal) => {
     paramId.value = newVal.params.id;
 
-    if (props.getDataKey && paramId.value) {
+    if (props.getDataKey && (paramId.value || props.workWithoutId)) {
       store.dispatch(props.getDataKey, paramId.value);
     }
   },
