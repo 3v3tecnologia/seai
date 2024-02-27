@@ -1,110 +1,17 @@
 import { farmsStageDefault } from "@/constants";
 
+const mutatorWeights = (value) => {
+  if (value < 0 || !value) {
+    return 0;
+  } else if (value >= 1) {
+    return 1;
+  }
+
+  return +value.toFixed(2);
+};
+
 export const route = {
   fields: [
-    {
-      formKey: "Weights",
-      colSize: 12,
-      component: {
-        name: "FarmDap",
-        props: {
-          label: "Tabela de pesos",
-          hasCrudRows: false,
-          columns: [
-            {
-              title: "Cultura",
-              field: "Plant_Name",
-              mutator: (a) => {
-                if (a && a.length >= 50) {
-                  return a.slice(50);
-                } else if (a) {
-                  return a;
-                }
-
-                return farmsStageDefault;
-              },
-            },
-            {
-              title: "CC",
-              field: "cultureCycle",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "id",
-              field: "id",
-              visible: false,
-            },
-            {
-              title: "SP1",
-              field: "secProd",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SP2",
-              field: "secProd",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SE1",
-              field: "secEconomic",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SE2",
-              field: "secEconomic",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SS1",
-              field: "secSocial",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SS2",
-              field: "secSocial",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-            {
-              title: "SH",
-              field: "secHyd",
-              editor: "number",
-              mutator: (value) => (value && value > 0 ? Math.floor(value) : 0),
-              editorParams: {
-                min: 0,
-              },
-            },
-          ],
-        },
-      },
-    },
     {
       formKey: "Acronyms",
       colSize: 12,
@@ -132,32 +39,179 @@ export const route = {
               acronym: "CC",
             },
             {
-              text: "Segurança Produtiva (kg/ha)",
-              acronym: "SP1",
+              text: "Segurança Produtiva",
+              acronym: "SP",
             },
             {
-              text: "Segurança Produtiva (kg/m³)",
-              acronym: "SP2",
+              text: "Segurança Econômica",
+              acronym: "SE",
             },
             {
-              text: "Segurança Econômica (R$/ha)",
-              acronym: "SE1",
-            },
-            {
-              text: "Segurança Econômica (R$/m³)",
-              acronym: "SE2",
-            },
-            {
-              text: "Segurança Social (Empregos/ha)",
-              acronym: "SS1",
-            },
-            {
-              text: "Segurança Social (Empregos/m³)",
-              acronym: "SS2",
-            },
-            {
-              text: "Segurança Hídrica (m³/ha)",
+              text: "Segurança Hídrica",
               acronym: "SH",
+            },
+            {
+              text: "Segurança Social",
+              acronym: "SS",
+            },
+          ],
+        },
+      },
+    },
+    {
+      formKey: "Weights",
+      colSize: 12,
+      component: {
+        name: "FarmDap",
+        props: {
+          label: "Tabela de pesos",
+          hasCrudRows: false,
+          columns: [
+            {
+              title: "Cultura",
+              field: "Plant_Name",
+              mutator: (a) => {
+                if (a && a.length >= 50) {
+                  return a.slice(50);
+                } else if (a) {
+                  return a;
+                }
+
+                return farmsStageDefault;
+              },
+            },
+            {
+              title: "CC",
+              field: "cultureCycle",
+              editor: "number",
+              width: 60,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "id",
+              field: "id",
+              visible: false,
+            },
+            {
+              title: "SP (kg/ha)",
+              field: "ProductivityPerKilo",
+              editor: "number",
+              width: 70,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SP (kg/m³)",
+              field: "ProductivityPerMeters",
+              editor: "number",
+              width: 70,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SE (R$/ha)",
+              field: "ProfitabilityPerHectare",
+              editor: "number",
+              width: 70,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SE (R$/m³)",
+              field: "ProfitabilityPerMeters",
+              editor: "number",
+              width: 70,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SH (m³/ha)",
+              field: "WaterConsumptionPerHectare",
+              editor: "number",
+              width: 70,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SS (Empregos/ha)",
+              field: "JobsPerHectare",
+              editor: "number",
+              width: 120,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "SS (Empregos/m³)",
+              field: "JobsPerMeters",
+              editor: "number",
+              width: 120,
+              mutator: mutatorWeights,
+              editorParams: {
+                min: 0,
+                max: 1,
+                step: 0.01,
+              },
+            },
+            {
+              title: "Corte Hídrico",
+              field: "secSocial",
+              width: 70,
+              formatter: (col) => {
+                const {
+                  ProductivityPerKilo,
+                  ProductivityPerMeters,
+                  ProfitabilityPerMeters,
+                  ProfitabilityPerHectare,
+                  JobsPerHectare,
+                  JobsPerMeters,
+                  WaterConsumptionPerMeters,
+                  cultureCycle,
+                } = col._cell.row.data;
+
+                const values = [
+                  ProductivityPerKilo,
+                  ProductivityPerMeters,
+                  ProfitabilityPerMeters,
+                  ProfitabilityPerHectare,
+                  JobsPerHectare,
+                  JobsPerMeters,
+                  WaterConsumptionPerMeters,
+                  cultureCycle,
+                ].map((c) => (c ? Number(c) : 0));
+
+                const avgValue = values.reduce((a, b) => a + b, 0) / 8;
+
+                return 1 - Number(avgValue.toFixed(2));
+              },
             },
           ],
         },

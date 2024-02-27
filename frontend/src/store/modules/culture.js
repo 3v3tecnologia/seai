@@ -39,6 +39,7 @@ export default {
             {
               Id: 1,
               Plant_Name: "Tomate",
+              HarvestDuration: 1,
               Etr_Cycle_Total: 1,
               Etp_Cycle_Total: "2",
               Et0_Total: "3",
@@ -51,6 +52,7 @@ export default {
             {
               Id: 2,
               Plant_Name: "Maçã",
+              HarvestDuration: 5,
               Etr_Cycle_Total: 5,
               Etp_Cycle_Total: "6",
               Et0_Total: "7",
@@ -63,6 +65,7 @@ export default {
             {
               Id: 3,
               Plant_Name: "Milho de lavanda azul",
+              HarvestDuration: 9,
               Etr_Cycle_Total: 9,
               Etp_Cycle_Total: "10",
               Et0_Total: "11",
@@ -75,6 +78,7 @@ export default {
             {
               Id: 4,
               Plant_Name: "Uva",
+              HarvestDuration: 1,
               Etr_Cycle_Total: 1,
               Etp_Cycle_Total: "14",
               Et0_Total: "15",
@@ -87,6 +91,7 @@ export default {
             {
               Id: 5,
               Plant_Name: "Cenoura",
+              HarvestDuration: 1,
               Etr_Cycle_Total: 1,
               Etp_Cycle_Total: "18",
               Et0_Total: "19",
@@ -99,6 +104,7 @@ export default {
             {
               Id: 6,
               Plant_Name: "Batata",
+              HarvestDuration: 2,
               Etr_Cycle_Total: 2,
               Etp_Cycle_Total: "22",
               Et0_Total: "23",
@@ -111,6 +117,7 @@ export default {
             {
               Id: 7,
               Plant_Name: "Pêssego",
+              HarvestDuration: 2,
               Etr_Cycle_Total: 2,
               Etp_Cycle_Total: "26",
               Et0_Total: "27",
@@ -123,6 +130,7 @@ export default {
             {
               Id: 8,
               Plant_Name: "Abóbora",
+              HarvestDuration: 2,
               Etr_Cycle_Total: 2,
               Etp_Cycle_Total: "30",
               Et0_Total: "31",
