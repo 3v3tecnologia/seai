@@ -8,6 +8,17 @@ export const CULTURES = {
       tags: ["Census"],
       summary: "Get crop indicators by basin",
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Id basin",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       responses: {
         200: {
           content: {
