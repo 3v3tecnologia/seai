@@ -214,7 +214,7 @@ const CATEGORY = {
 };
 
 const FAQ = {
-  [`${BASE_URL.V1}faq/create`]: {
+  [`${BASE_URL.V1}/faq/create`]: {
     post: {
       tags: TAGS.FAQ,
       security: [BEARER_AUTH],
