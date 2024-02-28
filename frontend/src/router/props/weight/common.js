@@ -13,6 +13,16 @@ const mutatorWeights = (value) => {
 export const route = {
   fields: [
     {
+      label: "Bacia",
+      formKey: "currentBasin",
+      getListKey: "FETCH_PLACES_OPTIONS",
+      getterKey: "basinOptions",
+      requestOnChange: true,
+      props: {
+        extraMarginTop: true,
+      },
+    },
+    {
       formKey: "Acronyms",
       colSize: 12,
       component: {
@@ -161,7 +171,7 @@ export const route = {
               title: "SS (Empregos/ha)",
               field: "JobsPerHectare",
               editor: "number",
-              width: 120,
+              minWidth: 120,
               mutator: mutatorWeights,
               editorParams: {
                 min: 0,
@@ -173,7 +183,7 @@ export const route = {
               title: "SS (Empregos/m³)",
               field: "JobsPerMeters",
               editor: "number",
-              width: 120,
+              minWidth: 120,
               mutator: mutatorWeights,
               editorParams: {
                 min: 0,
@@ -183,7 +193,7 @@ export const route = {
             },
             {
               title: "Corte Hídrico",
-              field: "secSocial",
+              field: "hydBlade",
               width: 70,
               formatter: (col) => {
                 const {
@@ -193,7 +203,7 @@ export const route = {
                   ProfitabilityPerHectare,
                   JobsPerHectare,
                   JobsPerMeters,
-                  WaterConsumptionPerMeters,
+                  WaterConsumptionPerHectare,
                   cultureCycle,
                 } = col._cell.row.data;
 
@@ -204,13 +214,13 @@ export const route = {
                   ProfitabilityPerHectare,
                   JobsPerHectare,
                   JobsPerMeters,
-                  WaterConsumptionPerMeters,
+                  WaterConsumptionPerHectare,
                   cultureCycle,
                 ].map((c) => (c ? Number(c) : 0));
 
                 const avgValue = values.reduce((a, b) => a + b, 0) / 8;
 
-                return 1 - Number(avgValue.toFixed(2));
+                return Number(((avgValue - 1) * 100).toFixed(2));
               },
             },
           ],

@@ -260,14 +260,14 @@ export default {
       },
     },
     GET_CURRENT_WEIGHT: {
-      async handler({ commit, dispatch, state }) {
+      async handler({ commit, dispatch, state }, id) {
         try {
+          console.log("pedindo current weight", id);
           await dispatch("GET_WEIGHTS");
 
           const culture = state.list.data;
 
           commit("SET_CURRENT_WEIGHT", { Weights: culture });
-          console.log({ culture });
         } catch (e) {
           console.error("Falhou ao pegar dados de peso");
           commit("SET_CURRENT_WEIGHT", {});

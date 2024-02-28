@@ -274,12 +274,13 @@ const columnsDTO = computed(() => {
 
 // Redraw columns;
 watch(
-  () => columnsDTO.value,
+  () => [columnsDTO.value, props.data],
   (newValue) => {
     if (tabulator.value?.initialized) {
-      tabulator.value?.setColumns(newValue);
+      tabulator.value?.setColumns(newValue[0]);
     }
-  }
+  },
+  { immediate: true, deep: true }
 );
 
 const emit = defineEmits(["selected", "update:modelValue"]);

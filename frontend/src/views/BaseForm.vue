@@ -19,6 +19,7 @@
             <BaseDropdown
               v-else-if="field._typeComponent == 'dropdown'"
               v-model="form[field.formKey]"
+              :extra-margin-top="field.props?.extraMarginTop"
               inline-label
               remove-margin
               class="w-100"
@@ -276,16 +277,17 @@ const drodpDowns = computed(() =>
     })
 );
 
-const updateDropdownsValue = () => {
-  drodpDowns.value.forEach((field) => {
+const updateDropdownsValue = async (newVal, oldVal) => {
+  newVal.forEach(async (field, i) => {
+    const key = field.formKey;
+    const firstOption = field.options?.[0];
     const matchedResult = field.options.find((f) => f.title === field.value);
+    const currentValue = form.value[key];
 
-    const valueWasEmpty = !form.value[field.formKey];
-
-    if (valueWasEmpty) {
-      form.value[field.formKey] = field.options[0];
-    } else if (matchedResult) {
-      form.value[field.formKey] = matchedResult;
+    if (!currentValue) {
+      form.value[key] = firstOption;
+    } else if (matchedResult && matchedResult != form.value[key]) {
+      form.value[key] = matchedResult;
     }
   });
 };
@@ -331,6 +333,8 @@ const isNewForm = computed(() => {
   );
 });
 
+const timeoutReqChange = ref(null);
+
 const setFormWatcher = () => {
   form.value = formData.value ? JSON.parse(JSON.stringify(formData.value)) : {};
 
@@ -343,6 +347,10 @@ const updateOldForm = (hasSavedForm = false) => {
   hasSaved.value = !!hasSavedForm;
 };
 
+const tempFormOld = computed(() =>
+  JSON.parse(JSON.stringify(drodpDowns.value))
+);
+
 watch(
   formData,
   () => {
@@ -352,11 +360,51 @@ watch(
 );
 
 watch(
+  () => tempFormOld.value,
+  (newVal, oldVal) => {
+    let askForThisData = null;
+
+    // TODO AQUI TA EM LOOP ATUALIZANDO TUDO, TEM QUE VER DE MODIFICAR O DADO DA STORE SO SE MUDAR, MAS PENSAR AINDA SOBRE
+    // O PROBLEMA PRINCIPAL TA NO drodpDowns
+    // TALVEZ CRIAR UMA COMPUTED SO COM OS DROPDOWNS QUE SAO POWERFULL SOLUCIONASSE
+    // console.log("what the fuck mudou", newVal, oldVal);
+
+    newVal.forEach((field, i) => {
+      const isPowerfullDropdown = field.requestOnChange;
+      const oldFieldVal = oldVal[i]?.value?.value;
+      const currentFieldVal = field?.value?.value;
+      const isFirstRequest = currentFieldVal && !oldFieldVal;
+      const isChangingValue =
+        oldFieldVal && currentFieldVal && oldFieldVal != currentFieldVal;
+
+      if (!isPowerfullDropdown) {
+        return;
+      }
+
+      if (isChangingValue || isFirstRequest) {
+        askForThisData = currentFieldVal;
+      }
+    });
+
+    if (!askForThisData) {
+      return;
+    }
+
+    if (timeoutReqChange.value) clearTimeout(timeoutReqChange.value);
+
+    timeoutReqChange.value = setTimeout(async () => {
+      await store.dispatch(props.getDataKey, askForThisData);
+    }, 100);
+  },
+  { deep: true }
+);
+
+watch(
   () => currentRoute.name,
-  () => {
+  async () => {
     form.value = {};
     updateOldForm();
-    updateDropdownsValue();
+    await updateDropdownsValue(drodpDowns.value);
   },
   {
     deep: true,

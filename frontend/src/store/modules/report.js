@@ -347,7 +347,11 @@ export default {
   getters: {
     cityOptions(state) {
       return state.currentBasinFilter;
-      // return state.cityOptions;
     },
+    basinOptions: (state) =>
+      state.hydrographicBasinOptions.map((b) => ({
+        title: b.title,
+        value: b.value,
+      })),
   },
 };
