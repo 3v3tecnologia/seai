@@ -3,7 +3,7 @@ import { BASE_URL } from "../../commons/baseURL";
 import { BEARER_AUTH } from "../../commons/security";
 
 export const CULTURES = {
-  [`${BASE_URL.V1}/census/cultures`]: {
+  [`${BASE_URL.V1}/census/cultures/{id}`]: {
     get: {
       tags: ["Census"],
       summary: "Get crop indicators by basin",
