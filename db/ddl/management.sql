@@ -71,7 +71,7 @@ CREATE TABLE "Physics_Characteristics"(
 
 CREATE TABLE "Studies"(
 	"Id_Basin" INTEGER NOT NULL,
-	"Id_Culture" INTEGER NOT NULL, -- cultura
+	"Culture" VARCHAR(50) NOT NULL, -- cultura
 	"Harvest" INTEGER NOT NULL, -- safra
 	"Farm" INTEGER NOT NULL, -- cultivo
 	"ProductivityPerKilo" REAL NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE "Studies"(
 
 CREATE TABLE "Weights"(
 	"Id_Basin" INTEGER NOT NULL,
-	"Id_Culture" INTEGER NOT NULL,
+	"Culture" VARCHAR(50) NOT NULL,
 	"ProductivityPerKilo" REAL DEFAULT NULL,
 	"ProductivityPerMeters" REAL DEFAULT NULL,
 	"ProfitabilityPerMeters" REAL DEFAULT NULL,

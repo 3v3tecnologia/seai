@@ -1,10 +1,10 @@
-import { ManagementWeights } from "../../../entities/management/weights";
-import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { CultureWeights } from "../../../entities/management/weights";
+import { InputWithPagination } from "../../helpers/dto";
 import { DatabaseOperationOutputLog } from "./dto/output";
 
 export type CultureWeightsToPersistency = {
   Id_Basin: number;
-  Id_Culture: number;
+  Culture: string;
   ProductivityPerKilo: number | null;
   ProductivityPerMeters: number | null;
   ProfitabilityPerHectare: number | null;
@@ -17,7 +17,7 @@ export type CultureWeightsToPersistency = {
 
 export namespace ManagementWeightsRepositoryDTO {
   export namespace Create {
-    export type Request = Array<ManagementWeights>;
+    export type Request = Array<CultureWeights>;
 
     export type Response = Promise<DatabaseOperationOutputLog>;
   }
@@ -31,10 +31,9 @@ export namespace ManagementWeightsRepositoryDTO {
   }
 
   export namespace GetByBasin {
-    export type Request = { Id_Basin: number } & InputWithPagination;
+    export type Request = { Id_Basin: number } & Partial<InputWithPagination>;
 
-    export type Response =
-      Promise<OutputWithPagination<ManagementWeights> | null>;
+    export type Response = Promise<Array<CultureWeights> | null>;
   }
 }
 

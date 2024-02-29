@@ -108,10 +108,11 @@ export class GetCulturesIndicatorsFromBasin
         const culture = basinIndicators.Cultures?.get(study);
 
         if (culture) {
-          const averageProductivity =
+          const averageStudyProductivity =
             value.ProductivityPerKilo / value.ProductivityPerMeters;
 
-          culture.Productivity = culture.Consumption * averageProductivity;
+          culture.ProductivityPerHectare =
+            culture.Consumption * averageStudyProductivity;
         }
       }
     }
