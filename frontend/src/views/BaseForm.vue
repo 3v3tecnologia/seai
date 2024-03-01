@@ -2,7 +2,6 @@
   <div class="home">
     <FormWrapper :title="headerLabel" @submit="handleSubmit">
       <template v-slot:content>
-        {{ form.Weights?.[0]?.cultureCycle }}
         <div class="row">
           <div
             v-for="(field, i) in fieldsTotal"
@@ -398,11 +397,6 @@ const isNewForm = computed(() => {
 
 const setFormWatcher = (value) => {
   form.value = value ? JSON.parse(JSON.stringify(value)) : {};
-  console.log(
-    "set form watcher",
-    JSON.parse(JSON.stringify(value))?.Weights?.[0]?.cultureCycle
-  );
-
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
 
@@ -420,15 +414,6 @@ watch(
     if (newVal && newVal.value != oldVal?.value) {
       await store.dispatch(props.getDataKey, newVal);
     }
-  }
-);
-
-watch(
-  () => form.value,
-  async (newVal, oldVal) => {
-    // TODO
-    // UNDERSTAND WHY THE VALUES ARE NOT UPDATING, IF IT'S DOING THE REQUEST SUCCESFULLY
-    // console.log("atualizando o form", newVal, oldVal);
   }
 );
 

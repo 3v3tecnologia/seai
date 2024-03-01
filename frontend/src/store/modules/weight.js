@@ -266,11 +266,12 @@ export default {
 
           const culture = state.list.data;
 
-          console.log("hey budy", culture, basin.value);
           commit("SET_CURRENT_WEIGHT", {
             currentBasin: basin,
             Weights: culture.map((culture) => {
-              culture.cultureCycle = basin.value;
+              // TODO
+              // REMOVE THAT LOGIC, THIS IS ONLY TO CHECK API REQUESTING
+              culture.cultureCycle = basin.value * 0.19;
 
               return culture;
             }),
