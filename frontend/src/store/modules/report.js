@@ -141,18 +141,20 @@ export default {
         const showingDataFormat = filters.showingDataFormat.value;
         const showingDataFormatUrl = dataFormatUrl[showingDataFormat];
 
+        const hydrographicBasin = filters.hydrographicBasin?.[0]?.value;
+
+        await dispatch("FETCH_FIRST_BASIN", hydrographicBasin);
+
+        const currentBasinId = state.currentBasinFilter[0].value;
+
         const responses = await Promise.all([
-          await http.get(
-            `/census/indicator/security/water/${showingDataFormatUrl}`
-          ),
-          await http.get(
-            `/census/indicator/security/social/${showingDataFormatUrl}`
-          ),
-          await http.get(
-            `/census/indicator/security/economic/${showingDataFormatUrl}`
-          ),
+          await http.get(`/census/cultures/${currentBasinId}`),
         ]);
 
+        console.log(
+          "waaaaw",
+          responses.map((c) => c.data.data[0].Cultures)
+        );
         const [securityWater, securitySocial, securityEconomic] = responses.map(
           (c) => c.data.data.map(getValueBasic).map(formatLocation)
         );
@@ -208,7 +210,27 @@ export default {
         console.error(e);
       }
     },
-    async ["FETCH_SINGLE_BASIN"]({ state, commit }, filters) {
+    async ["FETCH_FIRST_BASIN"](
+      { state, commit, dispatch },
+      hydrographicBasin
+    ) {
+      await dispatch("FETCH_PLACES_OPTIONS");
+
+      const firstBasin = Object.values(state.hydrographicBasinOptions)[0];
+      const currentBasinFilter = state.currentBasinFilter;
+
+      if (!currentBasinFilter?.length) {
+        commit("SET_CURRENT_BASIN_NAME", [firstBasin]);
+      }
+
+      console.log(
+        "pedindo o bixo pra setar o basin",
+        hydrographicBasin,
+        currentBasinFilter,
+        firstBasin
+      );
+    },
+    async ["FETCH_SINGLE_BASIN"]({ state, commit, dispatch }, filters) {
       const currentReportData = filters.currentReportData;
       const hydrographicBasinIndexes = Object.keys(filters.hydrographicBasin);
       const lastHydrographicBasin =

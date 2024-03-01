@@ -193,6 +193,8 @@ watch(
   () => props.fields,
   async (newVal) => {
     try {
+      loadedAllOptions.value = false;
+
       fieldsTmp.value = newVal
         .map((c) => ({ ...c }))
         .map((c, index) => {
@@ -211,6 +213,7 @@ watch(
       console.error(e);
     } finally {
       loadedAllOptions.value = true;
+      console.log("atualizou os dados viu");
     }
   },
   { immediate: true, deep: true }
@@ -296,18 +299,18 @@ const requestDropdown = computed(() => {
   return JSON.parse(JSON.stringify(dropdowns));
 });
 
-const requestDropdownValue = ref(null);
+// const requestDropdownValue = ref(null);
 
-watch(
-  () => requestDropdown.value,
-  (newValue) => {
-    const newValueId = newValue?.[0]?.value;
+// watch(
+//   () => requestDropdown.value,
+//   (newValue) => {
+//     const newValueId = newValue?.[0]?.value;
 
-    if (newValueId) {
-      requestDropdownValue.value = newValueId;
-    }
-  }
-);
+//     if (newValueId) {
+//       requestDropdownValue.value = newValueId;
+//     }
+//   }
+// );
 
 const updateOldForm = (hasSavedForm = false) => {
   oldForm.value = JSON.parse(JSON.stringify(form.value));
@@ -318,7 +321,6 @@ const updateOldForm = (hasSavedForm = false) => {
 watch(
   currentRoute,
   async (newVal) => {
-    loadedAllOptions.value = false;
     paramId.value = newVal.params.id;
 
     if (
@@ -335,7 +337,9 @@ watch(
   { immediate: true }
 );
 
-const updateDropdownsValue = async () => {
+const updateDropdownsValue = async (value) => {
+  if (!value) return;
+
   drodpDowns.value.forEach((field) => {
     const key = field.formKey;
     const firstOption = field.options?.[0];
@@ -403,19 +407,24 @@ const setFormWatcher = (value) => {
 
 watch(() => formData.value, setFormWatcher, { immediate: true, deep: true });
 
+const fetchDataParams = computed(() =>
+  JSON.parse(JSON.stringify([requestDropdown.value, currentRoute.path]))
+);
+
 watch(
-  () => [requestDropdownValue.value, currentRoute.path],
+  () => fetchDataParams.value,
   async (newVal, oldVal) => {
     const [newDropdown, newPath] = newVal;
+    const hasDropdownChangedValue =
+      (newDropdown && newDropdown.value != oldVal?.[0]?.value) || !oldVal[0];
+    const isChangingRoute = oldVal && oldVal[1] != newPath;
 
-    if (
-      (newDropdown && newDropdown.value != oldVal?.[0]?.value) ||
-      (oldVal && oldVal[1] != newPath)
-    ) {
+    console.log("oldVal", JSON.parse(JSON.stringify(oldVal[0])));
+    if (hasDropdownChangedValue || isChangingRoute) {
+      console.log("pediu os dados ein");
       await store.dispatch(props.getDataKey, newDropdown);
     }
-  },
-  { deep: true }
+  }
 );
 
 const handleSubmit = async (e) => {
