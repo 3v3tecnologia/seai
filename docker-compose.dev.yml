@@ -40,7 +40,7 @@ services:
         - ./db/csv/DiluicaoEfluentes.csv:/var/lib/postgres/data/DiluicaoEfluentes.csv
         - ./db/csv/Militar.csv:/var/lib/postgres/data/Militar.csv
         - ./db/csv/RHManejados.csv:/var/lib/postgres/data/RHManejados.csv
-        - ./db/csv/Termelétrica.csv:/var/lib/postgres/data/Termelétrica.csv
+        - ./db/csv/Termeletrica.csv:/var/lib/postgres/data/Termeletrica.csv
         - ./db/csv/LavagemVeiculos.csv:/var/lib/postgres/data/LavagemVeiculos.csv
         - ./db/csv/Bombas.csv:/var/lib/postgres/data/Bombas.csv
         - ./db/csv/TesteVazao.csv:/var/lib/postgres/data/TesteVazao.csv
