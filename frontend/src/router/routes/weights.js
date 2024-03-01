@@ -1,4 +1,3 @@
-import { actionPrefix } from "@/constants";
 import weightUpdate from "@/router/props/weight/update";
 import BaseForm from "@/views/BaseForm.vue";
 

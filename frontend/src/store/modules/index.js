@@ -5,6 +5,7 @@ import report from "./report";
 import page from "./page";
 import culture from "./culture";
 import weight from "./weight";
+import study from "./study";
 
 export default {
   cron,
@@ -14,4 +15,5 @@ export default {
   page,
   culture,
   weight,
+  study,
 };

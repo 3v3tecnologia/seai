@@ -27,7 +27,7 @@ const props = defineProps({
   },
   modelValue: {
     type: Object,
-    required: true,
+    required: false,
   },
   columns: {
     type: Array,
