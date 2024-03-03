@@ -1,13 +1,19 @@
 import { farmsStageDefault } from "@/constants";
 
-const mutatorWeights = (value) => {
+const mutatorDays = (value) => {
   if (value < 0 || !value) {
-    return 0;
-  } else if (value >= 1) {
     return 1;
   }
 
-  return +value.toFixed(2);
+  return Math.round(value) || 1;
+};
+
+const mutatorDivisor = (value) => {
+  if (value < 0 || !value) {
+    return 0;
+  }
+
+  return +Number(value).toFixed(2);
 };
 
 export const route = {
@@ -48,11 +54,9 @@ export const route = {
               title: "Duração da safra (dias)",
               field: "cultureCycle",
               editor: "number",
-              mutator: mutatorWeights,
+              mutator: mutatorDays,
               editorParams: {
-                min: 0,
-                max: 1,
-                step: 0.01,
+                min: 1,
               },
             },
             {
@@ -64,21 +68,18 @@ export const route = {
               title: "Período de cultivo (dias)",
               field: "ProductivityPerKilo",
               editor: "number",
-              mutator: mutatorWeights,
+              mutator: mutatorDays,
               editorParams: {
-                min: 0,
-                max: 1,
-                step: 0.01,
+                min: 1,
               },
             },
             {
               title: "Produtividade (kg/ha)",
               field: "ProductivityPerMeters",
               editor: "number",
-              mutator: mutatorWeights,
+              mutator: mutatorDivisor,
               editorParams: {
                 min: 0,
-                max: 1,
                 step: 0.01,
               },
             },
@@ -86,10 +87,9 @@ export const route = {
               title: "Consumo hídrico (m³/ha)",
               field: "ProfitabilityPerHectare",
               editor: "number",
-              mutator: mutatorWeights,
+              mutator: mutatorDivisor,
               editorParams: {
                 min: 0,
-                max: 1,
                 step: 0.01,
               },
             },
