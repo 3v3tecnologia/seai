@@ -1,11 +1,12 @@
 <template>
   <div class="position-relative w-100 mt-4">
     <label v-if="label" class="font-weight-bold label mb-0">{{ label }} </label>
+
     <BaseTable
       ref="refBaseTable"
       v-model="inputValue"
       :hidePagination="hidePagination"
-      :data="modelValue || emptyTableValue"
+      :data="inputValue"
       :columns="columns"
       :selectable="false"
       :apiPagination="{}"
@@ -15,7 +16,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, computed } from "vue";
 import BaseTable from "@/components/tables/BaseTable.vue";
 
 const emptyTableValue = [{ id: 1 }];
@@ -44,7 +45,7 @@ const props = defineProps({
   },
 });
 
-const inputValue = ref([]);
+const inputValue = ref(JSON.parse(JSON.stringify(emptyTableValue)));
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -59,8 +60,10 @@ watch(
   () => props.modelValue,
   (val) => {
     if (!val) {
-      emit("update:modelValue", [{ id: 1 }]);
+      return emit("update:modelValue", [{ id: 1 }]);
     }
+
+    inputValue.value = val;
   }
 );
 </script>

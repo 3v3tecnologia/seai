@@ -186,13 +186,20 @@ const dataShowing = computed(() => {
   return props.data.slice(currentStart, currentEnd);
 });
 
+const timeoutSetData = ref(null);
+
 watch(
   () => dataShowing.value,
   async (val) => {
+    clearTimeout(timeoutSetData.value);
+
     if (tabulator.value?.initialized) {
-      tabulator.value?.setData(val);
+      timeoutSetData.value = setTimeout(() => tabulator.value?.setData(val), 0);
     } else {
-      setTimeout(() => tabulator.value?.setData(val), 200);
+      timeoutSetData.value = setTimeout(
+        () => tabulator.value?.setData(val),
+        200
+      );
     }
   },
   { immediate: true }

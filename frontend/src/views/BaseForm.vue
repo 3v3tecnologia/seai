@@ -213,7 +213,6 @@ watch(
       console.error(e);
     } finally {
       loadedAllOptions.value = true;
-      console.log("atualizou os dados viu");
     }
   },
   { immediate: true, deep: true }
@@ -239,6 +238,28 @@ const labelTypeField = (fields, type) =>
     return field;
   });
 
+const prebuiltComponentsFields = computed(() =>
+  fieldsTmp.value
+    .filter((f) => f.component)
+    .map((field) => ({
+      ...field,
+      value: form.value[field.formKey],
+    }))
+);
+
+const drodpDowns = computed(() =>
+  JSON.parse(JSON.stringify(fieldsTmp.value))
+    .filter((f) => f.getListKey && !f.component)
+    .map((field) => ({
+      ...field,
+      options: store.getters[field.getterKey].filter((f) => f.value),
+    }))
+);
+
+const inputFields = computed(() =>
+  fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
+);
+
 const fieldsTotal = computed(() => {
   const tempComponents = labelTypeField(
     prebuiltComponentsFields.value,
@@ -251,36 +272,6 @@ const fieldsTotal = computed(() => {
     (a, b) => a.index - b.index
   );
 });
-
-const inputFields = computed(() =>
-  fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
-);
-
-const prebuiltComponentsFields = computed(() =>
-  fieldsTmp.value
-    .filter((f) => f.component)
-    .map((field) => {
-      field.value = form.value[field.formKey];
-      return field;
-    })
-);
-
-const drodpDowns = computed(() =>
-  JSON.parse(JSON.stringify(fieldsTmp.value))
-    .filter((f) => f.getListKey && !f.component)
-    .map((field) => {
-      const tempField = {
-        ...field,
-        options: store.getters[field.getterKey].filter((f) => f.value),
-      };
-
-      if (!field.requestOnChange) {
-        tempField.value = form.value[field.formKey];
-      }
-
-      return tempField;
-    })
-);
 
 const dropdownsCopy = computed(() => {
   return JSON.parse(JSON.stringify(drodpDowns.value));
@@ -298,19 +289,6 @@ const requestDropdown = computed(() => {
 
   return JSON.parse(JSON.stringify(dropdowns));
 });
-
-// const requestDropdownValue = ref(null);
-
-// watch(
-//   () => requestDropdown.value,
-//   (newValue) => {
-//     const newValueId = newValue?.[0]?.value;
-
-//     if (newValueId) {
-//       requestDropdownValue.value = newValueId;
-//     }
-//   }
-// );
 
 const updateOldForm = (hasSavedForm = false) => {
   oldForm.value = JSON.parse(JSON.stringify(form.value));
@@ -401,11 +379,13 @@ const isNewForm = computed(() => {
 });
 
 const setFormWatcher = (value) => {
+  console.log("atualizou os dados do form", value);
+
   form.value = value ? JSON.parse(JSON.stringify(value)) : {};
   oldForm.value = JSON.parse(JSON.stringify(form.value));
 };
 
-watch(() => formData.value, setFormWatcher, { immediate: true, deep: true });
+watch(() => formData.value, setFormWatcher, { deep: true });
 
 const fetchDataParams = computed(() =>
   JSON.parse(JSON.stringify([requestDropdown.value, currentRoute.path]))
@@ -415,14 +395,19 @@ watch(
   () => fetchDataParams.value,
   async (newVal, oldVal) => {
     const [newDropdown, newPath] = newVal;
+    const fullNewDropdownValue = newDropdown?.[0]?.value;
+    const newDropdownValue = fullNewDropdownValue?.value;
+    const oldDropdownValue = oldVal?.[0]?.[0]?.value?.value;
+
     const hasDropdownChangedValue =
-      (newDropdown && newDropdown.value != oldVal?.[0]?.value) || !oldVal[0];
+      (newDropdownValue && !oldDropdownValue) ||
+      (oldDropdownValue &&
+        newDropdownValue &&
+        oldDropdownValue != newDropdownValue);
     const isChangingRoute = oldVal && oldVal[1] != newPath;
 
-    console.log("oldVal", JSON.parse(JSON.stringify(oldVal[0])));
     if (hasDropdownChangedValue || isChangingRoute) {
-      console.log("pediu os dados ein");
-      await store.dispatch(props.getDataKey, newDropdown);
+      await store.dispatch(props.getDataKey, fullNewDropdownValue);
     }
   }
 );

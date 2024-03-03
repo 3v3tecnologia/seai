@@ -273,6 +273,8 @@ export default {
 
           const culture = state.list.data.find((c) => c.id == id || c.Id == id);
 
+          console.log("pediu dado de cultura e recebeu isso", culture);
+
           commit("SET_CURRENT_CULTURE", culture);
         } catch (e) {
           console.error("falhou ao pegar cultura atual");
