@@ -1,5 +1,5 @@
 <template>
-  <span class="p-float-label">
+  <span class="p-float-label" :class="{ 'mt-4 mt-lg-5': extraMarginTop }">
     <Dropdown
       v-model="inputValue"
       :disabled="disabled"
@@ -23,6 +23,10 @@ const props = defineProps({
   inputRequired: {
     type: Boolean,
     default: true,
+  },
+  extraMarginTop: {
+    type: Boolean,
+    default: false,
   },
   disabled: {
     type: Boolean,

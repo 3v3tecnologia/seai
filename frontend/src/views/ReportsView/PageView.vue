@@ -84,10 +84,6 @@ const groupReportsOptions = [
     title: "Indicadores por cultura",
     value: 5,
   },
-  {
-    title: "Recursos hídricos",
-    value: 6,
-  },
 ];
 
 const filtersData = ref({});

@@ -19,6 +19,7 @@
             <BaseDropdown
               v-else-if="field._typeComponent == 'dropdown'"
               v-model="form[field.formKey]"
+              :extra-margin-top="field.props?.extraMarginTop"
               inline-label
               remove-margin
               class="w-100"
@@ -119,6 +120,7 @@ import BaseDropdown from "@/components/form/BaseDropdown.vue";
 import FilterDate from "@/components/form/FilterDate.vue";
 import FarmDap from "@/components/form/FarmDap.vue";
 import FieldEditor from "@/components/form/FieldEditor.vue";
+import BaseTable from "@/components/tables/BaseTable.vue";
 import { accessStoreKey } from "@/helpers/dto";
 
 const form = ref({});
@@ -126,8 +128,11 @@ const oldForm = ref({});
 const preBuiltComponents = {
   FilterDate,
   FieldEditor,
+  BaseTable,
   FarmDap,
 };
+
+const loadedAllOptions = ref(false);
 
 const currentRoute = useRoute();
 const fieldsTmp = ref([]);
@@ -169,6 +174,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  workWithoutId: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   fields: {
     type: Array,
     required: true,
@@ -180,34 +190,30 @@ const props = defineProps({
 });
 
 watch(
-  currentRoute,
-  (newVal) => {
-    paramId.value = newVal.params.id;
-
-    if (props.getDataKey && paramId.value) {
-      store.dispatch(props.getDataKey, paramId.value);
-    }
-  },
-  { immediate: true }
-);
-
-watch(
   () => props.fields,
   async (newVal) => {
-    fieldsTmp.value = newVal
-      .map((c) => ({ ...c }))
-      .map((c, index) => {
-        c.index = index;
-        c.tmp_pass = true;
+    try {
+      loadedAllOptions.value = false;
 
-        return c;
-      });
+      fieldsTmp.value = newVal
+        .map((c) => ({ ...c }))
+        .map((c, index) => {
+          c.index = index;
+          c.tmp_pass = true;
 
-    await Promise.allSettled(
-      fieldsTmp.value
-        .filter((f) => f.getListKey)
-        .map(async (f) => await store.dispatch(f.getListKey))
-    );
+          return c;
+        });
+
+      await Promise.allSettled(
+        fieldsTmp.value
+          .filter((f) => f.getListKey)
+          .map(async (f) => await store.dispatch(f.getListKey))
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadedAllOptions.value = true;
+    }
   },
   { immediate: true, deep: true }
 );
@@ -232,6 +238,28 @@ const labelTypeField = (fields, type) =>
     return field;
   });
 
+const prebuiltComponentsFields = computed(() =>
+  fieldsTmp.value
+    .filter((f) => f.component)
+    .map((field) => ({
+      ...field,
+      value: form.value[field.formKey],
+    }))
+);
+
+const drodpDowns = computed(() =>
+  JSON.parse(JSON.stringify(fieldsTmp.value))
+    .filter((f) => f.getListKey && !f.component)
+    .map((field) => ({
+      ...field,
+      options: store.getters[field.getterKey].filter((f) => f.value),
+    }))
+);
+
+const inputFields = computed(() =>
+  fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
+);
+
 const fieldsTotal = computed(() => {
   const tempComponents = labelTypeField(
     prebuiltComponentsFields.value,
@@ -245,45 +273,71 @@ const fieldsTotal = computed(() => {
   );
 });
 
-const inputFields = computed(() =>
-  fieldsTmp.value.filter((f) => !f.getListKey && !f.component)
+const dropdownsCopy = computed(() => {
+  return JSON.parse(JSON.stringify(drodpDowns.value));
+});
+
+const requestDropdown = computed(() => {
+  const dropdowns = dropdownsCopy.value
+    .filter((d) => d.requestOnChange)
+    .map((d) => {
+      return {
+        ...d,
+        value: form.value[d.formKey],
+      };
+    });
+
+  return JSON.parse(JSON.stringify(dropdowns));
+});
+
+const updateOldForm = (hasSavedForm = false) => {
+  oldForm.value = JSON.parse(JSON.stringify(form.value));
+
+  hasSaved.value = !!hasSavedForm;
+};
+
+watch(
+  currentRoute,
+  async (newVal) => {
+    paramId.value = newVal.params.id;
+
+    if (
+      props.getDataKey &&
+      (paramId.value || props.workWithoutId) &&
+      !requestDropdown.value.length
+    ) {
+      await store.dispatch(props.getDataKey, paramId.value);
+    } else {
+      form.value = {};
+      updateOldForm();
+    }
+  },
+  { immediate: true }
 );
 
-const prebuiltComponentsFields = computed(() =>
-  fieldsTmp.value
-    .filter((f) => f.component)
-    .map((field) => {
-      field.value = form.value[field.formKey];
-      return field;
-    })
-);
+const updateDropdownsValue = async (value) => {
+  if (!value) return;
 
-const drodpDowns = computed(() =>
-  fieldsTmp.value
-    .filter((f) => f.getListKey && !f.component)
-    .map((field) => {
-      field.value = form.value[field.formKey];
-      field.options = store.getters[field.getterKey].filter((f) => f.value);
-
-      return field;
-    })
-);
-
-const updateDropdownsValue = () => {
   drodpDowns.value.forEach((field) => {
+    const key = field.formKey;
+    const firstOption = field.options?.[0];
     const matchedResult = field.options.find((f) => f.title === field.value);
+    const currentValue = form.value[key];
 
-    const valueWasEmpty = !form.value[field.formKey];
+    let valueToReceive = null;
+    if (!currentValue) {
+      valueToReceive = firstOption;
+    } else if (matchedResult && matchedResult.value != form.value[key].value) {
+      valueToReceive = matchedResult;
+    }
 
-    if (valueWasEmpty) {
-      form.value[field.formKey] = field.options[0];
-    } else if (matchedResult) {
-      form.value[field.formKey] = matchedResult;
+    if (valueToReceive) {
+      form.value[key] = valueToReceive;
     }
   });
 };
 
-watch(drodpDowns.value, updateDropdownsValue, { immediate: true, deep: true });
+watch(() => loadedAllOptions.value, updateDropdownsValue);
 
 const getConcatValuesForms = (formToCheck) => {
   const flatTypes = ["string", "number"];
@@ -324,35 +378,37 @@ const isNewForm = computed(() => {
   );
 });
 
-const setFormWatcher = () => {
-  form.value = formData.value ? JSON.parse(JSON.stringify(formData.value)) : {};
+const setFormWatcher = (value) => {
+  console.log("atualizou os dados do form", value);
 
-  oldForm.value = JSON.parse(JSON.stringify(formData.value));
-};
-
-const updateOldForm = (hasSavedForm = false) => {
+  form.value = value ? JSON.parse(JSON.stringify(value)) : {};
   oldForm.value = JSON.parse(JSON.stringify(form.value));
-
-  hasSaved.value = !!hasSavedForm;
 };
 
-watch(
-  formData,
-  () => {
-    setFormWatcher();
-  },
-  { immediate: true, deep: true }
+watch(() => formData.value, setFormWatcher, { deep: true });
+
+const fetchDataParams = computed(() =>
+  JSON.parse(JSON.stringify([requestDropdown.value, currentRoute.path]))
 );
 
 watch(
-  () => currentRoute.name,
-  () => {
-    form.value = {};
-    updateOldForm();
-    updateDropdownsValue();
-  },
-  {
-    deep: true,
+  () => fetchDataParams.value,
+  async (newVal, oldVal) => {
+    const [newDropdown, newPath] = newVal;
+    const fullNewDropdownValue = newDropdown?.[0]?.value;
+    const newDropdownValue = fullNewDropdownValue?.value;
+    const oldDropdownValue = oldVal?.[0]?.[0]?.value?.value;
+
+    const hasDropdownChangedValue =
+      (newDropdownValue && !oldDropdownValue) ||
+      (oldDropdownValue &&
+        newDropdownValue &&
+        oldDropdownValue != newDropdownValue);
+    const isChangingRoute = oldVal && oldVal[1] != newPath;
+
+    if (hasDropdownChangedValue || isChangingRoute) {
+      await store.dispatch(props.getDataKey, fullNewDropdownValue);
+    }
   }
 );
 

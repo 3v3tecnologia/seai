@@ -1,5 +1,10 @@
 <template>
-  <div class="w-100 d-flex flex-column align-items-start">
+  <div
+    class="w-100 d-flex flex-column align-items-start"
+    :class="{ 'mt-4': addMarginTop }"
+  >
+    <label v-if="label" class="font-weight-bold label mb-0">{{ label }} </label>
+
     <div v-if="isEditable">
       <button type="button" class="btn btn-success mr-4" @click="createNewLine">
         Adicionar linha
@@ -90,6 +95,10 @@ const downloadXLSX = () => {
 };
 
 const props = defineProps({
+  label: {
+    type: String,
+    required: false,
+  },
   title: {
     type: String,
     default: "",
@@ -99,6 +108,10 @@ const props = defineProps({
     required: false,
   },
   hidePagination: {
+    type: Boolean,
+    default: false,
+  },
+  addMarginTop: {
     type: Boolean,
     default: false,
   },
@@ -118,6 +131,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  hasCrudRows: {
+    type: Boolean,
+    default: false,
+  },
   actionText: {
     type: String,
     default: "linha",
@@ -134,7 +151,9 @@ const props = defineProps({
 
 const currentRoute = useRoute();
 const paramId = computed(() => currentRoute.params.id || "");
-const isEditable = computed(() => props.columns.find((c) => c.editor));
+const isEditable = computed(
+  () => props.columns.find((c) => c.editor) && props.hasCrudRows
+);
 const currentRouteName = computed(() => currentRoute.name || "");
 const biggestId = computed(
   () => Math.max(...props.data.map((c) => c.id || c.Id).filter((c) => c)) || 1
@@ -167,13 +186,20 @@ const dataShowing = computed(() => {
   return props.data.slice(currentStart, currentEnd);
 });
 
+const timeoutSetData = ref(null);
+
 watch(
   () => dataShowing.value,
   async (val) => {
+    clearTimeout(timeoutSetData.value);
+
     if (tabulator.value?.initialized) {
-      tabulator.value?.setData(val);
+      timeoutSetData.value = setTimeout(() => tabulator.value?.setData(val), 0);
     } else {
-      setTimeout(() => tabulator.value?.setData(val), 200);
+      timeoutSetData.value = setTimeout(
+        () => tabulator.value?.setData(val),
+        200
+      );
     }
   },
   { immediate: true }
@@ -255,12 +281,13 @@ const columnsDTO = computed(() => {
 
 // Redraw columns;
 watch(
-  () => columnsDTO.value,
+  () => [columnsDTO.value, props.data],
   (newValue) => {
     if (tabulator.value?.initialized) {
-      tabulator.value?.setColumns(newValue);
+      tabulator.value?.setColumns(newValue[0]);
     }
-  }
+  },
+  { immediate: true, deep: true }
 );
 
 const emit = defineEmits(["selected", "update:modelValue"]);
@@ -335,5 +362,24 @@ onMounted(() => {
 .wrapper-table {
   border: 1px solid #4b4b4b59;
   border-radius: 5px;
+}
+
+.wrapper-table :deep {
+  & .tabulator-col-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: break-spaces !important;
+  }
+
+  .tabulator-col-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+  }
 }
 </style>

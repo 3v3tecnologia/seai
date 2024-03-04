@@ -13,15 +13,15 @@ export default {
     update: {},
   }),
   mutations: {
-    ["SET_LIST_CULTURE"](state, list) {
+    ["SET_LIST_WEIGHT"](state, list) {
       state.list = list;
     },
-    ["SET_CURRENT_CULTURE"](state, culture) {
+    ["SET_CURRENT_WEIGHT"](state, culture) {
       state.update = culture;
     },
   },
   actions: {
-    GET_CULTURES: {
+    GET_WEIGHTS: {
       async handler({ commit }, filters) {
         try {
           // const {
@@ -38,104 +38,128 @@ export default {
           const data = [
             {
               Id: 1,
+              cultureCycle: 1,
               Plant_Name: "Tomate",
-              HarvestDuration: 1,
-              Etr_Cycle_Total: 1,
-              Etp_Cycle_Total: "2",
-              Et0_Total: "3",
+              ProductivityPerKilo: 1,
+              ProductivityPerMeters: 1,
+              ProfitabilityPerMeters: "2",
+              ProfitabilityPerHectare: "2",
+              JobsPerHectare: "3",
+              JobsPerMeters: "3",
               Basin: "Banabuiú",
-              Etp_Cycle_Maximium: "4",
+              WaterConsumptionPerMeters: "4",
               Location_Name: "Localização1",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 2,
+              cultureCycle: 2,
               Plant_Name: "Maçã",
-              HarvestDuration: 5,
-              Etr_Cycle_Total: 5,
-              Etp_Cycle_Total: "6",
-              Et0_Total: "7",
+              ProductivityPerKilo: 5,
+              ProductivityPerMeters: 5,
+              ProfitabilityPerMeters: "6",
+              ProfitabilityPerHectare: "6",
+              JobsPerHectare: "7",
+              JobsPerMeters: "7",
               Basin: "Médio Jaguaribe",
-              Etp_Cycle_Maximium: "8",
+              WaterConsumptionPerMeters: "8",
               Location_Name: "Localização2",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 3,
+              cultureCycle: 3,
               Plant_Name: "Milho de lavanda azul",
-              HarvestDuration: 9,
-              Etr_Cycle_Total: 9,
-              Etp_Cycle_Total: "10",
-              Et0_Total: "11",
+              ProductivityPerKilo: 9,
+              ProductivityPerMeters: 9,
+              ProfitabilityPerMeters: "10",
+              ProfitabilityPerHectare: "10",
+              JobsPerHectare: "11",
+              JobsPerMeters: "11",
               Basin: "Baixo Jaguaribe",
-              Etp_Cycle_Maximium: "12",
+              WaterConsumptionPerMeters: "12",
               Location_Name: "Localização3",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 4,
+              cultureCycle: 4,
               Plant_Name: "Uva",
-              HarvestDuration: 1,
-              Etr_Cycle_Total: 1,
-              Etp_Cycle_Total: "14",
-              Et0_Total: "15",
+              ProductivityPerKilo: 1,
+              ProductivityPerMeters: 1,
+              ProfitabilityPerMeters: "14",
+              ProfitabilityPerHectare: "14",
+              JobsPerHectare: "15",
+              JobsPerMeters: "15",
               Basin: "Alto Jaguaribe",
-              Etp_Cycle_Maximium: "16",
+              WaterConsumptionPerMeters: "16",
               Location_Name: "Localização4",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 5,
+              cultureCycle: 5,
               Plant_Name: "Cenoura",
-              HarvestDuration: 1,
-              Etr_Cycle_Total: 1,
-              Etp_Cycle_Total: "18",
-              Et0_Total: "19",
+              ProductivityPerKilo: 1,
+              ProductivityPerMeters: 1,
+              ProfitabilityPerMeters: "18",
+              ProfitabilityPerHectare: "18",
+              JobsPerHectare: "19",
+              JobsPerMeters: "19",
               Basin: "Salgado",
-              Etp_Cycle_Maximium: "20",
+              WaterConsumptionPerMeters: "20",
               Location_Name: "Localização5",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 6,
+              cultureCycle: 6,
               Plant_Name: "Batata",
-              HarvestDuration: 2,
-              Etr_Cycle_Total: 2,
-              Etp_Cycle_Total: "22",
-              Et0_Total: "23",
+              ProductivityPerKilo: 2,
+              ProductivityPerMeters: 2,
+              ProfitabilityPerMeters: "22",
+              ProfitabilityPerHectare: "22",
+              JobsPerHectare: "23",
+              JobsPerMeters: "23",
               Basin: "Alto Jaguaribe",
-              Etp_Cycle_Maximium: "24",
+              WaterConsumptionPerMeters: "24",
               Location_Name: "Localização6",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 7,
+              cultureCycle: 7,
               Plant_Name: "Pêssego",
-              HarvestDuration: 2,
-              Etr_Cycle_Total: 2,
-              Etp_Cycle_Total: "26",
-              Et0_Total: "27",
+              ProductivityPerKilo: 2,
+              ProductivityPerMeters: 2,
+              ProfitabilityPerMeters: "26",
+              ProfitabilityPerHectare: "26",
+              JobsPerHectare: "27",
+              JobsPerMeters: "27",
               Basin: "Alto Jaguaribe",
-              Etp_Cycle_Maximium: "28",
+              WaterConsumptionPerMeters: "28",
               Location_Name: "Localização7",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
             },
             {
               Id: 8,
+              cultureCycle: 8,
               Plant_Name: "Abóbora",
-              HarvestDuration: 2,
-              Etr_Cycle_Total: 2,
-              Etp_Cycle_Total: "30",
-              Et0_Total: "31",
+              ProductivityPerKilo: 2,
+              ProductivityPerMeters: 2,
+              ProfitabilityPerMeters: "30",
+              ProfitabilityPerHectare: "30",
+              JobsPerHectare: "31",
+              JobsPerMeters: "31",
               Basin: "Alto Jaguaribe",
-              Etp_Cycle_Maximium: "32",
+              WaterConsumptionPerMeters: "32",
               Location_Name: "Localização8",
               CreatedAt: new Date().toISOString(),
               UpdatedAt: new Date().toISOString(),
@@ -194,7 +218,7 @@ export default {
           //   pageLimit,
           // };
 
-          commit("SET_LIST_CULTURE", {
+          commit("SET_LIST_WEIGHT", {
             data,
             // apiPagination,
           });
@@ -204,38 +228,7 @@ export default {
         }
       },
     },
-    CREATE_CULTURE: {
-      async handler(_, form) {
-        try {
-          const {
-            name,
-            cron_text_formatted,
-            priority,
-            retryLimit,
-            retryDelay,
-          } = form;
-
-          const data = {
-            name,
-            cron: cron_text_formatted.value,
-            data: null,
-            options: {
-              priority,
-              retryLimit,
-              retryDelay,
-            },
-          };
-
-          await http.post(`/jobs/schedule`, data);
-          toast.success("Rotina criada com sucesso");
-        } catch (e) {
-          console.error(e);
-          toast.error("Falha ao criar rotina");
-          throw Error(e?.response?.data?.error);
-        }
-      },
-    },
-    UPDATE_CULTURE: {
+    UPDATE_WEIGHT: {
       async handler(_, form) {
         try {
           const {
@@ -258,7 +251,7 @@ export default {
           };
 
           await http.put(`/jobs/schedule/`, data);
-          toast.success("Rotina atualizada com sucesso");
+          toast.success("Pesos atualizados com sucesso");
         } catch (e) {
           console.error(e);
           toast.error("Falha ao atualizar rotina");
@@ -266,37 +259,30 @@ export default {
         }
       },
     },
-    GET_CURRENT_CULTURE: {
-      async handler({ commit, dispatch, state }, id) {
+    GET_CURRENT_WEIGHT: {
+      async handler({ commit, dispatch, state }, basin) {
         try {
-          await dispatch("GET_CULTURES");
+          await dispatch("GET_WEIGHTS");
 
-          const culture = state.list.data.find((c) => c.id == id || c.Id == id);
+          const culture = state.list.data;
 
-          console.log("pediu dado de cultura e recebeu isso", culture);
+          console.log("pedi os dados do peso atual", basin);
 
-          commit("SET_CURRENT_CULTURE", culture);
+          commit("SET_CURRENT_WEIGHT", {
+            currentBasin: basin,
+            Weights: culture.map((culture) => {
+              // TODO
+              // REMOVE THAT LOGIC, THIS IS ONLY TO CHECK API REQUESTING
+              culture.cultureCycle = basin.value * 0.19;
+
+              return culture;
+            }),
+          });
         } catch (e) {
-          console.error("falhou ao pegar cultura atual");
-          commit("SET_CURRENT_CULTURE", {});
+          console.error("Falhou ao pegar dados de peso");
+          commit("SET_CURRENT_WEIGHT", {});
           console.error(e);
           toast.error(e);
-        }
-      },
-    },
-    DELETE_CULTURES: {
-      async handler(_, ids) {
-        try {
-          // await Promise.allSettled(
-          //   ids.map(
-          //     async (id) => await http.delete(`/jobs/schedule?name=${id}`)
-          //   )
-          // );
-          ids.forEach((id) => toast.success(`Cultura de id '${id}' deletado`));
-        } catch (e) {
-          console.error(e);
-          toast.error("Falha ao deletar cultura");
-          throw Error(e?.response?.data?.error);
         }
       },
     },
