@@ -12,10 +12,13 @@ export class BasinIndicatorsByCulture {
   private _indicatorsPerBasin: Map<
     string,
     {
-      Social: number;
-      Economic: number;
+      SocialPerHectare: number;
+      SocialPerMeters: number;
+      EconomicPerHectare: number;
+      EconomicPerMeters: number;
       Consumption: number;
-      Productivity: number;
+      ProductivityPerHectare: number;
+      ProductivityPerMeters: number;
     }
   > | null;
 
@@ -60,19 +63,25 @@ export class BasinIndicatorsByCulture {
   private calcAverageOfCultureIndicators(): Map<
     string,
     {
-      Social: number;
-      Economic: number;
+      SocialPerHectare: number;
+      SocialPerMeters: number;
+      EconomicPerHectare: number;
+      EconomicPerMeters: number;
       Consumption: number;
-      Productivity: number;
+      ProductivityPerHectare: number;
+      ProductivityPerMeters: number;
     }
   > {
     const culturesIndicatorsByBasin: Map<
       string,
       {
-        Social: number;
-        Economic: number;
+        SocialPerHectare: number;
+        SocialPerMeters: number;
+        EconomicPerHectare: number;
+        EconomicPerMeters: number;
         Consumption: number;
-        Productivity: number;
+        ProductivityPerHectare: number;
+        ProductivityPerMeters: number;
       }
     > = new Map();
 
@@ -109,11 +118,26 @@ export class BasinIndicatorsByCulture {
         totalProportionalArea += proportionalArea;
       }
 
+      const SocialPerHectare = this.calcAverage(social, totalProportionalArea);
+      const Consumption = this.calcAverage(consumption, totalProportionalArea);
+
+      const EconomicPerHectare = this.calcAverage(
+        profitability,
+        totalProportionalArea
+      );
+      const ProductivityPerHectare = this.calcAverage(
+        productivity,
+        totalProportionalArea
+      );
+
       culturesIndicatorsByBasin.set(name, {
-        Social: this.calcAverage(social, totalProportionalArea),
-        Consumption: this.calcAverage(consumption, totalProportionalArea),
-        Economic: this.calcAverage(profitability, totalProportionalArea),
-        Productivity: this.calcAverage(productivity, totalProportionalArea),
+        SocialPerHectare,
+        SocialPerMeters: SocialPerHectare / Consumption,
+        Consumption,
+        EconomicPerHectare,
+        EconomicPerMeters: EconomicPerHectare / Consumption,
+        ProductivityPerHectare,
+        ProductivityPerMeters: ProductivityPerHectare / Consumption,
       });
     }
 

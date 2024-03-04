@@ -46,14 +46,18 @@ export class DbManagementWeightsRepository
   async getByBasin(
     request: ManagementWeightsRepositoryDTO.GetByBasin.Request
   ): ManagementWeightsRepositoryDTO.GetByBasin.Response {
-    const result = await managementDb
+    const query = managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.WEIGHTS)
       .where({
         Id_Basin: request.Id_Basin,
-      })
-      .limit(request.limit)
-      .offset(request.pageNumber);
+      });
+
+    if (request.limit && request.pageNumber) {
+      query.limit(request.limit).offset(request.pageNumber);
+    }
+
+    const result = await query;
 
     if (!result.length) {
       return null;
@@ -63,10 +67,6 @@ export class DbManagementWeightsRepository
       CultureWeightsMapper.toDomain(row)
     );
 
-    return withPagination(weights, {
-      count: result.length,
-      limit: request.limit,
-      offset: request.pageNumber,
-    });
+    return weights;
   }
 }
