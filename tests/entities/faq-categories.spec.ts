@@ -1,6 +1,6 @@
-import { Category } from "../../../src/domain/entities/faq/category";
-import { CategoryDescription } from "../../../src/domain/entities/faq/category-description";
-import { CategoryTitle } from "../../../src/domain/entities/faq/category-title";
+import { Category } from "../../src/domain/entities/faq/category";
+import { CategoryDescription } from "../../src/domain/entities/faq/category-description";
+import { CategoryTitle } from "../../src/domain/entities/faq/category-title";
 
 describe("#FAQ Categories", () => {
   test("should not create a category with invalid title", () => {
