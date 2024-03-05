@@ -5,7 +5,7 @@ export type ManagementStudyIndicator = {
 
 export interface ManagementCensusStudy {
   Id_Basin: number;
-  Id_Culture: number;
+  Culture: number;
   Harvest: number;
   Farm: number;
   Productivity: Array<ManagementStudyIndicator>;

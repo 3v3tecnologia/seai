@@ -22,8 +22,6 @@ export class DbManagementStudiesRepository
       .batchInsert(DATABASES.MANAGEMENT.TABLES.STUDIES, toPersistency)
       .returning("Id_Basin");
 
-    console.log("[ManagementStudiesRepository] :: RESULT ", result);
-
     return DatabaseOperationOutputLogFactory.insert(
       DATABASES.MANAGEMENT.TABLES.STUDIES
     );
@@ -72,24 +70,23 @@ export class DbManagementStudiesRepository
     const raw = await managementDb.raw(
       `
       SELECT
-          s."Id_Culture"  AS "Id_Culture",
-          s."Id_Basin" ,
-          c."Name" AS "Culture",
-          s."Harvest" ,
-          s."Farm" ,
-          s."ProductivityPerKilo" ,
-          s."ProductivityPerMeters"
+              s."Culture",
+             s."Id_Basin" ,
+              c."Name" AS "Culture",
+              s."Harvest" ,
+              s."Farm" ,
+             s."ProductivityPerKilo" ,
+             s."ProductivityPerMeters"
       FROM
-          "Studies" s
-      INNER JOIN "Crop" c 
-      ON
-          c."Id" = s."Id_Culture"
-      WHERE s."Id_Basin" = ?
+                    "Studies" s
+      INNER JOIN "Crop" c
+              ON
+                  c."Name" = s."Culture"
+      WHERE
+          s."Id_Basin" = ?
       `,
       [request.Id_Basin]
     );
-
-    console.log("[ManagementStudiesRepository] :: RESULT ", raw.rows);
 
     if (!raw.rows.length) {
       return null;
@@ -99,7 +96,7 @@ export class DbManagementStudiesRepository
       string,
       {
         Id_Basin: number;
-        Id_Culture: number;
+        Culture: number;
         Harvest: number;
         Farm: number;
         ProductivityPerKilo: number | null;
@@ -110,7 +107,7 @@ export class DbManagementStudiesRepository
     raw.rows.forEach((raw: any) => {
       const culture = {
         Id_Basin: raw.Id_Basin,
-        Id_Culture: raw.Id_Culture,
+        Culture: raw.Culture,
         Harvest: raw.Harvest, //safra
         Farm: raw.Farm, // cultivo
         ProductivityPerKilo: raw.ProductivityPerKilo,

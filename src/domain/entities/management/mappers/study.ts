@@ -4,7 +4,7 @@ export class ManagementStudyMapper {
   static toDomain(row: any): ManagementCensusStudy {
     return {
       Id_Basin: Number(row.Id_Basin),
-      Id_Culture: Number(row.Id_Culture),
+      Culture: Number(row.Culture),
       Harvest: Number(row.Harvest),
       Farm: Number(row.Farm),
       Productivity: [
@@ -23,7 +23,7 @@ export class ManagementStudyMapper {
   static toPersistency(study: ManagementCensusStudy): any {
     return {
       Id_Basin: study.Id_Basin,
-      Id_Culture: study.Id_Culture,
+      Culture: study.Culture,
       Harvest: study.Harvest,
       Farm: study.Farm,
       ProductivityPerKilo: study.Productivity[0].Value,
