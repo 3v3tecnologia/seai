@@ -88,7 +88,7 @@ export class DbProfitabilitySecurityCensusRepository
       const culture = {
         Name: raw.Culture,
         CultivationPeriod: raw.CultivationPeriod,
-        IrrigatedArea: raw.IrrigatedArea,
+        IrrigatedArea: raw.IrrigatedArea ? Number(raw.IrrigatedArea) : 0,
       };
 
       const register = Number(raw.IdProducer);

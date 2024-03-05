@@ -1,68 +1,40 @@
 import { CultureWeightsToPersistency } from "../../../use-cases/_ports/repositories/management-weights.repository";
-import { ManagementWeights } from "../weights";
+import { CultureWeights } from "../weights";
 
 export class CultureWeightsMapper {
-  static toDomain(row: any): ManagementWeights {
-    return new ManagementWeights({
+  static toDomain(row: any): CultureWeights {
+    return new CultureWeights({
       id_basin: Number(row.Id_Basin),
-      id_culture: Number(row.Id_Culture),
-      productivity: [
-        {
-          value: Number(row.ProductivityPerKilo) || null,
-          unity: "Kg/ha",
-        },
-        {
-          value: Number(row.ProductivityPerMeters) || null,
-          unity: "kg/m³",
-        },
-      ],
-      profitability: [
-        {
-          value: Number(row.ProfitabilityPerHectare) || null,
-          unity: "R$/ha",
-        },
-        {
-          value: Number(row.ProfitabilityPerMeters) || null,
-          unity: "R$/m³",
-        },
-      ],
-      jobs: [
-        {
-          value: Number(row.JobsPerMeters) || null,
-          unity: "1000m³",
-        },
-        {
-          value: Number(row.JobsPerHectare) || null,
-          unity: "ha",
-        },
-      ],
-      waterConsumption: [
-        {
-          value: Number(row.WaterConsumptionPerMeters) || null,
-          unity: "m",
-        },
-        {
-          value: Number(row.WaterConsumptionPerHectare) || null,
-          unity: "ha",
-        },
-      ],
+      culture: row.Culture,
+      productivity: new Map([
+        ["Kg/ha", Number(row.ProductivityPerKilo)],
+        ["Kg/ha", Number(row.ProductivityPerMeters)],
+      ]),
+      profitability: new Map([
+        ["R$/ha", Number(row.ProfitabilityPerHectare)],
+        ["R$/m³", Number(row.ProfitabilityPerMeters)],
+      ]),
+      jobs: new Map([
+        ["1000m³", Number(row.JobsPerMeters)],
+        ["ha", Number(row.JobsPerHectare)],
+      ]),
+      waterConsumption: new Map([["m³/ha", Number(row.WaterConsumption)]]),
     });
   }
 
   static toPersistency(
-    weights: Array<ManagementWeights>
+    weights: Array<CultureWeights>
   ): Array<CultureWeightsToPersistency> {
     return weights.map((weight) => ({
       Id_Basin: weight.idBasin,
-      Id_Culture: weight.idCulture,
-      ProductivityPerKilo: weight.productivity[0].value,
-      ProductivityPerMeters: weight.productivity[1].value,
-      ProfitabilityPerHectare: weight.profitability[0].value,
-      ProfitabilityPerMeters: weight.profitability[1].value,
-      JobsPerMeters: weight.jobs[0].value,
-      JobsPerHectare: weight.jobs[1].value,
-      WaterConsumptionPerHectare: weight.waterConsumption[0].value,
-      WaterConsumptionPerMeters: weight.waterConsumption[1].value,
+      Culture: weight.culture,
+      ProductivityPerKilo: weight.productivity.get("Kg/ha") || null,
+      ProductivityPerMeters: weight.productivity.get("kg/m³") || null,
+      ProfitabilityPerHectare: weight.profitability.get("R$/ha") || null,
+      ProfitabilityPerMeters: weight.profitability.get("R$/m³") || null,
+      JobsPerMeters: weight.jobs.get("1000m³") || null,
+      JobsPerHectare: weight.jobs.get("ha") || null,
+      WaterConsumption: weight.waterConsumption.get("m³/ha") || null,
     }));
   }
 }

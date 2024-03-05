@@ -15,6 +15,7 @@ import {
 import { DbManagementStudiesRepository } from "../../../../infra/database/postgres/repositories/management-studies.repository";
 import { DbManagementWeightsRepository } from "../../../../infra/database/postgres/repositories/management-weights.repository";
 import { DbProducerRepository } from "../../../../infra/database/postgres/repositories/producer.repository";
+import { SecurityIndicatorsUseCaseFactory } from "./indicators.useCase.factory";
 
 export class ManagementUseCasesFactory {
   private static repository = new DbManagementStudiesRepository();
@@ -40,7 +41,10 @@ export class ManagementWeightsUseCasesFactory {
   }
 
   static makeGetManagementWeightsByBasin(): GetManagementWeightsByBasinUseCaseProtocol.UseCase {
-    return new GetManagementWeightsByBasin(this.repository);
+    return new GetManagementWeightsByBasin(
+      this.repository,
+      SecurityIndicatorsUseCaseFactory.makeGetCultureIndicatorsFromBasin()
+    );
   }
 
   static makeInsertManagementWeights(): InsertManagementWeightsByBasin {

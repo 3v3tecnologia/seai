@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementWeights } from "../../entities/management/weights";
+import { CultureWeights } from "../../entities/management/weights";
 import { Command } from "../_ports/core/command";
 import { ManagementWeightsRepositoryProtocol } from "../_ports/repositories/management-weights.repository";
 
@@ -34,7 +34,7 @@ export class InsertManagementWeightsByBasin
 export namespace InsertManagementWeightsByBasinUseCaseProtocol {
   export type Request = {
     Id_Basin: number;
-    Weights: Array<ManagementWeights>;
+    Weights: Array<CultureWeights>;
   };
 
   export type Response = Promise<Either<Error, string>>;

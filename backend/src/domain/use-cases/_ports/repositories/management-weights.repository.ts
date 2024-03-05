@@ -11,8 +11,7 @@ export type CultureWeightsToPersistency = {
   ProfitabilityPerMeters: number | null;
   JobsPerMeters: number | null;
   JobsPerHectare: number | null;
-  WaterConsumptionPerHectare: number | null;
-  WaterConsumptionPerMeters: number | null;
+  WaterConsumption: number | null;
 };
 
 export namespace ManagementWeightsRepositoryDTO {

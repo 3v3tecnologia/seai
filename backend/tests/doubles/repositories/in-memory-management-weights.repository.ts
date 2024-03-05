@@ -41,10 +41,6 @@ export class InMemoryManagementWeightsRepository
       CultureWeightsMapper.toDomain(row)
     );
 
-    return withPagination(weights, {
-      count: weights.length,
-      limit: request.limit,
-      offset: request.pageNumber,
-    });
+    return weights;
   }
 }

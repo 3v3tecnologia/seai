@@ -91,7 +91,7 @@ export class DbWorkesrSecurityCensusRepository
             Basin: string;
             Workers: number;
           }
-        >producers.get(registerNumber)).Workers += raw.Workers;
+        >producers.get(registerNumber)).Workers += Number(raw.Workers);
 
         return;
       }
@@ -99,7 +99,7 @@ export class DbWorkesrSecurityCensusRepository
       producers.set(registerNumber, {
         IdBasin: raw.IdBasin || null,
         Basin: raw.Basin || null,
-        Workers: raw.Workers || 0,
+        Workers: Number(raw.Workers) || 0,
       });
     });
 

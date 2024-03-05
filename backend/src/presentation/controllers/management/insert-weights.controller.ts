@@ -1,4 +1,4 @@
-import { ManagementWeights } from "../../../domain/entities/management/weights";
+import { CultureWeights } from "../../../domain/entities/management/weights";
 import { InsertManagementWeightsByBasin } from "../../../domain/use-cases/management/insert-weights";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
@@ -46,6 +46,6 @@ export namespace InsertManagementWeightsByBasinByBasinControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Data: Array<ManagementWeights>;
+    Data: Array<CultureWeights>;
   };
 }

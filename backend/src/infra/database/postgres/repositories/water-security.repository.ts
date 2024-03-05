@@ -47,9 +47,9 @@ export class DbWaterSecurityCensusRepository
 
     return data.map((superficial: any) => {
       return {
-        Register: superficial.Register,
+        Register: Number(superficial.Register),
         IdBasin: superficial.IdBasin,
-        Volume: superficial.Volume,
+        Volume: Number(superficial.Volume),
       };
     });
   }
@@ -93,9 +93,9 @@ export class DbWaterSecurityCensusRepository
 
     return data.map((superficial: any) => {
       return {
-        Register: superficial.Register,
+        Register: Number(superficial.Register),
         IdBasin: superficial.IdBasin,
-        Volume: superficial.Volume,
+        Volume: Number(superficial.Volume),
       };
     });
   }
@@ -112,6 +112,7 @@ export class DbWaterSecurityCensusRepository
       }
     >();
 
+    // Promise all
     for (const consume of [
       ...(await this.getSuperficialVolumeGroupedByProducer(basinId)),
       ...(await this.getUnderGroundVolumeGroupedByProducer(basinId)),
