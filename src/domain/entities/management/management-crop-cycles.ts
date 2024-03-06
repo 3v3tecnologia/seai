@@ -1,4 +1,4 @@
-export type CultureCyclesDTO = {
+export type ManagementCropCycle = {
   stage: number;
   title: string;
   durationInDays: number;
