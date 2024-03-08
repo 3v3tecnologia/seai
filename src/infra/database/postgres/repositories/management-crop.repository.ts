@@ -126,6 +126,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     });
 
     const cropOrError = ManagementCrop.create({
+      id: rawCrop.Id,
       name: rawCrop.Name,
       locationName: rawCrop.Location_Name,
       cycles,
