@@ -1,11 +1,16 @@
-import { ManagementCrop } from "../../../entities/management/management-crop";
+import {
+  ManagementCrop,
+  ManagementCropParams,
+} from "../../../entities/management/management-crop";
 
 export interface ManagementCropRepository {
   create(culture: ManagementCrop): Promise<number | null>;
 
   update(culture: ManagementCrop): Promise<void>;
 
-  exists(crop: string | number): Promise<boolean>;
+  nameExists(crop: string | number): Promise<boolean>;
+
+  idExists(crop: string | number): Promise<boolean>;
 
   delete(idCulture: number): Promise<void>;
 
@@ -13,5 +18,5 @@ export interface ManagementCropRepository {
 
   findCropByName(name: string): Promise<ManagementCrop | null>;
 
-  find(): Promise<Array<ManagementCrop> | null>;
+  find(): Promise<Array<ManagementCropParams> | null>;
 }

@@ -1,6 +1,10 @@
-import { ManagementCrop } from "../../../src/domain/entities/management/management-crop";
+import {
+  ManagementCrop,
+  ManagementCropParams,
+} from "../../../src/domain/entities/management/management-crop";
 import { ManagementCropRepository } from "../../../src/domain/use-cases/_ports/repositories/management-crop-repository";
 
+/*
 export class InMemoryManagementCropRepository
   implements ManagementCropRepository
 {
@@ -11,8 +15,8 @@ export class InMemoryManagementCropRepository
     this._data = data;
   }
 
-  async find(): Promise<ManagementCrop[] | null> {
-    return this._data;
+  async find(): Promise<ManagementCropParams[] | null> {
+    throw new Error("Method not implemented.");
   }
 
   public get data() {
@@ -59,3 +63,4 @@ export class InMemoryManagementCropRepository
     return culture || null;
   }
 }
+*/

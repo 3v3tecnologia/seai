@@ -2,9 +2,10 @@ import { Either, right } from "../../../shared/Either";
 import { ManagementCropCycle } from "./management-crop-cycles";
 
 export type ManagementCropParams = {
+  id?: number;
   name: string;
   locationName: string | null;
-  cycles: Array<ManagementCropCycle>;
+  cycles?: Array<ManagementCropCycle>;
 };
 
 export class ManagementCrop {
@@ -13,10 +14,10 @@ export class ManagementCrop {
   private readonly _locationName: string | null;
   private readonly _cycles: Array<ManagementCropCycle>;
 
-  private constructor(props: ManagementCropParams, id?: number) {
-    this._id = id || null;
+  private constructor(props: ManagementCropParams) {
+    this._id = props.id || null;
     this._name = props.name;
-    this._cycles = props.cycles;
+    this._cycles = props.cycles || [];
     this._locationName = props.locationName;
 
     Object.freeze(this);
@@ -42,12 +43,9 @@ export class ManagementCrop {
     return this._cycles;
   }
 
-  static create(
-    props: ManagementCropParams,
-    id?: number
-  ): Either<Error, ManagementCrop> {
+  static create(props: ManagementCropParams): Either<Error, ManagementCrop> {
     // TO-DO : check cycles validations
-    const culture = new ManagementCrop(props, id);
+    const culture = new ManagementCrop(props);
 
     return right(culture);
   }

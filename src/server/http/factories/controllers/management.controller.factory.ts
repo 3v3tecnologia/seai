@@ -6,12 +6,14 @@ import {
   InsertManagementStudiesByBasinController,
   InsertManagementWeightsByBasinController,
 } from "../../../../presentation/controllers/management";
+import { ManagementCropController } from "../../../../presentation/controllers/management/crop.controller";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
 import {
   ManagementUseCasesFactory,
   ManagementWeightsUseCasesFactory,
   SystemLogsUseCaseFactory,
+  managementCropUseCasesFactory,
 } from "../use-cases";
 
 export class ManagementControllersFactory {
@@ -63,3 +65,7 @@ export class ManagementControllersFactory {
     );
   }
 }
+
+export const managementControllerFactory = new ManagementCropController(
+  managementCropUseCasesFactory
+);
