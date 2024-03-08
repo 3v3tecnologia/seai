@@ -57,12 +57,12 @@ export class ManagementCropController {
   async getById(params: ManagementCropDTO.GetById.Input) {
     const result = await this._useCases.getById(params);
 
-    return ok(result);
+    return ok(result.value);
   }
   async getAll(params: ManagementCropDTO.GetById.Input) {
     const result = await this._useCases.getAll();
 
-    return ok(result);
+    return ok(result.value);
   }
 
   async update(
