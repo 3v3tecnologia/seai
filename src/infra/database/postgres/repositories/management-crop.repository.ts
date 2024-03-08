@@ -79,6 +79,8 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       .where({ Name: crop })
       .first();
 
+    console.log(!!result);
+
     return !!result;
   }
 

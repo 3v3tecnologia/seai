@@ -106,9 +106,17 @@ export class CropUseCases
     >
   > {
     // Id or name?
-    const alreadyExists = await this._repository.nameExists(params.name);
+    const exists = await this._repository.idExists(params.id);
 
-    if (alreadyExists) {
+    if (!exists) {
+      return left(new ManagementCropErrors.CropNotExistsError());
+    }
+
+    // Id or name?
+    const nameAlreadyExists =
+      (await this._repository.nameExists(params.name)) === true;
+
+    if (nameAlreadyExists) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(params.name));
     }
 
