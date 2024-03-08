@@ -238,7 +238,6 @@ export class DbEquipmentsRepository
       .andWhereNot({ IdRead: params.idRead })
       .first();
 
-    console.log(measure);
     if (!measure) {
       return false;
     }

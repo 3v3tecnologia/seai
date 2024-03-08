@@ -1,9 +1,9 @@
-import { BasinIndicatorsByCulture } from "../../../../src/domain/entities/management/basin-indicators-by-culture";
-import { GetCulturesIndicatorsFromBasin } from "../../../../src/domain/use-cases/census/fetch-cultures-indicators-by-basin";
-import { InMemoryStudiesRepository } from "../../../doubles/repositories/in-memory-management-studies.repository";
-import { InMemoryProfitabilitySecurityRepository } from "../../../doubles/repositories/in-memory-profitability.repository";
-import { InMemoryWaterSecurityRepository } from "../../../doubles/repositories/in-memory-water-security.repository";
-import { InMemoryWorkersSecurityRepository } from "../../../doubles/repositories/in-memory-workers.repository";
+import { BasinIndicatorsByCulture } from "../../../src/domain/entities/management/basin-indicators-by-culture";
+import { GetCulturesIndicatorsFromBasin } from "../../../src/domain/use-cases/census";
+import { InMemoryStudiesRepository } from "../../doubles/repositories/in-memory-management-studies.repository";
+import { InMemoryProfitabilitySecurityRepository } from "../../doubles/repositories/in-memory-profitability.repository";
+import { InMemoryWaterSecurityRepository } from "../../doubles/repositories/in-memory-water-security.repository";
+import { InMemoryWorkersSecurityRepository } from "../../doubles/repositories/in-memory-workers.repository";
 
 describe("Farms indicators", () => {
   test("Should be able to calculate profitability by producer with monoculture", async function () {

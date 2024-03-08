@@ -1,4 +1,4 @@
-import { User, UserTypes } from "../../../src/domain/entities/user/user";
+import { User, UserTypes } from "../../src/domain/entities/user/user";
 
 // npx jest user.spec.ts
 describe("#User entity", () => {

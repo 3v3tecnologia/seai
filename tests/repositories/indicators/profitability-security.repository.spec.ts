@@ -1,4 +1,4 @@
-import { InMemoryProfitabilitySecurityRepository } from "../../../doubles/repositories/in-memory-profitability.repository";
+import { InMemoryProfitabilitySecurityRepository } from "../../doubles/repositories/in-memory-profitability.repository";
 
 describe("Profitability Security Repository", () => {
   test("should be able to list profitability grouped by producer when basin id is provided", async () => {

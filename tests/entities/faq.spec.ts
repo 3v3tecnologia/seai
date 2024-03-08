@@ -1,6 +1,6 @@
-import { Categories } from "../../../src/domain/entities/faq/categories";
-import { Category } from "../../../src/domain/entities/faq/category";
-import { Faq } from "../../../src/domain/entities/faq/faq";
+import { Categories } from "../../src/domain/entities/faq/categories";
+import { Category } from "../../src/domain/entities/faq/category";
+import { Faq } from "../../src/domain/entities/faq/faq";
 
 let categories: Categories | null = null;
 describe("#FAQ", () => {

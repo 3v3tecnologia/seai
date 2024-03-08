@@ -1,4 +1,5 @@
 import {
+  CropUseCases,
   DeleteManagementStudiesByBasin,
   DeleteManagementWeightsByBasin,
   GetManagementStudiesByBasin,
@@ -16,6 +17,7 @@ import { DbManagementStudiesRepository } from "../../../../infra/database/postgr
 import { DbManagementWeightsRepository } from "../../../../infra/database/postgres/repositories/management-weights.repository";
 import { DbProducerRepository } from "../../../../infra/database/postgres/repositories/producer.repository";
 import { SecurityIndicatorsUseCaseFactory } from "./indicators.useCase.factory";
+import { DbManagementCropRepository } from "../../../../infra/database/postgres/repositories/management-crop.repository";
 
 export class ManagementUseCasesFactory {
   private static repository = new DbManagementStudiesRepository();
@@ -51,3 +53,7 @@ export class ManagementWeightsUseCasesFactory {
     return new InsertManagementWeightsByBasin(this.repository);
   }
 }
+
+export const managementCropUseCasesFactory = new CropUseCases(
+  new DbManagementCropRepository()
+);
