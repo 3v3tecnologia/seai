@@ -34,7 +34,7 @@ export namespace ManagementCropDTO {
     export type Input = {
       id: number;
     };
-    export type Output = ManagementCrop | null;
+    export type Output = ManagementCropParams | null;
   }
 
   export namespace GetAll {

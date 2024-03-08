@@ -99,7 +99,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       .where({ Id: idCrop })
       .del();
   }
-  async findCropById(id: number): Promise<ManagementCrop | null> {
+  async findCropById(id: number): Promise<ManagementCropParams | null> {
     const result = await managementDb.raw(
       `
       SELECT * FROM "Crop" c 
@@ -125,14 +125,21 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       };
     });
 
-    const crop = ManagementCrop.create({
+    const cropOrError = ManagementCrop.create({
       name: rawCrop.Name,
       locationName: rawCrop.Location_Name,
       cycles,
     });
 
-    if (crop.isRight()) {
-      return crop.value as ManagementCrop;
+    if (cropOrError.isRight()) {
+      const crop = cropOrError.value as ManagementCrop;
+
+      return {
+        id: crop.id as number,
+        name: crop.name,
+        locationName: crop.location,
+        cycles: crop.cycles,
+      };
     }
 
     return null;

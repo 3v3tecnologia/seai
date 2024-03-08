@@ -94,6 +94,7 @@ export class CropUseCases
     >
   > {
     const crop = await this._repository.findCropById(params.id);
+
     return right(crop);
   }
 

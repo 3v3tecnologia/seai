@@ -14,7 +14,7 @@ export interface ManagementCropRepository {
 
   delete(idCulture: number): Promise<void>;
 
-  findCropById(id: number): Promise<ManagementCrop | null>;
+  findCropById(id: number): Promise<ManagementCropParams | null>;
 
   findCropByName(name: string): Promise<ManagementCrop | null>;
 
