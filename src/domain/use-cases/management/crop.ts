@@ -113,14 +113,14 @@ export class CropUseCases
     }
 
     // Id or name?
-    const nameAlreadyExists =
-      (await this._repository.nameExists(params.name)) === true;
+    const cropWithSameName = await this._repository.findCropByName(params.name);
 
-    if (nameAlreadyExists) {
+    if (cropWithSameName && cropWithSameName.id !== params.id) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(params.name));
     }
 
     const cultureOrError = ManagementCrop.create({
+      id: params.id,
       cycles: params.cycles,
       locationName: params.locationName,
       name: params.name,

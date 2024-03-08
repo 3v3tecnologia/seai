@@ -29,7 +29,6 @@ export class DbManagementCropRepository implements ManagementCropRepository {
           culture.cycles.map((cycle) => {
             return {
               FK_Crop: id_crop as number,
-              Stage_Cycle: cycle.stage,
               Stage_Title: cycle.title,
               Duration_In_Days: cycle.durationInDays,
               KC: cycle.KC,
@@ -42,11 +41,12 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     return id_crop;
   }
   async update(culture: ManagementCrop): Promise<void> {
+    console.log(culture);
     await managementDb.transaction(async (trx) => {
       await trx(DATABASES.MANAGEMENT.TABLES.CROP)
         .update({
           Name: culture.name,
-          Altitude: culture.location,
+          Location_Name: culture.location,
           UpdatedAt: managementDb.fn.now(),
         })
         .where({
@@ -54,7 +54,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
         });
 
       await trx(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
-        .where({ Id: culture.id })
+        .where({ FK_Crop: culture.id })
         .del();
 
       await trx.batchInsert(
@@ -62,7 +62,6 @@ export class DbManagementCropRepository implements ManagementCropRepository {
         culture.cycles.map((cycle) => {
           return {
             FK_Crop: culture.id,
-            Stage_Cycle: cycle.stage,
             Stage_Title: cycle.title,
             Duration_In_Days: cycle.durationInDays,
             KC: cycle.KC,
@@ -79,7 +78,8 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       .where({ Name: crop })
       .first();
 
-    console.log(!!result);
+    if (!result) {
+    }
 
     return !!result;
   }
@@ -109,17 +109,16 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       [id]
     );
 
-    const data: any = result?.rows[0];
+    const data: any = result?.rows;
 
-    if (!data) {
+    if (!data.length) {
       return null;
     }
 
-    const rawCrop = data;
+    const rawCrop = data[0];
 
     const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
       return {
-        stage: row.Stage_Cycle,
         title: row.Stage_Title,
         durationInDays: row.Duration_In_Days,
         KC: row.KC,
@@ -158,6 +157,41 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     });
   }
   async findCropByName(name: string): Promise<ManagementCrop | null> {
-    throw new Error("Method not implemented.");
+    const result = await managementDb.raw(
+      `
+      SELECT * FROM "Crop" c 
+      INNER JOIN "Crop_Cycle" cc 
+      ON c."Name"  = ? 
+    `,
+      [name]
+    );
+
+    const data: any = result?.rows[0];
+
+    if (!data) {
+      return null;
+    }
+
+    const rawCrop = data;
+
+    const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
+      return {
+        title: row.Stage_Title,
+        durationInDays: row.Duration_In_Days,
+        KC: row.KC,
+      };
+    });
+
+    const crop = ManagementCrop.create({
+      name: rawCrop.Name,
+      locationName: rawCrop.Location_Name,
+      cycles,
+    });
+
+    if (crop.isRight()) {
+      return crop.value as ManagementCrop;
+    }
+
+    return null;
   }
 }

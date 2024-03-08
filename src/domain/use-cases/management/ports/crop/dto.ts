@@ -6,7 +6,6 @@ import {
 export namespace ManagementCropDTO {
   export namespace Create {
     type CreateManagementCropCyclesInputDTO = {
-      stage: number;
       title: string;
       durationInDays: number;
       KC: number;
@@ -45,7 +44,6 @@ export namespace ManagementCropDTO {
 
   export namespace Update {
     type UpdateManagementCropCyclesInputDTO = {
-      stage: number;
       title: string;
       durationInDays: number;
       KC: number;
