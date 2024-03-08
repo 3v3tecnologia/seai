@@ -4,7 +4,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 
 const TAGS = ["Management"];
 
-export const MEASURES = {
+export const MANAGEMENT = {
   [`${BASE_URL.V1}/management/crop`]: {
     get: {
       tags: TAGS,
