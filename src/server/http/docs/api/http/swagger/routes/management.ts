@@ -41,6 +41,55 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Create crop",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                name: "FEIJÃO",
+                locationName: "FORTALEZA",
+                cycles: [
+                  {
+                    stage: 1,
+                    title: "test",
+                    durationInDays: 12,
+                    KC: 54,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao criar cultura 4.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
   },
   [`${BASE_URL.V1}/management/crop/{id}`]: {
     get: {
@@ -67,54 +116,26 @@ export const MEASURES = {
                 type: "object",
                 example: {
                   data: {
-                    IdRead: 1,
-                    IdEquipment: 1,
-                    Time: "2023-11-20T00:00:00.000Z",
-                    Hour: null,
-                    Altitude: {
-                      Unit: "m",
-                      Value: 30.4,
-                    },
-                    TotalRadiation: {
-                      Unit: "W/m",
-                      Value: 255.68,
-                    },
-                    AverageRelativeHumidity: {
-                      Unit: "%",
-                      Value: 74.87,
-                    },
-                    MinRelativeHumidity: {
-                      Unit: "%",
-                      Value: 52.41,
-                    },
-                    MaxRelativeHumidity: {
-                      Unit: "%",
-                      Value: 87.5,
-                    },
-                    AverageAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 28.31,
-                    },
-                    MaxAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 32.97,
-                    },
-                    MinAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 25.29,
-                    },
-                    AtmosphericPressure: {
-                      Unit: "°C",
-                      Value: 1008.94,
-                    },
-                    WindVelocity: {
-                      Unit: "m/s",
-                      Value: 3.5,
-                    },
-                    ETO: {
-                      Unit: "mm",
-                      Value: 4.911332,
-                    },
+                    id: 3,
+                    name: "ALFACE",
+                    locationName: "FORTALEZA",
+                    cycles: [
+                      {
+                        title: "test",
+                        durationInDays: 12,
+                        KC: 54,
+                      },
+                      {
+                        title: "test",
+                        durationInDays: 12,
+                        KC: 54,
+                      },
+                      {
+                        title: "test",
+                        durationInDays: 12,
+                        KC: 54,
+                      },
+                    ],
                   },
                 },
               },
@@ -131,7 +152,7 @@ export const MEASURES = {
         {
           name: "id",
           in: "path",
-          description: "Equipment Id",
+          description: "Crop Id",
           required: true,
           schema: {
             type: "number",
@@ -143,27 +164,17 @@ export const MEASURES = {
           "application/json": {
             schema: {
               type: "object",
-              properties: {
-                TotalRadiation: "number",
-                AverageRelativeHumidity: "number",
-                MinRelativeHumidity: "number",
-                MaxRelativeHumidity: "number",
-                AverageAtmosphericTemperature: "number",
-                MaxAtmosphericTemperature: "number",
-                MinAtmosphericTemperature: "number",
-                AtmosphericPressure: "number",
-                ETO: "number",
-              },
               example: {
-                TotalRadiation: 1,
-                AverageRelativeHumidity: 11.4,
-                MinRelativeHumidity: 11.4,
-                MaxRelativeHumidity: 11.4,
-                AverageAtmosphericTemperature: 11.4,
-                MaxAtmosphericTemperature: 11.4,
-                MinAtmosphericTemperature: 11.4,
-                AtmosphericPressure: 11.4,
-                ETO: 11.4,
+                name: "LIMÃO",
+                locationName: "ESTADOS",
+                cycles: [
+                  {
+                    stage: 1,
+                    title: "test",
+                    durationInDays: 12,
+                    KC: 54,
+                  },
+                ],
               },
             },
           },
@@ -184,7 +195,45 @@ export const MEASURES = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao atualizar leitura de estação 5.",
+                  data: "Sucesso ao atualizar cultura  5.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Crop Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao deletar cultura  5.",
                 },
               },
             },
