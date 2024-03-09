@@ -4,7 +4,6 @@ export * from "./equipments.controller.factory";
 export * from "./faq.controller.factory";
 export * from "./indicators-census.controller.factory";
 export * from "./jobs.controller.factory";
-export * from "./management.controller.factory";
 export * from "./newsletter.controller.factory";
 export * from "./system-logs.controller.factory";
 export * from "./user.controller.factory";

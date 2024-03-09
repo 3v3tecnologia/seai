@@ -61,7 +61,7 @@ export class SecurityIndicatorsUseCaseFactory {
       new DbProfitabilitySecurityCensusRepository(),
       new DbWorkesrSecurityCensusRepository(),
       new DbWaterSecurityCensusRepository(),
-      new DbManagementStudiesRepository()
+      DbManagementStudiesRepository
     );
   }
 }

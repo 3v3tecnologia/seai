@@ -1,17 +1,11 @@
 import { CultureWeightsMapper } from "../../../../domain/entities/management/mappers/weights";
 import { DatabaseOperationOutputLogFactory } from "../../../../domain/use-cases/_ports/repositories/dto/output";
-import {
-  ManagementWeightsRepositoryDTO,
-  ManagementWeightsRepositoryProtocol,
-} from "../../../../domain/use-cases/_ports/repositories/management-weights.repository";
+import { ManagementWeightsRepositoryDTO } from "../../../../domain/use-cases/_ports/repositories/management-weights.repository";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { managementDb } from "../connection/knexfile";
-import { withPagination } from "./mapper/WithPagination";
 
-export class DbManagementWeightsRepository
-  implements ManagementWeightsRepositoryProtocol
-{
-  async create(
+export class DbManagementWeightsRepository {
+  static async create(
     request: ManagementWeightsRepositoryDTO.Create.Request
   ): ManagementWeightsRepositoryDTO.Create.Response {
     const toPersistency = CultureWeightsMapper.toPersistency(request);
@@ -27,7 +21,7 @@ export class DbManagementWeightsRepository
     );
   }
 
-  async delete(
+  static async delete(
     request: ManagementWeightsRepositoryDTO.Delete.Request
   ): ManagementWeightsRepositoryDTO.Delete.Response {
     const result = await managementDb(DATABASES.MANAGEMENT.TABLES.WEIGHTS)
@@ -43,7 +37,7 @@ export class DbManagementWeightsRepository
     );
   }
 
-  async getByBasin(
+  static async getByBasin(
     request: ManagementWeightsRepositoryDTO.GetByBasin.Request
   ): ManagementWeightsRepositoryDTO.GetByBasin.Response {
     const query = managementDb

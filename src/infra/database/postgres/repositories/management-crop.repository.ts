@@ -3,12 +3,11 @@ import {
   ManagementCropParams,
 } from "../../../../domain/entities/management/management-crop";
 import { ManagementCropCycle } from "../../../../domain/entities/management/management-crop-cycles";
-import { ManagementCropRepository } from "../../../../domain/use-cases/_ports/repositories/management-crop-repository";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { managementDb } from "../connection/knexfile";
 
-export class DbManagementCropRepository implements ManagementCropRepository {
-  async create(culture: ManagementCrop): Promise<number | null> {
+export class DbManagementCropRepository {
+  static async create(culture: ManagementCrop): Promise<number | null> {
     let id_crop: number | null = null;
 
     await managementDb.transaction(async (trx) => {
@@ -40,8 +39,8 @@ export class DbManagementCropRepository implements ManagementCropRepository {
 
     return id_crop;
   }
-  async update(culture: ManagementCrop): Promise<void> {
-    console.log(culture);
+
+  static async update(culture: ManagementCrop): Promise<void> {
     await managementDb.transaction(async (trx) => {
       await trx(DATABASES.MANAGEMENT.TABLES.CROP)
         .update({
@@ -71,7 +70,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     });
   }
 
-  async nameExists(crop: string | number): Promise<boolean> {
+  static async nameExists(crop: string | number): Promise<boolean> {
     const result = await managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.CROP)
@@ -84,7 +83,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     return !!result;
   }
 
-  async idExists(crop: string | number): Promise<boolean> {
+  static async idExists(crop: string | number): Promise<boolean> {
     const result = await managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.CROP)
@@ -94,12 +93,12 @@ export class DbManagementCropRepository implements ManagementCropRepository {
     return !!result;
   }
 
-  async delete(idCrop: number): Promise<void> {
+  static async delete(idCrop: number): Promise<void> {
     await managementDb(DATABASES.MANAGEMENT.TABLES.CROP)
       .where({ Id: idCrop })
       .del();
   }
-  async findCropById(id: number): Promise<ManagementCropParams | null> {
+  static async findCropById(id: number): Promise<ManagementCropParams | null> {
     const result = await managementDb.raw(
       `
       SELECT * FROM "Crop" c 
@@ -145,7 +144,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
 
     return null;
   }
-  async find(): Promise<ManagementCropParams[] | null> {
+  static async find(): Promise<ManagementCropParams[] | null> {
     const data = await managementDb
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .from(DATABASES.MANAGEMENT.TABLES.CROP);
@@ -164,7 +163,7 @@ export class DbManagementCropRepository implements ManagementCropRepository {
       };
     });
   }
-  async findCropByName(name: string): Promise<ManagementCrop | null> {
+  static async findCropByName(name: string): Promise<ManagementCrop | null> {
     const result = await managementDb.raw(
       `
       SELECT * FROM "Crop" c 

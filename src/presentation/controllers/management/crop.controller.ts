@@ -1,16 +1,12 @@
-import { CropUseCases } from "../../../domain/use-cases/management";
+import { ManagementCropUseCases } from "../../../domain/use-cases/management";
 import { ManagementCropDTO } from "../../../domain/use-cases/management/ports/crop/dto";
-import { CropUseCaseProtocol } from "../../../domain/use-cases/management/ports/crop/use-case";
 import { created, forbidden, ok, serverError } from "../helpers";
+import { HttpResponse } from "../ports";
 
-export class ManagementCropController {
-  public _useCases: CropUseCases;
-
-  constructor(cropUseCases: CropUseCases) {
-    this._useCases = cropUseCases;
-  }
-
-  async create(params: ManagementCropDTO.Create.Input & { accountId: number }) {
+export class ManagementCropControllers {
+  static async create(
+    params: ManagementCropDTO.Create.Input & { accountId: number }
+  ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Create.Input = {
         cycles: params.cycles,
@@ -18,7 +14,7 @@ export class ManagementCropController {
         locationName: params.locationName,
       };
 
-      const createdOrError = await this._useCases.create(dto);
+      const createdOrError = await ManagementCropUseCases.create(dto);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -33,13 +29,16 @@ export class ManagementCropController {
     }
   }
 
-  async delete(params: { accountId: number; id: number }) {
+  static async delete(params: {
+    accountId: number;
+    id: number;
+  }): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Delete.Input = {
         id: params.id,
       };
 
-      const deletedOrError = await this._useCases.delete(dto);
+      const deletedOrError = await ManagementCropUseCases.delete(dto);
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
@@ -54,20 +53,25 @@ export class ManagementCropController {
     }
   }
 
-  async getById(params: ManagementCropDTO.GetById.Input) {
-    const result = await this._useCases.getById(params);
+  static async getById(
+    params: ManagementCropDTO.GetById.Input
+  ): Promise<HttpResponse> {
+    const result = await ManagementCropUseCases.getById(params);
 
     return ok(result.value);
   }
-  async getAll(params: ManagementCropDTO.GetById.Input) {
-    const result = await this._useCases.getAll();
+
+  static async getAll(
+    params: ManagementCropDTO.GetById.Input
+  ): Promise<HttpResponse> {
+    const result = await ManagementCropUseCases.getAll();
 
     return ok(result.value);
   }
 
-  async update(
+  static async update(
     params: ManagementCropDTO.Update.Input & { accountId: number; id: number }
-  ) {
+  ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Update.Input = {
         id: params.id,
@@ -76,7 +80,7 @@ export class ManagementCropController {
         locationName: params.locationName,
       };
 
-      const updatedOrError = await this._useCases.update(dto);
+      const updatedOrError = await ManagementCropUseCases.update(dto);
 
       if (updatedOrError.isLeft()) {
         return forbidden(updatedOrError.value);

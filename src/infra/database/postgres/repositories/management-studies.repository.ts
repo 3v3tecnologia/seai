@@ -1,17 +1,12 @@
 import { ManagementStudyMapper } from "../../../../domain/entities/management/mappers/study";
 import { DatabaseOperationOutputLogFactory } from "../../../../domain/use-cases/_ports/repositories/dto/output";
-import {
-  ManagementStudiesRepositoryDTO,
-  ManagementStudiesRepositoryProtocol,
-} from "../../../../domain/use-cases/_ports/repositories/management-studies.repository";
+import { ManagementStudiesRepositoryDTO } from "../../../../domain/use-cases/_ports/repositories/management-studies.repository";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { managementDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
-export class DbManagementStudiesRepository
-  implements ManagementStudiesRepositoryProtocol
-{
-  async create(
+export class DbManagementStudiesRepository {
+  static async create(
     request: ManagementStudiesRepositoryDTO.Create.Request
   ): ManagementStudiesRepositoryDTO.Create.Response {
     const toPersistency = request.map((data) =>
@@ -27,7 +22,7 @@ export class DbManagementStudiesRepository
     );
   }
 
-  async delete(
+  static async delete(
     request: ManagementStudiesRepositoryDTO.Delete.Request
   ): ManagementStudiesRepositoryDTO.Delete.Response {
     await managementDb(DATABASES.MANAGEMENT.TABLES.STUDIES)
@@ -39,7 +34,7 @@ export class DbManagementStudiesRepository
     );
   }
 
-  async getByBasin(
+  static async getByBasin(
     request: ManagementStudiesRepositoryDTO.GetByBasin.Request
   ): ManagementStudiesRepositoryDTO.GetByBasin.Response {
     const result = await managementDb
@@ -64,7 +59,7 @@ export class DbManagementStudiesRepository
     });
   }
 
-  async getAllByBasin(
+  static async getAllByBasin(
     request: ManagementStudiesRepositoryDTO.GetAllByBasin.Request
   ): ManagementStudiesRepositoryDTO.GetAllByBasin.Response {
     const raw = await managementDb.raw(

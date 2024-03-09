@@ -1,16 +1,16 @@
 import { Express, Router } from "express";
 
 import {
-  loginRouter,
-  userRouter,
-  faqRouter,
+  accessKeyRouter,
+  backgroundJobsRouter,
   censusRouter,
   equipmentsRouter,
+  faqRouter,
+  loginRouter,
   newsRouter,
-  backgroundJobsRouter,
-  accessKeyRouter,
-  managementRouter,
+  userRouter,
 } from "./http-routes";
+import { managementRoutes } from "./http-routes/management/routes";
 
 export function setRoutes(app: Express): void {
   const router = Router();
@@ -23,7 +23,7 @@ export function setRoutes(app: Express): void {
   router.use("/news", newsRouter());
   router.use("/jobs", backgroundJobsRouter());
   router.use("/accessKey", accessKeyRouter());
-  router.use("/management", managementRouter());
+  router.use("/management", managementRoutes());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });

@@ -1,25 +1,12 @@
+import { DbManagementCropRepository } from "../../../infra/database/postgres/repositories/management-crop.repository";
 import { Either, left, right } from "../../../shared/Either";
 import { ManagementCrop } from "../../entities/management/management-crop";
-import { ManagementCropRepository } from "../_ports/repositories/management-crop-repository";
 import { ManagementCropErrors } from "./errors/management-crop-errors";
 
 import { ManagementCropDTO } from "./ports/crop/dto";
-import { CropUseCaseProtocol } from "./ports/crop/use-case";
 
-export class CropUseCases
-  implements
-    CropUseCaseProtocol.Create,
-    CropUseCaseProtocol.Delete,
-    CropUseCaseProtocol.GetAll,
-    CropUseCaseProtocol.GetById
-{
-  private _repository: ManagementCropRepository;
-
-  constructor(repository: ManagementCropRepository) {
-    this._repository = repository;
-  }
-
-  async create(
+export class ManagementCropUseCases {
+  static async create(
     params: ManagementCropDTO.Create.Input
   ): Promise<
     Either<
@@ -29,7 +16,7 @@ export class CropUseCases
   > {
     const { cycles, locationName, name } = params;
 
-    const alreadyExists = await this._repository.nameExists(name);
+    const alreadyExists = await DbManagementCropRepository.nameExists(name);
 
     if (alreadyExists) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(name));
@@ -47,7 +34,7 @@ export class CropUseCases
 
     const culture = cultureOrError.value as ManagementCrop;
 
-    const cultureId = await this._repository.create(culture);
+    const cultureId = await DbManagementCropRepository.create(culture);
 
     if (cultureId === null) {
       return left(new ManagementCropErrors.CropNotExistsError());
@@ -56,7 +43,7 @@ export class CropUseCases
     return right(cultureId);
   }
 
-  async delete(
+  static async delete(
     params: ManagementCropDTO.Delete.Input
   ): Promise<
     Either<
@@ -64,28 +51,29 @@ export class CropUseCases
       ManagementCropDTO.Delete.Output
     >
   > {
-    const notFound = (await this._repository.idExists(params.id)) === false;
+    const notFound =
+      (await DbManagementCropRepository.idExists(params.id)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    await this._repository.delete(params.id);
+    await DbManagementCropRepository.delete(params.id);
 
     return right(true);
   }
 
-  async getAll(): Promise<
+  static async getAll(): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
       ManagementCropDTO.GetAll.Output
     >
   > {
-    const crops = await this._repository.find();
+    const crops = await DbManagementCropRepository.find();
     return right(crops);
   }
 
-  async getById(
+  static async getById(
     params: ManagementCropDTO.GetById.Input
   ): Promise<
     Either<
@@ -93,12 +81,12 @@ export class CropUseCases
       ManagementCropDTO.GetById.Output
     >
   > {
-    const crop = await this._repository.findCropById(params.id);
+    const crop = await DbManagementCropRepository.findCropById(params.id);
 
     return right(crop);
   }
 
-  async update(
+  static async update(
     params: ManagementCropDTO.Update.Input
   ): Promise<
     Either<
@@ -107,14 +95,16 @@ export class CropUseCases
     >
   > {
     // Id or name?
-    const exists = await this._repository.idExists(params.id);
+    const exists = await DbManagementCropRepository.idExists(params.id);
 
     if (!exists) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
     // Id or name?
-    const cropWithSameName = await this._repository.findCropByName(params.name);
+    const cropWithSameName = await DbManagementCropRepository.findCropByName(
+      params.name
+    );
 
     if (cropWithSameName && cropWithSameName.id !== params.id) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(params.name));
@@ -133,7 +123,7 @@ export class CropUseCases
 
     const culture = cultureOrError.value as ManagementCrop;
 
-    const cultureId = await this._repository.update(culture);
+    const cultureId = await DbManagementCropRepository.update(culture);
 
     if (cultureId === null) {
       return left(new ManagementCropErrors.CropNotExistsError());
