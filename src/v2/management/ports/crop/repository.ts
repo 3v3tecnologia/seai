@@ -1,7 +1,4 @@
-import {
-  ManagementCrop,
-  ManagementCropParams,
-} from "../../entities/management-crop";
+import { ManagementCrop, ManagementCropParams } from "../../entities/crop";
 
 export interface ManagementCropRepository {
   create(culture: ManagementCrop): Promise<number | null>;

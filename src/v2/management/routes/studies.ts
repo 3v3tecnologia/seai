@@ -15,10 +15,4 @@ export const setupStudiesRoutes = (router: Router): void => {
     authorization,
     adaptRouteV2(ManagementStudiesControllers.getByBasin)
   );
-
-  router.delete(
-    "/studies/:id",
-    authorization,
-    adaptRouteV2(ManagementStudiesControllers.delete)
-  );
 };

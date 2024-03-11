@@ -4,11 +4,11 @@ import { DbManagementWeightsRepository } from "../infra/database/repositories/ma
 
 export class ManagementWeightsUseCases {
   static async create(params: {
-    Id_Basin: number;
-    Weights: Array<CultureWeights>;
+    id_basin: number;
+    weights: Array<CultureWeights>;
   }): Promise<Either<Error, string>> {
     const deleteLog = await DbManagementWeightsRepository.delete({
-      Id_Basin: params.Id_Basin,
+      id_basin: params.id_basin,
     });
 
     // this.addLog(deleteLog);
@@ -23,10 +23,10 @@ export class ManagementWeightsUseCases {
   }
 
   static async deleteByBasin(params: {
-    Id: number;
+    id: number;
   }): Promise<Either<Error, string>> {
     const deleteLog = await DbManagementWeightsRepository.delete({
-      Id_Basin: params.Id,
+      id_basin: params.id,
     });
 
     // this.addLog(deleteLog);
@@ -35,10 +35,10 @@ export class ManagementWeightsUseCases {
   }
 
   static async getByBasin(params: {
-    Id_Basin: number;
+    id_basin: number;
   }): Promise<Either<Error, CultureWeights | null>> {
     const weights = await DbManagementWeightsRepository.getByBasin({
-      Id_Basin: params.Id_Basin,
+      id_basin: params.id_basin,
     });
 
     if (weights == null) {

@@ -26,7 +26,7 @@ export class InMemoryManagementWeightsRepository
     request: ManagementWeightsRepositoryDTO.Delete.Request
   ): ManagementWeightsRepositoryDTO.Delete.Response {
     this.data.splice(
-      this.data.findIndex((weight) => weight.Id_Basin === request.Id_Basin),
+      this.data.findIndex((weight) => weight.Id_Basin === request.id_basin),
       1
     );
 

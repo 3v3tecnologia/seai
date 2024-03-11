@@ -6,19 +6,19 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { ManagementCensusStudy } from "../entities/study";
+import { CensusStudy } from "../entities/study";
 import { ManagementStudiesUseCases } from "../services/studies";
 
 export class ManagementStudiesControllers {
   static async create(request: {
     accountId: number;
     id: number;
-    Data: Array<ManagementCensusStudy>;
+    data: Array<CensusStudy>;
   }): Promise<HttpResponse> {
     try {
       const successOrError = await ManagementStudiesUseCases.create({
-        Id_Basin: request.id,
-        Data: request.Data,
+        id_basin: request.id,
+        data: request.data,
       });
 
       if (successOrError.isLeft()) {
@@ -40,35 +40,13 @@ export class ManagementStudiesControllers {
     } & InputWithPagination
   ): Promise<HttpResponse> {
     try {
-      const deletedOrError = await ManagementStudiesUseCases.getByBasin({
-        Id_Basin: Number(request.id),
-        ...formatPaginationInput(request.pageNumber, request.limit),
-      });
+      const deletedOrError = await ManagementStudiesUseCases.getByBasin(
+        request.id
+      );
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
       }
-
-      return created(deletedOrError.value);
-    } catch (error) {
-      console.error(error);
-      return serverError(error as Error);
-    }
-  }
-  static async delete(request: {
-    accountId: number;
-    id: number;
-  }): Promise<HttpResponse> {
-    try {
-      const deletedOrError = await ManagementStudiesUseCases.deleteByBasin({
-        Id: request.id,
-      });
-
-      if (deletedOrError.isLeft()) {
-        return forbidden(deletedOrError.value);
-      }
-
-      //   await this.userLogs.log(request.accountId, this.useCase);
 
       return created(deletedOrError.value);
     } catch (error) {

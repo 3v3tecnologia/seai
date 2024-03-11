@@ -14,9 +14,9 @@ export class ManagementCropControllers {
   ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Create.Input = {
-        cycles: params.cycles,
-        name: params.name,
-        locationName: params.locationName,
+        Cycles: params.Cycles,
+        Name: params.Name,
+        LocationName: params.LocationName,
       };
 
       const createdOrError = await ManagementCropUseCases.create(dto);
@@ -79,10 +79,10 @@ export class ManagementCropControllers {
   ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Update.Input = {
-        id: params.id,
-        cycles: params.cycles,
-        name: params.name,
-        locationName: params.locationName,
+        Id: params.Id,
+        Cycles: params.Cycles,
+        Name: params.Name,
+        LocationName: params.LocationName,
       };
 
       const updatedOrError = await ManagementCropUseCases.update(dto);

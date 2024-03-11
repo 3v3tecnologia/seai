@@ -1,31 +1,15 @@
-import {
-  ManagementStudiesRepositoryDTO,
-  ManagementStudiesRepositoryProtocol,
-  ManagementStudyToPersistency,
-} from "../../../src/v2/management/ports/studies/repository";
-
-export class InMemoryStudiesRepository
-  implements ManagementStudiesRepositoryProtocol
-{
-  public repository: Array<ManagementStudyToPersistency> = [];
-  async create(
-    request: ManagementStudiesRepositoryDTO.Create.Request
-  ): ManagementStudiesRepositoryDTO.Create.Response {
+export class InMemoryStudiesRepository {
+  public repository: Array<any> = [];
+  async create(request: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
-  async delete(
-    request: ManagementStudiesRepositoryDTO.Delete.Request
-  ): ManagementStudiesRepositoryDTO.Delete.Response {
+  async delete(request: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
-  async getByBasin(
-    request: ManagementStudiesRepositoryDTO.GetByBasin.Request
-  ): ManagementStudiesRepositoryDTO.GetByBasin.Response {
+  async getByBasin(request: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
-  async getAllByBasin(
-    request: ManagementStudiesRepositoryDTO.GetAllByBasin.Request
-  ): ManagementStudiesRepositoryDTO.GetAllByBasin.Response {
+  async getAllByBasin(request: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
 }

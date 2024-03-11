@@ -1,5 +1,5 @@
 export type ManagementCropCycle = {
-  title: string;
-  durationInDays: number;
+  Title: string;
+  DurationInDays: number;
   KC: number;
 };

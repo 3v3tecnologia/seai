@@ -1,57 +1,43 @@
-import {
-  InputWithPagination,
-  OutputWithPagination,
-} from "../../../domain/use-cases/helpers/dto";
-import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 import { Either, right } from "../../../shared/Either";
-import { ManagementCensusStudy } from "../entities/study";
+import { CensusStudy } from "../entities/study";
+
 import { DbManagementStudiesRepository } from "../infra/database/repositories/management-studies.repository";
 
 export class ManagementStudiesUseCases {
   static async create(params: {
-    Id_Basin: number;
-    Data: Array<ManagementCensusStudy>;
+    id_basin: number;
+    data: Array<CensusStudy>;
   }): Promise<Either<Error, string>> {
-    const deleteLog = await DbManagementStudiesRepository.delete({
-      Id_Basin: params.Id_Basin,
-    });
+    // TO-DO: check use of batch update
+    const deleteLog = await DbManagementStudiesRepository.delete(
+      params.id_basin
+    );
 
-    // this.addLog(deleteLog);
+    const createLog = await DbManagementStudiesRepository.create(params.data);
 
-    const createLog = await DbManagementStudiesRepository.create(params.Data);
-
-    // this.addLog(createLog);
-
-    return right("Sucesso ao inserir estudos.");
+    return right(createLog?.action);
     // return right(createLog.description);
   }
-  static async deleteByBasin(params: {
-    Id: number;
-  }): Promise<Either<Error, string>> {
-    const deleteLog = await DbManagementStudiesRepository.delete({
-      Id_Basin: params.Id,
-    });
 
-    // this.addLog({
-    //   action: "delete",
-    //   table: DATABASES.NEWSLETTER.SUBSCRIBER,
-    //   description: "Usuário deletado com sucesso da lista de emails",
-    // });
-
-    return right(deleteLog.description);
-  }
   static async getByBasin(
-    params: {
-      Id_Basin: number;
-    } & InputWithPagination
-  ): Promise<
-    Either<Error, OutputWithPagination<ManagementCensusStudy> | null>
-  > {
-    const result = await DbManagementStudiesRepository.getByBasin({
-      Id_Basin: params.Id_Basin,
-      ...formatPaginationInput(params.pageNumber, params.limit),
-    });
+    id: number
+  ): Promise<Either<Error, Array<CensusStudy> | null>> {
+    // TO-DO : get crops from basin
+    // const censusCrop = await DbCensusCropRepository.getAllCrops()
 
-    return right(result);
+    const studies = await DbManagementStudiesRepository.getByBasin(id);
+
+    if (studies) {
+      return right(
+        [...studies.entries()].map(([name, value]) => {
+          return {
+            Crop: name,
+            ...value,
+          };
+        })
+      );
+    }
+
+    return right(null);
   }
 }

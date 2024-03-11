@@ -1,9 +1,6 @@
 import { DATABASES } from "../../../../../shared/db/tableNames";
-import {
-  ManagementCrop,
-  ManagementCropParams,
-} from "../../../entities/management-crop";
-import { ManagementCropCycle } from "../../../entities/management-crop-cycles";
+import { ManagementCrop, ManagementCropParams } from "../../../entities/crop";
+import { ManagementCropCycle } from "../../../entities/crop-cycles";
 import { managementDb } from "../connections/db";
 
 export class DbManagementCropRepository {
@@ -13,8 +10,8 @@ export class DbManagementCropRepository {
     await managementDb.transaction(async (trx) => {
       const insertedCrop = await managementDb
         .insert({
-          Name: culture.name,
-          Location_Name: culture?.location || null,
+          Name: culture.Name,
+          Location_Name: culture?.Location || null,
           CreatedAt: managementDb.fn.now(),
         })
         .returning("Id")
@@ -25,11 +22,11 @@ export class DbManagementCropRepository {
       await trx
         .batchInsert(
           DATABASES.MANAGEMENT.TABLES.CROP_CYCLE,
-          culture.cycles.map((cycle) => {
+          culture.Cycles.map((cycle) => {
             return {
               FK_Crop: id_crop as number,
-              Stage_Title: cycle.title,
-              Duration_In_Days: cycle.durationInDays,
+              Stage_Title: cycle.Title,
+              Duration_In_Days: cycle.DurationInDays,
               KC: cycle.KC,
             };
           })
@@ -44,25 +41,25 @@ export class DbManagementCropRepository {
     await managementDb.transaction(async (trx) => {
       await trx(DATABASES.MANAGEMENT.TABLES.CROP)
         .update({
-          Name: culture.name,
-          Location_Name: culture.location,
+          Name: culture.Name,
+          Location_Name: culture.Location,
           UpdatedAt: managementDb.fn.now(),
         })
         .where({
-          Id: culture.id,
+          Id: culture.Id,
         });
 
       await trx(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
-        .where({ FK_Crop: culture.id })
+        .where({ FK_Crop: culture.Id })
         .del();
 
       await trx.batchInsert(
         DATABASES.MANAGEMENT.TABLES.CROP_CYCLE,
-        culture.cycles.map((cycle) => {
+        culture.Cycles.map((cycle) => {
           return {
-            FK_Crop: culture.id,
-            Stage_Title: cycle.title,
-            Duration_In_Days: cycle.durationInDays,
+            FK_Crop: culture.Id,
+            Stage_Title: cycle.Title,
+            Duration_In_Days: cycle.DurationInDays,
             KC: cycle.KC,
           };
         })
@@ -118,27 +115,27 @@ export class DbManagementCropRepository {
 
     const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
       return {
-        title: row.Stage_Title,
-        durationInDays: row.Duration_In_Days,
+        Title: row.Stage_Title,
+        DurationInDays: row.Duration_In_Days,
         KC: row.KC,
       };
     });
 
     const cropOrError = ManagementCrop.create({
-      id: rawCrop.Id,
-      name: rawCrop.Name,
-      locationName: rawCrop.Location_Name,
-      cycles,
+      Id: rawCrop.Id,
+      Name: rawCrop.Name,
+      LocationName: rawCrop.Location_Name,
+      Cycles: cycles,
     });
 
     if (cropOrError.isRight()) {
       const crop = cropOrError.value as ManagementCrop;
 
       return {
-        id: crop.id as number,
-        name: crop.name,
-        locationName: crop.location,
-        cycles: crop.cycles,
+        Id: crop.Id as number,
+        Name: crop.Name,
+        LocationName: crop.Location,
+        Cycles: crop.Cycles,
       };
     }
 
@@ -157,9 +154,9 @@ export class DbManagementCropRepository {
       const { Id, Name, Location_Name, CreatedAt, UpdatedAt } = raw;
 
       return {
-        id: Id as number,
-        name: Name as string,
-        locationName: Location_Name as string,
+        Id: Id as number,
+        Name: Name as string,
+        LocationName: Location_Name as string,
       };
     });
   }
@@ -183,16 +180,16 @@ export class DbManagementCropRepository {
 
     const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
       return {
-        title: row.Stage_Title,
-        durationInDays: row.Duration_In_Days,
+        Title: row.Stage_Title,
+        DurationInDays: row.Duration_In_Days,
         KC: row.KC,
       };
     });
 
     const crop = ManagementCrop.create({
-      name: rawCrop.Name,
-      locationName: rawCrop.Location_Name,
-      cycles,
+      Name: rawCrop.Name,
+      LocationName: rawCrop.Location_Name,
+      Cycles: cycles,
     });
 
     if (crop.isRight()) {

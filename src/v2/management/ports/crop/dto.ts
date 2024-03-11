@@ -1,19 +1,19 @@
-import { ManagementCropParams } from "../../entities/management-crop";
+import { ManagementCropParams } from "../../entities/crop";
 
 export namespace ManagementCropDTO {
   export namespace Create {
     type CreateManagementCropCyclesInputDTO = {
-      title: string;
-      durationInDays: number;
+      Title: string;
+      DurationInDays: number;
       KC: number;
     };
 
     type CreateManagementCropInputDTO = {
-      name: string;
-      locationName: string | null;
-      cycles: Array<CreateManagementCropCyclesInputDTO>;
-      createdAt?: string;
-      updatedAt?: string;
+      Name: string;
+      LocationName: string | null;
+      Cycles: Array<CreateManagementCropCyclesInputDTO>;
+      CreatedAt?: string;
+      UpdatedAt?: string;
     };
 
     export type Input = CreateManagementCropInputDTO;
@@ -41,18 +41,18 @@ export namespace ManagementCropDTO {
 
   export namespace Update {
     type UpdateManagementCropCyclesInputDTO = {
-      title: string;
-      durationInDays: number;
+      Title: string;
+      DurationInDays: number;
       KC: number;
     };
 
     type UpdateManagementCropInputDTO = {
-      id: number;
-      name: string;
-      locationName: string | null;
-      cycles: Array<UpdateManagementCropCyclesInputDTO>;
-      createdAt?: string;
-      updatedAt?: string;
+      Id: number;
+      Name: string;
+      LocationName: string | null;
+      Cycles: Array<UpdateManagementCropCyclesInputDTO>;
+      CreatedAt?: string;
+      UpdatedAt?: string;
     };
 
     export type Input = UpdateManagementCropInputDTO;

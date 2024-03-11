@@ -26,7 +26,7 @@ export class DbManagementWeightsRepository {
   ): ManagementWeightsRepositoryDTO.Delete.Response {
     const result = await managementDb(DATABASES.MANAGEMENT.TABLES.WEIGHTS)
       .where({
-        Id_Basin: request.Id_Basin,
+        Id_Basin: request.id_basin,
       })
       .del();
 
@@ -44,7 +44,7 @@ export class DbManagementWeightsRepository {
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.WEIGHTS)
       .where({
-        Id_Basin: request.Id_Basin,
+        Id_Basin: request.id_basin,
       });
 
     if (request.limit && request.pageNumber) {

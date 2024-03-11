@@ -1,19 +1,21 @@
-import { DatabaseOperationOutputLogFactory } from "../../../../../domain/use-cases/_ports/repositories/dto/output";
-import { withPagination } from "../../../../../infra/database/postgres/repositories/mapper/WithPagination";
+import {
+  DatabaseOperationOutputLog,
+  DatabaseOperationOutputLogFactory,
+} from "../../../../../domain/use-cases/_ports/repositories/dto/output";
 import { DATABASES } from "../../../../../shared/db/tableNames";
-import { ManagementStudyMapper } from "../../../entities/mappers/study";
-import { ManagementStudiesRepositoryDTO } from "../../../ports/studies/repository";
+import { CensusStudyMapper } from "../../../entities/mappers/study";
+import { CensusStudy } from "../../../entities/study";
 import { managementDb } from "../connections/db";
 
 export class DbManagementStudiesRepository {
   static async create(
-    request: ManagementStudiesRepositoryDTO.Create.Request
-  ): ManagementStudiesRepositoryDTO.Create.Response {
+    request: Array<CensusStudy>
+  ): Promise<DatabaseOperationOutputLog | null> {
     const toPersistency = request.map((data) =>
-      ManagementStudyMapper.toPersistency(data)
+      CensusStudyMapper.toPersistency(data)
     );
 
-    const result = await managementDb
+    await managementDb
       .batchInsert(DATABASES.MANAGEMENT.TABLES.STUDIES, toPersistency)
       .returning("Id_Basin");
 
@@ -22,11 +24,9 @@ export class DbManagementStudiesRepository {
     );
   }
 
-  static async delete(
-    request: ManagementStudiesRepositoryDTO.Delete.Request
-  ): ManagementStudiesRepositoryDTO.Delete.Response {
+  static async delete(id: number): Promise<DatabaseOperationOutputLog> {
     await managementDb(DATABASES.MANAGEMENT.TABLES.STUDIES)
-      .where("Id_Basin", request.Id_Basin)
+      .where("Id_Basin", id)
       .del();
 
     return DatabaseOperationOutputLogFactory.delete(
@@ -35,91 +35,38 @@ export class DbManagementStudiesRepository {
   }
 
   static async getByBasin(
-    request: ManagementStudiesRepositoryDTO.GetByBasin.Request
-  ): ManagementStudiesRepositoryDTO.GetByBasin.Response {
-    const result = await managementDb
-      .select("*")
-      .from(DATABASES.MANAGEMENT.TABLES.STUDIES)
+    id: number
+  ): Promise<Map<string, Omit<CensusStudy, "Crop">> | null> {
+    const raw = await managementDb
+      .select(
+        "Id_Basin",
+        "Crop",
+        "HarvestDuration",
+        "CultivationPeriod",
+        "Consumption",
+        "Productivity"
+      )
       .where({
-        Id_Basin: request.Id_Basin,
+        Id_Basin: id,
       })
-      .limit(request.limit)
-      .offset(request.pageNumber);
+      .from(DATABASES.MANAGEMENT.TABLES.STUDIES);
 
-    if (!result.length) {
-      return null;
+    if (raw.length) {
+      const result = new Map<string, Omit<CensusStudy, "Crop">>();
+
+      raw.forEach((row: any) => {
+        result.set(row.Crop, {
+          Id_Basin: row.Id_Basin,
+          HarvestDuration: Number(row.HarvestDuration),
+          CultivationPeriod: Number(row.CultivationPeriod),
+          Consumption: Number(row.Consumption),
+          Productivity: Number(row.Productivity),
+        });
+      });
+
+      return result;
     }
 
-    const data = result.map((row: any) => ManagementStudyMapper.toDomain(row));
-
-    return withPagination(data, {
-      count: result.length,
-      limit: request.limit,
-      offset: request.pageNumber,
-    });
-  }
-
-  static async getAllByBasin(
-    request: ManagementStudiesRepositoryDTO.GetAllByBasin.Request
-  ): ManagementStudiesRepositoryDTO.GetAllByBasin.Response {
-    const raw = await managementDb.raw(
-      `
-      SELECT
-              s."Culture",
-             s."Id_Basin" ,
-              c."Name" AS "Culture",
-              s."Harvest" ,
-              s."Farm" ,
-             s."ProductivityPerKilo" ,
-             s."ProductivityPerMeters"
-      FROM
-                    "Studies" s
-      INNER JOIN "Crop" c
-              ON
-                  c."Name" = s."Culture"
-      WHERE
-          s."Id_Basin" = ?
-      `,
-      [request.Id_Basin]
-    );
-
-    if (!raw.rows.length) {
-      return null;
-    }
-
-    const result: Map<
-      string,
-      {
-        Id_Basin: number;
-        Culture: number;
-        Harvest: number;
-        Farm: number;
-        ProductivityPerKilo: number | null;
-        ProductivityPerMeters: number | null;
-      }
-    > = new Map();
-
-    raw.rows.forEach((raw: any) => {
-      const culture = {
-        Id_Basin: raw.Id_Basin,
-        Culture: raw.Culture,
-        Harvest: raw.Harvest, //safra
-        Farm: raw.Farm, // cultivo
-        ProductivityPerKilo: raw.ProductivityPerKilo,
-        ProductivityPerMeters: raw.ProductivityPerMeters,
-      };
-
-      const name = raw.Culture;
-
-      // if (result.has(name)) {
-      //   result.get(name)?.Cultures.push(culture);
-
-      //   return;
-      // }
-
-      result.set(name, culture);
-    });
-
-    return result;
+    return null;
   }
 }

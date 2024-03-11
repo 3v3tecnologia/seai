@@ -13,12 +13,12 @@ export class ManagementWeightsController {
   static async create(request: {
     accountId: number;
     id: number;
-    Data: Array<CultureWeights>;
+    data: Array<CultureWeights>;
   }): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementWeightsUseCases.create({
-        Id_Basin: Number(request.id),
-        Weights: request.Data,
+        id_basin: Number(request.id),
+        weights: request.data,
       });
 
       if (deletedOrError.isLeft()) {
@@ -40,7 +40,7 @@ export class ManagementWeightsController {
   }): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementWeightsUseCases.deleteByBasin({
-        Id: request.id,
+        id: request.id,
       });
 
       if (deletedOrError.isLeft()) {
@@ -64,7 +64,7 @@ export class ManagementWeightsController {
   ): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementWeightsUseCases.getByBasin({
-        Id_Basin: Number(request.id),
+        id_basin: Number(request.id),
         ...formatPaginationInput(request.pageNumber, request.limit),
       });
 

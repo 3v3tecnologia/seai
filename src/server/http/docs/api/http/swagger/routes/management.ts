@@ -5,7 +5,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 const TAGS = ["Management"];
 
 export const MANAGEMENT = {
-  [`${BASE_URL.V1}/management/crop`]: {
+  [`${BASE_URL.V2}/management/crop`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -18,19 +18,14 @@ export const MANAGEMENT = {
                 example: {
                   data: [
                     {
-                      id: 3,
-                      name: "ALFACE",
-                      locationName: "FORTALEZA",
+                      Id: 3,
+                      Name: "ALFACE",
+                      LocationName: "FORTALEZA",
                     },
                     {
-                      id: 4,
-                      name: "FEIJÃO",
-                      locationName: "FORTALEZA",
-                    },
-                    {
-                      id: 2,
-                      name: "LIMÃO",
-                      locationName: "FORTALEZA",
+                      Id: 4,
+                      Name: "FEIJÃO",
+                      LocationName: "FORTALEZA",
                     },
                   ],
                 },
@@ -51,13 +46,13 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                name: "FEIJÃO",
-                locationName: "FORTALEZA",
-                cycles: [
+                Name: "FEIJÃO5",
+                LocationName: null,
+                Cycles: [
                   {
-                    stage: 1,
-                    title: "test",
-                    durationInDays: 12,
+                    Stage: 1,
+                    Title: "test",
+                    DurationInDays: 12,
                     KC: 54,
                   },
                 ],
@@ -91,7 +86,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V1}/management/crop/{id}`]: {
+  [`${BASE_URL.V2}/management/crop/{id}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -116,23 +111,18 @@ export const MANAGEMENT = {
                 type: "object",
                 example: {
                   data: {
-                    id: 3,
-                    name: "ALFACE",
-                    locationName: "FORTALEZA",
-                    cycles: [
+                    Id: 3,
+                    Name: "ALFACE",
+                    LocationName: "FORTALEZA",
+                    Cycles: [
                       {
-                        title: "test",
-                        durationInDays: 12,
+                        Title: "test",
+                        DurationInDays: 12,
                         KC: 54,
                       },
                       {
-                        title: "test",
-                        durationInDays: 12,
-                        KC: 54,
-                      },
-                      {
-                        title: "test",
-                        durationInDays: 12,
+                        Title: "test",
+                        DurationInDays: 12,
                         KC: 54,
                       },
                     ],
@@ -165,13 +155,13 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                name: "LIMÃO",
-                locationName: "ESTADOS",
-                cycles: [
+                Name: "LIMÃO",
+                LocationName: "ESTADOS",
+                Cycles: [
                   {
-                    stage: 1,
-                    title: "test",
-                    durationInDays: 12,
+                    Stage: 1,
+                    Title: "test",
+                    DurationInDays: 12,
                     KC: 54,
                   },
                 ],

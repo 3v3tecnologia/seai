@@ -1,11 +1,11 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementCropCycle } from "./management-crop-cycles";
+import { ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {
-  id?: number;
-  name: string;
-  locationName: string | null;
-  cycles?: Array<ManagementCropCycle>;
+  Id?: number;
+  Name: string;
+  LocationName: string | null;
+  Cycles?: Array<ManagementCropCycle>;
 };
 
 export class ManagementCrop {
@@ -15,31 +15,31 @@ export class ManagementCrop {
   private readonly _cycles: Array<ManagementCropCycle>;
 
   private constructor(props: ManagementCropParams) {
-    this._id = props.id || null;
-    this._name = props.name;
-    this._cycles = props.cycles || [];
-    this._locationName = props.locationName;
+    this._id = props.Id || null;
+    this._name = props.Name;
+    this._cycles = props.Cycles || [];
+    this._locationName = props.LocationName;
 
     Object.freeze(this);
   }
 
-  set id(id: number) {
+  set Id(id: number) {
     this._id = id;
   }
 
-  get id(): number | null {
+  get Id(): number | null {
     return this._id;
   }
 
-  get name() {
+  get Name() {
     return this._name;
   }
 
-  get location() {
+  get Location() {
     return this._locationName;
   }
 
-  get cycles() {
+  get Cycles() {
     return this._cycles;
   }
 

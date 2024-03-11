@@ -23,14 +23,14 @@ export namespace ManagementWeightsRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      Id_Basin: number;
+      id_basin: number;
     };
 
     export type Response = Promise<DatabaseOperationOutputLog>;
   }
 
   export namespace GetByBasin {
-    export type Request = { Id_Basin: number } & Partial<InputWithPagination>;
+    export type Request = { id_basin: number } & Partial<InputWithPagination>;
 
     export type Response = Promise<Array<CultureWeights> | null>;
   }

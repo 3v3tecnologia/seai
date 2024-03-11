@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCrop } from "../entities/management-crop";
+import { ManagementCrop } from "../entities/crop";
 import { ManagementCropErrors } from "../errors/management-crop-errors";
 import { DbManagementCropRepository } from "../infra/database/repositories/management-crop.repository";
 import { ManagementCropDTO } from "../ports/crop/dto";
@@ -13,18 +13,18 @@ export class ManagementCropUseCases {
       ManagementCropDTO.Create.Output
     >
   > {
-    const { cycles, locationName, name } = params;
+    const { Cycles, LocationName, Name } = params;
 
-    const alreadyExists = await DbManagementCropRepository.nameExists(name);
+    const alreadyExists = await DbManagementCropRepository.nameExists(Name);
 
     if (alreadyExists) {
-      return left(new ManagementCropErrors.CropAlreadyExistsError(name));
+      return left(new ManagementCropErrors.CropAlreadyExistsError(Name));
     }
 
     const cultureOrError = ManagementCrop.create({
-      cycles,
-      locationName,
-      name,
+      Cycles,
+      LocationName,
+      Name,
     });
 
     if (cultureOrError.isLeft()) {
@@ -94,7 +94,7 @@ export class ManagementCropUseCases {
     >
   > {
     // Id or name?
-    const exists = await DbManagementCropRepository.idExists(params.id);
+    const exists = await DbManagementCropRepository.idExists(params.Id);
 
     if (!exists) {
       return left(new ManagementCropErrors.CropNotExistsError());
@@ -102,18 +102,18 @@ export class ManagementCropUseCases {
 
     // Id or name?
     const cropWithSameName = await DbManagementCropRepository.findCropByName(
-      params.name
+      params.Name
     );
 
-    if (cropWithSameName && cropWithSameName.id !== params.id) {
-      return left(new ManagementCropErrors.CropAlreadyExistsError(params.name));
+    if (cropWithSameName && cropWithSameName.Id !== params.Id) {
+      return left(new ManagementCropErrors.CropAlreadyExistsError(params.Name));
     }
 
     const cultureOrError = ManagementCrop.create({
-      id: params.id,
-      cycles: params.cycles,
-      locationName: params.locationName,
-      name: params.name,
+      Id: params.Id,
+      Cycles: params.Cycles,
+      LocationName: params.LocationName,
+      Name: params.Name,
     });
 
     if (cultureOrError.isLeft()) {

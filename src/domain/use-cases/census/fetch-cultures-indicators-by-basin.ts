@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { ManagementStudiesRepositoryProtocol } from "../../../v2/management/ports/studies/repository";
+import { ManagementStudiesRepository } from "../../../v2/management/ports/studies/repository";
 import { BasinIndicatorsByCulture } from "../../entities/management/basin-indicators-by-culture";
 import { Culture } from "../../entities/management/culture";
 import { Producer } from "../../entities/management/producer";
@@ -14,13 +14,13 @@ export class GetCulturesIndicatorsFromBasin
   private economicSecurityRepository: ProfitabilitySecurityRepositoryProtocol;
   private socialSecurityRepository: WorkersSecurityRepositoryProtocol;
   private waterSecurityRepository: WaterSecurityRepositoryProtocol;
-  private managementStudiesRepository: ManagementStudiesRepositoryProtocol;
+  private managementStudiesRepository: ManagementStudiesRepository;
 
   constructor(
     economicSecurityRepository: ProfitabilitySecurityRepositoryProtocol,
     socialSecurityRepository: WorkersSecurityRepositoryProtocol,
     waterSecurityRepository: WaterSecurityRepositoryProtocol,
-    studiesRepository: ManagementStudiesRepositoryProtocol
+    studiesRepository: ManagementStudiesRepository
   ) {
     this.economicSecurityRepository = economicSecurityRepository;
     this.socialSecurityRepository = socialSecurityRepository;
@@ -53,9 +53,7 @@ export class GetCulturesIndicatorsFromBasin
       );
 
     const studiesProductivity =
-      await this.managementStudiesRepository.getAllByBasin({
-        Id_Basin: request.IdBasin,
-      });
+      await this.managementStudiesRepository.getByBasin(request.IdBasin);
 
     const producers = profitability.map((producer) => {
       let workers = null;
@@ -110,7 +108,7 @@ export class GetCulturesIndicatorsFromBasin
 
         if (culture) {
           const averageStudyProductivity =
-            value.ProductivityPerKilo / value.ProductivityPerMeters;
+            value.Consumption / value.Productivity;
 
           culture.ProductivityPerHectare =
             culture.Consumption * averageStudyProductivity;
