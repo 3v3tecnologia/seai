@@ -1,8 +1,9 @@
 import { Either, right } from "../../../shared/Either";
+import { ManagementStudiesRepositoryProtocol } from "../../../v2/management/ports/studies/repository";
 import { BasinIndicatorsByCulture } from "../../entities/management/basin-indicators-by-culture";
 import { Culture } from "../../entities/management/culture";
 import { Producer } from "../../entities/management/producer";
-import { ManagementStudiesRepositoryProtocol } from "../_ports/repositories/management-studies.repository";
+
 import { ProfitabilitySecurityRepositoryProtocol } from "../_ports/repositories/profitability-security.repository";
 import { WaterSecurityRepositoryProtocol } from "../_ports/repositories/water-security.repository";
 import { WorkersSecurityRepositoryProtocol } from "../_ports/repositories/workers-security.repository";

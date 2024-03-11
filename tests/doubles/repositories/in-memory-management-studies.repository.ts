@@ -2,7 +2,7 @@ import {
   ManagementStudiesRepositoryDTO,
   ManagementStudiesRepositoryProtocol,
   ManagementStudyToPersistency,
-} from "../../../src/domain/use-cases/_ports/repositories/management-studies.repository";
+} from "../../../src/v2/management/ports/studies/repository";
 
 export class InMemoryStudiesRepository
   implements ManagementStudiesRepositoryProtocol

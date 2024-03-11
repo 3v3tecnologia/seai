@@ -10,7 +10,7 @@ import {
   newsRouter,
   userRouter,
 } from "./http-routes";
-import { managementRoutes } from "./http-routes/management/routes";
+import { managementRoutes } from "../../v2/management/routes/routes";
 
 export function setRoutes(app: Express): void {
   const router = Router();
@@ -23,13 +23,13 @@ export function setRoutes(app: Express): void {
   router.use("/news", newsRouter());
   router.use("/jobs", backgroundJobsRouter());
   router.use("/accessKey", accessKeyRouter());
-  router.use("/management", managementRoutes());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });
   });
 
   app.use("/api/v1", router);
+  app.use("/api/v2/management", managementRoutes());
 
   app.use("*", (req, res) => {
     res.status(404).json({
