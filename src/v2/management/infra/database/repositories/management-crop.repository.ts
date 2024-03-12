@@ -74,9 +74,6 @@ export class DbManagementCropRepository {
       .where({ Name: crop })
       .first();
 
-    if (!result) {
-    }
-
     return !!result;
   }
 

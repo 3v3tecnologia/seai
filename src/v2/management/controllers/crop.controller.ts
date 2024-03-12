@@ -77,7 +77,7 @@ export class ManagementCropControllers {
   ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Update.Input = {
-        Id: params.Id,
+        Id: params.id,
         Cycles: params.Cycles,
         Name: params.Name,
         LocationName: params.LocationName,
