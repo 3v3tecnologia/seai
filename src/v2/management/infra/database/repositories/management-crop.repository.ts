@@ -163,22 +163,14 @@ export class DbManagementCropRepository {
   static async findCropByName(
     name: string
   ): Promise<ManagementCropParams | null> {
-    console.log(name);
     const dbCrops = await managementDb
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .where({ Name: name })
       .from(DATABASES.MANAGEMENT.TABLES.CROP)
       .first();
 
-    console.log(
-      await managementDb
-        .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
-        .from(DATABASES.MANAGEMENT.TABLES.CROP)
-        .where({ Name: name })
-    );
-
     if (dbCrops) {
-      const { Id, Name, Location_Name, CreatedAt, UpdatedAt } = dbCrops;
+      const { Id, Name, Location_Name } = dbCrops;
 
       return {
         Id: Id as number,
