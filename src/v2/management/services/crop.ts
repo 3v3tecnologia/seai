@@ -62,27 +62,33 @@ export class ManagementCropUseCases {
     return right(true);
   }
 
-  static async getAll(): Promise<
+  static async getAll(
+    params: { name: string } | void
+  ): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
       ManagementCropDTO.GetAll.Output
     >
   > {
-    const crops = await DbManagementCropRepository.find();
-    return right(crops);
+    if (params?.name) {
+      return right(
+        await DbManagementCropRepository.findCropByName(params.name as string)
+      );
+    }
+    return right(await DbManagementCropRepository.find());
   }
 
-  static async getById(
-    params: ManagementCropDTO.GetById.Input
+  static async getCropById(
+    params: ManagementCropDTO.GetCrop.Input
   ): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.GetById.Output
+      ManagementCropDTO.GetCrop.Output
     >
   > {
-    const crop = await DbManagementCropRepository.findCropById(params.id);
-
-    return right(crop);
+    return right(
+      await DbManagementCropRepository.findCropById(params.id as number)
+    );
   }
 
   static async update(

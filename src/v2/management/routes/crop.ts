@@ -25,7 +25,7 @@ export const setupCropRoutes = (router: Router): void => {
   router.get(
     "/crop/:id",
     authorization,
-    adaptRouteV2(ManagementCropControllers.getById)
+    adaptRouteV2(ManagementCropControllers.getCropById)
   );
 
   router.get(

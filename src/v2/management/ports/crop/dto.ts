@@ -27,16 +27,18 @@ export namespace ManagementCropDTO {
     export type Output = boolean;
   }
 
-  export namespace GetById {
+  export namespace GetCrop {
     export type Input = {
       id: number;
     };
     export type Output = ManagementCropParams | null;
   }
-
   export namespace GetAll {
-    export type Input = void;
-    export type Output = Array<ManagementCropParams> | null;
+    export type Input = void | string;
+    export type Output =
+      | Array<ManagementCropParams>
+      | ManagementCropParams
+      | null;
   }
 
   export namespace Update {

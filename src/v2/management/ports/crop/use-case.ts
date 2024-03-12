@@ -35,22 +35,13 @@ export namespace CropUseCaseProtocol {
     >;
   }
 
-  export interface GetAll {
-    getAll(): Promise<
-      Either<
-        ManagementCropErrors.CropAlreadyExistsError,
-        ManagementCropDTO.GetAll.Output | null
-      >
-    >;
-  }
-
   export interface GetById {
     getById(
-      params: ManagementCropDTO.GetById.Input
+      params: ManagementCropDTO.GetCrop.Input
     ): Promise<
       Either<
         ManagementCropErrors.CropAlreadyExistsError,
-        ManagementCropDTO.GetById.Output
+        ManagementCropDTO.GetCrop.Output
       >
     >;
   }

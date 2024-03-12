@@ -1,8 +1,8 @@
 import {
   created,
   forbidden,
-  serverError,
   ok,
+  serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { ManagementCropDTO } from "../ports/crop/dto";
@@ -58,18 +58,16 @@ export class ManagementCropControllers {
     }
   }
 
-  static async getById(
-    params: ManagementCropDTO.GetById.Input
+  static async getCropById(
+    params: ManagementCropDTO.GetCrop.Input
   ): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.getById(params);
+    const result = await ManagementCropUseCases.getCropById(params);
 
     return ok(result.value);
   }
 
-  static async getAll(
-    params: ManagementCropDTO.GetById.Input
-  ): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.getAll();
+  static async getAll(params: { name: string } | void): Promise<HttpResponse> {
+    const result = await ManagementCropUseCases.getAll(params);
 
     return ok(result.value);
   }

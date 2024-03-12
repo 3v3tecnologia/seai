@@ -160,40 +160,31 @@ export class DbManagementCropRepository {
       };
     });
   }
-  static async findCropByName(name: string): Promise<ManagementCrop | null> {
-    const result = await managementDb.raw(
-      `
-      SELECT * FROM "Crop" c 
-      INNER JOIN "Crop_Cycle" cc 
-      ON c."Name"  = ? 
-    `,
-      [name]
+  static async findCropByName(
+    name: string
+  ): Promise<ManagementCropParams | null> {
+    console.log(name);
+    const dbCrops = await managementDb
+      .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
+      .where({ Name: name })
+      .from(DATABASES.MANAGEMENT.TABLES.CROP)
+      .first();
+
+    console.log(
+      await managementDb
+        .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
+        .from(DATABASES.MANAGEMENT.TABLES.CROP)
+        .where({ Name: name })
     );
 
-    const data: any = result?.rows[0];
+    if (dbCrops) {
+      const { Id, Name, Location_Name, CreatedAt, UpdatedAt } = dbCrops;
 
-    if (!data) {
-      return null;
-    }
-
-    const rawCrop = data;
-
-    const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
       return {
-        Title: row.Stage_Title,
-        DurationInDays: row.Duration_In_Days,
-        KC: row.KC,
+        Id: Id as number,
+        Name: Name as string,
+        LocationName: Location_Name as string,
       };
-    });
-
-    const crop = ManagementCrop.create({
-      Name: rawCrop.Name,
-      LocationName: rawCrop.Location_Name,
-      Cycles: cycles,
-    });
-
-    if (crop.isRight()) {
-      return crop.value as ManagementCrop;
     }
 
     return null;
