@@ -108,7 +108,7 @@ export class GetCulturesIndicatorsFromBasin
 
         if (culture) {
           const averageStudyProductivity =
-            value.Consumption / value.Productivity;
+            Number(value.Productivity) / Number(value.Consumption);
 
           culture.ProductivityPerHectare =
             culture.Consumption * averageStudyProductivity;

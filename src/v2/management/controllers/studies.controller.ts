@@ -1,8 +1,10 @@
 import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 import {
+  badRequest,
   created,
   forbidden,
+  ok,
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
@@ -13,7 +15,7 @@ export class ManagementStudiesControllers {
   static async create(request: {
     accountId: number;
     id: number;
-    data: Array<CensusStudy>;
+    data: Array<Omit<CensusStudy, "Id_Basin">>;
   }): Promise<HttpResponse> {
     try {
       const successOrError = await ManagementStudiesUseCases.create({
@@ -22,7 +24,7 @@ export class ManagementStudiesControllers {
       });
 
       if (successOrError.isLeft()) {
-        return forbidden(successOrError.value);
+        return badRequest(successOrError.value);
       }
 
       //   await this.userLogs.log(request.accountId, this.useCase);
@@ -45,10 +47,10 @@ export class ManagementStudiesControllers {
       );
 
       if (deletedOrError.isLeft()) {
-        return forbidden(deletedOrError.value);
+        return badRequest(deletedOrError.value);
       }
 
-      return created(deletedOrError.value);
+      return ok(deletedOrError.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

@@ -3,7 +3,6 @@ import { CensusStudy } from "../study";
 export class CensusStudyMapper {
   static toDomain(row: any): CensusStudy {
     return {
-      Id_Basin: Number(row.Id_Basin),
       Crop: row.Crop,
       HarvestDuration: Number(row.HarvestDuration),
       CultivationPeriod: Number(row.CultivationPeriod),
@@ -12,9 +11,9 @@ export class CensusStudyMapper {
     };
   }
 
-  static toPersistency(study: CensusStudy): any {
+  static toPersistency(study: CensusStudy, idBasin: number): any {
     return {
-      Id_Basin: study.Id_Basin,
+      Id_Basin: idBasin,
       Crop: study.Crop,
       HarvestDuration: study.HarvestDuration,
       CultivationPeriod: study.CultivationPeriod,

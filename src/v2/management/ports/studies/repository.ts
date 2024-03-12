@@ -2,7 +2,8 @@ import { DatabaseOperationOutputLog } from "../../../../domain/use-cases/_ports/
 import { CensusStudy } from "../../entities/study";
 export interface ManagementStudiesRepository {
   create(
-    request: Array<CensusStudy>
+    request: Array<CensusStudy>,
+    id: number
   ): Promise<DatabaseOperationOutputLog | null>;
   delete(id: number): Promise<DatabaseOperationOutputLog>;
   getByBasin(

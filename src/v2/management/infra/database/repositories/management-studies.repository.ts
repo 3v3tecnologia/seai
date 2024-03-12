@@ -1,3 +1,4 @@
+import { Knex } from "knex";
 import {
   DatabaseOperationOutputLog,
   DatabaseOperationOutputLogFactory,
@@ -9,10 +10,11 @@ import { managementDb } from "../connections/db";
 
 export class DbManagementStudiesRepository {
   static async create(
-    request: Array<CensusStudy>
+    request: Array<CensusStudy>,
+    id: number
   ): Promise<DatabaseOperationOutputLog | null> {
     const toPersistency = request.map((data) =>
-      CensusStudyMapper.toPersistency(data)
+      CensusStudyMapper.toPersistency(data, id)
     );
 
     await managementDb
@@ -56,7 +58,6 @@ export class DbManagementStudiesRepository {
 
       raw.forEach((row: any) => {
         result.set(row.Crop, {
-          Id_Basin: row.Id_Basin,
           HarvestDuration: Number(row.HarvestDuration),
           CultivationPeriod: Number(row.CultivationPeriod),
           Consumption: Number(row.Consumption),
