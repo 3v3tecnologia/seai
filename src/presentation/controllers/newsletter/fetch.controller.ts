@@ -13,8 +13,8 @@ export class FetchNewsController {
   async handle(request: FetchNewsController.Request): Promise<HttpResponse> {
     try {
       const createdOrError = await this.useCase.create({
-        limit: request.Id,
-        pageNumber: request.accountId,
+        limit: request.limit,
+        pageNumber: request.pageNumber,
       });
 
       if (createdOrError.isLeft()) {
@@ -32,6 +32,9 @@ export class FetchNewsController {
 export namespace FetchNewsController {
   export type Request = {
     accountId: number;
-    Id: number;
+    pageNumber: number;
+    limit: number;
+    start?: string;
+    end?: string | null;
   };
 }

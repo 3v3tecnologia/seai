@@ -67,7 +67,7 @@ export class DbManagementCropRepository {
     });
   }
 
-  static async nameExists(crop: string | number): Promise<boolean> {
+  static async nameExists(crop: string): Promise<boolean> {
     const result = await managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.CROP)
@@ -80,7 +80,7 @@ export class DbManagementCropRepository {
     return !!result;
   }
 
-  static async idExists(crop: string | number): Promise<boolean> {
+  static async idExists(crop: number): Promise<boolean> {
     const result = await managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.CROP)
