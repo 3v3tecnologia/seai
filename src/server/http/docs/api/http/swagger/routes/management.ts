@@ -9,6 +9,17 @@ export const MANAGEMENT = {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "name",
+          in: "query",
+          description: "Crop name",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       responses: {
         200: {
           description: "Get all crops",
