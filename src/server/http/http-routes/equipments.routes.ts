@@ -66,14 +66,14 @@ export const equipmentsRouter = (): Router => {
   );
 
   router.get(
-    "/pluviometers",
+    "/pluviometer",
     adaptRoute(
       EquipmentsControllerFactory.makeFetchPluviometersWithLastMeasurements()
     )
   );
 
   router.get(
-    "/stations",
+    "/station",
     adaptRoute(
       EquipmentsControllerFactory.makeFetchStationsWithLastMeasurements()
     )

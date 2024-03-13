@@ -111,7 +111,7 @@ export class EquipmentsControllerFactory {
   }
   static makeFetchPluviometersWithLastMeasurements(): Controller {
     return new FetchPluviometersWithLastMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchStationsWithLastMeasurements()
+      EquipmentsUseCasesFactory.makeFetchPluviometersWithLastMeasurements()
     );
   }
 }
