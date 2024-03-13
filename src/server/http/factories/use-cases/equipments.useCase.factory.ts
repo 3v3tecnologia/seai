@@ -14,6 +14,8 @@ import {
   UpdatePluviometerMeasures,
   UpdateStationMeasures,
 } from "../../../../domain/use-cases/equipments";
+import { FetchPluviometersReadsWithLastMeasurements } from "../../../../domain/use-cases/equipments/fetch-pluviometers-with-last-measurements";
+import { FetchStationReadsWithLastMeasurements } from "../../../../domain/use-cases/equipments/fetch-stations-with-last-measurements";
 import { DbEquipmentsRepository } from "../../../../infra/database/postgres/repositories/equipments-repository";
 
 export class EquipmentsUseCasesFactory {
@@ -75,5 +77,11 @@ export class EquipmentsUseCasesFactory {
 
   static makeUpdateStationMeasures(): UpdateStationMeasures {
     return new UpdateStationMeasures(this.repository);
+  }
+  static makeFetchStationsWithLastMeasurements(): FetchStationReadsWithLastMeasurements {
+    return new FetchStationReadsWithLastMeasurements(this.repository);
+  }
+  static makeFetchPluviometersWithLastMeasurements(): FetchPluviometersReadsWithLastMeasurements {
+    return new FetchPluviometersReadsWithLastMeasurements(this.repository);
   }
 }

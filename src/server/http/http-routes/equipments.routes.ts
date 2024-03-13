@@ -66,6 +66,20 @@ export const equipmentsRouter = (): Router => {
   );
 
   router.get(
+    "/pluviometers",
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchPluviometersWithLastMeasurements()
+    )
+  );
+
+  router.get(
+    "/stations",
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchStationsWithLastMeasurements()
+    )
+  );
+
+  router.get(
     "/measures/pluviometers",
     authorization,
     adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())

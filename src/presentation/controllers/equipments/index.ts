@@ -10,3 +10,5 @@ export * from "./fetch-station-reads-by-id-read.controller";
 export * from "./fetch-stations-reads.controller";
 export * from "./update-equipment.controller";
 export * from "./update-meteorological-organ.controller";
+export * from "./fetch-pluviometers-with-last-measurements.controller";
+export * from "./fetch-stations-with-last-measurements.controller";

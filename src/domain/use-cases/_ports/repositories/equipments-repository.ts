@@ -253,4 +253,6 @@ export interface EquipmentsRepositoryProtocol
   getEquipmentId(
     id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
   ): EquipmentRepositoryDTOProtocol.GetIdBy.Result;
+  getPluviometersWithLastMeasurements(): Promise<any>;
+  getStationsWithLastMeasurements(): Promise<any>;
 }

@@ -11,6 +11,92 @@ import { equipments } from "../connection/knexfile";
 /*
   TO-DO : Create domain layer
 */
+
+function mapStationsMeasurementsToDomain(row: any) {
+  return {
+    Time: row.Time,
+    Hour: row.Hour,
+    Altitude: {
+      Unit: "m",
+      Value: Number(row.Altitude) || null,
+    },
+    TotalRadiation: {
+      Unit: "W/m",
+      Value: Number(row.TotalRadiation) || null,
+    },
+    AverageRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.AverageRelativeHumidity) || null,
+    },
+    MinRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.MinRelativeHumidity) || null,
+    },
+    MaxRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.MaxRelativeHumidity) || null,
+    },
+    AverageAtmosphericTemperature: {
+      Unit: "°C",
+      Value: Number(row.AverageAtmosphericTemperature) || null,
+    },
+    MaxAtmosphericTemperature: {
+      Unit: "°C",
+      Value: Number(row.MaxAtmosphericTemperature) || null,
+    },
+    MinAtmosphericTemperature: {
+      Unit: "°C",
+      Value: Number(row.MinAtmosphericTemperature) || null,
+    },
+    AtmosphericPressure: {
+      Unit: "°C",
+      Value: Number(row.AtmosphericPressure) || null,
+    },
+    WindVelocity: {
+      Unit: "m/s",
+      Value: Number(row.WindVelocity) || null,
+    },
+    ETO: {
+      Unit: "mm",
+      Value: Number(row.ETO) || null,
+    },
+  };
+}
+
+function mapPluviometerMeasurementsToDomain(row: any) {
+  return {
+    Time: row.Time,
+    Hour: row.Hour,
+    Precipitation: {
+      Unit: "mm",
+      Value: Number(row.Value),
+    },
+  };
+}
+
+function mapEquipmentToDomain(row: any) {
+  return {
+    Id: Number(row.Id),
+    Code: row.EqpCode || null,
+    Name: row.Name,
+    Type: {
+      Id: Number(row.IdType),
+      Name: row.EqpType,
+    },
+    Organ: {
+      Id: Number(row.IdOrgan),
+      Name: row.OrganName,
+    },
+    Altitude: Number(row.Altitude) || null,
+    Location: row.LocationName
+      ? {
+          Id: Number(row.IdLocation) || null,
+          Name: row.LocationName,
+          Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
+        }
+      : null,
+  };
+}
 export class DbEquipmentsRepository
   implements
     EquipmentsRepositoryProtocol,
@@ -809,5 +895,134 @@ export class DbEquipmentsRepository
       count: rows.total_registers,
       data: toDomain,
     };
+  }
+  async getStationsWithLastMeasurements() {
+    const STATION_ID_TYPE = 1;
+    const MEASURES_ROWS = 1;
+
+    const query = `
+        WITH Stations AS (SELECT
+                          equipment."IdEquipment" AS "Id",
+                          equipment."IdEquipmentExternal" AS "EqpCode",
+                          equipment."Name",
+                          equipment."Altitude" ,
+                          equipment."CreatedAt",
+                          equipment."UpdatedAt" ,
+                          organ."IdOrgan" AS "IdOrgan",
+                          organ."Name" AS "OrganName",
+                          eqpType."IdType" AS "IdType",
+                          eqpType."Name" AS "EqpType",
+                          eqpLocation."IdLocation" ,
+                          ST_AsGeoJSON(
+                              eqpLocation."Location"::geometry
+          )::json AS "GeoLocation",
+                          eqpLocation."Name" AS "LocationName"
+      FROM
+                          "MetereologicalEquipment" AS equipment
+      INNER JOIN "MetereologicalOrgan" AS organ ON
+                          organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN "EquipmentType" eqpType ON
+                          eqpType."IdType" = equipment."FK_Type"
+      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
+                          eqpLocation."FK_Equipment" = equipment."IdEquipment"
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE})
+      SELECT Stations.*, Measurements.* FROM Stations,
+          LATERAL (
+              SELECT
+                  rs."FK_Equipment" ,
+                  rs."Time",
+                  rs."Hour" ,
+                  rs."TotalRadiation" ,
+                  rs."MaxRelativeHumidity" ,
+                  rs."AverageRelativeHumidity" ,
+                  rs."MaxAtmosphericTemperature" ,
+                  rs."MinAtmosphericTemperature" ,
+                  rs."AverageAtmosphericTemperature" ,
+                  rs."AtmosphericPressure" ,
+                  rs."WindVelocity" ,
+                  rs."Et0"
+              FROM
+                  "ReadStations" rs
+              WHERE
+                  rs."FK_Equipment" = Stations."Id"
+              ORDER BY
+                  rs."Time" DESC
+              LIMIT ${MEASURES_ROWS}
+          ) AS Measurements
+    `;
+
+    const data = await equipments.raw(query);
+
+    const rows = data.rows;
+
+    if (!rows) {
+      return null;
+    }
+
+    return rows.map((row: any) => ({
+      ...mapEquipmentToDomain(row),
+      Measurements: {
+        ...mapStationsMeasurementsToDomain(row),
+      },
+    }));
+  }
+  async getPluviometersWithLastMeasurements() {
+    const query = `
+          WITH Pluviometers AS (SELECT
+                          equipment."IdEquipment" AS "Id",
+                          equipment."IdEquipmentExternal" AS "EqpCode",
+                          equipment."Name",
+                          equipment."Altitude" ,
+                          equipment."CreatedAt",
+                          equipment."UpdatedAt" ,
+                          organ."IdOrgan" AS "IdOrgan",
+                          organ."Name" AS "OrganName",
+                          eqpType."IdType" AS "IdType",
+                          eqpType."Name" AS "EqpType",
+                          eqpLocation."IdLocation" ,
+                          ST_AsGeoJSON(
+                              eqpLocation."Location"::geometry
+          )::json AS "GeoLocation",
+                          eqpLocation."Name" AS "LocationName"
+      FROM
+                          "MetereologicalEquipment" AS equipment
+      INNER JOIN "MetereologicalOrgan" AS organ ON
+                          organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN "EquipmentType" eqpType ON
+                          eqpType."IdType" = equipment."FK_Type"
+      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
+                          eqpLocation."FK_Equipment" = equipment."IdEquipment"
+      WHERE equipment."FK_Type" = 2)
+      SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
+          LATERAL (
+              SELECT
+                  rs."FK_Equipment" ,
+                  rs."Time",
+                  rs."Hour" ,
+                  rs."Value"
+              FROM
+                  "ReadPluviometers" rs
+              WHERE
+                  rs."FK_Equipment" = Pluviometers."Id"
+              ORDER BY
+                  rs."Time" DESC
+              LIMIT 1
+          ) AS Measurements
+    `;
+
+    const data = await equipments.raw(query);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const rows = data.rows;
+
+    return rows.map((row: any) => ({
+      ...mapEquipmentToDomain(row),
+      Measurements: {
+        ...mapPluviometerMeasurementsToDomain(row),
+      },
+    }));
   }
 }

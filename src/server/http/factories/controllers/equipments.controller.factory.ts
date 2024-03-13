@@ -7,8 +7,10 @@ import {
   FetchMeteorologicalOrganController,
   FetchPluviometerReadsByIdReadController,
   FetchPluviometersReadsController,
+  FetchPluviometersWithLastMeasurementsController,
   FetchStationReadsByIdReadController,
   FetchStationsReadsController,
+  FetchStationsWithLastMeasurementsController,
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
 } from "../../../../presentation/controllers/equipments";
@@ -99,6 +101,17 @@ export class EquipmentsControllerFactory {
     return new UpdateStationMeasuresController(
       EquipmentsUseCasesFactory.makeUpdateStationMeasures(),
       SystemLogsUseCaseFactory.makeRegisterUserLogs()
+    );
+  }
+
+  static makeFetchStationsWithLastMeasurements(): Controller {
+    return new FetchStationsWithLastMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchStationsWithLastMeasurements()
+    );
+  }
+  static makeFetchPluviometersWithLastMeasurements(): Controller {
+    return new FetchPluviometersWithLastMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchStationsWithLastMeasurements()
     );
   }
 }
