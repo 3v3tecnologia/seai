@@ -896,7 +896,10 @@ export class DbEquipmentsRepository
       data: toDomain,
     };
   }
-  async getStationsWithLastMeasurements() {
+  async getStationsWithLastMeasurements(coordinates?: {
+    latitude: number;
+    longitude: number;
+  }) {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
@@ -951,6 +954,8 @@ export class DbEquipmentsRepository
           ) AS Measurements
     `;
 
+    const toGeometryPointSQL = `'POINT(${coordinates?.latitude} ${coordinates?.longitude})'::geometry`;
+
     const data = await equipments.raw(query);
 
     const rows = data.rows;
@@ -959,12 +964,50 @@ export class DbEquipmentsRepository
       return null;
     }
 
-    return rows.map((row: any) => ({
-      ...mapEquipmentToDomain(row),
-      Measurements: {
-        ...mapStationsMeasurementsToDomain(row),
-      },
-    }));
+    const stations: Array<{
+      Id: number;
+      Code: string;
+      Name: string;
+      Type: {
+        Id: 1;
+        Name: string;
+      };
+      Organ: {
+        Id: number;
+        Name: string;
+      };
+      Altitude: number | null;
+      Location: any;
+      ETO: number | null;
+    }> = rows
+      .map((row: any) => ({
+        ...mapEquipmentToDomain(row),
+        ETO: Number(row.ETO) || null,
+      }))
+      .filter(
+        (station: {
+          Id: number;
+          Code: string;
+          Name: string;
+          Type: {
+            Id: 1;
+            Name: string;
+          };
+          Organ: {
+            Id: number;
+            Name: string;
+          };
+          Altitude: number | null;
+          Location: any;
+          ETO: number | null;
+        }) => station.ETO !== null
+      );
+
+    if (stations.length) {
+      return stations;
+    }
+
+    return null;
   }
   async getPluviometersWithLastMeasurements() {
     const query = `
@@ -1018,11 +1061,45 @@ export class DbEquipmentsRepository
 
     const rows = data.rows;
 
-    return rows.map((row: any) => ({
-      ...mapEquipmentToDomain(row),
-      Measurements: {
-        ...mapPluviometerMeasurementsToDomain(row),
-      },
-    }));
+    const pluviometers: Array<{
+      Id: number;
+      Code: string;
+      Name: string;
+      Type: {
+        Id: 1;
+        Name: string;
+      };
+      Organ: {
+        Id: number;
+        Name: string;
+      };
+      Altitude: number | null;
+      Location: any;
+      Precipitation: number | null;
+    }> = rows
+      .map((row: any) => ({
+        ...mapEquipmentToDomain(row),
+        Precipitation: Number(row.Value),
+      }))
+      .filter(
+        (pluviometer: {
+          Id: number;
+          Code: string;
+          Name: string;
+          Type: {
+            Id: 1;
+            Name: string;
+          };
+          Organ: {
+            Id: number;
+            Name: string;
+          };
+          Altitude: number | null;
+          Location: any;
+          Precipitation: number | null;
+        }) => pluviometer.Precipitation !== null
+      );
+
+    return pluviometers;
   }
 }
