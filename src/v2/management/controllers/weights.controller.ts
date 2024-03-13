@@ -34,28 +34,6 @@ export class ManagementWeightsController {
     }
   }
 
-  static async delete(request: {
-    accountId: number;
-    id: number;
-  }): Promise<HttpResponse> {
-    try {
-      const deletedOrError = await ManagementWeightsUseCases.deleteByBasin({
-        id: request.id,
-      });
-
-      if (deletedOrError.isLeft()) {
-        return forbidden(deletedOrError.value);
-      }
-
-      //   await this.userLogs.log(request.accountId, this.useCase);
-
-      return created(deletedOrError.value);
-    } catch (error) {
-      console.error(error);
-      return serverError(error as Error);
-    }
-  }
-
   static async getByBasin(
     request: {
       accountId: number;

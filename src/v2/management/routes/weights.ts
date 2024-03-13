@@ -15,10 +15,4 @@ export const setupWeightsRoutes = (router: Router): void => {
     authorization,
     adaptRouteV2(ManagementWeightsController.getByBasin)
   );
-
-  router.delete(
-    "/weights/:id",
-    authorization,
-    adaptRouteV2(ManagementWeightsController.delete)
-  );
 };

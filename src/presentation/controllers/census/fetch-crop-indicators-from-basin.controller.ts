@@ -1,12 +1,14 @@
 import { HttpResponse } from "../ports";
 
-import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../../../domain/use-cases/census/fetch-cultures-indicators-by-basin";
-import { created, forbidden, ok, serverError } from "../helpers";
+import {
+  GetCropsIndicatorsFromBasinUseCaseProtocol
+} from "../../../domain/use-cases/census/fetch-crops-indicators-by-basin";
+import { forbidden, ok, serverError } from "../helpers";
 
 export class GetCulturesIndicatorsFromBasinController {
-  private useCase: GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase;
+  private useCase: GetCropsIndicatorsFromBasinUseCaseProtocol.UseCase;
 
-  constructor(useCase: GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase) {
+  constructor(useCase: GetCropsIndicatorsFromBasinUseCaseProtocol.UseCase) {
     this.useCase = useCase;
   }
 

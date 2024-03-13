@@ -82,7 +82,7 @@ export class SecurityIndicatorsControllersFactory {
 
   static makeGetCulturesIndicatorsFromBasin(): Controller {
     return new GetCulturesIndicatorsFromBasinController(
-      SecurityIndicatorsUseCaseFactory.makeGetCultureIndicatorsFromBasin()
+      SecurityIndicatorsUseCaseFactory.makeGetCropsIndicatorsFromBasin()
     );
   }
 }

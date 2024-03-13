@@ -1,5 +1,5 @@
 import { BasinIndicatorsByCulture } from "../../../src/domain/entities/management/basin-indicators-by-culture";
-import { GetCulturesIndicatorsFromBasin } from "../../../src/domain/use-cases/census";
+import { GetCropsIndicatorsFromBasin } from "../../../src/domain/use-cases/census";
 import { InMemoryStudiesRepository } from "../../doubles/repositories/in-memory-management-studies.repository";
 import { InMemoryProfitabilitySecurityRepository } from "../../doubles/repositories/in-memory-profitability.repository";
 import { InMemoryWaterSecurityRepository } from "../../doubles/repositories/in-memory-water-security.repository";
@@ -26,7 +26,7 @@ describe("Farms indicators", () => {
     const socialSecurityRepository = new InMemoryWorkersSecurityRepository([]);
     const waterSecurityRepository = new InMemoryWaterSecurityRepository([]);
 
-    const useCase = new GetCulturesIndicatorsFromBasin(
+    const useCase = new GetCropsIndicatorsFromBasin(
       profitabilityRepository,
       socialSecurityRepository,
       waterSecurityRepository,
@@ -122,7 +122,7 @@ describe("Farms indicators", () => {
     const socialSecurityRepository = new InMemoryWorkersSecurityRepository([]);
     const waterSecurityRepository = new InMemoryWaterSecurityRepository([]);
 
-    const useCase = new GetCulturesIndicatorsFromBasin(
+    const useCase = new GetCropsIndicatorsFromBasin(
       profitabilityRepository,
       socialSecurityRepository,
       waterSecurityRepository,

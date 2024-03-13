@@ -22,18 +22,6 @@ export class ManagementWeightsUseCases {
     return right();
   }
 
-  static async deleteByBasin(params: {
-    id: number;
-  }): Promise<Either<Error, string>> {
-    const deleteLog = await DbManagementWeightsRepository.delete({
-      id_basin: params.id,
-    });
-
-    // this.addLog(deleteLog);
-
-    return right(deleteLog.description);
-  }
-
   static async getByBasin(params: {
     id_basin: number;
   }): Promise<Either<Error, CultureWeights | null>> {

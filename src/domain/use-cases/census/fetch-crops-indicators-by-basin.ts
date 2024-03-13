@@ -8,8 +8,8 @@ import { ProfitabilitySecurityRepositoryProtocol } from "../_ports/repositories/
 import { WaterSecurityRepositoryProtocol } from "../_ports/repositories/water-security.repository";
 import { WorkersSecurityRepositoryProtocol } from "../_ports/repositories/workers-security.repository";
 
-export class GetCulturesIndicatorsFromBasin
-  implements GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase
+export class GetCropsIndicatorsFromBasin
+  implements GetCropsIndicatorsFromBasinUseCaseProtocol.UseCase
 {
   private economicSecurityRepository: ProfitabilitySecurityRepositoryProtocol;
   private socialSecurityRepository: WorkersSecurityRepositoryProtocol;
@@ -29,8 +29,8 @@ export class GetCulturesIndicatorsFromBasin
   }
 
   async execute(
-    request: GetCulturesIndicatorsFromBasinUseCaseProtocol.Request
-  ): GetCulturesIndicatorsFromBasinUseCaseProtocol.Response {
+    request: GetCropsIndicatorsFromBasinUseCaseProtocol.Request
+  ): GetCropsIndicatorsFromBasinUseCaseProtocol.Response {
     const profitability =
       await this.economicSecurityRepository.getByBasinGroupedByProducer(
         request.IdBasin
@@ -120,7 +120,7 @@ export class GetCulturesIndicatorsFromBasin
   }
 }
 
-export namespace GetCulturesIndicatorsFromBasinUseCaseProtocol {
+export namespace GetCropsIndicatorsFromBasinUseCaseProtocol {
   export type Request = {
     IdBasin: number;
   };

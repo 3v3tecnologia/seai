@@ -1,7 +1,3 @@
-export type ManagementWeightIndicatorValue = {
-  value: number | null;
-  unity: string;
-};
 export interface ManagementWeightsProtocol {
   id_basin: number;
   culture: string;

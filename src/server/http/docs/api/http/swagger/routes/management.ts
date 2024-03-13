@@ -617,4 +617,88 @@ export const MANAGEMENT = {
       },
     },
   },
+  [`${BASE_URL.V2}/management/weights/{id}`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get weights by basin id",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Id Basin",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Weights by basin",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                example: {
+                  data: "TO-DO",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Basin Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                data: "TO-DO",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao atualizar cultura  5.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
 };

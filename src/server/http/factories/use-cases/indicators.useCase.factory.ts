@@ -1,6 +1,6 @@
 import {
-  GetCulturesIndicatorsFromBasin,
-  GetCulturesIndicatorsFromBasinUseCaseProtocol,
+  GetCropsIndicatorsFromBasin,
+  GetCropsIndicatorsFromBasinUseCaseProtocol,
 } from "../../../../domain/use-cases/census";
 import { FetchCensusLocations } from "../../../../domain/use-cases/indicators-census/fetch-census-locations";
 import { FetchEconomicSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-economic-security-by-basin";
@@ -56,8 +56,8 @@ export class SecurityIndicatorsUseCaseFactory {
     return new FetchWaterSecurityCensusByCounty(this.repository);
   }
 
-  static makeGetCultureIndicatorsFromBasin(): GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase {
-    return new GetCulturesIndicatorsFromBasin(
+  static makeGetCropsIndicatorsFromBasin(): GetCropsIndicatorsFromBasinUseCaseProtocol.UseCase {
+    return new GetCropsIndicatorsFromBasin(
       new DbProfitabilitySecurityCensusRepository(),
       new DbWorkesrSecurityCensusRepository(),
       new DbWaterSecurityCensusRepository(),
