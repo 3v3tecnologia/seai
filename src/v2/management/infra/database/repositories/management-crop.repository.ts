@@ -26,8 +26,10 @@ export class DbManagementCropRepository {
             return {
               FK_Crop: id_crop as number,
               Stage_Title: cycle.Title,
-              Duration_In_Days: cycle.DurationInDays,
+              Start: cycle.Start,
+              End: cycle.End,
               KC: cycle.KC,
+              Increment: cycle.Increment,
             };
           })
         )
@@ -59,8 +61,10 @@ export class DbManagementCropRepository {
           return {
             FK_Crop: culture.Id,
             Stage_Title: cycle.Title,
-            Duration_In_Days: cycle.DurationInDays,
+            Start: cycle.Start,
+            End: cycle.End,
             KC: cycle.KC,
+            Increment: cycle.Increment,
           };
         })
       );
@@ -96,8 +100,9 @@ export class DbManagementCropRepository {
     const result = await managementDb.raw(
       `
       SELECT * FROM "Crop" c 
-      INNER JOIN "Crop_Cycle" cc 
-      ON cc."FK_Crop"  = ? 
+      LEFT JOIN "Crop_Cycle" cc 
+      ON cc."FK_Crop"  = c."Id"
+      WHERE c."Id" = ?
     `,
       [id]
     );
@@ -110,13 +115,18 @@ export class DbManagementCropRepository {
 
     const rawCrop = data[0];
 
-    const cycles: Array<ManagementCropCycle> = data.map((row: any) => {
-      return {
-        Title: row.Stage_Title,
-        DurationInDays: row.Duration_In_Days,
-        KC: row.KC,
-      };
-    });
+    const cycles: Array<ManagementCropCycle> = data
+      .map((row: any) => {
+        return {
+          Title: row.Stage_Title,
+          DurationInDays: row.Duration_In_Days,
+          KC: row.KC,
+          Start: row.Start,
+          End: row.End,
+          Increment: row.Increment,
+        };
+      })
+      .filter((row: ManagementCropCycle) => row.Title !== null);
 
     const cropOrError = ManagementCrop.create({
       Id: rawCrop.Id,
@@ -170,7 +180,7 @@ export class DbManagementCropRepository {
       const { Id, Name, Location_Name } = dbCrops;
 
       return {
-        Id: Id as number,
+        Id: Number(Id),
         Name: Name as string,
         LocationName: Location_Name as string,
       };

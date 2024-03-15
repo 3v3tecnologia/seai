@@ -105,7 +105,6 @@ export class ManagementCropUseCases {
     if (!exists) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
-
     // Id or name?
     const cropWithSameName = await DbManagementCropRepository.findCropByName(
       params.Name

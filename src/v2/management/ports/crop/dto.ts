@@ -5,7 +5,10 @@ export namespace ManagementCropDTO {
     type CreateManagementCropCyclesInputDTO = {
       Title: string;
       DurationInDays: number;
+      Start: number;
+      End: number;
       KC: number;
+      Increment: number;
     };
 
     type CreateManagementCropInputDTO = {
@@ -45,7 +48,10 @@ export namespace ManagementCropDTO {
     type UpdateManagementCropCyclesInputDTO = {
       Title: string;
       DurationInDays: number;
+      Start: number;
+      End: number;
       KC: number;
+      Increment: number;
     };
 
     type UpdateManagementCropInputDTO = {

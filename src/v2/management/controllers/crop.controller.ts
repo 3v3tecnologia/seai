@@ -27,7 +27,7 @@ export class ManagementCropControllers {
 
       // await this.userLogs.log(request.accountId, this.useCase);
 
-      return created(createdOrError.value);
+      return created("Sucesso ao criar cultura");
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -51,7 +51,7 @@ export class ManagementCropControllers {
 
       // await this.userLogs.log(request.accountId, this.useCase);
 
-      return created(deletedOrError.value);
+      return created("Sucesso ao deletar cultura");
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -77,7 +77,7 @@ export class ManagementCropControllers {
   ): Promise<HttpResponse> {
     try {
       const dto: ManagementCropDTO.Update.Input = {
-        Id: params.id,
+        Id: Number(params.id),
         Cycles: params.Cycles,
         Name: params.Name,
         LocationName: params.LocationName,
@@ -91,7 +91,7 @@ export class ManagementCropControllers {
 
       // await this.userLogs.log(request.accountId, this.useCase);
 
-      return created(updatedOrError.value);
+      return created("Sucesso ao atualizar cultura");
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

@@ -60,10 +60,12 @@ export const MANAGEMENT = {
                 LocationName: null,
                 Cycles: [
                   {
-                    Stage: 1,
+                    Stage: 2,
                     Title: "test",
-                    DurationInDays: 12,
+                    Start: 1,
+                    End: 3,
                     KC: 54,
+                    Increment: 3,
                   },
                 ],
               },
@@ -86,7 +88,7 @@ export const MANAGEMENT = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao criar cultura 4.",
+                  data: "Sucesso ao criar cultura.",
                 },
               },
             },
@@ -126,13 +128,10 @@ export const MANAGEMENT = {
                     Cycles: [
                       {
                         Title: "test",
-                        DurationInDays: 12,
                         KC: 54,
-                      },
-                      {
-                        Title: "test",
-                        DurationInDays: 12,
-                        KC: 54,
+                        Start: 1,
+                        End: 3,
+                        Increment: 1,
                       },
                     ],
                   },
@@ -170,8 +169,10 @@ export const MANAGEMENT = {
                   {
                     Stage: 1,
                     Title: "test",
-                    DurationInDays: 12,
+                    Start: 1,
+                    End: 3,
                     KC: 54,
+                    Increment: 1,
                   },
                 ],
               },
@@ -194,7 +195,7 @@ export const MANAGEMENT = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao atualizar cultura  5.",
+                  data: "Sucesso ao atualizar cultura.",
                 },
               },
             },
@@ -232,7 +233,7 @@ export const MANAGEMENT = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao deletar cultura  5.",
+                  data: "Sucesso ao deletar cultura.",
                 },
               },
             },
