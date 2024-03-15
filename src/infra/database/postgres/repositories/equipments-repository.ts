@@ -906,8 +906,6 @@ export class DbEquipmentsRepository
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-    console.log(params);
-
     const query = `
         WITH Stations AS (SELECT
                           equipment."IdEquipment" AS "Id",
