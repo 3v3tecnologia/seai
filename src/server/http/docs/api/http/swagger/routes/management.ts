@@ -8,7 +8,6 @@ export const MANAGEMENT = {
   [`${BASE_URL.V2}/management/crop`]: {
     get: {
       tags: TAGS,
-      security: [BEARER_AUTH],
       parameters: [
         {
           name: "name",
@@ -100,7 +99,6 @@ export const MANAGEMENT = {
   [`${BASE_URL.V2}/management/crop/{id}`]: {
     get: {
       tags: TAGS,
-      security: [BEARER_AUTH],
       summary: "Get crop by id",
       parameters: [
         {
