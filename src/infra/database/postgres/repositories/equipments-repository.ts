@@ -896,12 +896,17 @@ export class DbEquipmentsRepository
       data: toDomain,
     };
   }
-  async getStationsWithLastMeasurements(coordinates?: {
-    latitude: number;
-    longitude: number;
-  }) {
+  async getStationsWithLastMeasurements(
+    params: {
+      latitude: number;
+      longitude: number;
+      distance: number;
+    } | null
+  ) {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
+
+    console.log(params);
 
     const query = `
         WITH Stations AS (SELECT
@@ -928,21 +933,17 @@ export class DbEquipmentsRepository
                           eqpType."IdType" = equipment."FK_Type"
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON
                           eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE})
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${
+      [params?.latitude, params?.longitude].every((e) => e)
+        ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        : ""
+    })
       SELECT Stations.*, Measurements.* FROM Stations,
           LATERAL (
               SELECT
                   rs."FK_Equipment" ,
                   rs."Time",
                   rs."Hour" ,
-                  rs."TotalRadiation" ,
-                  rs."MaxRelativeHumidity" ,
-                  rs."AverageRelativeHumidity" ,
-                  rs."MaxAtmosphericTemperature" ,
-                  rs."MinAtmosphericTemperature" ,
-                  rs."AverageAtmosphericTemperature" ,
-                  rs."AtmosphericPressure" ,
-                  rs."WindVelocity" ,
                   rs."Et0"
               FROM
                   "ReadStations" rs
@@ -953,8 +954,6 @@ export class DbEquipmentsRepository
               LIMIT ${MEASURES_ROWS}
           ) AS Measurements
     `;
-
-    const toGeometryPointSQL = `'POINT(${coordinates?.latitude} ${coordinates?.longitude})'::geometry`;
 
     const data = await equipments.raw(query);
 
@@ -1009,7 +1008,13 @@ export class DbEquipmentsRepository
 
     return null;
   }
-  async getPluviometersWithLastMeasurements() {
+  async getPluviometersWithLastMeasurements(
+    params: {
+      latitude: number;
+      longitude: number;
+      distance: number;
+    } | null
+  ) {
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -1035,7 +1040,11 @@ export class DbEquipmentsRepository
                           eqpType."IdType" = equipment."FK_Type"
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON
                           eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      WHERE equipment."FK_Type" = 2)
+      WHERE equipment."FK_Type" = 2 ${
+        [params?.latitude, params?.longitude].every((e) => e)
+          ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+          : ""
+      })
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (
               SELECT

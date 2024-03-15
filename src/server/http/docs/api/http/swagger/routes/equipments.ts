@@ -383,7 +383,33 @@ export const EQUIPMENTS = {
   [`${BASE_URL.V1}/equipments/pluviometers`]: {
     get: {
       tags: TAGS,
-      summary: "Get all pluviometers stations with last measurement record",
+      summary: "Get all pluviometers with last measurement record",
+      parameters: [
+        {
+          name: "latitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "longitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "distance",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       responses: {
         200: {
           description: "All equipments",
@@ -452,7 +478,33 @@ export const EQUIPMENTS = {
   [`${BASE_URL.V1}/equipments/stations`]: {
     get: {
       tags: TAGS,
-      summary: "Get all stations stations with last measurement record",
+      summary: "Get all stations with last measurement record",
+      parameters: [
+        {
+          name: "latitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "longitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "distance",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       responses: {
         200: {
           description: "All equipments",
@@ -483,42 +535,6 @@ export const EQUIPMENTS = {
                           Unit: "m",
                           Value: 1,
                         },
-                        TotalRadiation: {
-                          Unit: "W/m",
-                          Value: null,
-                        },
-                        AverageRelativeHumidity: {
-                          Unit: "%",
-                          Value: null,
-                        },
-                        MinRelativeHumidity: {
-                          Unit: "%",
-                          Value: null,
-                        },
-                        MaxRelativeHumidity: {
-                          Unit: "%",
-                          Value: null,
-                        },
-                        AverageAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: null,
-                        },
-                        MaxAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: null,
-                        },
-                        MinAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: null,
-                        },
-                        AtmosphericPressure: {
-                          Unit: "°C",
-                          Value: null,
-                        },
-                        WindVelocity: {
-                          Unit: "m/s",
-                          Value: null,
-                        },
                         ETO: {
                           Unit: "mm",
                           Value: null,
@@ -545,42 +561,6 @@ export const EQUIPMENTS = {
                         Altitude: {
                           Unit: "m",
                           Value: 30.4,
-                        },
-                        TotalRadiation: {
-                          Unit: "W/m",
-                          Value: 183.72,
-                        },
-                        AverageRelativeHumidity: {
-                          Unit: "%",
-                          Value: 89.3,
-                        },
-                        MinRelativeHumidity: {
-                          Unit: "%",
-                          Value: null,
-                        },
-                        MaxRelativeHumidity: {
-                          Unit: "%",
-                          Value: 99.3,
-                        },
-                        AverageAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: 27.64,
-                        },
-                        MaxAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: 30.83,
-                        },
-                        MinAtmosphericTemperature: {
-                          Unit: "°C",
-                          Value: 25.49,
-                        },
-                        AtmosphericPressure: {
-                          Unit: "°C",
-                          Value: 1010.92,
-                        },
-                        WindVelocity: {
-                          Unit: "m/s",
-                          Value: 1.37,
                         },
                         ETO: {
                           Unit: "mm",

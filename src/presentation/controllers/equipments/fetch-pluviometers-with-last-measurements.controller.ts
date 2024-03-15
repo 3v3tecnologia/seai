@@ -24,7 +24,7 @@ export class FetchPluviometersWithLastMeasurementsController
     request: FetchPluviometersWithLastMeasurementsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.useCase.execute();
+      const result = await this.useCase.execute(request);
 
       return ok(result.value);
     } catch (error) {
@@ -36,6 +36,8 @@ export class FetchPluviometersWithLastMeasurementsController
 
 export namespace FetchPluviometersWithLastMeasurementsControllerProtocol {
   export type Request = {
-    id: number;
-  };
+    latitude: number;
+    longitude: number;
+    distance: number;
+  } | null;
 }

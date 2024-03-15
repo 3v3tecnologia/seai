@@ -21,7 +21,7 @@ export class FetchStationsWithLastMeasurementsController
     request: FetchStationsWithLastMeasurementsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.useCase.execute();
+      const result = await this.useCase.execute(request);
 
       return ok(result.value);
     } catch (error) {
@@ -33,6 +33,8 @@ export class FetchStationsWithLastMeasurementsController
 
 export namespace FetchStationsWithLastMeasurementsControllerProtocol {
   export type Request = {
-    id: number;
-  };
+    latitude: number;
+    longitude: number;
+    distance: number;
+  } | null;
 }

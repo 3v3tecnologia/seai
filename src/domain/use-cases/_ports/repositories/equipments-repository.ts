@@ -253,6 +253,18 @@ export interface EquipmentsRepositoryProtocol
   getEquipmentId(
     id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
   ): EquipmentRepositoryDTOProtocol.GetIdBy.Result;
-  getPluviometersWithLastMeasurements(): Promise<any>;
-  getStationsWithLastMeasurements(): Promise<any>;
+  getPluviometersWithLastMeasurements(
+    params: {
+      latitude: number;
+      longitude: number;
+      distance: number;
+    } | null
+  ): Promise<any>;
+  getStationsWithLastMeasurements(
+    params: {
+      latitude: number;
+      longitude: number;
+      distance: number;
+    } | null
+  ): Promise<any>;
 }
