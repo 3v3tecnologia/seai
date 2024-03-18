@@ -98,6 +98,109 @@ export const MANAGEMENT = {
       },
     },
   },
+  [`${BASE_URL.V2}/management/crop/cycles/{id}`]: {
+    get: {
+      tags: TAGS,
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Crop id",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Get crop cycles",
+          content: {
+            "application/json": {
+              schema: {
+                example: {
+                  data: [
+                    {
+                      Title: "test2",
+                      Start: 1,
+                      End: 3,
+                      KC: 54,
+                      Increment: 1,
+                    },
+                    {
+                      Title: "test2",
+                      Start: 1,
+                      End: 3,
+                      KC: 54,
+                      Increment: 3,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Create crop",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                data: [
+                  {
+                    Stage: 1,
+                    Title: "test2",
+                    Start: 1,
+                    End: 3,
+                    KC: 54,
+                    Increment: 1,
+                  },
+                  {
+                    Stage: 2,
+                    Title: "test2",
+                    Start: 1,
+                    End: 3,
+                    KC: 54,
+                    Increment: 3,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao criar ciclos de cultura.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${BASE_URL.V2}/management/crop/{id}`]: {
     get: {
       tags: TAGS,
@@ -115,7 +218,6 @@ export const MANAGEMENT = {
       ],
       responses: {
         200: {
-          description: "Daily stations measures",
           content: {
             "application/json": {
               schema: {
@@ -125,15 +227,6 @@ export const MANAGEMENT = {
                     Id: 3,
                     Name: "ALFACE",
                     LocationName: "FORTALEZA",
-                    Cycles: [
-                      {
-                        Title: "test",
-                        KC: 54,
-                        Start: 1,
-                        End: 3,
-                        Increment: 1,
-                      },
-                    ],
                   },
                 },
               },
@@ -165,16 +258,6 @@ export const MANAGEMENT = {
               example: {
                 Name: "LIMÃO",
                 LocationName: "ESTADOS",
-                Cycles: [
-                  {
-                    Stage: 1,
-                    Title: "test",
-                    Start: 1,
-                    End: 3,
-                    KC: 54,
-                    Increment: 1,
-                  },
-                ],
               },
             },
           },
