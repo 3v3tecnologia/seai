@@ -78,7 +78,7 @@ export const MANAGEMENT = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao criar cultura.",
+                  data: 1,
                 },
               },
             },
