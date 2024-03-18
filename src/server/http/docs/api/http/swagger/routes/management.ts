@@ -58,16 +58,6 @@ export const MANAGEMENT = {
               example: {
                 Name: "FEIJÃO5",
                 LocationName: null,
-                Cycles: [
-                  {
-                    Stage: 2,
-                    Title: "test",
-                    Start: 1,
-                    End: 3,
-                    KC: 54,
-                    Increment: 3,
-                  },
-                ],
               },
             },
           },
