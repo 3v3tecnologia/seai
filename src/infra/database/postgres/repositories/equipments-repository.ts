@@ -12,68 +12,6 @@ import { equipments } from "../connection/knexfile";
   TO-DO : Create domain layer
 */
 
-function mapStationsMeasurementsToDomain(row: any) {
-  return {
-    Time: row.Time,
-    Hour: row.Hour,
-    Altitude: {
-      Unit: "m",
-      Value: Number(row.Altitude) || null,
-    },
-    TotalRadiation: {
-      Unit: "W/m",
-      Value: Number(row.TotalRadiation) || null,
-    },
-    AverageRelativeHumidity: {
-      Unit: "%",
-      Value: Number(row.AverageRelativeHumidity) || null,
-    },
-    MinRelativeHumidity: {
-      Unit: "%",
-      Value: Number(row.MinRelativeHumidity) || null,
-    },
-    MaxRelativeHumidity: {
-      Unit: "%",
-      Value: Number(row.MaxRelativeHumidity) || null,
-    },
-    AverageAtmosphericTemperature: {
-      Unit: "°C",
-      Value: Number(row.AverageAtmosphericTemperature) || null,
-    },
-    MaxAtmosphericTemperature: {
-      Unit: "°C",
-      Value: Number(row.MaxAtmosphericTemperature) || null,
-    },
-    MinAtmosphericTemperature: {
-      Unit: "°C",
-      Value: Number(row.MinAtmosphericTemperature) || null,
-    },
-    AtmosphericPressure: {
-      Unit: "°C",
-      Value: Number(row.AtmosphericPressure) || null,
-    },
-    WindVelocity: {
-      Unit: "m/s",
-      Value: Number(row.WindVelocity) || null,
-    },
-    ETO: {
-      Unit: "mm",
-      Value: Number(row.ETO) || null,
-    },
-  };
-}
-
-function mapPluviometerMeasurementsToDomain(row: any) {
-  return {
-    Time: row.Time,
-    Hour: row.Hour,
-    Precipitation: {
-      Unit: "mm",
-      Value: Number(row.Value),
-    },
-  };
-}
-
 function mapEquipmentToDomain(row: any) {
   return {
     Id: Number(row.Id),

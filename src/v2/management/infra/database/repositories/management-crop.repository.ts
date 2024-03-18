@@ -169,6 +169,49 @@ export class DbManagementCropRepository {
   }
   static async findCropByName(
     name: string
+  ): Promise<Array<ManagementCropParams> | null> {
+    const data = await managementDb.raw(`
+      SELECT
+          "Id",
+          "Name",
+          "Location_Name",
+          "CreatedAt",
+          "UpdatedAt"
+      FROM
+          "Crop" c
+      WHERE
+          (
+                to_tsvector(
+                  'simple',
+                  COALESCE(
+                      c."Name",
+                      ''
+                  )
+              )
+          ) @@ to_tsquery(
+              'simple',
+              '${name}:*'
+          )
+    `);
+
+    const dbCrops = data.rows;
+
+    if (dbCrops.length) {
+      return dbCrops.map((row: any) => {
+        const { Id, Name, Location_Name } = row;
+        return {
+          Id: Number(Id),
+          Name: Name as string,
+          LocationName: Location_Name as string,
+        };
+      });
+    }
+
+    return null;
+  }
+
+  static async checkIfCropNameAlreadyExists(
+    name: string
   ): Promise<ManagementCropParams | null> {
     const dbCrops = await managementDb
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")

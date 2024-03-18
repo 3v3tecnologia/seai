@@ -38,10 +38,7 @@ export namespace ManagementCropDTO {
   }
   export namespace GetAll {
     export type Input = void | string;
-    export type Output =
-      | Array<ManagementCropParams>
-      | ManagementCropParams
-      | null;
+    export type Output = Array<ManagementCropParams> | null;
   }
 
   export namespace Update {

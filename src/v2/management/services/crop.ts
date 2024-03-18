@@ -106,9 +106,10 @@ export class ManagementCropUseCases {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
     // Id or name?
-    const cropWithSameName = await DbManagementCropRepository.findCropByName(
-      params.Name
-    );
+    const cropWithSameName =
+      await DbManagementCropRepository.checkIfCropNameAlreadyExists(
+        params.Name
+      );
 
     if (cropWithSameName && cropWithSameName.Id !== params.Id) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(params.Name));
