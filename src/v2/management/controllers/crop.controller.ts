@@ -5,6 +5,7 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
+import { HTTPIncomingAdapters } from "../../../shared/ports/incoming-adapters";
 import { ManagementCropUseCases } from "../services/crop";
 
 export class ManagementCropControllers {
@@ -33,10 +34,9 @@ export class ManagementCropControllers {
     }
   }
 
-  static async deleteCrop(params: {
-    accountId: number;
-    id: number;
-  }): Promise<HttpResponse> {
+  static async deleteCrop(
+    params: HTTPIncomingAdapters.ItemIdInput & HTTPIncomingAdapters.UserIdInput
+  ): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementCropUseCases.deleteCrop(params.id);
 
@@ -53,7 +53,9 @@ export class ManagementCropControllers {
     }
   }
 
-  static async getCropById(params: { id: number }): Promise<HttpResponse> {
+  static async getCropById(
+    params: HTTPIncomingAdapters.ItemIdInput
+  ): Promise<HttpResponse> {
     const result = await ManagementCropUseCases.getCropById(params.id);
 
     return ok(result.value);
@@ -78,7 +80,7 @@ export class ManagementCropControllers {
     params: {
       Name: string;
       LocationName: string | null;
-    } & { id: number }
+    } & HTTPIncomingAdapters.ItemIdInput
   ): Promise<HttpResponse> {
     try {
       const updatedOrError = await ManagementCropUseCases.updateCrop({
@@ -110,7 +112,8 @@ export class ManagementCropControllers {
         KC: number;
         Increment: number;
       }>;
-    } & { id: number; accountId: number }
+    } & HTTPIncomingAdapters.ItemIdInput &
+      HTTPIncomingAdapters.ItemIdInput
   ): Promise<HttpResponse> {
     try {
       const createdOrError = await ManagementCropUseCases.insertCropCycles(
@@ -131,7 +134,9 @@ export class ManagementCropControllers {
     }
   }
 
-  static async getAllCropCycles(params: { id: number }): Promise<HttpResponse> {
+  static async getAllCropCycles(
+    params: HTTPIncomingAdapters.ItemIdInput
+  ): Promise<HttpResponse> {
     const result = await ManagementCropUseCases.findCropCyclesByCropId(
       params.id
     );
