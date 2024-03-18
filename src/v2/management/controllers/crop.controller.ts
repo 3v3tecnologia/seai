@@ -27,7 +27,7 @@ export class ManagementCropControllers {
 
       // await this.userLogs.log(request.accountId, this.useCase);
 
-      return created("Sucesso ao criar cultura");
+      return created(createdOrError.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
