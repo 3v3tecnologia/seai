@@ -4,62 +4,51 @@ import { ManagementCropCycle } from "../../../entities/crop-cycles";
 import { managementDb } from "../connections/db";
 
 export class DbManagementCropRepository {
-  static async create(culture: ManagementCrop): Promise<number | null> {
-    let id_crop: number | null = null;
+  static async createCrop(culture: ManagementCrop): Promise<number | null> {
+    const insertedCrop = await managementDb
+      .insert({
+        Name: culture.Name,
+        Location_Name: culture?.Location || null,
+        CreatedAt: managementDb.fn.now(),
+      })
+      .returning("Id")
+      .into(DATABASES.MANAGEMENT.TABLES.CROP);
 
-    await managementDb.transaction(async (trx) => {
-      const insertedCrop = await managementDb
-        .insert({
-          Name: culture.Name,
-          Location_Name: culture?.Location || null,
-          CreatedAt: managementDb.fn.now(),
-        })
-        .returning("Id")
-        .into(DATABASES.MANAGEMENT.TABLES.CROP);
-
-      id_crop = insertedCrop.length && insertedCrop[0].Id;
-
-      await trx
-        .batchInsert(
-          DATABASES.MANAGEMENT.TABLES.CROP_CYCLE,
-          culture.Cycles.map((cycle) => {
-            return {
-              FK_Crop: id_crop as number,
-              Stage_Title: cycle.Title,
-              Start: cycle.Start,
-              End: cycle.End,
-              KC: cycle.KC,
-              Increment: cycle.Increment,
-            };
-          })
-        )
-        .returning("FK_Crop");
-    });
-
-    return id_crop;
+    return insertedCrop.length ? insertedCrop[0]?.Id : null;
   }
 
-  static async update(culture: ManagementCrop): Promise<void> {
-    await managementDb.transaction(async (trx) => {
-      await trx(DATABASES.MANAGEMENT.TABLES.CROP)
-        .update({
-          Name: culture.Name,
-          Location_Name: culture.Location,
-          UpdatedAt: managementDb.fn.now(),
-        })
-        .where({
-          Id: culture.Id,
-        });
+  static async updateCrop(culture: ManagementCrop): Promise<void> {
+    await managementDb(DATABASES.MANAGEMENT.TABLES.CROP)
+      .update({
+        Name: culture.Name,
+        Location_Name: culture.Location,
+        UpdatedAt: managementDb.fn.now(),
+      })
+      .where({
+        Id: culture.Id,
+      });
+  }
 
+  static async deleteCrop(idCrop: number): Promise<void> {
+    await managementDb(DATABASES.MANAGEMENT.TABLES.CROP)
+      .where({ Id: idCrop })
+      .del();
+  }
+
+  static async createCropCycles(
+    idCrop: number,
+    cycles: Array<ManagementCropCycle>
+  ): Promise<void> {
+    await managementDb.transaction(async (trx) => {
       await trx(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
-        .where({ FK_Crop: culture.Id })
+        .where({ FK_Crop: idCrop })
         .del();
 
       await trx.batchInsert(
         DATABASES.MANAGEMENT.TABLES.CROP_CYCLE,
-        culture.Cycles.map((cycle) => {
+        cycles.map((cycle) => {
           return {
-            FK_Crop: culture.Id,
+            FK_Crop: idCrop,
             Stage_Title: cycle.Title,
             Start: cycle.Start,
             End: cycle.End,
@@ -69,6 +58,38 @@ export class DbManagementCropRepository {
         })
       );
     });
+  }
+
+  static async findCropsCycles(
+    idCrop: number
+  ): Promise<Array<ManagementCropCycle> | null> {
+    const data = await managementDb
+      .select("*")
+      .from(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
+      .where({ FK_Crop: idCrop });
+
+    if (data.length === 0) {
+      return null;
+    }
+
+    return data.map((raw: any) => {
+      const { Stage_Title, DurationInDays, Start, End, KC, Increment } = raw;
+
+      return {
+        Title: Stage_Title,
+        DurationInDays,
+        Start,
+        End,
+        KC,
+        Increment,
+      };
+    });
+  }
+
+  static async deleteCropCycles(idCrop: number): Promise<void> {
+    await managementDb(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
+      .where({ FK_Crop: idCrop })
+      .del();
   }
 
   static async nameExists(crop: string): Promise<boolean> {
@@ -91,17 +112,12 @@ export class DbManagementCropRepository {
     return !!result;
   }
 
-  static async delete(idCrop: number): Promise<void> {
-    await managementDb(DATABASES.MANAGEMENT.TABLES.CROP)
-      .where({ Id: idCrop })
-      .del();
-  }
-  static async findCropById(id: number): Promise<ManagementCropParams | null> {
+  static async findCropById(
+    id: number
+  ): Promise<{ Id: number; Name: string; LocationName: string | null } | null> {
     const result = await managementDb.raw(
       `
       SELECT * FROM "Crop" c 
-      LEFT JOIN "Crop_Cycle" cc 
-      ON cc."FK_Crop"  = c."Id"
       WHERE c."Id" = ?
     `,
       [id]
@@ -115,7 +131,7 @@ export class DbManagementCropRepository {
 
     const rawCrop = data[0];
 
-    const cycles: Array<ManagementCropCycle> = data
+    /*const cycles: Array<ManagementCropCycle> = data
       .map((row: any) => {
         return {
           Title: row.Stage_Title,
@@ -126,29 +142,20 @@ export class DbManagementCropRepository {
           Increment: row.Increment,
         };
       })
-      .filter((row: ManagementCropCycle) => row.Title !== null);
+      .filter((row: ManagementCropCycle) => row.Title !== null);*/
 
-    const cropOrError = ManagementCrop.create({
+    return {
       Id: rawCrop.Id,
       Name: rawCrop.Name,
       LocationName: rawCrop.Location_Name,
-      Cycles: cycles,
-    });
-
-    if (cropOrError.isRight()) {
-      const crop = cropOrError.value as ManagementCrop;
-
-      return {
-        Id: crop.Id as number,
-        Name: crop.Name,
-        LocationName: crop.Location,
-        Cycles: crop.Cycles,
-      };
-    }
-
-    return null;
+    };
   }
-  static async find(): Promise<ManagementCropParams[] | null> {
+
+  static async findAllCrops(): Promise<Array<{
+    Id: number;
+    Name: string;
+    LocationName: string | null;
+  }> | null> {
     const data = await managementDb
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .from(DATABASES.MANAGEMENT.TABLES.CROP);
@@ -167,9 +174,12 @@ export class DbManagementCropRepository {
       };
     });
   }
-  static async findCropByName(
-    name: string
-  ): Promise<Array<ManagementCropParams> | null> {
+
+  static async findCropByName(name: string): Promise<Array<{
+    Id: number;
+    Name: string;
+    LocationName: string | null;
+  }> | null> {
     const data = await managementDb.raw(`
       SELECT
           "Id",

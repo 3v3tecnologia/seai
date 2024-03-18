@@ -5,21 +5,20 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { ManagementCropDTO } from "../ports/crop/dto";
 import { ManagementCropUseCases } from "../services/crop";
 
 export class ManagementCropControllers {
-  static async create(
-    params: ManagementCropDTO.Create.Input & { accountId: number }
-  ): Promise<HttpResponse> {
+  static async createCrop(params: {
+    Name: string;
+    LocationName: string | null;
+    CreatedAt?: string;
+    UpdatedAt?: string;
+  }): Promise<HttpResponse> {
     try {
-      const dto: ManagementCropDTO.Create.Input = {
-        Cycles: params.Cycles,
+      const createdOrError = await ManagementCropUseCases.createCrop({
         Name: params.Name,
         LocationName: params.LocationName,
-      };
-
-      const createdOrError = await ManagementCropUseCases.create(dto);
+      });
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -34,16 +33,12 @@ export class ManagementCropControllers {
     }
   }
 
-  static async delete(params: {
+  static async deleteCrop(params: {
     accountId: number;
     id: number;
   }): Promise<HttpResponse> {
     try {
-      const dto: ManagementCropDTO.Delete.Input = {
-        id: params.id,
-      };
-
-      const deletedOrError = await ManagementCropUseCases.delete(dto);
+      const deletedOrError = await ManagementCropUseCases.deleteCrop(params.id);
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
@@ -58,32 +53,39 @@ export class ManagementCropControllers {
     }
   }
 
-  static async getCropById(
-    params: ManagementCropDTO.GetCrop.Input
+  static async getCropById(params: { id: number }): Promise<HttpResponse> {
+    const result = await ManagementCropUseCases.getCropById(params.id);
+
+    return ok(result.value);
+  }
+
+  static async getAllCrops(
+    params: { name: string } | void
   ): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.getCropById(params);
+    const dto: { Name?: string } = {};
+
+    if (params && params.name) {
+      Object.assign(dto, {
+        Name: params.name,
+      });
+    }
+    const result = await ManagementCropUseCases.getAllCrops(dto);
 
     return ok(result.value);
   }
 
-  static async getAll(params: { name: string } | void): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.getAll(params);
-
-    return ok(result.value);
-  }
-
-  static async update(
-    params: ManagementCropDTO.Update.Input & { accountId: number; id: number }
+  static async updateCrop(
+    params: {
+      Name: string;
+      LocationName: string | null;
+    } & { id: number }
   ): Promise<HttpResponse> {
     try {
-      const dto: ManagementCropDTO.Update.Input = {
+      const updatedOrError = await ManagementCropUseCases.updateCrop({
         Id: Number(params.id),
-        Cycles: params.Cycles,
         Name: params.Name,
         LocationName: params.LocationName,
-      };
-
-      const updatedOrError = await ManagementCropUseCases.update(dto);
+      });
 
       if (updatedOrError.isLeft()) {
         return forbidden(updatedOrError.value);
@@ -96,5 +98,44 @@ export class ManagementCropControllers {
       console.error(error);
       return serverError(error as Error);
     }
+  }
+
+  static async createCropCycles(
+    params: {
+      data: Array<{
+        Title: string;
+        DurationInDays: number;
+        Start: number;
+        End: number;
+        KC: number;
+        Increment: number;
+      }>;
+    } & { id: number; accountId: number }
+  ): Promise<HttpResponse> {
+    try {
+      const createdOrError = await ManagementCropUseCases.insertCropCycles(
+        params.id,
+        params.data
+      );
+
+      if (createdOrError.isLeft()) {
+        return forbidden(createdOrError.value);
+      }
+
+      // await this.userLogs.log(request.accountId, this.useCase);
+
+      return created("Sucesso ao criar cultura");
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+
+  static async getAllCropCycles(params: { id: number }): Promise<HttpResponse> {
+    const result = await ManagementCropUseCases.findCropCyclesByCropId(
+      params.id
+    );
+
+    return ok(result.value);
   }
 }
