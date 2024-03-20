@@ -1,4 +1,8 @@
 import {
+  PluviometerWithLastMeasurement,
+  StationWithLastMeasurement,
+} from "../../../../domain/entities/equipments/Equipment";
+import {
   EquipmentsMeasuresRepositoryProtocol,
   EquipmentsRepositoryProtocol,
   MeteorologicalOrganRepositoryProtocol,
@@ -122,6 +126,7 @@ export class DbEquipmentsRepository
           Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
+          Enable: equipment.Enable,
           CreatedAt: equipments.fn.now(),
         })
         .returning("IdEquipment")
@@ -157,6 +162,7 @@ export class DbEquipmentsRepository
           Altitude: equipment.Altitude,
           FK_Organ: equipment.Fk_Organ,
           FK_Type: equipment.Fk_Type,
+          Enable: equipment.Enable,
           UpdatedAt: equipments.fn.now(),
         })
         .returning("IdEquipment")
@@ -308,6 +314,7 @@ export class DbEquipmentsRepository
           equipment."Altitude" ,
           equipment."CreatedAt",
           equipment."UpdatedAt" ,
+          equipment."Enable",
           organ."IdOrgan" AS "IdOrgan",
           organ."Name" AS "OrganName",
           eqpType."IdType" AS "IdType",
@@ -360,6 +367,7 @@ export class DbEquipmentsRepository
         : null,
       CreatedAt: data.CreatedAt,
       UpdatedAt: data.UpdatedAt,
+      Enable: data.Enable,
     };
   }
 
@@ -441,6 +449,7 @@ export class DbEquipmentsRepository
                     equipment."Altitude" ,
                     equipment."CreatedAt",
                     equipment."UpdatedAt" ,
+                    equipment."Enable",
                     organ."IdOrgan" AS "IdOrgan",
                     organ."Name" AS "OrganName",
                     eqpType."IdType" AS "IdType",
@@ -493,6 +502,7 @@ export class DbEquipmentsRepository
         : null,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
+      Enable: row.Enable,
     }));
 
     return {
@@ -840,7 +850,7 @@ export class DbEquipmentsRepository
       longitude: number;
       distance: number;
     } | null
-  ) {
+  ): Promise<Array<StationWithLastMeasurement> | null> {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
@@ -869,7 +879,7 @@ export class DbEquipmentsRepository
                           eqpType."IdType" = equipment."FK_Type"
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON
                           eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${
       [params?.latitude, params?.longitude].every((e) => e)
         ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
         : ""
@@ -899,50 +909,14 @@ export class DbEquipmentsRepository
       return null;
     }
 
-    const stations: Array<{
-      Id: number;
-      Code: string;
-      Name: string;
-      Type: {
-        Id: 1;
-        Name: string;
-      };
-      Organ: {
-        Id: number;
-        Name: string;
-      };
-      Altitude: number | null;
-      Location: any;
-      ETO: number | null;
-    }> = rows
+    const stations: Array<StationWithLastMeasurement> = rows
       .map((row: any) => ({
         ...mapEquipmentToDomain(row),
         ETO: Number(row.ETO) || null,
       }))
-      .filter(
-        (station: {
-          Id: number;
-          Code: string;
-          Name: string;
-          Type: {
-            Id: 1;
-            Name: string;
-          };
-          Organ: {
-            Id: number;
-            Name: string;
-          };
-          Altitude: number | null;
-          Location: any;
-          ETO: number | null;
-        }) => station.ETO !== null
-      );
+      .filter((station: StationWithLastMeasurement) => station.ETO !== null);
 
-    if (stations.length) {
-      return stations;
-    }
-
-    return null;
+    return stations.length ? stations : null;
   }
   async getPluviometersWithLastMeasurements(
     params: {
@@ -950,7 +924,7 @@ export class DbEquipmentsRepository
       longitude: number;
       distance: number;
     } | null
-  ) {
+  ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -976,7 +950,7 @@ export class DbEquipmentsRepository
                           eqpType."IdType" = equipment."FK_Type"
       LEFT JOIN "EquipmentLocation" AS eqpLocation ON
                           eqpLocation."FK_Equipment" = equipment."IdEquipment"
-      WHERE equipment."FK_Type" = 2 ${
+      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${
         [params?.latitude, params?.longitude].every((e) => e)
           ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
           : ""
@@ -1006,45 +980,16 @@ export class DbEquipmentsRepository
 
     const rows = data.rows;
 
-    const pluviometers: Array<{
-      Id: number;
-      Code: string;
-      Name: string;
-      Type: {
-        Id: 1;
-        Name: string;
-      };
-      Organ: {
-        Id: number;
-        Name: string;
-      };
-      Altitude: number | null;
-      Location: any;
-      Precipitation: number | null;
-    }> = rows
+    const pluviometers: Array<PluviometerWithLastMeasurement> = rows
       .map((row: any) => ({
         ...mapEquipmentToDomain(row),
         Precipitation: Number(row.Value),
       }))
       .filter(
-        (pluviometer: {
-          Id: number;
-          Code: string;
-          Name: string;
-          Type: {
-            Id: 1;
-            Name: string;
-          };
-          Organ: {
-            Id: number;
-            Name: string;
-          };
-          Altitude: number | null;
-          Location: any;
-          Precipitation: number | null;
-        }) => pluviometer.Precipitation !== null
+        (pluviometer: PluviometerWithLastMeasurement) =>
+          pluviometer.Precipitation !== null
       );
 
-    return pluviometers;
+    return pluviometers.length ? pluviometers : null;
   }
 }

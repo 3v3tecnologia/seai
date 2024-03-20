@@ -29,6 +29,7 @@ export class UpdateEquipmentsController
         Fk_Type: request.Fk_Type,
         Altitude: request.Altitude,
         Location: request.Location,
+        Enable: request.Enable,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -60,5 +61,6 @@ export namespace UpdateEquipmentsControllerProtocol {
       Name: string;
       Coordinates: Array<number>;
     };
+    Enable: boolean;
   };
 }

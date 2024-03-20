@@ -50,6 +50,7 @@ export class UpdateEquipment extends Command {
       Location: request.Location,
       Altitude: request.Altitude,
       Name: request.Name,
+      Enable: request.Enable,
     });
 
     this.addLog({
@@ -74,6 +75,7 @@ export namespace UpdateEquipmentUseCaseProtocol {
       Name: string;
       Coordinates: Array<number>;
     };
+    Enable: boolean;
   };
   export type Response = string;
 }

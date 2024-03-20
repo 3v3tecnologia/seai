@@ -1,4 +1,8 @@
-import { EquipmentEntity } from "../../../entities/equipments/Equipment";
+import {
+  EquipmentEntity,
+  PluviometerWithLastMeasurement,
+  StationWithLastMeasurement,
+} from "../../../entities/equipments/Equipment";
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
 import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../../entities/equipments/StationRead";
@@ -46,6 +50,7 @@ export namespace EquipmentRepositoryDTOProtocol {
         Name: string;
         Coordinates: Array<number>;
       };
+      Enable: boolean;
     };
 
     export type Result = Promise<number | null>;
@@ -259,12 +264,12 @@ export interface EquipmentsRepositoryProtocol
       longitude: number;
       distance: number;
     } | null
-  ): Promise<any>;
+  ): Promise<Array<PluviometerWithLastMeasurement> | null>;
   getStationsWithLastMeasurements(
     params: {
       latitude: number;
       longitude: number;
       distance: number;
     } | null
-  ): Promise<any>;
+  ): Promise<Array<StationWithLastMeasurement> | null>;
 }
