@@ -109,6 +109,7 @@ export const EQUIPMENTS = {
                             },
                             CreatedAt: "string",
                             UpdatedAt: "string",
+                            Enable: "boolean",
                           },
                         },
                       },
@@ -150,6 +151,7 @@ export const EQUIPMENTS = {
                         },
                         CreatedAt: "2023-11-06T12:52:23.953Z",
                         UpdatedAt: "2023-11-06T12:55:17.233Z",
+                        Enable: true,
                       },
                     ],
                     PageNumber: 0,
@@ -205,6 +207,7 @@ export const EQUIPMENTS = {
                 Fk_Type: {
                   type: "string",
                 },
+                Enable: "boolean",
               },
               example: {
                 IdEquipmentExternal: "TESTE1",
@@ -216,6 +219,7 @@ export const EQUIPMENTS = {
                 },
                 Fk_Organ: 2,
                 Fk_Type: 1,
+                Enable: true,
               },
             },
           },
@@ -237,7 +241,7 @@ export const EQUIPMENTS = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao criar equipamento 6.",
+                  data: 6,
                 },
               },
             },
@@ -297,6 +301,7 @@ export const EQUIPMENTS = {
                 Fk_Type: {
                   type: "string",
                 },
+                Enable: "boolean",
               },
               example: {
                 IdEquipmentExternal: "TESTE1",
@@ -308,6 +313,7 @@ export const EQUIPMENTS = {
                 },
                 Fk_Organ: 2,
                 Fk_Type: 1,
+                Enable: true,
               },
             },
           },
