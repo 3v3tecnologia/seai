@@ -13,20 +13,20 @@ export class UpdateEquipment extends Command {
   async execute(
     request: UpdateEquipmentUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateEquipmentUseCaseProtocol.Response>> {
-    const existingEquipmentId =
-      await this.equipmentsRepository.getEquipmentIdByExternalCode(
-        request.IdEquipmentExternal
-      );
+    const notFound =
+      await this.equipmentsRepository.checkIfEquipmentIdExists(
+        request.IdEquipment
+      ) === false;
 
-    const hasOtherEquipmentWithSameCode =
+    /*const hasOtherEquipmentWithSameCode =
       existingEquipmentId !== null &&
-      Number(request.IdEquipment) !== existingEquipmentId;
+      Number(request.IdEquipment) !== existingEquipmentId;*/
 
-    if (hasOtherEquipmentWithSameCode) {
-      return left(new Error(`Equipamento com código já existente.`));
+    if (notFound) {
+      return left(new Error(`Equipamento não encontrado`));
     }
 
-    const isOrganAlreadyExists =
+    /*const isOrganAlreadyExists =
       await this.equipmentsRepository.checkIfOrganExists(request.Fk_Organ);
 
     if (isOrganAlreadyExists === false) {
@@ -41,16 +41,17 @@ export class UpdateEquipment extends Command {
     if (isEquipmentTypeAlreadyExists === false) {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
+    */
 
-    const equipmentId = await this.equipmentsRepository.updateEquipment({
-      Fk_Organ: request.Fk_Organ,
-      Fk_Type: request.Fk_Type,
+    await this.equipmentsRepository.updateEquipment({
       IdEquipment: request.IdEquipment,
-      IdEquipmentExternal: request.IdEquipmentExternal,
-      Location: request.Location,
-      Altitude: request.Altitude,
-      Name: request.Name,
-      Enable: request.Enable,
+      Enable: request.Enable
+      // Fk_Organ: request.Fk_Organ,
+      // Fk_Type: request.Fk_Type,
+      // IdEquipmentExternal: request.IdEquipmentExternal,
+      // Location: request.Location,
+      // Altitude: request.Altitude,
+      // Name: request.Name,
     });
 
     this.addLog({
@@ -66,7 +67,7 @@ export class UpdateEquipment extends Command {
 export namespace UpdateEquipmentUseCaseProtocol {
   export type Request = {
     IdEquipment: number;
-    IdEquipmentExternal: string;
+    /*IdEquipmentExternal: string;
     Name: string;
     Fk_Organ: number;
     Fk_Type: number;
@@ -74,7 +75,7 @@ export namespace UpdateEquipmentUseCaseProtocol {
     Location: {
       Name: string;
       Coordinates: Array<number>;
-    };
+    };*/
     Enable: boolean;
   };
   export type Response = string;

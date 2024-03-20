@@ -151,34 +151,18 @@ export class DbEquipmentsRepository
     return idEquipment ? Number(idEquipment) : null;
   }
 
-  async updateEquipment(
-    equipment: EquipmentRepositoryDTOProtocol.Update.Params
-  ): EquipmentRepositoryDTOProtocol.Update.Result {
+  async updateEquipment(equipment: {
+    IdEquipment: number;
+    Enable: boolean;
+  }): Promise<void> {
     await equipments.transaction(async (trx) => {
-      const rawResult = await trx("MetereologicalEquipment")
+      await trx("MetereologicalEquipment")
         .update({
-          IdEquipmentExternal: equipment.IdEquipmentExternal,
-          Name: equipment.Name,
-          Altitude: equipment.Altitude,
-          FK_Organ: equipment.Fk_Organ,
-          FK_Type: equipment.Fk_Type,
           Enable: equipment.Enable,
           UpdatedAt: equipments.fn.now(),
         })
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
-
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
-
-      await trx.raw(
-        `
-        UPDATE "EquipmentLocation" 
-        SET "Location" = ${toGeometryPointSQL},
-        "Name" = ?
-        WHERE "FK_Equipment" = ?
-      `,
-        [equipment.Location.Name, equipment.IdEquipment]
-      );
     });
   }
 
@@ -202,12 +186,6 @@ export class DbEquipmentsRepository
           Et0: request.ETO,
         })
         .where("IdRead", request.IdRead);
-
-      // await trx("Et0")
-      //   .update({
-      //     Value: request.ETO,
-      //   })
-      //   .where({ FK_Station_Read: request.IdRead });
     });
   }
 
@@ -254,6 +232,15 @@ export class DbEquipmentsRepository
       .select("IdEquipment")
       .from("MetereologicalEquipment")
       .where({ IdEquipmentExternal: idEquipmentExternal })
+      .first();
+
+    return exists ? true : false;
+  }
+  async checkIfEquipmentIdExists(id: number): Promise<boolean> {
+    const exists = await equipments
+      .select("IdEquipment")
+      .from("MetereologicalEquipment")
+      .where({ IdEquipment: id })
       .first();
 
     return exists ? true : false;

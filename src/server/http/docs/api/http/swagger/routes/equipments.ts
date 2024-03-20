@@ -167,7 +167,7 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },
-    post: {
+    /*post: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Create equipment",
@@ -249,7 +249,7 @@ export const EQUIPMENTS = {
         },
         ...DEFAULT_RESPONSES,
       },
-    },
+    },*/
     put: {
       tags: TAGS,
       summary: "Update equipments",
@@ -272,47 +272,9 @@ export const EQUIPMENTS = {
             schema: {
               type: "object",
               properties: {
-                IdEquipmentExternal: {
-                  type: "string",
-                },
-                Name: {
-                  type: "string",
-                },
-                Altitude: {
-                  type: "number",
-                },
-                Location: {
-                  type: "object",
-                  properties: {
-                    Name: {
-                      type: "string",
-                    },
-                    Coordinates: {
-                      type: "array",
-                      items: {
-                        type: "number",
-                      },
-                    },
-                  },
-                },
-                Fk_Organ: {
-                  type: "string",
-                },
-                Fk_Type: {
-                  type: "string",
-                },
                 Enable: "boolean",
               },
               example: {
-                IdEquipmentExternal: "TESTE1",
-                Name: "teste12",
-                Altitude: 4,
-                Location: {
-                  Name: "Test3",
-                  Coordinates: [-38.5162, -4.1124],
-                },
-                Fk_Organ: 2,
-                Fk_Type: 1,
                 Enable: true,
               },
             },
@@ -344,7 +306,7 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },
-    delete: {
+    /*delete: {
       tags: TAGS,
       summary: "Delete equipment",
       description: "Delete equipment by id",
@@ -384,7 +346,7 @@ export const EQUIPMENTS = {
         },
         ...DEFAULT_RESPONSES,
       },
-    },
+    },*/
   },
   [`${BASE_URL.V1}/equipments/pluviometers`]: {
     get: {

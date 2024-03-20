@@ -57,8 +57,9 @@ export namespace EquipmentRepositoryDTOProtocol {
   }
 
   export namespace Update {
-    export type Params = Create.Params & {
+    export type Params = {
       IdEquipment: number;
+      Enable: boolean;
     };
     export type Result = Promise<void>;
   }
@@ -249,6 +250,7 @@ export interface EquipmentsRepositoryProtocol
   checkIfEquipmentTypeExists(
     idType: EquipmentRepositoryDTOProtocol.CheckIfTypeExists.Params
   ): EquipmentRepositoryDTOProtocol.CheckIfTypeExists.Result;
+  checkIfEquipmentIdExists(id: number): Promise<boolean>;
   getEquipmentIdByExternalCode(
     idEquipmentExternal: EquipmentRepositoryDTOProtocol.GetIdByExternalCode.Params
   ): Promise<number | null>;
