@@ -14,38 +14,6 @@ services:
         - ./db/seeds/government.sql:/docker-entrypoint-initdb.d/seeds-government.sql
         - ./db/seeds/logs.sql:/docker-entrypoint-initdb.d/seeds-logs.sql
         - ./db-data:/var/lib/postgresql/data
-        - ./db/csv/Bacias.csv:/var/lib/postgres/data/Bacias.csv
-        - ./db/csv/Municipios.csv:/var/lib/postgres/data/Municipios.csv
-        - ./db/csv/Contatos.csv:/var/lib/postgres/data/Contatos.csv
-        - ./db/csv/EmpresasPocos.csv:/var/lib/postgres/data/EmpresasPocos.csv
-        - ./db/csv/Pocos.csv:/var/lib/postgres/data/Pocos.csv
-        - ./db/csv/Cadastro.csv:/var/lib/postgres/data/Cadastro.csv
-        - ./db/csv/PessoaJuridica.csv:/var/lib/postgres/data/PessoaJuridica.csv
-        - ./db/csv/PessoaFisica.csv:/var/lib/postgres/data/PessoaFisica.csv
-        - ./db/csv/CaptacaoMedia.csv:/var/lib/postgres/data/CaptacaoMedia.csv
-        - ./db/csv/RecursoHidrico.csv:/var/lib/postgres/data/RecursoHidrico.csv
-        - ./db/csv/Superficial.csv:/var/lib/postgres/data/Superficial.csv
-        - ./db/csv/Subterranea.csv:/var/lib/postgres/data/Subterranea.csv
-        - ./db/csv/Usos.csv:/var/lib/postgres/data/Usos.csv
-        - ./db/csv/Animais.csv:/var/lib/postgres/data/Animais.csv
-        - ./db/csv/Irrigacao.csv:/var/lib/postgres/data/Irrigacao.csv
-        - ./db/csv/Saneamento.csv:/var/lib/postgres/data/Saneamento.csv
-        - ./db/csv/CulturasIrrigadas.csv:/var/lib/postgres/data/CulturasIrrigadas.csv
-        - ./db/csv/Aquiculturas.csv:/var/lib/postgres/data/Aquiculturas.csv
-        - ./db/csv/Industria.csv:/var/lib/postgres/data/Industria.csv
-        - ./db/csv/ConsumoHumano.csv:/var/lib/postgres/data/ConsumoHumano.csv
-        - ./db/csv/Mineracao.csv:/var/lib/postgres/data/Mineracao.csv
-        - ./db/csv/DestinosEspeciais.csv:/var/lib/postgres/data/DestinosEspeciais.csv
-        - ./db/csv/ControleAmbiental.csv:/var/lib/postgres/data/ControleAmbiental.csv
-        - ./db/csv/DiluicaoEfluentes.csv:/var/lib/postgres/data/DiluicaoEfluentes.csv
-        - ./db/csv/Militar.csv:/var/lib/postgres/data/Militar.csv
-        - ./db/csv/RHManejados.csv:/var/lib/postgres/data/RHManejados.csv
-        - ./db/csv/Termeletrica.csv:/var/lib/postgres/data/Termeletrica.csv
-        - ./db/csv/LavagemVeiculos.csv:/var/lib/postgres/data/LavagemVeiculos.csv
-        - ./db/csv/Bombas.csv:/var/lib/postgres/data/Bombas.csv
-        - ./db/csv/TesteVazao.csv:/var/lib/postgres/data/TesteVazao.csv
-        - ./db/csv/TesteBombeamento.csv:/var/lib/postgres/data/TesteBombeamento.csv
-        - ./db/csv/Hidroquimica.csv:/var/lib/postgres/data/Hidroquimica.csv
       ports:
         - "5432:5432"
       healthcheck:
@@ -67,7 +35,7 @@ services:
     container_name: "seai-server"
     restart: always
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - .:/usr/src/app
       - backend_node_modules:/usr/src/app/node_modules
