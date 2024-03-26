@@ -56,24 +56,42 @@ export class ManagementCropControllers {
   static async getCropById(
     params: HTTPIncomingAdapters.ItemIdInput
   ): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.getCropById(params.id);
+    try {
+      const result = await ManagementCropUseCases.getCropById(params.id);
 
-    return ok(result.value);
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+
+      return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
   }
 
   static async getAllCrops(
     params: { name: string } | void
   ): Promise<HttpResponse> {
-    const dto: { Name?: string } = {};
+    try {
+      const dto: { Name?: string } = {};
 
-    if (params && params.name) {
-      Object.assign(dto, {
-        Name: params.name,
-      });
+      if (params && params.name) {
+        Object.assign(dto, {
+          Name: params.name,
+        });
+      }
+      const result = await ManagementCropUseCases.getAllCrops(dto);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+
+      return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
     }
-    const result = await ManagementCropUseCases.getAllCrops(dto);
-
-    return ok(result.value);
   }
 
   static async updateCrop(
@@ -137,10 +155,19 @@ export class ManagementCropControllers {
   static async getAllCropCycles(
     params: HTTPIncomingAdapters.ItemIdInput
   ): Promise<HttpResponse> {
-    const result = await ManagementCropUseCases.findCropCyclesByCropId(
-      params.id
-    );
+    try {
+      const result = await ManagementCropUseCases.findCropCyclesByCropId(
+        params.id
+      );
 
-    return ok(result.value);
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+
+      return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
   }
 }
