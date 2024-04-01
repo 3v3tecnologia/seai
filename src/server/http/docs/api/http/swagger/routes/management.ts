@@ -771,7 +771,7 @@ export const MANAGEMENT = {
         },
       },
       responses: {
-        200: {
+        201: {
           content: {
             "application/json": {
               schema: {
@@ -785,7 +785,7 @@ export const MANAGEMENT = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao atualizar cultura  5.",
+                  data: "Sucesso ao adicionar pesos para a bacia 1",
                 },
               },
             },
