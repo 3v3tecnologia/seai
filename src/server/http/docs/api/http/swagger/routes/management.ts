@@ -713,7 +713,18 @@ export const MANAGEMENT = {
               schema: {
                 type: "object",
                 example: {
-                  data: "TO-DO",
+                  data: [
+                    {
+                      Crop: "BANANA",
+                      ProductivityPerHectare: 0,
+                      ProductivityPerMeters: 1,
+                      ProfitabilityPerHectare: 4,
+                      ProfitabilityPerMeters: 3,
+                      JobsPerMeters: 6,
+                      JobsPerHectare: 5,
+                      WaterConsumptionPerMeters: 0,
+                    },
+                  ],
                 },
               },
             },
@@ -742,7 +753,18 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                data: "TO-DO",
+                data: [
+                  {
+                    Crop: "BANANA",
+                    ProductivityPerHectare: 0,
+                    ProductivityPerMeters: 1,
+                    ProfitabilityPerHectare: 4,
+                    ProfitabilityPerMeters: 3,
+                    JobsPerMeters: 6,
+                    JobsPerHectare: 5,
+                    WaterConsumptionPerMeters: 0,
+                  },
+                ],
               },
             },
           },
