@@ -1,6 +1,6 @@
-import { DatabaseOperationOutputLog } from "../../../../domain/use-cases/_ports/repositories/dto/output";
-import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
-import { CultureWeights } from "../../entities/weights";
+import { CultureWeights } from "../../../entities/management/weights";
+import { InputWithPagination } from "../../helpers/dto";
+import { DatabaseOperationOutputLog } from "./dto/output";
 
 export type CultureWeightsToPersistency = {
   Id_Basin: number;
@@ -23,14 +23,14 @@ export namespace ManagementWeightsRepositoryDTO {
 
   export namespace Delete {
     export type Request = {
-      id_basin: number;
+      Id_Basin: number;
     };
 
     export type Response = Promise<DatabaseOperationOutputLog>;
   }
 
   export namespace GetByBasin {
-    export type Request = { id_basin: number } & Partial<InputWithPagination>;
+    export type Request = { Id_Basin: number } & Partial<InputWithPagination>;
 
     export type Response = Promise<Array<CultureWeights> | null>;
   }

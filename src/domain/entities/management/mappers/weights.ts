@@ -1,11 +1,11 @@
-import { CultureWeightsToPersistency } from "../../ports/weights/repository";
+import { CultureWeightsToPersistency } from "../../../use-cases/_ports/repositories/management-weights.repository";
 import { CultureWeights } from "../weights";
 
 export class CultureWeightsMapper {
   static toDomain(row: any): CultureWeights {
     return new CultureWeights({
       id_basin: Number(row.Id_Basin),
-      culture: row.Crop,
+      culture: row.Culture,
       productivity: new Map([
         ["Kg/ha", Number(row.ProductivityPerKilo)],
         ["Kg/ha", Number(row.ProductivityPerMeters)],

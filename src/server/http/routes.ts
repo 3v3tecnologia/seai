@@ -9,6 +9,7 @@ import {
   loginRouter,
   newsRouter,
   userRouter,
+  managementRouter,
 } from "./http-routes";
 import { managementRoutes } from "../../v2/management/routes/routes";
 

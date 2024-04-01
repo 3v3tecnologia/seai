@@ -6,9 +6,22 @@ import { managementDb } from "../connections/db";
 
 export class DbManagementWeightsRepository {
   static async create(
-    request: ManagementWeightsRepositoryDTO.Create.Request
+    id: number,
+    weights: Array<any>
   ): ManagementWeightsRepositoryDTO.Create.Response {
-    const toPersistency = CultureWeightsMapper.toPersistency(request);
+    const toPersistency = weights.map((data) => {
+      return {
+        Id_Basin: id,
+        Crop: data.Crop,
+        ProductivityPerKilo: data.ProductivityPerHectare,
+        ProductivityPerMeters: data.ProductivityPerMeters,
+        ProfitabilityPerMeters: data.ProfitabilityPerMeters,
+        ProfitabilityPerHectare: data.ProfitabilityPerHectare,
+        JobsPerHectare: data.JobsPerHectare,
+        JobsPerMeters: data.JobsPerMeters,
+        WaterConsumption: data.WaterConsumption,
+      };
+    });
 
     const result = await managementDb
       .batchInsert(DATABASES.MANAGEMENT.TABLES.WEIGHTS, toPersistency)

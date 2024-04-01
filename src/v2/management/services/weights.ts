@@ -1,3 +1,4 @@
+import { SecurityIndicatorsUseCaseFactory } from "../../../server/http/factories";
 import { Either, right } from "../../../shared/Either";
 import { CultureWeights } from "../entities/weights";
 import { DbManagementWeightsRepository } from "../infra/database/repositories/management-weights.repository";
@@ -5,7 +6,16 @@ import { DbManagementWeightsRepository } from "../infra/database/repositories/ma
 export class ManagementWeightsUseCases {
   static async create(params: {
     id_basin: number;
-    weights: Array<CultureWeights>;
+    weights: Array<{
+      Crop: string;
+      ProductivityPerHectare: number | null;
+      ProductivityPerMeters: number | null;
+      ProfitabilityPerHectare: number | null;
+      ProfitabilityPerMeters: number | null;
+      JobsPerMeters: number | null;
+      JobsPerHectare: number | null;
+      WaterConsumptionPerMeters: number | null;
+    }>;
   }): Promise<Either<Error, string>> {
     const deleteLog = await DbManagementWeightsRepository.delete({
       id_basin: params.id_basin,
@@ -13,18 +23,19 @@ export class ManagementWeightsUseCases {
 
     // this.addLog(deleteLog);
 
-    /*const successLog = await DbManagementWeightsRepository.create(
-      params.Weights
-    );*/
+    const successLog = await DbManagementWeightsRepository.create(
+      params.id_basin,
+      params.weights
+    );
 
     // this.addLog(successLog);
 
-    return right();
+    return right(`Sucesso ao adicionar pesos para a bacia ${params.id_basin}`);
   }
 
   static async getByBasin(params: {
     id_basin: number;
-  }): Promise<Either<Error, CultureWeights | null>> {
+  }): Promise<Either<Error, any | null>> {
     const weights = await DbManagementWeightsRepository.getByBasin({
       id_basin: params.id_basin,
     });
@@ -48,12 +59,13 @@ export class ManagementWeightsUseCases {
     //Pode ser que tenha algum valor nulo no banco (precisa calcular)
 
     // Se tiver algum valor Nulo, então calcula usando o indicador da cultura
-    /*
+
     const culturesIndicatorsResult =
-      await this.getCulturesIndicatorsByBasin.execute({
-        IdBasin: request.Id_Basin,
-      });
-    */
+      await SecurityIndicatorsUseCaseFactory.makeGetCropsIndicatorsFromBasin().execute(
+        {
+          IdBasin: params.id_basin,
+        }
+      );
 
     let cropCensusIndicators: Map<
       string,
@@ -86,7 +98,7 @@ export class ManagementWeightsUseCases {
       consumption: 0,
     };
 
-    /*if (
+    if (
       culturesIndicatorsResult.isRight() &&
       culturesIndicatorsResult.value?.Cultures
     ) {
@@ -94,8 +106,9 @@ export class ManagementWeightsUseCases {
 
       maximumAmongCulturesIndicators =
         findMaximumAmongCropIndicators(cropCensusIndicators);
-    }*/
+    }
 
+    const response: Array<any> = [];
     cropsWeights.forEach((cropWeights, cropName) => {
       const cultureIndicator = cropCensusIndicators?.get(cropName);
 
@@ -158,9 +171,20 @@ export class ManagementWeightsUseCases {
             maximumAmongCulturesIndicators.consumption
         );
       }
+
+      response.push({
+        Crop: cropName,
+        ProductivityPerHectare: cropWeights.productivity.get("Kg/ha"),
+        ProductivityPerMeters: cropWeights.productivity.get("kg/m³") || null,
+        ProfitabilityPerHectare: cropWeights.profitability.get("R$/ha"),
+        ProfitabilityPerMeters: cropWeights.profitability.get("R$/m³"),
+        JobsPerMeters: cropWeights.jobs.get("1000m³"),
+        JobsPerHectare: cropWeights.jobs.get("ha"),
+        WaterConsumptionPerMeters: cropWeights.waterConsumption.get("m³/ha"),
+      });
     });
 
-    return right(null);
+    return right(response);
   }
 }
 

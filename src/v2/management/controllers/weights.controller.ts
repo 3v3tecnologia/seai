@@ -6,14 +6,13 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { CultureWeights } from "../entities/weights";
 import { ManagementWeightsUseCases } from "../services/weights";
 
 export class ManagementWeightsController {
   static async create(request: {
     accountId: number;
     id: number;
-    data: Array<CultureWeights>;
+    data: Array<any>;
   }): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementWeightsUseCases.create({
