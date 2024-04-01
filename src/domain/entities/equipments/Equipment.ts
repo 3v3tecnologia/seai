@@ -8,9 +8,9 @@ export interface EquipmentEntity {
   };
   Altitude: number | null;
   Location: {
-    Id: number | null;
+    // Id: number | null;
     Coordinates: Array<number> | null;
-    Name: string;
+    // Name: string;
   } | null;
   Organ: {
     Id: number;

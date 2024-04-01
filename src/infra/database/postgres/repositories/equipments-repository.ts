@@ -30,13 +30,9 @@ function mapEquipmentToDomain(row: any) {
       Name: row.OrganName,
     },
     Altitude: Number(row.Altitude) || null,
-    Location: row.LocationName
-      ? {
-          Id: Number(row.IdLocation) || null,
-          Name: row.LocationName,
-          Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
-        }
-      : null,
+    Location: {
+      Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
+    },
   };
 }
 export class DbEquipmentsRepository
@@ -306,19 +302,15 @@ export class DbEquipmentsRepository
           organ."Name" AS "OrganName",
           eqpType."IdType" AS "IdType",
           eqpType."Name" AS "EqpType",
-          eqpLocation."IdLocation" ,
           ST_AsGeoJSON(
-              eqpLocation."Location"::geometry
-          )::json AS "GeoLocation",
-          eqpLocation."Name" AS "LocationName"
+              equipment."Location"::geometry
+          )::json AS "GeoLocation"
       FROM
           "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON
           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
           eqpType."IdType" = equipment."FK_Type"
-      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
-          eqpLocation."FK_Equipment" = equipment."IdEquipment"
       WHERE "IdEquipment" = ?
     `,
       id
@@ -343,15 +335,9 @@ export class DbEquipmentsRepository
         Name: data.OrganName,
       },
       Altitude: Number(data.Altitude) || null,
-      Location: data.LocationName
-        ? {
-            Id: Number(data.IdLocation) || null,
-            Name: data.LocationName,
-            Coordinates: data.GeoLocation
-              ? data.GeoLocation["coordinates"]
-              : null,
-          }
-        : null,
+      Location: {
+        Coordinates: data.GeoLocation ? data.GeoLocation["coordinates"] : null,
+      },
       CreatedAt: data.CreatedAt,
       UpdatedAt: data.UpdatedAt,
       Enable: data.Enable,
@@ -397,14 +383,12 @@ export class DbEquipmentsRepository
       if (queries.length) {
         queries.push(`AND (
           to_tsvector('simple', coalesce(equipment."Name", ''))      || 
-          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))         || 
-          to_tsvector('simple', coalesce(eqpLocation."Name", '')) 
+          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", '')) 
           ) @@ to_tsquery('simple', '${name}:*')`);
       } else {
         queries.push(`WHERE (
           to_tsvector('simple', coalesce(equipment."Name", ''))      || 
-          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))         || 
-          to_tsvector('simple', coalesce(eqpLocation."Name", '')) 
+          to_tsvector('simple', coalesce(equipment."IdEquipmentExternal", ''))
           ) @@ to_tsquery('simple', '${name}:*')`);
       }
       // binding.push(name);
@@ -441,19 +425,15 @@ export class DbEquipmentsRepository
                     organ."Name" AS "OrganName",
                     eqpType."IdType" AS "IdType",
                     eqpType."Name" AS "EqpType",
-                    eqpLocation."IdLocation" ,
                     ST_AsGeoJSON(
-                        eqpLocation."Location"::geometry
-                    )::json AS "GeoLocation",
-                    eqpLocation."Name" AS "LocationName"
+                        equipment."Location"::geometry
+                    )::json AS "GeoLocation"
                 FROM
                     "MetereologicalEquipment" AS equipment
                 INNER JOIN "MetereologicalOrgan" AS organ ON
                     organ."IdOrgan" = equipment."FK_Organ"
                 INNER JOIN "EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
-                LEFT JOIN "EquipmentLocation" AS eqpLocation ON
-                    eqpLocation."FK_Equipment" = equipment."IdEquipment"
                ${queries.join(" ").concat(") AS t) AS equipments")}`;
 
     const data = await equipments.raw(sql, binding);
@@ -478,15 +458,9 @@ export class DbEquipmentsRepository
         Name: row.OrganName,
       },
       Altitude: Number(row.Altitude) || null,
-      Location: row.LocationName
-        ? {
-            Id: Number(row.IdLocation) || null,
-            Name: row.LocationName,
-            Coordinates: row.GeoLocation
-              ? row.GeoLocation["coordinates"]
-              : null,
-          }
-        : null,
+      Location: {
+        Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
+      },
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
       Enable: row.Enable,
@@ -853,22 +827,18 @@ export class DbEquipmentsRepository
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
                           eqpType."Name" AS "EqpType",
-                          eqpLocation."IdLocation" ,
                           ST_AsGeoJSON(
-                              eqpLocation."Location"::geometry
-          )::json AS "GeoLocation",
-                          eqpLocation."Name" AS "LocationName"
+                              equipment."Location"::geometry
+          )::json AS "GeoLocation"
       FROM
                           "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
-                          eqpLocation."FK_Equipment" = equipment."IdEquipment"
       WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${
       [params?.latitude, params?.longitude].every((e) => e)
-        ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
         : ""
     })
       SELECT Stations.*, Measurements.* FROM Stations,
@@ -924,22 +894,18 @@ export class DbEquipmentsRepository
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
                           eqpType."Name" AS "EqpType",
-                          eqpLocation."IdLocation" ,
                           ST_AsGeoJSON(
-                              eqpLocation."Location"::geometry
-          )::json AS "GeoLocation",
-                          eqpLocation."Name" AS "LocationName"
+                              equipment."Location"::geometry
+          )::json AS "GeoLocation"
       FROM
                           "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      LEFT JOIN "EquipmentLocation" AS eqpLocation ON
-                          eqpLocation."FK_Equipment" = equipment."IdEquipment"
       WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${
         [params?.latitude, params?.longitude].every((e) => e)
-          ? `AND ST_Intersects(ST_Buffer(eqpLocation."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+          ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
           : ""
       })
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
