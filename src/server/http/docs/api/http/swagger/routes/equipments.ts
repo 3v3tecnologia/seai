@@ -97,8 +97,6 @@ export const EQUIPMENTS = {
                             Location: {
                               type: "object",
                               properties: {
-                                Id: "number",
-                                Name: "string",
                                 Coordinates: {
                                   type: "array",
                                   items: {
@@ -145,8 +143,6 @@ export const EQUIPMENTS = {
                         },
                         Altitude: 4,
                         Location: {
-                          Id: 3,
-                          Name: "Test3",
                           Coordinates: [-30.1162, -8.9124],
                         },
                         CreatedAt: "2023-11-06T12:52:23.953Z",
