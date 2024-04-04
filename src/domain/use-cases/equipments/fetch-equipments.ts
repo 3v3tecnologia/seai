@@ -51,7 +51,7 @@ export class FetchEquipments {
       PageNumber: Number(dto.pageNumber) || 0,
       QtdRows: result?.count || 0,
       PageLimitRows: dto.limit,
-      QtdPages: pages,
+      // QtdPages: pages,
     });
   }
 }
@@ -69,6 +69,6 @@ export namespace FetchEquipmentsUseCaseProtocol {
     PageNumber: number;
     QtdRows: number;
     PageLimitRows: number;
-    QtdPages: number;
+    // QtdPages: number;
   } | EquipmentEntity | null;
 }

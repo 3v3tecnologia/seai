@@ -394,9 +394,11 @@ export class DbEquipmentsRepository
       // binding.push(name);
     }
 
+    queries.push('order by equipment."IdEquipment"')
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
     binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
+
 
     const sql = `
     SELECT
@@ -438,6 +440,7 @@ export class DbEquipmentsRepository
 
     const data = await equipments.raw(sql, binding);
 
+
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
 
@@ -467,7 +470,7 @@ export class DbEquipmentsRepository
     }));
 
     return {
-      count: Number(rows.total_registers) || 0,
+      count: rows.equipments.length,
       data: toDomain,
     };
   }
