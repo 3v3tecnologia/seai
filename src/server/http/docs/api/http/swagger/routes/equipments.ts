@@ -246,62 +246,7 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },*/
-    put: {
-      tags: TAGS,
-      summary: "Update equipments",
-      description: "Update equipment by id",
-      security: [BEARER_AUTH],
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Equipment Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                Enable: "boolean",
-              },
-              example: {
-                Enable: true,
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Equipment updated successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Sucesso ao atualizar equipamento x.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
+
     /*delete: {
       tags: TAGS,
       summary: "Delete equipment",
