@@ -12,4 +12,10 @@ export namespace ManagementCropErrors {
       this.name = "CropNotExistsError";
     }
   }
+  export class CropCyclesError extends Error {
+    constructor() {
+      super("Não há dados de KC da cultura.");
+      this.name = "CropCyclesError";
+    }
+  }
 }
