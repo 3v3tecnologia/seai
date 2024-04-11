@@ -21,6 +21,7 @@ export class DbEquipmentsMeasurementsRepository {
       Et0: data.Et0,
     };
   }
+  
   static async getLastMeasurementsFromPluviometer(
     idPluviometer: number
   ): Promise<null | { Time: Date; Precipitation: number }> {

@@ -4,7 +4,7 @@ import { IrrigantControllers } from "../controllers";
 
 export const setupIrrigationRoutes = (router: Router): void => {
   router.post(
-    "/blade_irrigation",
+    "/blade_suggestion",
     adaptRouteV2(IrrigantControllers.getBladeIrrigation)
   );
 };

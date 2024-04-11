@@ -5,14 +5,39 @@ import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositori
 
 import { DbManagementCropRepository } from "../infra/database/repositories/management-crop.repository";
 
-namespace ICalcBaldeIrrigationRecommendationService {
+export namespace ICalcBaldeIrrigationRecommendationService {
+  export type Sprinkling={
+    precipitation:number;
+  }
+
+  export type MicroSprinklingOrDripping={
+    flow:number;
+    area:number;
+    efectiveArea:number;
+    plantsQtd:number;
+  }
+
+  export type Pivot={
+    precipitation:number
+  }
+
+  export type Sulcos={
+    length:number
+    spacing:number
+    flow:number
+  }
+
   export type Input = {
-    station_id: number;
-    pluviometer_id: number;
-    crop_id: number;
-    planting_date: string;
-    irrigation_efficiency: number;
-    application_rate: number;
+    stationId: number;
+    pluviometerId: number;
+    cropId: number;
+    plantingDate: string;
+    irrigationEfficiency: number;
+    applicationRate: number;
+    system:{
+      type:'Aspersão' | 'Micro-Aspersão' | 'Gotejamento' | 'Pivô' | 'Sulcos';
+      measurements: Sulcos | Pivot | MicroSprinklingOrDripping | Sprinkling;
+    }
   };
 
   export type Output = Promise<Either<Error, any | null>>;
@@ -22,9 +47,10 @@ export class IrrigationRecommendationUseCases {
   static async calcBladeIrrigationRecommendation(
     command: ICalcBaldeIrrigationRecommendationService.Input
   ): ICalcBaldeIrrigationRecommendationService.Output {
+
     const lastStationMeasurements =
       await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
-        command.station_id
+        command.stationId
       );
 
     if (lastStationMeasurements == null) {
@@ -33,7 +59,7 @@ export class IrrigationRecommendationUseCases {
 
     const lastPluviometerMeasurements =
       await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
-        command.pluviometer_id
+        command.pluviometerId
       );
 
     if (lastPluviometerMeasurements == null) {
@@ -46,7 +72,7 @@ export class IrrigationRecommendationUseCases {
 
     //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
     const cropCycles = await DbManagementCropRepository.findCropsCycles(
-      command.crop_id
+      command.cropId
     );
 
     if (cropCycles == null) {
@@ -56,7 +82,7 @@ export class IrrigationRecommendationUseCases {
     const currentDate = new Date();
 
     const plantingDate = new Date(
-      parseBrazilianDateTime(command.planting_date)
+      parseBrazilianDateTime(command.plantingDate)
     );
 
     const cropDate = dateDiffInDays(currentDate, plantingDate);
@@ -71,17 +97,31 @@ export class IrrigationRecommendationUseCases {
     // Evapotranspiração específica da cultura levando em consideração suas características
     const ETc = ETo * Kc;
 
-    const repositionBlade = ETc / command.irrigation_efficiency;
+    const repositionBlade = ETc / command.irrigationEfficiency;
 
     // [Dúvida] Vai precisar converter dados da asperção para tempo?
 
     // Taxa de aplicação
-    const applicationRate = 1;
+    let applicationRate = 0;
+
+    if(['Micro-Aspersão','Gotejamento'].includes(command.system.type)){
+      const {area,efectiveArea,flow,plantsQtd} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.MicroSprinklingOrDripping
+      applicationRate = flow / (area * efectiveArea * plantsQtd)
+    }else if(command.system.type === 'Aspersão'){
+      // mm/h
+      const {precipitation} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.Sprinkling
+      applicationRate = precipitation // How convert to time?
+    }else if(command.system.type === 'Pivô'){
+      const {precipitation} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.Pivot
+      applicationRate = precipitation
+    }
+
+    const irrigationTime = repositionBlade / applicationRate
 
     return right({
       Etc: 22,
       RepositionBlade: repositionBlade,
-      IrrigationTime: 21,
+      IrrigationTime: irrigationTime,
       CropDay: "23/02/2024",
       ETo,
       Precipitation: 1,
