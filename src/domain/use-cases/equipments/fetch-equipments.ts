@@ -44,14 +44,13 @@ export class FetchEquipments {
 
     const result = await this.equipmentsRepository.getEquipments(dto);
 
-    let pages = result?.count ? Math.ceil(result.count / dto.limit) : 0;
-
     return right({
       Equipments: result?.data || [],
       PageNumber: Number(dto.pageNumber) || 0,
       QtdRows: result?.count || 0,
       PageLimitRows: dto.limit,
-      // QtdPages: pages,
+      Total: result?.total || 0,
+      TotalPages: result?.totalPages || 0
     });
   }
 }
@@ -69,6 +68,7 @@ export namespace FetchEquipmentsUseCaseProtocol {
     PageNumber: number;
     QtdRows: number;
     PageLimitRows: number;
-    // QtdPages: number;
+    Total: number;
+    TotalPages: number;
   } | EquipmentEntity | null;
 }

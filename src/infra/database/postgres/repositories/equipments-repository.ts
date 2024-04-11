@@ -11,6 +11,7 @@ import {
   EquipmentRepositoryDTOProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { equipments } from "../connection/knexfile";
+import { calculateTotalPages } from "./utils/paginate";
 
 /*
   TO-DO : Create domain layer
@@ -358,9 +359,11 @@ export class DbEquipmentsRepository
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
     const { idOrgan, idType, pageNumber, limit, name } = params;
+    const pageLimit = limit || 40
 
     const binding = [];
     const queries: Array<any> = [];
+
 
     if (idOrgan) {
       queries.push(`WHERE
@@ -394,21 +397,28 @@ export class DbEquipmentsRepository
       // binding.push(name);
     }
 
-    queries.push('order by equipment."IdEquipment"')
-    queries.push(`LIMIT ? OFFSET ?`);
-    binding.push(limit || 100);
-    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
+    const countSQL = `
+      SELECT
+                     count(equipment."IdEquipment")
+                 FROM
+                     "MetereologicalEquipment" AS equipment
+                 INNER JOIN "MetereologicalOrgan" AS organ ON
+                     organ."IdOrgan" = equipment."FK_Organ"
+                 INNER JOIN "EquipmentType" eqpType ON
+                     eqpType."IdType" = equipment."FK_Type"
+                     ${queries.join(" ")}
+    `
+
+    // queries.push('order by equipment."IdEquipment"')
+    queries.push(`order by equipment."IdEquipment" LIMIT ? OFFSET ?`);
+    binding.push(pageLimit);
+    binding.push(pageNumber ? pageLimit * (pageNumber - 1) : 0);
 
 
     const sql = `
     SELECT
           (
-        SELECT
-            reltuples::bigint AS estimate
-        FROM
-            pg_class
-        WHERE
-            oid = 'public."MetereologicalEquipment"'::regclass
+        ${countSQL}
     ) AS total_registers, 
           (
         SELECT
@@ -438,8 +448,8 @@ export class DbEquipmentsRepository
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ").concat(") AS t) AS equipments")}`;
 
+               
     const data = await equipments.raw(sql, binding);
-
 
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
@@ -469,8 +479,13 @@ export class DbEquipmentsRepository
       Enable: row.Enable,
     }));
 
+    const total = Number(rows.total_registers)
+    const totalPages = calculateTotalPages(total,pageLimit)
+
     return {
       count: rows.equipments.length,
+      total: Number(rows.total_registers),
+      totalPages:totalPages,
       data: toDomain,
     };
   }

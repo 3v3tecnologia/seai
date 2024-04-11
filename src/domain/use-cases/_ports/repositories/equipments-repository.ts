@@ -94,6 +94,8 @@ export namespace EquipmentRepositoryDTOProtocol {
     };
     export type Result = Promise<{
       count: number;
+      total: number;
+      totalPages: number;
       data: Array<EquipmentEntity> | null;
     } | null>;
   }
