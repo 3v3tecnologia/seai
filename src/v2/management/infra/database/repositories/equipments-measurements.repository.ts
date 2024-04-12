@@ -21,7 +21,7 @@ export class DbEquipmentsMeasurementsRepository {
       Et0: data.Et0,
     };
   }
-  
+
   static async getLastMeasurementsFromPluviometer(
     idPluviometer: number
   ): Promise<null | { Time: Date; Precipitation: number }> {
@@ -33,13 +33,13 @@ export class DbEquipmentsMeasurementsRepository {
       .limit(1)
       .first();
 
-    if (!data) {
-      return null;
+    if (data) {
+      return {
+        Time: new Date(data.Time),
+        Precipitation: data.Value,
+      };
     }
 
-    return {
-      Time: new Date(data.Time),
-      Precipitation: data.Value,
-    };
+    return null;
   }
 }

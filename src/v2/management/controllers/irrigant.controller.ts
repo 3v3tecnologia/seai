@@ -4,14 +4,16 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { ICalcBaldeIrrigationRecommendationService, IrrigationRecommendationUseCases } from "../services/irrigant";
-
+import { ICalcBaldeIrrigationRecommendationService } from "../services/irrigant";
+import { IrrigationRecommendationServices } from "../services/irrigant";
 
 export class IrrigantControllers {
-  static async getBladeIrrigation(command: ICalcBaldeIrrigationRecommendationService.Input): Promise<HttpResponse> {
+  static async getBladeIrrigation(
+    command: ICalcBaldeIrrigationRecommendationService.Input
+  ): Promise<HttpResponse> {
     try {
       const successOrError =
-        await IrrigationRecommendationUseCases.calcBladeIrrigationRecommendation(
+        await IrrigationRecommendationServices.calcBladeIrrigationRecommendation(
           command
         );
 

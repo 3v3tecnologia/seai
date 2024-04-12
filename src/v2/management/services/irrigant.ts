@@ -1,4 +1,23 @@
 import { Either, left, right } from "../../../shared/Either";
+import { BladeSuggestion } from "../entities/blade-suggestion";
+import { ManagementCropCycle } from "../entities/crop-cycles";
+import {
+  IrrigationSystemEntity,
+  IrrigationSystemMeasurementsTypes,
+  IrrigationSystemTypes,
+  irrigationsTypesNames,
+} from "../entities/irrigation-system";
+import {
+  IrrigationSystemMeasurementsEntity,
+  MicroSprinklingOrDripping,
+  MicroSprinklingOrDrippingProps,
+  Pivot,
+  PivotProps,
+  Sprinkling,
+  SprinklingProps,
+  Sulcos,
+  SulcosProps,
+} from "../entities/irrigation-system-measurements";
 import { ManagementIrrigantErrors } from "../errors/irrigant.error";
 import { ManagementCropErrors } from "../errors/management-crop-errors";
 import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositories/equipments-measurements.repository";
@@ -6,61 +25,40 @@ import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositori
 import { DbManagementCropRepository } from "../infra/database/repositories/management-crop.repository";
 
 export namespace ICalcBaldeIrrigationRecommendationService {
-  export type Sprinkling={
-    precipitation:number;
-  }
-
-  export type MicroSprinklingOrDripping={
-    flow:number;
-    area:number;
-    efectiveArea:number;
-    plantsQtd:number;
-  }
-
-  export type Pivot={
-    precipitation:number
-  }
-
-  export type Sulcos={
-    length:number
-    spacing:number
-    flow:number
-  }
-
   export type Input = {
-    stationId: number;
-    pluviometerId: number;
-    cropId: number;
-    plantingDate: string;
-    irrigationEfficiency: number;
-    applicationRate: number;
-    system:{
-      type:'Aspersão' | 'Micro-Aspersão' | 'Gotejamento' | 'Pivô' | 'Sulcos';
-      measurements: Sulcos | Pivot | MicroSprinklingOrDripping | Sprinkling;
-    }
+    StationId: number;
+    PluviometerId: number;
+    CropId: number;
+    PlantingDate: string;
+    IrrigationEfficiency: number;
+    System: {
+      Type: IrrigationSystemTypes;
+      Measurements: IrrigationSystemMeasurementsTypes;
+    };
   };
 
   export type Output = Promise<Either<Error, any | null>>;
 }
 
-export class IrrigationRecommendationUseCases {
+export class IrrigationRecommendationServices {
   static async calcBladeIrrigationRecommendation(
     command: ICalcBaldeIrrigationRecommendationService.Input
   ): ICalcBaldeIrrigationRecommendationService.Output {
+    //  [Dúvida] O que é feito com a leitura do pluviômetro?
+    const [lastStationMeasurements, lastPluviometerMeasurements] =
+      await Promise.all([
+        DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
+          command.StationId
+        ),
+        DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
+          command.PluviometerId
+        ),
+      ]);
 
-    const lastStationMeasurements =
-      await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
-        command.stationId
-      );
-
+    console.log(lastPluviometerMeasurements);
     if (lastStationMeasurements == null) {
       return left(new ManagementIrrigantErrors.StationMeasurementsNotFound());
     }
-
-    const lastPluviometerMeasurements =
-      await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
-        command.pluviometerId
-      );
 
     if (lastPluviometerMeasurements == null) {
       return left(
@@ -68,68 +66,89 @@ export class IrrigationRecommendationUseCases {
       );
     }
 
-    // [Dúvida] Como descobrir o dia da cultura?
+    const { Et0 } = lastStationMeasurements;
+    const { Precipitation } = lastPluviometerMeasurements;
+
+    let system: IrrigationSystemMeasurementsEntity;
+
+    switch (command.System.Type) {
+      case irrigationsTypesNames.MicroSprinkling:
+      case irrigationsTypesNames.Dripping:
+        system = new MicroSprinklingOrDripping(
+          command.System.Measurements as MicroSprinklingOrDrippingProps
+        );
+      case irrigationsTypesNames.Sprinkling:
+        system = new Sprinkling(command.System.Measurements as SprinklingProps);
+      case irrigationsTypesNames.Pivot:
+        system = new Pivot(command.System.Measurements as PivotProps);
+      default:
+        system = new Sulcos(command.System.Measurements as SulcosProps);
+    }
+
+    const irrigationSystem = new IrrigationSystemEntity({
+      type: command.System.Type,
+      measurements: system,
+      efficiency: command.IrrigationEfficiency,
+    });
 
     //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
     const cropCycles = await DbManagementCropRepository.findCropsCycles(
-      command.cropId
+      command.CropId
     );
 
     if (cropCycles == null) {
       return left(new ManagementCropErrors.CropCyclesError());
     }
 
-    const currentDate = new Date();
-
-    const plantingDate = new Date(
-      parseBrazilianDateTime(command.plantingDate)
-    );
-
-    const cropDate = dateDiffInDays(currentDate, plantingDate);
-
-    //  Evapotranspiração de referencia :  o quanto de água que uma cultura perderia sem nenhuma deficiência hídrica
-    const ETo = lastStationMeasurements.Et0;
+    const cropDate = getCropDate(command.PlantingDate);
 
     // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
     // varia de acordo com o ciclo de crescimento da cultura
-    const Kc = 50;
+    const cycle = findKc(cropDate, cropCycles);
 
-    // Evapotranspiração específica da cultura levando em consideração suas características
-    const ETc = ETo * Kc;
-
-    const repositionBlade = ETc / command.irrigationEfficiency;
-
-    // [Dúvida] Vai precisar converter dados da asperção para tempo?
-
-    // Taxa de aplicação
-    let applicationRate = 0;
-
-    if(['Micro-Aspersão','Gotejamento'].includes(command.system.type)){
-      const {area,efectiveArea,flow,plantsQtd} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.MicroSprinklingOrDripping
-      applicationRate = flow / (area * efectiveArea * plantsQtd)
-    }else if(command.system.type === 'Aspersão'){
-      // mm/h
-      const {precipitation} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.Sprinkling
-      applicationRate = precipitation // How convert to time?
-    }else if(command.system.type === 'Pivô'){
-      const {precipitation} = command.system.measurements as ICalcBaldeIrrigationRecommendationService.Pivot
-      applicationRate = precipitation
+    if (!cycle) {
+      return left(new ManagementIrrigantErrors.CropDateNotFound());
     }
 
-    const irrigationTime = repositionBlade / applicationRate
+    const bladeSuggestion = BladeSuggestion.create({
+      cropCycle: cycle,
+      precipitation: Precipitation,
+      Et0,
+      irrigationSystem: irrigationSystem,
+      plantingDate: command.PlantingDate,
+    });
 
     return right({
-      Etc: 22,
-      RepositionBlade: repositionBlade,
-      IrrigationTime: irrigationTime,
-      CropDay: "23/02/2024",
-      ETo,
-      Precipitation: 1,
+      Etc: bladeSuggestion.Etc,
+      RepositionBlade: bladeSuggestion.repositionBlade,
+      IrrigationTime: bladeSuggestion.irrigationTime,
+      CropDays: cropDate,
+      Et0,
+      Precipitation,
     });
   }
 }
 
-function dateDiffInDays(start: Date, end: Date) {
+// [DÚVIDA] plantingDate tem que ser no passado?
+// [Dúvida] Como descobrir o dia da cultura?
+// [DÚVIDA] E se o dia da cultura foi negativo?
+
+function getCropDate(plantingDate: string) {
+  const currentDate = new Date();
+  const diff = dateDiffInDays(
+    new Date(parseBrazilianDateTime(plantingDate)),
+    currentDate
+  );
+  return diff < 0 ? 0 : diff;
+}
+
+// Entity?
+function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>) {
+  return cropCycles.find(
+    (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
+  );
+}
+export function dateDiffInDays(start: Date, end: Date) {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
   // Discard the time and time-zone information.
   const utc1 = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
@@ -138,7 +157,7 @@ function dateDiffInDays(start: Date, end: Date) {
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
-function parseBrazilianDateTime(dateTimeString: string) {
+export function parseBrazilianDateTime(dateTimeString: string) {
   const [datePart, timePart] = dateTimeString.split(" ");
   const [day, month, year] = datePart.split("/").map(Number);
 
