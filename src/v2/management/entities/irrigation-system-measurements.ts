@@ -14,7 +14,7 @@ export class Sulcos implements IrrigationSystemMeasurementsEntity {
     this._props = props;
   }
   public applicationRate(): number {
-    return 0;
+    return this._props.Flow / (this._props.Length * this._props.Spacing);
   }
 }
 

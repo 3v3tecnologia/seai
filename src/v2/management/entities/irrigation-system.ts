@@ -14,12 +14,12 @@ export enum irrigationsTypesNames {
   Sulcos = "Sulcos",
 }
 
-export type IrrigationSystemTypes =
+export type IrrigationSystemTypes = `${
   | irrigationsTypesNames.Dripping
   | irrigationsTypesNames.MicroSprinkling
   | irrigationsTypesNames.Pivot
   | irrigationsTypesNames.Sprinkling
-  | irrigationsTypesNames.Sulcos;
+  | irrigationsTypesNames.Sulcos}`;
 
 export type IrrigationSystemMeasurementsTypes =
   | SulcosProps

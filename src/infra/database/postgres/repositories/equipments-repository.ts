@@ -1,3 +1,4 @@
+import { Knex } from "knex";
 import {
   PluviometerWithLastMeasurement,
   StationWithLastMeasurement,
@@ -11,7 +12,7 @@ import {
   EquipmentRepositoryDTOProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { equipments } from "../connection/knexfile";
-import { calculateTotalPages } from "./utils/paginate";
+import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 /*
   TO-DO : Create domain layer
@@ -36,6 +37,7 @@ function mapEquipmentToDomain(row: any) {
     },
   };
 }
+
 export class DbEquipmentsRepository
   implements
     EquipmentsRepositoryProtocol,
@@ -360,6 +362,7 @@ export class DbEquipmentsRepository
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
     const { idOrgan, idType, pageNumber, limit, name } = params;
     const pageLimit = limit || 40;
+    const offset = pageNumber ? pageLimit * (pageNumber - 1) : 0;
 
     const binding = [];
     const queries: Array<any> = [];
@@ -408,14 +411,13 @@ export class DbEquipmentsRepository
                      ${queries.join(" ")}
     `;
 
-    const countResponse = await equipments.raw(countSQL, binding);
-    const [countRows] = countResponse.rows;
-    console.log("[COUNT] ", countRows);
+    const countRows = await countTotalRows(equipments)(countSQL, binding);
 
-    // queries.push('order by equipment."IdEquipment"')
+    console.log("[COUNT] :: ", countRows);
+
     queries.push(`order by equipment."IdEquipment" LIMIT ? OFFSET ?`);
     binding.push(pageLimit);
-    binding.push(pageNumber ? pageLimit * (pageNumber - 1) : 0);
+    binding.push(offset);
 
     const sql = `
           
@@ -448,8 +450,6 @@ export class DbEquipmentsRepository
 
     const data = await equipments.raw(sql, binding);
 
-    console.log("[DATA] ", data);
-
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
 
@@ -478,20 +478,20 @@ export class DbEquipmentsRepository
       Enable: row.Enable,
     }));
 
-    const total = Number(countRows.count);
-    const totalPages = calculateTotalPages(total, pageLimit);
-
-    return {
-      count: rows.measures.length,
-      total: Number(total),
-      totalPages: totalPages,
+    return toPaginatedOutput({
       data: toDomain,
-    };
+      limit: pageLimit,
+      count: countRows,
+    });
   }
   async getStationsReads(
     params: MeasuresRepositoryDTOProtocol.GetStations.Params
   ): MeasuresRepositoryDTOProtocol.GetStations.Result {
     const { idEquipment, pageNumber, limit, time } = params;
+    const pageLimit = limit || 20;
+    console.log(pageNumber);
+    // TODO: add format input here!
+    const pageOffset = pageNumber;
 
     const binding = [];
     const queries: Array<any> = [];
@@ -520,18 +520,14 @@ export class DbEquipmentsRepository
                      ${queries.join(" ")}
     `;
 
+    const countRows = await countTotalRows(equipments)(countSQL, binding);
+
     queries.push('ORDER BY stations."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
-    binding.push(limit || 100);
-    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
+    binding.push(pageLimit);
+    binding.push(pageOffset);
 
     const sqlQuery = `
-      SELECT
-          (SELECT reltuples::bigint AS estimate
-      FROM   pg_class
-      WHERE  oid = 'public."MetereologicalEquipment"'::regclass
-          ) as total_registers, 
-          (SELECT json_agg(t.*) FROM (
               SELECT
                 stations."IdRead",
                 stations."Time" AS "Date",
@@ -556,20 +552,18 @@ export class DbEquipmentsRepository
             ON equipment."IdEquipment"  = stations."FK_Equipment"
             INNER JOIN "MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
-            ${queries.join(" ").concat(") AS t) AS measures")}
+            ${queries.join(" ")}
     `;
-
-    console.log(sqlQuery);
 
     const data = await equipments.raw(sqlQuery, binding);
 
-    const rows = data.rows[0];
+    const rows = data.rows;
 
-    if (!rows.measures) {
+    if (!rows.length) {
       return null;
     }
 
-    const measuresToDomain = rows.measures.map((row: any) => ({
+    const measuresToDomain = rows.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Date,
       Hour: row.Hour,
@@ -619,11 +613,13 @@ export class DbEquipmentsRepository
       },
     }));
 
-    return {
-      count: rows.total_registers,
+    return toPaginatedOutput({
       data: measuresToDomain,
-    };
+      limit: pageLimit,
+      count: countRows,
+    });
   }
+
   async getStationReadsByIdRead(
     params: MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Params
   ): MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Result {
@@ -772,6 +768,8 @@ export class DbEquipmentsRepository
 
     const binding = [];
     const queries: Array<any> = [];
+    const pageLimit = limit || 20;
+    const offset = pageNumber;
 
     queries.push(`WHERE equipment."IdEquipment" = ?`);
     binding.push(idEquipment);
@@ -786,17 +784,28 @@ export class DbEquipmentsRepository
       }
     }
 
+    const countSQL = `
+      SELECT
+          count("IdEquipment")
+      FROM
+        "MetereologicalEquipment" AS equipment 
+      INNER JOIN "ReadPluviometers" AS pluviometer
+        ON equipment."IdEquipment" = pluviometer."FK_Equipment"
+      INNER JOIN "MetereologicalOrgan" AS organ
+          ON organ."IdOrgan" = equipment."FK_Organ"
+                     ${queries.join(" ")}
+    `;
+
+    const countRows = await countTotalRows(equipments)(countSQL, binding);
+
+    console.log("[COUNT] ", countRows);
+
     queries.push('ORDER BY pluviometer."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
-    binding.push(limit || 100);
-    binding.push(pageNumber ? limit * (pageNumber - 1) : 0);
+    binding.push(pageLimit);
+    binding.push(offset);
 
     const sql = `
-      SELECT (SELECT reltuples::bigint AS estimate
-      FROM   pg_class
-      WHERE  oid = 'public."ReadPluviometers"'::regclass
-          ) as total_registers,
-          (SELECT json_agg(t.*) FROM (
       SELECT
           pluviometer."IdRead",
           pluviometer."Time" ,
@@ -810,18 +819,18 @@ export class DbEquipmentsRepository
         ON equipment."IdEquipment" = pluviometer."FK_Equipment"
       INNER JOIN "MetereologicalOrgan" AS organ
           ON organ."IdOrgan" = equipment."FK_Organ"
-      ${queries.join(" ").concat(") AS t) AS measures")};
+      ${queries.join(" ")};
   `;
 
     const data = await equipments.raw(sql, binding);
 
-    const rows = data.rows[0];
+    const rows = data.rows;
 
-    if (!rows.measures) {
+    if (!rows.length) {
       return null;
     }
 
-    const toDomain = rows.measures.map((row: any) => ({
+    const toDomain = rows.map((row: any) => ({
       IdRead: Number(row.IdRead) || null,
       Time: row.Time,
       Hour: row.Hour,
@@ -831,10 +840,11 @@ export class DbEquipmentsRepository
       },
     }));
 
-    return {
-      count: rows.total_registers,
+    return toPaginatedOutput({
       data: toDomain,
-    };
+      count: countRows,
+      limit: pageLimit,
+    });
   }
   async getStationsWithLastMeasurements(
     params: {
@@ -843,8 +853,15 @@ export class DbEquipmentsRepository
       distance: number;
     } | null
   ): Promise<Array<StationWithLastMeasurement> | null> {
+    // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
+
+    const coordinateFilter = [params?.latitude, params?.longitude].every(
+      (e) => e
+    )
+      ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+      : "";
 
     const query = `
         WITH Stations AS (SELECT
@@ -867,11 +884,7 @@ export class DbEquipmentsRepository
                           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${
-      [params?.latitude, params?.longitude].every((e) => e)
-        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-        : ""
-    })
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${coordinateFilter})
       SELECT Stations.*, Measurements.* FROM Stations,
           LATERAL (
               SELECT
@@ -882,7 +895,7 @@ export class DbEquipmentsRepository
               FROM
                   "ReadStations" rs
               WHERE
-                  rs."FK_Equipment" = Stations."Id"
+                  rs."FK_Equipment" = Stations."Id" and rs."Et0" >= 0
               ORDER BY
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
@@ -913,6 +926,7 @@ export class DbEquipmentsRepository
       distance: number;
     } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
+    // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",

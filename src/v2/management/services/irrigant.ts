@@ -23,51 +23,53 @@ import { ManagementCropErrors } from "../errors/management-crop-errors";
 import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositories/equipments-measurements.repository";
 
 import { DbManagementCropRepository } from "../infra/database/repositories/management-crop.repository";
-
-export namespace ICalcBaldeIrrigationRecommendationService {
-  export type Input = {
-    StationId: number;
-    PluviometerId: number;
-    CropId: number;
-    PlantingDate: string;
-    IrrigationEfficiency: number;
-    System: {
-      Type: IrrigationSystemTypes;
-      Measurements: IrrigationSystemMeasurementsTypes;
-    };
-  };
-
-  export type Output = Promise<Either<Error, any | null>>;
-}
+import { ICalcBaldeIrrigationRecommendationService } from "../ports/irrigant/dto";
 
 export class IrrigationRecommendationServices {
   static async calcBladeIrrigationRecommendation(
     command: ICalcBaldeIrrigationRecommendationService.Input
   ): ICalcBaldeIrrigationRecommendationService.Output {
-    //  [Dúvida] O que é feito com a leitura do pluviômetro?
-    const [lastStationMeasurements, lastPluviometerMeasurements] =
-      await Promise.all([
-        DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
-          command.StationId
-        ),
-        DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
-          command.PluviometerId
-        ),
-      ]);
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    const dateSeparator = "-";
 
-    console.log(lastPluviometerMeasurements);
+    const yesterDay = `${date.getFullYear()}${dateSeparator}${
+      date.getMonth() + 1
+    }${dateSeparator}${date.getDate()}`;
+    console.log("Buscando ETO pela a data de ontem ", yesterDay);
+    //  [Dúvida] O que é feito com a leitura do pluviômetro?
+    const lastStationMeasurements =
+      await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
+        command.StationId,
+        yesterDay
+      );
+
     if (lastStationMeasurements == null) {
       return left(new ManagementIrrigantErrors.StationMeasurementsNotFound());
     }
+    const { Et0 } = lastStationMeasurements;
 
-    if (lastPluviometerMeasurements == null) {
+    console.log("lastStationMeasurements :: ", lastStationMeasurements);
+
+    let Precipitation: number | null = null;
+
+    if (Reflect.has(command, "Precipitation")) {
+      Precipitation = command.Precipitation as number;
+    } else {
+      const lastPluviometerMeasurements =
+        await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
+          command.PluviometerId
+        );
+
+      if (lastPluviometerMeasurements?.Precipitation)
+        Precipitation = lastPluviometerMeasurements.Precipitation;
+    }
+
+    if (Precipitation == null) {
       return left(
         new ManagementIrrigantErrors.PluviometerMeasurementsNotFound()
       );
     }
-
-    const { Et0 } = lastStationMeasurements;
-    const { Precipitation } = lastPluviometerMeasurements;
 
     let system: IrrigationSystemMeasurementsEntity;
 
@@ -105,6 +107,8 @@ export class IrrigationRecommendationServices {
     // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
     // varia de acordo com o ciclo de crescimento da cultura
     const cycle = findKc(cropDate, cropCycles);
+    console.log("cycle :: ", cycle);
+    console.log("cropDate :: ", cropDate);
 
     if (!cycle) {
       return left(new ManagementIrrigantErrors.CropDateNotFound());
@@ -131,7 +135,6 @@ export class IrrigationRecommendationServices {
 
 // [DÚVIDA] plantingDate tem que ser no passado?
 // [Dúvida] Como descobrir o dia da cultura?
-// [DÚVIDA] E se o dia da cultura foi negativo?
 
 function getCropDate(plantingDate: string) {
   const currentDate = new Date();
@@ -163,6 +166,8 @@ export function parseBrazilianDateTime(dateTimeString: string) {
 
   // Create a Date object with the parsed components
   const brazilianDate = new Date(Date.UTC(year, month - 1, day));
+
+  console.log("brazilianDate", brazilianDate);
 
   return brazilianDate;
 }

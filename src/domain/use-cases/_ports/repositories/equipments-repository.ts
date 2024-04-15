@@ -6,6 +6,8 @@ import {
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
 import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../../entities/equipments/StationRead";
+import { IInputWithPagination } from "./dto/input";
+import { IOuputWithPagination } from "./dto/output";
 
 export namespace MeteorologicalOrganRepositoryDTOProtocol {
   export namespace Get {
@@ -86,35 +88,23 @@ export namespace EquipmentRepositoryDTOProtocol {
   }
   export namespace GetByPageNumber {
     export type Params = {
-      pageNumber: number;
-      limit: number;
       idOrgan?: number;
       idType?: number;
       name?: string;
-    };
-    export type Result = Promise<{
-      count: number;
-      total: number;
-      totalPages: number;
-      data: Array<EquipmentEntity> | null;
-    } | null>;
+    } & IInputWithPagination;
+    export type Result = Promise<IOuputWithPagination<EquipmentEntity>>;
   }
 }
 export namespace MeasuresRepositoryDTOProtocol {
   export namespace GetStations {
     export type Params = {
       idEquipment: number;
-      pageNumber: number;
-      limit: number;
       time?: {
         start: string;
         end: string | null;
       } | null;
-    };
-    export type Result = Promise<{
-      count: number;
-      data: Array<StationReadEntity> | null;
-    } | null>;
+    } & IInputWithPagination;
+    export type Result = Promise<IOuputWithPagination<StationReadEntity>>;
   }
   export namespace GetStationMeasuresByIdRead {
     export type Params = {
@@ -139,18 +129,13 @@ export namespace MeasuresRepositoryDTOProtocol {
   export namespace GetPluviometers {
     export type Params = {
       idEquipment: number;
-      pageNumber: number;
-      limit: number;
       time?: {
         start: string;
         end: string | null;
       } | null;
-    };
+    } & IInputWithPagination;
 
-    export type Result = Promise<{
-      count: number;
-      data: Array<PluviometerReadEntity> | null;
-    } | null>;
+    export type Result = Promise<IOuputWithPagination<PluviometerReadEntity>>;
   }
   export namespace GetPluviometersByIdPluviometer {
     export type Params = {

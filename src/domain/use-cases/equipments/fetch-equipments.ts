@@ -1,5 +1,7 @@
 import { Either, right } from "../../../shared/Either";
 import { EquipmentEntity } from "../../entities/equipments/Equipment";
+import { IInputWithPagination } from "../_ports/repositories/dto/input";
+import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
@@ -14,9 +16,11 @@ export class FetchEquipments {
   async execute(
     request: FetchEquipmentsUseCaseProtocol.Request
   ): Promise<Either<Error, FetchEquipmentsUseCaseProtocol.Response>> {
-    if(request.equipmentId){
-      const equipment = await this.equipmentsRepository.getEquipmentId(request.equipmentId)
-      return right(equipment)
+    if (request.equipmentId) {
+      const equipment = await this.equipmentsRepository.getEquipmentId(
+        request.equipmentId
+      );
+      return right(equipment);
     }
 
     const dto = {
@@ -44,31 +48,18 @@ export class FetchEquipments {
 
     const result = await this.equipmentsRepository.getEquipments(dto);
 
-    return right({
-      Equipments: result?.data || [],
-      PageNumber: Number(dto.pageNumber) || 0,
-      QtdRows: result?.count || 0,
-      PageLimitRows: dto.limit,
-      Total: result?.total || 0,
-      TotalPages: result?.totalPages || 0
-    });
+    return right(result);
   }
 }
 export namespace FetchEquipmentsUseCaseProtocol {
   export type Request = {
-    equipmentId?:number;
-    pageNumber: number;
-    limit: number;
+    equipmentId?: number;
     idOrgan?: number;
     idType?: number;
     name?: string;
-  };
-  export type Response = {
-    Equipments: Array<EquipmentEntity> | null;
-    PageNumber: number;
-    QtdRows: number;
-    PageLimitRows: number;
-    Total: number;
-    TotalPages: number;
-  } | EquipmentEntity | null;
+  } & IInputWithPagination;
+  export type Response =
+    | IOuputWithPagination<EquipmentEntity>
+    | EquipmentEntity
+    | null;
 }

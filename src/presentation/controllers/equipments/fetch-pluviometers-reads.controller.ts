@@ -5,6 +5,7 @@ import { badRequest, ok, serverError } from "../helpers";
 
 import { FetchPluviometersReads } from "../../../domain/use-cases/equipments/fetch-pluviometers-reads";
 import { Notification } from "../../../shared/notification/notification";
+import { IInputWithPagination } from "../../../domain/use-cases/_ports/repositories/dto/input";
 
 export class FetchPluviometersReadsController
   implements
@@ -65,9 +66,7 @@ export class FetchPluviometersReadsController
 export namespace FetchPluviometersMeasuresControllerProtocol {
   export type Request = {
     idEquipment: number;
-    pageNumber: number;
-    limit: number;
     start?: string;
     end?: string | null;
-  };
+  } & IInputWithPagination;
 }

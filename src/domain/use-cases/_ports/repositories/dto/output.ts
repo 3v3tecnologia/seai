@@ -6,6 +6,13 @@ export type DatabaseOperationOutputLog = {
   description: string;
 };
 
+export type IOuputWithPagination<T> = {
+  Total: number;
+  Limit: number;
+  TotalPages: number;
+  Data: Array<T> | null;
+} | null;
+
 export class DatabaseOperationOutputLogFactory {
   static insert(
     table: string,

@@ -4,7 +4,9 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { ICalcBaldeIrrigationRecommendationService } from "../services/irrigant";
+
+import { ICalcBaldeIrrigationRecommendationService } from "../ports/irrigant/dto";
+
 import { IrrigationRecommendationServices } from "../services/irrigant";
 
 export class IrrigantControllers {

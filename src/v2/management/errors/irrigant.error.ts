@@ -13,7 +13,7 @@ export namespace ManagementIrrigantErrors {
   }
   export class CropDateNotFound extends Error {
     constructor() {
-      super("Não há dados das últimas medições do pluviômetro.");
+      super("Não há dados de KC.");
       this.name = "PluviometerMeasurementsNotFound";
     }
   }

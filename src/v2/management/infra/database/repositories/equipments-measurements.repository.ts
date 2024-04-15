@@ -2,12 +2,14 @@ import { equipments } from "../../../../../infra/database/postgres/connection/kn
 
 export class DbEquipmentsMeasurementsRepository {
   static async getLastMeasurementsFromStation(
-    idStation: number
+    idStation: number,
+    date: string
   ): Promise<null | { Time: Date; Et0: number }> {
     const data = await equipments
       .select("*")
       .from("ReadStations")
       .where({ FK_Equipment: idStation })
+      .andWhere({ Time: date })
       .orderBy("Time", "desc")
       .limit(1)
       .first();

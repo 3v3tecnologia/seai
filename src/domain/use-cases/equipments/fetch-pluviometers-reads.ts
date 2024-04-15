@@ -1,6 +1,8 @@
 import { Either, right } from "../../../shared/Either";
 
 import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead";
+import { IInputWithPagination } from "../_ports/repositories/dto/input";
+import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
 import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
@@ -32,31 +34,15 @@ export class FetchPluviometersReads {
 
     const result = await this.measuresRepository.getPluviometersReads(dto);
 
-    let pages = result?.count ? Math.ceil(result.count / dto.limit) : 0;
-
-    return right({
-      Measures: result?.data || [],
-      PageNumber: dto.pageNumber,
-      QtdRows: Number(result?.count) || 0,
-      PageLimitRows: dto.limit,
-      QtdPages: pages,
-    });
+    return right(result);
   }
 }
 
 export namespace FetchPluviometersReadsUseCaseProtocol {
   export type Request = {
     idEquipment: number;
-    pageNumber: number;
-    limit: number;
     start?: string | null;
     end?: string | null;
-  };
-  export type Response = {
-    Measures: Array<PluviometerReadEntity> | null;
-    PageNumber: number;
-    QtdRows: number;
-    PageLimitRows: number;
-    QtdPages: number;
-  } | null;
+  } & IInputWithPagination;
+  export type Response = IOuputWithPagination<PluviometerReadEntity> | null;
 }

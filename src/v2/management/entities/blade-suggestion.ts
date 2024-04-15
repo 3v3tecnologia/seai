@@ -1,5 +1,8 @@
 import { ManagementCropCycle } from "./crop-cycles";
-import { IrrigationSystemEntity } from "./irrigation-system";
+import {
+  IrrigationSystemEntity,
+  irrigationsTypesNames,
+} from "./irrigation-system";
 
 export type BladeSuggestionProps = {
   Et0: number;
@@ -11,8 +14,6 @@ export type BladeSuggestionProps = {
 
 export class BladeSuggestion {
   private Et0: number;
-  // precipitação, é que ficou faltando eu colocar no documento
-  // mas ela é para subtrair da lâmina de reposição, aí se der menor q 0, a reposição é para ser 0, é tipo, "choveu mais do q precisava"
   private precipitation: number;
   public readonly Kc: number;
   public readonly plantingDate: string;
@@ -34,16 +35,25 @@ export class BladeSuggestion {
     this.plantingDate = plantingDate;
     this.Kc = Kc;
     this.irrigationSystem = irrigationSystem;
+
     this.Etc = this.calcEtc(this.Et0, this.Kc);
+
     this.repositionBlade = this.calcRepositionBlade(
-      this.Etc,
+      this.Et0,
+      this.Kc,
+      this.precipitation,
       this.irrigationSystem.efficiency
     );
-    //  [Dúvida] Como converter para tempo?
-    this.irrigationTime = this.calcIrrigationTime(
+    const irrigationTime = this.calcIrrigationTime(
       this.repositionBlade,
       this.irrigationSystem.applicationRate
     );
+
+    // não faz sentido um valor quebrado para o número de voltas
+    this.irrigationTime =
+      this.irrigationSystem.type === irrigationsTypesNames.Pivot
+        ? Math.ceil(irrigationTime)
+        : irrigationTime;
   }
 
   private calcEtc(Eto: number, kc: number) {
@@ -54,8 +64,13 @@ export class BladeSuggestion {
     return repositionBlade / applicationRate;
   }
 
-  private calcRepositionBlade(Etc: number, efficiency: number) {
-    return Etc * efficiency;
+  private calcRepositionBlade(
+    Eto: number,
+    Kc: number,
+    precipitation: number,
+    efficiency: number
+  ) {
+    return (Eto * Kc - precipitation) / efficiency;
   }
 
   static create(props: {
