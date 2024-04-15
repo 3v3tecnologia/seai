@@ -1,6 +1,7 @@
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 import { BASE_URL } from "../commons/baseURL";
+import { PaginationSchema } from "../commons/withPagination";
 
 const TAGS = ["Equipments"];
 
@@ -111,18 +112,7 @@ export const EQUIPMENTS = {
                           },
                         },
                       },
-                      PageNumber: {
-                        type: "number",
-                      },
-                      QtdRows: {
-                        type: "number",
-                      },
-                      PageLimitRows: {
-                        type: "number",
-                      },
-                      QtdPages: {
-                        type: "number",
-                      },
+                      ...PaginationSchema,
                     },
                   },
                 },
@@ -153,7 +143,8 @@ export const EQUIPMENTS = {
                     PageNumber: 0,
                     QtdRows: 1,
                     PageLimitRows: 90,
-                    QtdPages: 1,
+                    Total: 633,
+                    TotalPages: 317,
                   },
                 },
               },
