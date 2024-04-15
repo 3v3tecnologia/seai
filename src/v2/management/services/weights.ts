@@ -14,7 +14,7 @@ export class ManagementWeightsUseCases {
       ProfitabilityPerMeters: number | null;
       JobsPerMeters: number | null;
       JobsPerHectare: number | null;
-      WaterConsumptionPerMeters: number | null;
+      WaterConsumption: number | null;
     }>;
   }): Promise<Either<Error, string>> {
     const deleteLog = await DbManagementWeightsRepository.delete({
@@ -180,7 +180,7 @@ export class ManagementWeightsUseCases {
         ProfitabilityPerMeters: cropWeights.profitability.get("R$/m³"),
         JobsPerMeters: cropWeights.jobs.get("1000m³"),
         JobsPerHectare: cropWeights.jobs.get("ha"),
-        WaterConsumptionPerMeters: cropWeights.waterConsumption.get("m³/ha"),
+        WaterConsumption: cropWeights.waterConsumption.get("m³/ha"),
       });
     });
 

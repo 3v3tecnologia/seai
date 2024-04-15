@@ -7,8 +7,8 @@ export class CultureWeightsMapper {
       id_basin: Number(row.Id_Basin),
       culture: row.Crop,
       productivity: new Map([
-        ["Kg/ha", Number(row.ProductivityPerKilo)],
-        ["Kg/ha", Number(row.ProductivityPerMeters)],
+        ["Kg/ha", Number(row.ProductivityPerHectare)],
+        ["kg/m³", Number(row.ProductivityPerMeters)],
       ]),
       profitability: new Map([
         ["R$/ha", Number(row.ProfitabilityPerHectare)],
@@ -28,7 +28,7 @@ export class CultureWeightsMapper {
     return weights.map((weight) => ({
       Id_Basin: weight.idBasin,
       Culture: weight.culture,
-      ProductivityPerKilo: weight.productivity.get("Kg/ha") || null,
+      ProductivityPerHectare: weight.productivity.get("Kg/ha") || null,
       ProductivityPerMeters: weight.productivity.get("kg/m³") || null,
       ProfitabilityPerHectare: weight.profitability.get("R$/ha") || null,
       ProfitabilityPerMeters: weight.profitability.get("R$/m³") || null,

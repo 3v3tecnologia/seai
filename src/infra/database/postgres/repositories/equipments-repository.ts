@@ -359,11 +359,10 @@ export class DbEquipmentsRepository
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
     const { idOrgan, idType, pageNumber, limit, name } = params;
-    const pageLimit = limit || 40
+    const pageLimit = limit || 40;
 
     const binding = [];
     const queries: Array<any> = [];
-
 
     if (idOrgan) {
       queries.push(`WHERE
@@ -407,22 +406,21 @@ export class DbEquipmentsRepository
                  INNER JOIN "EquipmentType" eqpType ON
                      eqpType."IdType" = equipment."FK_Type"
                      ${queries.join(" ")}
-    `
+    `;
+
+    const countResponse = await equipments.raw(countSQL, binding);
+    const [countRows] = countResponse.rows;
+    console.log("[COUNT] ", countRows);
 
     // queries.push('order by equipment."IdEquipment"')
     queries.push(`order by equipment."IdEquipment" LIMIT ? OFFSET ?`);
     binding.push(pageLimit);
     binding.push(pageNumber ? pageLimit * (pageNumber - 1) : 0);
 
-
     const sql = `
-    SELECT
-          (
-        ${countSQL}
-    ) AS total_registers, 
-          (
+          
         SELECT
-            json_agg(t.*)
+            json_agg(t.*) AS "measures"
         FROM
             (
                 SELECT
@@ -446,19 +444,20 @@ export class DbEquipmentsRepository
                     organ."IdOrgan" = equipment."FK_Organ"
                 INNER JOIN "EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
-               ${queries.join(" ").concat(") AS t) AS equipments")}`;
+               ${queries.join(" ")}) as t`;
 
-               
     const data = await equipments.raw(sql, binding);
+
+    console.log("[DATA] ", data);
 
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
 
-    if (!rows.equipments) {
+    if (!rows.measures) {
       return null;
     }
 
-    const toDomain = rows.equipments.map((row: any) => ({
+    const toDomain = rows.measures.map((row: any) => ({
       Id: Number(row.Id),
       Code: row.EqpCode || null,
       Name: row.Name,
@@ -479,13 +478,13 @@ export class DbEquipmentsRepository
       Enable: row.Enable,
     }));
 
-    const total = Number(rows.total_registers)
-    const totalPages = calculateTotalPages(total,pageLimit)
+    const total = Number(countRows.count);
+    const totalPages = calculateTotalPages(total, pageLimit);
 
     return {
-      count: rows.equipments.length,
-      total: Number(rows.total_registers),
-      totalPages:totalPages,
+      count: rows.measures.length,
+      total: Number(total),
+      totalPages: totalPages,
       data: toDomain,
     };
   }
@@ -509,6 +508,18 @@ export class DbEquipmentsRepository
         binding.push(time.end);
       }
     }
+
+    const countSQL = `
+      SELECT
+                     count(equipment."IdEquipment")
+                 FROM "MetereologicalEquipment" AS equipment  
+            LEFT JOIN "ReadStations" AS stations
+            ON equipment."IdEquipment"  = stations."FK_Equipment"
+            INNER JOIN "MetereologicalOrgan" AS organ
+            ON organ."IdOrgan" = stations."FK_Organ"
+                     ${queries.join(" ")}
+    `;
+
     queries.push('ORDER BY stations."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(limit || 100);
@@ -547,6 +558,8 @@ export class DbEquipmentsRepository
             ON organ."IdOrgan" = stations."FK_Organ"
             ${queries.join(" ").concat(") AS t) AS measures")}
     `;
+
+    console.log(sqlQuery);
 
     const data = await equipments.raw(sqlQuery, binding);
 

@@ -5,7 +5,7 @@ import { CultureWeights } from "../../entities/weights";
 export type CultureWeightsToPersistency = {
   Id_Basin: number;
   Culture: string;
-  ProductivityPerKilo: number | null;
+  ProductivityPerHectare: number | null;
   ProductivityPerMeters: number | null;
   ProfitabilityPerHectare: number | null;
   ProfitabilityPerMeters: number | null;

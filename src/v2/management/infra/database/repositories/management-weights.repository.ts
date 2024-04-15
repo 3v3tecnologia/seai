@@ -13,7 +13,7 @@ export class DbManagementWeightsRepository {
       return {
         Id_Basin: id,
         Crop: data.Crop,
-        ProductivityPerKilo: data.ProductivityPerHectare,
+        ProductivityPerHectare: data.ProductivityPerHectare,
         ProductivityPerMeters: data.ProductivityPerMeters,
         ProfitabilityPerMeters: data.ProfitabilityPerMeters,
         ProfitabilityPerHectare: data.ProfitabilityPerHectare,
