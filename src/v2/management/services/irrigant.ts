@@ -1,4 +1,9 @@
 import { left, right } from "../../../shared/Either";
+import {
+  dateDiffInDays,
+  getYesterDayDate,
+  parseBrazilianDateTime,
+} from "../../../shared/utils/date";
 import { BladeSuggestion } from "../entities/blade-suggestion";
 import { ManagementCropCycle } from "../entities/crop-cycles";
 import {
@@ -29,13 +34,8 @@ export class IrrigationRecommendationServices {
   static async calcBladeIrrigationRecommendation(
     command: ICalcBaldeIrrigationRecommendationService.Input
   ): ICalcBaldeIrrigationRecommendationService.Output {
-    const date = new Date();
-    date.setDate(date.getDate() - 1);
-    const dateSeparator = "-";
+    const yesterDay = getYesterDayDate("-");
 
-    const yesterDay = `${date.getFullYear()}${dateSeparator}${
-      date.getMonth() + 1
-    }${dateSeparator}${date.getDate()}`;
     console.log("Buscando ETO pela a data de ontem ", yesterDay);
     //  [Dúvida] O que é feito com a leitura do pluviômetro?
     const lastStationMeasurements =
@@ -48,8 +48,6 @@ export class IrrigationRecommendationServices {
       return left(new ManagementIrrigantErrors.StationMeasurementsNotFound());
     }
     const { Et0 } = lastStationMeasurements;
-
-    console.log("Et0 :: ", Et0);
 
     let Precipitation: number | null = null;
 
@@ -177,22 +175,4 @@ function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>) {
   return cropCycles.find(
     (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
   );
-}
-function dateDiffInDays(start: Date, end: Date) {
-  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-  // Discard the time and time-zone information.
-  const utc1 = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
-  const utc2 = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
-
-  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-}
-
-function parseBrazilianDateTime(dateTimeString: string) {
-  const [datePart, timePart] = dateTimeString.split(" ");
-  const [day, month, year] = datePart.split("/").map(Number);
-
-  // Create a Date object with the parsed components
-  const brazilianDate = new Date(Date.UTC(year, month - 1, day));
-
-  return brazilianDate;
 }
