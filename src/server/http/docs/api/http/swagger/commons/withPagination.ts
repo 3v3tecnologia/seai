@@ -1,14 +1,11 @@
 export const PaginationSchema = {
-  PageNumber: {
+  Page: {
     type: "number",
   },
-  QtdRows: {
+  PageSize: {
     type: "number",
   },
-  PageLimitRows: {
-    type: "number",
-  },
-  TotalPages: {
+  TotalItems: {
     type: "number",
   },
   Total: {

@@ -72,7 +72,7 @@ export const EQUIPMENTS = {
                   properties: {
                     data: {
                       type: "object",
-                      Equipments: {
+                      Items: {
                         type: "array",
                         items: {
                           type: "object",
@@ -118,33 +118,54 @@ export const EQUIPMENTS = {
                 },
                 example: {
                   data: {
-                    Equipments: [
-                      {
-                        Id: 17,
-                        Code: "B8524E9A",
-                        Name: "Alto Santo - Castanhão",
-                        Type: {
+                    data: {
+                      Items: [
+                        {
                           Id: 1,
-                          Name: "station",
+                          Code: "B850A89C",
+                          Name: "São Benedito - Sítio Ingazeira",
+                          Type: {
+                            Id: 1,
+                            Name: "station",
+                          },
+                          Organ: {
+                            Id: 2,
+                            Name: "FUNCEME",
+                          },
+                          Altitude: 844,
+                          Location: {
+                            Coordinates: [-3.995388889, -40.955111111],
+                          },
+                          CreatedAt: "2024-03-29T02:34:51.281+00:00",
+                          UpdatedAt: "2024-04-01T19:56:15.697297+00:00",
+                          Enable: true,
                         },
-                        Organ: {
+                        {
                           Id: 2,
-                          Name: "FUNCEME",
+                          Code: "A315",
+                          Name: "BARBALHA",
+                          Type: {
+                            Id: 1,
+                            Name: "station",
+                          },
+                          Organ: {
+                            Id: 2,
+                            Name: "FUNCEME",
+                          },
+                          Altitude: 409.41,
+                          Location: {
+                            Coordinates: [-7.300925, -39.271107],
+                          },
+                          CreatedAt: "2024-03-29T02:34:51.281+00:00",
+                          UpdatedAt: "2024-04-01T19:56:50.264197+00:00",
+                          Enable: true,
                         },
-                        Altitude: 4,
-                        Location: {
-                          Coordinates: [-30.1162, -8.9124],
-                        },
-                        CreatedAt: "2023-11-06T12:52:23.953Z",
-                        UpdatedAt: "2023-11-06T12:55:17.233Z",
-                        Enable: true,
-                      },
-                    ],
-                    PageNumber: 0,
-                    QtdRows: 1,
-                    PageLimitRows: 90,
-                    Total: 633,
-                    TotalPages: 317,
+                      ],
+                      TotalItems: 94,
+                      Page: 1,
+                      PageSize: 2,
+                      TotalPages: 47,
+                    },
                   },
                 },
               },
