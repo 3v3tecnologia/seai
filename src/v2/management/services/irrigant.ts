@@ -1,25 +1,22 @@
-import { Either, left, right } from "../../../shared/Either";
+import { left, right } from "../../../shared/Either";
 import { BladeSuggestion } from "../entities/blade-suggestion";
 import { ManagementCropCycle } from "../entities/crop-cycles";
 import {
   IrrigationSystemEntity,
-  IrrigationSystemMeasurementsTypes,
-  IrrigationSystemTypes,
   irrigationsTypesNames,
 } from "../entities/irrigation-system";
 import {
-  IrrigationSystemMeasurementsEntity,
-  MicroSprinklingProps,
+  Dripping,
   DrippingProps,
+  IIrrigationSystemMeasurementsEntity,
+  MicroSprinkling,
+  MicroSprinklingProps,
   Pivot,
   PivotProps,
   Sprinkling,
   SprinklingProps,
   Sulcos,
   SulcosProps,
-  Dripping,
-  MicroSprinkling,
-  IIrrigationSystemMeasurementsEntity,
 } from "../entities/irrigation-system-measurements";
 import { ManagementIrrigantErrors } from "../errors/irrigant.error";
 import { ManagementCropErrors } from "../errors/management-crop-errors";
@@ -56,12 +53,28 @@ export class IrrigationRecommendationServices {
 
     let Precipitation: number | null = null;
 
-    if (Reflect.has(command, "Precipitation")) {
-      Precipitation = command.Precipitation as number;
+    if (Reflect.has(command, "Pluviometer") == false) {
+      return left(new Error("É necessário informar o atributo 'Pluviometer'"));
+    }
+
+    if (
+      [
+        Reflect.has(command, "Id") == false,
+        Reflect.has(command, "Precipitation") == false,
+      ].every((pred) => pred == false)
+    ) {
+      return left(
+        new Error(
+          "É necessário informar no atributo 'Pluviometer' o campo 'Precipitation' ou 'Id'"
+        )
+      );
+    }
+    if (Reflect.has(command.Pluviometer, "Precipitation")) {
+      Precipitation = command.Pluviometer.Precipitation as number;
     } else {
       const lastPluviometerMeasurements =
         await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
-          command.PluviometerId
+          command.Pluviometer.Id as number
         );
 
       if (lastPluviometerMeasurements?.Precipitation)
@@ -76,11 +89,6 @@ export class IrrigationRecommendationServices {
 
     let systemOrError;
 
-    console.log("[command.System.Type] :: ", command.System.Type);
-    console.log(
-      "irrigationsTypesNames.Sprinkling :: ",
-      irrigationsTypesNames.Sprinkling
-    );
     switch (command.System.Type) {
       case irrigationsTypesNames.MicroSprinkling:
         systemOrError = MicroSprinkling.create(
@@ -105,8 +113,6 @@ export class IrrigationRecommendationServices {
           command.System.Measurements as SulcosProps
         );
     }
-
-    console.log("[system] :: ", systemOrError);
 
     if (systemOrError.isLeft()) {
       return left(systemOrError.value);

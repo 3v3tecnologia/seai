@@ -99,7 +99,7 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
       {
         name: "Precipitação",
         value: props.Precipitation,
-        msg: "Precipitação tem que ser informada e seu valor deve ser inteiro",
+        msg: "Precipitação por volta do sistema pivô tem que ser informada e seu valor deve ser inteiro",
       },
     ]) {
       if (prop.value === null || prop.value === undefined) {
@@ -251,7 +251,7 @@ export class Sprinkling extends IrrigationSystemMeasurementsEntity<
       {
         name: "Precipitação",
         value: props.Precipitation,
-        msg: "Precipitação tem que ser informada e seu valor deve ser inteiro",
+        msg: "Precipitação do sistema de asperção tem que ser informada e seu valor deve ser inteiro",
       },
     ]) {
       if (prop.value === null || prop.value === undefined) {
