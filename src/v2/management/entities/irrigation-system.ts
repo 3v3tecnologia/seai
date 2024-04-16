@@ -17,7 +17,7 @@ export enum irrigationsTypesNames {
   Sprinkling = "Aspersão",
   MicroSprinkling = "Microaspersão",
   Dripping = "Gotejamento",
-  Pivot = " Pivô Central",
+  Pivot = "Pivô Central",
   Sulcos = "Sulcos",
 }
 

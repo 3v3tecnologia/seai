@@ -1,14 +1,41 @@
-// export interface IrrigationSystemMeasurementsEntity {
-//   applicationRate(): number;
-//   efficiency(): number;
-// }
-
 import { Either, left, right } from "../../../shared/Either";
 
 export interface IIrrigationSystemMeasurementsEntity {
   efficiency(): number;
   applicationRate(): number;
 }
+
+type SistemEfficiency = {
+  Efficiency: number;
+};
+export type SprinklingProps = {
+  Precipitation: number;
+} & Partial<SistemEfficiency>;
+
+export type SulcosProps = {
+  Length: number;
+  Spacing: number;
+  Flow: number;
+} & Partial<SistemEfficiency>;
+
+export type PivotProps = {
+  Precipitation: number;
+} & Partial<SistemEfficiency>;
+
+export type MicroSprinklingProps = {
+  Flow: number;
+  Area: number;
+  EfectiveArea: number;
+  PlantsQtd: number;
+} & Partial<SistemEfficiency>;
+
+export type DrippingProps = {
+  Flow: number;
+  Area: number;
+  EfectiveArea: number;
+  PlantsQtd: number;
+} & Partial<SistemEfficiency>;
+
 export abstract class IrrigationSystemMeasurementsEntity<
   T extends { Efficiency: number }
 > implements IIrrigationSystemMeasurementsEntity
@@ -25,13 +52,6 @@ export abstract class IrrigationSystemMeasurementsEntity<
   }
   public abstract applicationRate(): number;
 }
-
-export type SulcosProps = {
-  Length: number;
-  Spacing: number;
-  Flow: number;
-  Efficiency?: number;
-};
 
 export class Sulcos extends IrrigationSystemMeasurementsEntity<
   Required<SulcosProps>
@@ -73,11 +93,6 @@ export class Sulcos extends IrrigationSystemMeasurementsEntity<
   }
 }
 
-export type PivotProps = {
-  Precipitation: number;
-  Efficiency?: number;
-};
-
 export class Pivot extends IrrigationSystemMeasurementsEntity<
   Required<PivotProps>
 > {
@@ -109,14 +124,6 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
     return right(new Pivot(props));
   }
 }
-
-export type MicroSprinklingProps = {
-  Flow: number;
-  Area: number;
-  EfectiveArea: number;
-  PlantsQtd: number;
-  Efficiency?: number;
-};
 
 export class MicroSprinkling extends IrrigationSystemMeasurementsEntity<
   Required<MicroSprinklingProps>
@@ -167,14 +174,6 @@ export class MicroSprinkling extends IrrigationSystemMeasurementsEntity<
   }
 }
 
-export type DrippingProps = {
-  Flow: number;
-  Area: number;
-  EfectiveArea: number;
-  PlantsQtd: number;
-  Efficiency?: number;
-};
-
 export class Dripping extends IrrigationSystemMeasurementsEntity<
   Required<DrippingProps>
 > {
@@ -224,11 +223,6 @@ export class Dripping extends IrrigationSystemMeasurementsEntity<
     return right(new Dripping(props));
   }
 }
-
-export type SprinklingProps = {
-  Precipitation: number;
-  Efficiency?: number;
-};
 
 export class Sprinkling extends IrrigationSystemMeasurementsEntity<
   Required<SprinklingProps>
