@@ -9,14 +9,17 @@ import {
 } from "../entities/irrigation-system";
 import {
   IrrigationSystemMeasurementsEntity,
-  MicroSprinklingOrDripping,
-  MicroSprinklingOrDrippingProps,
+  MicroSprinklingProps,
+  DrippingProps,
   Pivot,
   PivotProps,
   Sprinkling,
   SprinklingProps,
   Sulcos,
   SulcosProps,
+  Dripping,
+  MicroSprinkling,
+  IIrrigationSystemMeasurementsEntity,
 } from "../entities/irrigation-system-measurements";
 import { ManagementIrrigantErrors } from "../errors/irrigant.error";
 import { ManagementCropErrors } from "../errors/management-crop-errors";
@@ -49,7 +52,7 @@ export class IrrigationRecommendationServices {
     }
     const { Et0 } = lastStationMeasurements;
 
-    console.log("lastStationMeasurements :: ", lastStationMeasurements);
+    console.log("Et0 :: ", Et0);
 
     let Precipitation: number | null = null;
 
@@ -71,26 +74,47 @@ export class IrrigationRecommendationServices {
       );
     }
 
-    let system: IrrigationSystemMeasurementsEntity;
+    let systemOrError;
 
+    console.log("[command.System.Type] :: ", command.System.Type);
+    console.log(
+      "irrigationsTypesNames.Sprinkling :: ",
+      irrigationsTypesNames.Sprinkling
+    );
     switch (command.System.Type) {
       case irrigationsTypesNames.MicroSprinkling:
-      case irrigationsTypesNames.Dripping:
-        system = new MicroSprinklingOrDripping(
-          command.System.Measurements as MicroSprinklingOrDrippingProps
+        systemOrError = MicroSprinkling.create(
+          command.System.Measurements as MicroSprinklingProps
         );
+        break;
+      case irrigationsTypesNames.Dripping:
+        systemOrError = Dripping.create(
+          command.System.Measurements as DrippingProps
+        );
+        break;
       case irrigationsTypesNames.Sprinkling:
-        system = new Sprinkling(command.System.Measurements as SprinklingProps);
+        systemOrError = Sprinkling.create(
+          command.System.Measurements as SprinklingProps
+        );
+        break;
       case irrigationsTypesNames.Pivot:
-        system = new Pivot(command.System.Measurements as PivotProps);
+        systemOrError = Pivot.create(command.System.Measurements as PivotProps);
+        break;
       default:
-        system = new Sulcos(command.System.Measurements as SulcosProps);
+        systemOrError = Sulcos.create(
+          command.System.Measurements as SulcosProps
+        );
+    }
+
+    console.log("[system] :: ", systemOrError);
+
+    if (systemOrError.isLeft()) {
+      return left(systemOrError.value);
     }
 
     const irrigationSystem = new IrrigationSystemEntity({
       type: command.System.Type,
-      measurements: system,
-      efficiency: command.IrrigationEfficiency,
+      measurements: systemOrError.value as IIrrigationSystemMeasurementsEntity,
     });
 
     //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
@@ -107,8 +131,6 @@ export class IrrigationRecommendationServices {
     // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
     // varia de acordo com o ciclo de crescimento da cultura
     const cycle = findKc(cropDate, cropCycles);
-    console.log("cycle :: ", cycle);
-    console.log("cropDate :: ", cropDate);
 
     if (!cycle) {
       return left(new ManagementIrrigantErrors.CropDateNotFound());
@@ -129,18 +151,17 @@ export class IrrigationRecommendationServices {
       CropDays: cropDate,
       Et0,
       Precipitation,
+      Kc: bladeSuggestion.Kc,
     });
   }
 }
 
 // [DÚVIDA] plantingDate tem que ser no passado?
-// [Dúvida] Como descobrir o dia da cultura?
-
 function getCropDate(plantingDate: string) {
   const currentDate = new Date();
   const diff = dateDiffInDays(
-    new Date(parseBrazilianDateTime(plantingDate)),
-    currentDate
+    currentDate,
+    new Date(parseBrazilianDateTime(plantingDate))
   );
   return diff < 0 ? 0 : diff;
 }
@@ -151,7 +172,7 @@ function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>) {
     (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
   );
 }
-export function dateDiffInDays(start: Date, end: Date) {
+function dateDiffInDays(start: Date, end: Date) {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
   // Discard the time and time-zone information.
   const utc1 = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
@@ -160,14 +181,12 @@ export function dateDiffInDays(start: Date, end: Date) {
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
-export function parseBrazilianDateTime(dateTimeString: string) {
+function parseBrazilianDateTime(dateTimeString: string) {
   const [datePart, timePart] = dateTimeString.split(" ");
   const [day, month, year] = datePart.split("/").map(Number);
 
   // Create a Date object with the parsed components
   const brazilianDate = new Date(Date.UTC(year, month - 1, day));
-
-  console.log("brazilianDate", brazilianDate);
 
   return brazilianDate;
 }

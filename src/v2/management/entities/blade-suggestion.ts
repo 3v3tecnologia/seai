@@ -1,8 +1,12 @@
 import { ManagementCropCycle } from "./crop-cycles";
+import { IrrigationSystemEntity } from "./irrigation-system";
 import {
-  IrrigationSystemEntity,
-  irrigationsTypesNames,
-} from "./irrigation-system";
+  Dripping,
+  MicroSprinkling,
+  Pivot,
+  Sprinkling,
+  Sulcos,
+} from "./irrigation-system-measurements";
 
 export type BladeSuggestionProps = {
   Et0: number;
@@ -20,7 +24,7 @@ export class BladeSuggestion {
   private irrigationSystem: IrrigationSystemEntity;
 
   public readonly Etc: number = 0;
-  public readonly irrigationTime: number = 0;
+  public readonly irrigationTime: string;
   public readonly repositionBlade: number = 0;
 
   private constructor({
@@ -49,11 +53,14 @@ export class BladeSuggestion {
       this.irrigationSystem.applicationRate
     );
 
-    // não faz sentido um valor quebrado para o número de voltas
+    /**
+     *  Pivô Central: Obtenção do número de voltas necessárias para a reposição
+     *  Em outros tipos de sistemas a saída será em horas
+     */
     this.irrigationTime =
-      this.irrigationSystem.type === irrigationsTypesNames.Pivot
-        ? Math.ceil(irrigationTime)
-        : irrigationTime;
+      this.irrigationSystem instanceof Pivot
+        ? decimalToPivotLaps(irrigationTime)
+        : decimalToHoursAndMinutes(irrigationTime);
   }
 
   private calcEtc(Eto: number, kc: number) {
@@ -90,4 +97,24 @@ export class BladeSuggestion {
 
     return bladeSuggestion;
   }
+}
+
+function decimalToPivotLaps(decimalTime: number) {
+  const laps = Math.ceil(decimalTime);
+  return `${laps} volta(s)`;
+}
+
+function decimalToHoursAndMinutes(decimalTime: number) {
+  const date = new Date(0, 0);
+  date.setSeconds(decimalTime * 60 * 60);
+
+  // Extract hours and minutes
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // Format the result
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}`;
 }

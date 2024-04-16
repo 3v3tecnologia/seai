@@ -1,9 +1,16 @@
 import {
   IrrigationSystemMeasurementsEntity,
-  MicroSprinklingOrDrippingProps,
+  DrippingProps,
+  MicroSprinklingProps,
   PivotProps,
   SprinklingProps,
   SulcosProps,
+  MicroSprinkling,
+  Dripping,
+  Sprinkling,
+  Pivot,
+  Sulcos,
+  IIrrigationSystemMeasurementsEntity,
 } from "./irrigation-system-measurements";
 
 export enum irrigationsTypesNames {
@@ -24,34 +31,33 @@ export type IrrigationSystemTypes = `${
 export type IrrigationSystemMeasurementsTypes =
   | SulcosProps
   | PivotProps
-  | MicroSprinklingOrDrippingProps
+  | DrippingProps
+  | MicroSprinklingProps
   | SprinklingProps;
 
 export interface IrrigationSystem {
   type: IrrigationSystemTypes;
   efficiency: number; // Percentage
   applicationRate: number;
-  measurements: IrrigationSystemMeasurementsEntity;
+  measurements: MicroSprinkling | Dripping | Sprinkling | Pivot | Sulcos;
 }
 
-export class IrrigationSystemEntity implements IrrigationSystem {
+export class IrrigationSystemEntity {
   public type: IrrigationSystemTypes;
   public efficiency: number; // Percentage
-  public measurements: IrrigationSystemMeasurementsEntity;
+  public measurements: IIrrigationSystemMeasurementsEntity;
   public applicationRate: number = 0;
 
   constructor({
     type,
-    efficiency,
     measurements,
   }: {
     type: IrrigationSystemTypes;
-    efficiency: number;
-    measurements: IrrigationSystemMeasurementsEntity;
+    measurements: IIrrigationSystemMeasurementsEntity;
   }) {
     this.type = type;
-    this.efficiency = efficiency;
     this.measurements = measurements;
+    this.efficiency = this.measurements.efficiency();
     this.applicationRate = this.measurements.applicationRate();
   }
 

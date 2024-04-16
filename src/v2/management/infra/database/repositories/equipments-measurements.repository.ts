@@ -14,7 +14,7 @@ export class DbEquipmentsMeasurementsRepository {
       .limit(1)
       .first();
 
-    if (!data) {
+    if (!data || data.Et0 === null) {
       return null;
     }
 
