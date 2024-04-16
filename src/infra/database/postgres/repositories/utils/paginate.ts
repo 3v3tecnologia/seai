@@ -6,10 +6,12 @@ export function calculateTotalPages(totalItems: number, itemsPerPage: number) {
 
 export function toPaginatedOutput<T>({
   data,
+  page,
   limit,
   count,
 }: {
   data: Array<T>;
+  page: number;
   limit: number;
   count: number;
 }) {
@@ -17,9 +19,10 @@ export function toPaginatedOutput<T>({
   const totalPages = calculateTotalPages(total, limit);
 
   return {
-    Data: data,
-    Total: Number(total),
-    Limit: limit,
+    Items: data,
+    TotalItems: Number(total),
+    Page: page,
+    PageSize: limit,
     TotalPages: totalPages,
   };
 }

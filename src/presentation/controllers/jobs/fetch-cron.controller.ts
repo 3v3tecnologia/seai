@@ -3,6 +3,7 @@ import { Controller } from "../ports/controllers";
 
 import { FetchCronUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { badRequest, ok, serverError } from "../helpers";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchCronController
   implements Controller<FetchCronControllerProtocol.Request, HttpResponse>
@@ -18,8 +19,7 @@ export class FetchCronController
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute({
-        limit: request.limit,
-        pageNumber: request.pageNumber ? Number(request.pageNumber) : 1,
+        ...formatPaginationInput(request.pageNumber, request.limit),
         queue: request.queue,
       });
 

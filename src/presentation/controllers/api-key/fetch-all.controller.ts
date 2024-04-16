@@ -4,6 +4,7 @@ import { Controller } from "../ports/controllers";
 import { FetchAccessKeysUseCaseProtocol } from "../../../domain/use-cases/access-key";
 import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 import { badRequest, ok, serverError } from "../helpers";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchAccessKeysController
   implements
@@ -20,8 +21,7 @@ export class FetchAccessKeysController
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute({
-        limit: request.limit,
-        pageNumber: request.pageNumber,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       });
 
       if (result.isLeft()) {

@@ -4,6 +4,7 @@ import { IInputWithPagination } from "../_ports/repositories/dto/input";
 import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchEquipments {
   private LIMIT: number = 40;
@@ -24,8 +25,7 @@ export class FetchEquipments {
     }
 
     const dto = {
-      limit: Number(request.limit) || this.LIMIT,
-      pageNumber: Number(request.pageNumber) || this.PAGE_NUMBER,
+      ...formatPaginationInput(request.pageNumber, request.limit),
     };
 
     if (request.idOrgan) {

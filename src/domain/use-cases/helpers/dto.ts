@@ -1,6 +1,7 @@
 export type InputWithPagination = {
   pageNumber: number;
   limit: number;
+  offset: number;
 };
 
 export type OutputWithPagination<T> = {

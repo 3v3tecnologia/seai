@@ -1,6 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { JobsRepositoryProtocol } from "../_ports/repositories/background-jobs-repository";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
   private readonly repository: JobsRepositoryProtocol;
@@ -25,8 +26,7 @@ export class FetchJobs implements FetchJobUseCaseProtocol.UseCase {
     }
 
     const dto = {
-      limit: request.limit || 50,
-      pageNumber: request.pageNumber || 1,
+      ...formatPaginationInput(request.pageNumber, request.limit),
     };
 
     if (request.queue)

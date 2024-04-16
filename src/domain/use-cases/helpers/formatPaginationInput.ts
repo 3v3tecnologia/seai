@@ -16,6 +16,7 @@ export function formatPaginationInput(
     page && Number(page) > 0 ? Number(page) : options.defaultPageNumber;
   return {
     limit: pageLimit,
-    pageNumber: pageLimit * (pageNumber - 1),
+    pageNumber,
+    offset: pageLimit * (pageNumber - 1),
   };
 }

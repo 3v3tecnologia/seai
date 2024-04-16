@@ -7,10 +7,11 @@ export type DatabaseOperationOutputLog = {
 };
 
 export type IOuputWithPagination<T> = {
-  Total: number;
-  Limit: number;
+  Items: Array<T> | null;
+  TotalItems: number;
+  Page: number;
+  PageSize: number;
   TotalPages: number;
-  Data: Array<T> | null;
 } | null;
 
 export class DatabaseOperationOutputLogFactory {

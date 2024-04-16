@@ -4,6 +4,7 @@ import { Controller } from "../ports/controllers";
 import { FetchEquipments } from "../../../domain/use-cases/equipments/fetch-equipments";
 
 import { ok, serverError } from "../helpers";
+import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 
 export class FetchEquipmentsController
   implements
@@ -31,11 +32,9 @@ export class FetchEquipmentsController
 
 export namespace FetchEquipmentsControllerProtocol {
   export type Request = {
-    equipmentId?:number;
-    pageNumber: number;
-    limit: number;
+    equipmentId?: number;
     idOrgan?: number;
     idType?: number;
     name?: string;
-  };
+  } & InputWithPagination;
 }

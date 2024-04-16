@@ -2,6 +2,8 @@ import { HttpResponse } from "../ports";
 
 import { FetchAllNews } from "../../../domain/use-cases/newsletter/fetch";
 import { forbidden, ok, serverError } from "../helpers";
+import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchNewsController {
   private useCase: FetchAllNews.UseCase;
@@ -13,8 +15,7 @@ export class FetchNewsController {
   async handle(request: FetchNewsController.Request): Promise<HttpResponse> {
     try {
       const createdOrError = await this.useCase.create({
-        limit: request.limit,
-        pageNumber: request.pageNumber,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       });
 
       if (createdOrError.isLeft()) {
@@ -32,9 +33,7 @@ export class FetchNewsController {
 export namespace FetchNewsController {
   export type Request = {
     accountId: number;
-    pageNumber: number;
-    limit: number;
     start?: string;
     end?: string | null;
-  };
+  } & InputWithPagination;
 }

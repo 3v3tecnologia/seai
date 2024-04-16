@@ -360,9 +360,8 @@ export class DbEquipmentsRepository
   async getEquipments(
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
-    const { idOrgan, idType, pageNumber, limit, name } = params;
-    const pageLimit = limit || 40;
-    const offset = pageNumber ? pageLimit * (pageNumber - 1) : 0;
+    const { idOrgan, idType, pageNumber, limit, offset, name } = params;
+    const pageLimit = limit;
 
     const binding = [];
     const queries: Array<any> = [];
@@ -412,8 +411,6 @@ export class DbEquipmentsRepository
     `;
 
     const countRows = await countTotalRows(equipments)(countSQL, binding);
-
-    console.log("[COUNT] :: ", countRows);
 
     queries.push(`order by equipment."IdEquipment" LIMIT ? OFFSET ?`);
     binding.push(pageLimit);
@@ -480,6 +477,7 @@ export class DbEquipmentsRepository
 
     return toPaginatedOutput({
       data: toDomain,
+      page: pageNumber,
       limit: pageLimit,
       count: countRows,
     });
@@ -615,6 +613,7 @@ export class DbEquipmentsRepository
 
     return toPaginatedOutput({
       data: measuresToDomain,
+      page: pageNumber,
       limit: pageLimit,
       count: countRows,
     });
@@ -842,8 +841,9 @@ export class DbEquipmentsRepository
 
     return toPaginatedOutput({
       data: toDomain,
-      count: countRows,
+      page: pageNumber,
       limit: pageLimit,
+      count: countRows,
     });
   }
   async getStationsWithLastMeasurements(
