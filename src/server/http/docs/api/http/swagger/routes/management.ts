@@ -795,4 +795,68 @@ export const MANAGEMENT = {
       },
     },
   },
+  [`${BASE_URL.V2}/management/blade_suggestion`]: {
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                data: {
+                  StationId: 1,
+                  CropId: 1,
+                  Pluviometer: {
+                    Id: 2,
+                    Precipitation: 2,
+                  },
+                  PlantingDate: "17/04/2024",
+                  IrrigationEfficiency: 75,
+                  System: {
+                    Type: "Aspersão",
+                    Measurements: {
+                      Precipitation: 1,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    Etc: 6.4800234,
+                    RepositionBlade: 5.430331393939395,
+                    IrrigationTime: "05:25",
+                    CropDays: 1,
+                    Et0: 3.2400117,
+                    Precipitation: 2,
+                    Kc: 2,
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
 };
