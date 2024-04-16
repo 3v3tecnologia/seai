@@ -121,7 +121,7 @@ export const MEASURES = {
                 },
                 example: {
                   data: {
-                    Measures: [
+                    Items: [
                       {
                         IdRead: 78,
                         Time: "2023-11-05",
@@ -172,10 +172,10 @@ export const MEASURES = {
                         },
                       },
                     ],
-                    PageNumber: 1,
-                    QtdRows: 1,
-                    PageLimitRows: 40,
-                    QtdPages: 1,
+                    Page: 1,
+                    TotalItems: 1,
+                    PageSize: 40,
+                    TotalPages: 1,
                   },
                 },
               },
@@ -320,7 +320,7 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
-    put:{
+    put: {
       tags: TAGS,
       security: [BEARER_AUTH],
       parameters: [
@@ -344,23 +344,23 @@ export const MEASURES = {
                 AverageRelativeHumidity: "number",
                 MinRelativeHumidity: "number",
                 MaxRelativeHumidity: "number",
-                AverageAtmosphericTemperature:"number",
-                MaxAtmosphericTemperature:"number",
-                MinAtmosphericTemperature:"number",
-                AtmosphericPressure:"number",
-                ETO:"number",
+                AverageAtmosphericTemperature: "number",
+                MaxAtmosphericTemperature: "number",
+                MinAtmosphericTemperature: "number",
+                AtmosphericPressure: "number",
+                ETO: "number",
               },
               example: {
-                "TotalRadiation": 1,
-                "AverageRelativeHumidity": 11.4,
-                "MinRelativeHumidity": 11.4,
-                "MaxRelativeHumidity": 11.4,
-                "AverageAtmosphericTemperature": 11.4,
-                "MaxAtmosphericTemperature": 11.4,
-                "MinAtmosphericTemperature": 11.4,
-                "AtmosphericPressure": 11.4,
-                "ETO": 11.4
-              }
+                TotalRadiation: 1,
+                AverageRelativeHumidity: 11.4,
+                MinRelativeHumidity: 11.4,
+                MaxRelativeHumidity: 11.4,
+                AverageAtmosphericTemperature: 11.4,
+                MaxAtmosphericTemperature: 11.4,
+                MinAtmosphericTemperature: 11.4,
+                AtmosphericPressure: 11.4,
+                ETO: 11.4,
+              },
             },
           },
         },
@@ -380,7 +380,7 @@ export const MEASURES = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao atualizar leitura de estação 5."
+                  data: "Sucesso ao atualizar leitura de estação 5.",
                 },
               },
             },
@@ -388,7 +388,7 @@ export const MEASURES = {
         },
         ...DEFAULT_RESPONSES,
       },
-    }
+    },
   },
   [`${BASE_URL.V1}/equipments/measures/pluviometers`]: {
     get: {
@@ -476,7 +476,7 @@ export const MEASURES = {
                 },
                 example: {
                   data: {
-                    Measures: [
+                    Items: [
                       {
                         IdRead: 1,
                         Time: "2023-09-11",
@@ -487,10 +487,10 @@ export const MEASURES = {
                         },
                       },
                     ],
-                    PageNumber: 1,
-                    QtdRows: 1,
-                    PageLimitRows: 40,
-                    QtdPages: 1,
+                    TotalItems: 6,
+                    Page: 1,
+                    PageSize: 40,
+                    TotalPages: 1,
                   },
                 },
               },
@@ -571,7 +571,7 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
-    put:{
+    put: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Update pluviometer measures",
@@ -609,6 +609,6 @@ export const MEASURES = {
         },
         ...DEFAULT_RESPONSES,
       },
-    }
+    },
   },
 };
