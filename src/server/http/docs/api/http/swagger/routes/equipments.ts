@@ -8,7 +8,7 @@ const TAGS = ["Equipments"];
 const IRRIGANT = {
   [`${BASE_URL.V1}/equipments/pluviometers`]: {
     get: {
-      tags: [...TAGS, "Irrigant"],
+      tags: ["Irrigant"],
       summary: "Get all pluviometers with yesterday's measurements",
       parameters: [
         {
@@ -92,7 +92,7 @@ const IRRIGANT = {
   },
   [`${BASE_URL.V1}/equipments/stations`]: {
     get: {
-      tags: [...TAGS, "Irrigant"],
+      tags: ["Irrigant"],
       summary: "Get all stations with last measurement record",
       parameters: [
         {
