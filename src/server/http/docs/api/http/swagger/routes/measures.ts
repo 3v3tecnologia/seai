@@ -306,7 +306,7 @@ export const MEASURES = {
                       Unit: "m/s",
                       Value: 3.5,
                     },
-                    ETO: {
+                    Et0: {
                       Unit: "mm",
                       Value: 4.911332,
                     },
