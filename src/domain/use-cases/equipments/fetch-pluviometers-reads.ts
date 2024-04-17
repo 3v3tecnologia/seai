@@ -8,8 +8,6 @@ import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equ
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchPluviometersReads {
-  private LIMIT: number = 40;
-  private PAGE_NUMBER: number = 0;
   private readonly measuresRepository: EquipmentsMeasuresRepositoryProtocol;
 
   constructor(measuresRepository: EquipmentsMeasuresRepositoryProtocol) {

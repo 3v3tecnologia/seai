@@ -230,6 +230,7 @@ export class Sprinkling extends IrrigationSystemMeasurementsEntity<
   static DEFAULT_EFFICIENCY = 82.5;
 
   constructor(props: SprinklingProps) {
+    console.log(props.Efficiency || Sprinkling.DEFAULT_EFFICIENCY);
     super({
       ...props,
       Efficiency: props.Efficiency || Sprinkling.DEFAULT_EFFICIENCY,

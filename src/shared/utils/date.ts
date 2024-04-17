@@ -1,9 +1,12 @@
 export function getYesterDayDate(separator: string) {
   const date = new Date();
   date.setDate(date.getDate() - 1);
-  return `${date.getFullYear()}${separator}${
-    date.getMonth() + 1
-  }${separator}${date.getDate()}`;
+  return `${date.getFullYear()}${separator}${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}${separator}${date
+    .getDate()
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 export function dateDiffInDays(start: Date, end: Date) {

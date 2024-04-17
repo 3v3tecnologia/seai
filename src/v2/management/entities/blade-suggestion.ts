@@ -43,8 +43,7 @@ export class BladeSuggestion {
     this.Etc = this.calcEtc(this.Et0, this.Kc);
 
     this.repositionBlade = this.calcRepositionBlade(
-      this.Et0,
-      this.Kc,
+      this.Etc,
       this.precipitation,
       this.irrigationSystem.efficiency
     );
@@ -72,12 +71,16 @@ export class BladeSuggestion {
   }
 
   private calcRepositionBlade(
-    Eto: number,
-    Kc: number,
+    Etc: number,
     precipitation: number,
     efficiency: number
   ) {
-    return (Eto * Kc - precipitation) / efficiency;
+    console.log({
+      Etc,
+      precipitation,
+      efficiency,
+    });
+    return (Etc - precipitation) / efficiency;
   }
 
   static create(props: {

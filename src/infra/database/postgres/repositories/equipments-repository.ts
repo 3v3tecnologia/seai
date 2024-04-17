@@ -13,6 +13,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { equipments } from "../connection/knexfile";
 import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { getYesterDayDate } from "../../../../shared/utils/date";
 
 /*
   TO-DO : Create domain layer
@@ -618,148 +619,6 @@ export class DbEquipmentsRepository
       count: countRows,
     });
   }
-
-  async getStationReadsByIdRead(
-    params: MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Params
-  ): MeasuresRepositoryDTOProtocol.GetStationMeasuresByIdRead.Result {
-    const { idRead } = params;
-
-    const sqlQuery = `
-      SELECT
-                stations."IdRead",
-                stations."Time" AS "Date",
-                stations."Hour",
-                equipment."IdEquipment",
-                equipment."IdEquipmentExternal" AS "EquipmentCode",
-                organ."IdOrgan",
-                organ."Name" AS "OrganName",
-                equipment."Altitude",
-                stations."TotalRadiation",
-                stations."MaxRelativeHumidity",
-                stations."MinRelativeHumidity",
-                stations."AverageRelativeHumidity",
-                stations."MaxAtmosphericTemperature",
-                stations."MinAtmosphericTemperature",
-                stations."AverageAtmosphericTemperature" ,
-                stations."AtmosphericPressure" ,
-                stations."WindVelocity",
-                stations."Et0" AS "ETO"
-            FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
-            ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
-            ON organ."IdOrgan" = stations."FK_Organ"
-            WHERE stations."IdRead" = ?;
-    `;
-
-    const data = await equipments.raw(sqlQuery, [idRead]);
-
-    if (!data.rows.length) {
-      return null;
-    }
-
-    const row = data.rows[0];
-
-    const toDomain = {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.IdEquipment),
-      Time: row.Date,
-      Hour: row.Hour,
-      Altitude: {
-        Unit: "m",
-        Value: Number(row.Altitude) || null,
-      },
-      TotalRadiation: {
-        Unit: "W/m",
-        Value: Number(row.TotalRadiation) || null,
-      },
-      AverageRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.AverageRelativeHumidity) || null,
-      },
-      MinRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MinRelativeHumidity) || null,
-      },
-      MaxRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MaxRelativeHumidity) || null,
-      },
-      AverageAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.AverageAtmosphericTemperature) || null,
-      },
-      MaxAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MaxAtmosphericTemperature) || null,
-      },
-      MinAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MinAtmosphericTemperature) || null,
-      },
-      AtmosphericPressure: {
-        Unit: "°C",
-        Value: Number(row.AtmosphericPressure) || null,
-      },
-      WindVelocity: {
-        Unit: "m/s",
-        Value: Number(row.WindVelocity) || null,
-      },
-      ETO: {
-        Unit: "mm",
-        Value: Number(row.ETO) || null,
-      },
-    };
-
-    return toDomain;
-  }
-  async getPluviometerReadsByIdRead(
-    params: MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Params
-  ): MeasuresRepositoryDTOProtocol.GetPluviometersByIdPluviometer.Result {
-    const { idRead } = params;
-
-    const sqlQuery = `
-      SELECT
-          pluviometer."IdRead",
-          pluviometer."Time" ,
-          pluviometer."Hour" ,
-          organ."Name" AS "OrganName",
-          organ."IdOrgan",
-          pluviometer."Value",
-          pluviometer."FK_Equipment"
-      FROM
-              "MetereologicalEquipment" AS equipment
-      INNER JOIN "ReadPluviometers" AS pluviometer
-              ON
-          equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
-                ON
-          organ."IdOrgan" = equipment."FK_Organ"
-      WHERE
-          pluviometer."IdRead" = ?
-    `;
-
-    const data = await equipments.raw(sqlQuery, [idRead]);
-
-    if (!data.rows.length) {
-      return null;
-    }
-
-    const row = data.rows[0];
-
-    const toDomain = {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.FK_Equipment),
-      Time: row.Time,
-      Hour: row.Hour,
-      Precipitation: {
-        Unit: "mm",
-        Value: Number(row.Value),
-      },
-    };
-
-    return toDomain;
-  }
   async getPluviometersReads(
     params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
   ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result {
@@ -846,7 +705,147 @@ export class DbEquipmentsRepository
       count: countRows,
     });
   }
-  async getStationsWithLastMeasurements(
+
+  async getLatestStationMeasurements(
+    params: MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Params
+  ): MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Result {
+    const { id } = params;
+
+    const sqlQuery = `
+      SELECT
+                equipment."IdEquipment",
+                stations."IdRead",
+                stations."Time" AS "Date",
+                stations."Hour",
+                stations."TotalRadiation",
+                stations."MaxRelativeHumidity",
+                stations."MinRelativeHumidity",
+                stations."AverageRelativeHumidity",
+                stations."MaxAtmosphericTemperature",
+                stations."MinAtmosphericTemperature",
+                stations."AverageAtmosphericTemperature" ,
+                stations."AtmosphericPressure" ,
+                stations."WindVelocity",
+                stations."Et0"
+            FROM "MetereologicalEquipment" AS equipment  
+            LEFT JOIN "ReadStations" AS stations
+            ON equipment."IdEquipment"  = stations."FK_Equipment"
+            INNER JOIN "MetereologicalOrgan" AS organ
+            ON organ."IdOrgan" = stations."FK_Organ"
+            WHERE equipment."IdEquipment" = ?
+            ORDER BY stations."IdRead" DESC
+            LIMIT 1;
+    `;
+
+    const data = await equipments.raw(sqlQuery, [id]);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const row = data.rows[0];
+
+    return {
+      IdRead: Number(row.IdRead),
+      IdEquipment: Number(row.IdEquipment),
+      Time: row.Date,
+      Hour: row.Hour,
+      Altitude: {
+        Unit: "m",
+        Value: Number(row.Altitude) || null,
+      },
+      TotalRadiation: {
+        Unit: "W/m",
+        Value: Number(row.TotalRadiation) || null,
+      },
+      AverageRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.AverageRelativeHumidity) || null,
+      },
+      MinRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MinRelativeHumidity) || null,
+      },
+      MaxRelativeHumidity: {
+        Unit: "%",
+        Value: Number(row.MaxRelativeHumidity) || null,
+      },
+      AverageAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.AverageAtmosphericTemperature) || null,
+      },
+      MaxAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MaxAtmosphericTemperature) || null,
+      },
+      MinAtmosphericTemperature: {
+        Unit: "°C",
+        Value: Number(row.MinAtmosphericTemperature) || null,
+      },
+      AtmosphericPressure: {
+        Unit: "°C",
+        Value: Number(row.AtmosphericPressure) || null,
+      },
+      WindVelocity: {
+        Unit: "m/s",
+        Value: Number(row.WindVelocity) || null,
+      },
+      Et0: {
+        Unit: "mm",
+        Value: Number(row.Et0) || null,
+      },
+    };
+  }
+  async getLatestPluviometerMeasurements(
+    params: MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Params
+  ): MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Result {
+    const { id } = params;
+
+    const sqlQuery = `
+      SELECT
+          pluviometer."IdRead",
+          pluviometer."Time" ,
+          pluviometer."Hour" ,
+          organ."Name" AS "OrganName",
+          organ."IdOrgan",
+          pluviometer."Value",
+          pluviometer."FK_Equipment"
+      FROM
+                    "MetereologicalEquipment" AS equipment
+      INNER JOIN "ReadPluviometers" AS pluviometer
+                    ON
+                equipment."IdEquipment" = pluviometer."FK_Equipment"
+      INNER JOIN "MetereologicalOrgan" AS organ
+                      ON
+                organ."IdOrgan" = equipment."FK_Organ"
+      WHERE
+                equipment."IdEquipment" = ?
+      ORDER BY
+          pluviometer."IdRead" DESC
+      LIMIT 1;
+    `;
+
+    const data = await equipments.raw(sqlQuery, [id]);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const row = data.rows[0];
+
+    return {
+      IdRead: Number(row.IdRead),
+      IdEquipment: Number(row.FK_Equipment),
+      Time: row.Time,
+      Hour: row.Hour,
+      Precipitation: {
+        Unit: "mm",
+        Value: Number(row.Value),
+      },
+    };
+  }
+
+  async getStationsWithYesterdayMeasurements(
     params: {
       latitude: number;
       longitude: number;
@@ -856,6 +855,8 @@ export class DbEquipmentsRepository
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
+
+    const yesterdayDate = getYesterDayDate("-");
 
     const coordinateFilter = [params?.latitude, params?.longitude].every(
       (e) => e
@@ -895,7 +896,7 @@ export class DbEquipmentsRepository
               FROM
                   "ReadStations" rs
               WHERE
-                  rs."FK_Equipment" = Stations."Id" and rs."Et0" >= 0
+                  rs."FK_Equipment" = Stations."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Et0" >= 0
               ORDER BY
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
@@ -910,16 +911,16 @@ export class DbEquipmentsRepository
       return null;
     }
 
-    const stations: Array<StationWithLastMeasurement> = rows
-      .map((row: any) => ({
+    const stations: Array<StationWithLastMeasurement> = rows.map(
+      (row: any) => ({
         ...mapEquipmentToDomain(row),
-        ETO: Number(row.ETO) || null,
-      }))
-      .filter((station: StationWithLastMeasurement) => station.ETO !== null);
+        Et0: Number(row.Et0) || null,
+      })
+    );
 
     return stations.length ? stations : null;
   }
-  async getPluviometersWithLastMeasurements(
+  async getPluviometersWithYesterdayMeasurements(
     params: {
       latitude: number;
       longitude: number;
@@ -927,6 +928,7 @@ export class DbEquipmentsRepository
     } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
+    const yesterdayDate = getYesterDayDate("-");
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -963,7 +965,7 @@ export class DbEquipmentsRepository
               FROM
                   "ReadPluviometers" rs
               WHERE
-                  rs."FK_Equipment" = Pluviometers."Id"
+                  rs."FK_Equipment" = Pluviometers."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Value" >= 0
               ORDER BY
                   rs."Time" DESC
               LIMIT 1
@@ -978,15 +980,12 @@ export class DbEquipmentsRepository
 
     const rows = data.rows;
 
-    const pluviometers: Array<PluviometerWithLastMeasurement> = rows
-      .map((row: any) => ({
+    const pluviometers: Array<PluviometerWithLastMeasurement> = rows.map(
+      (row: any) => ({
         ...mapEquipmentToDomain(row),
         Precipitation: Number(row.Value),
-      }))
-      .filter(
-        (pluviometer: PluviometerWithLastMeasurement) =>
-          pluviometer.Precipitation !== null
-      );
+      })
+    );
 
     return pluviometers.length ? pluviometers : null;
   }

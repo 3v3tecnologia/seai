@@ -6,7 +6,10 @@ import {
 
 export namespace ICalcBaldeIrrigationRecommendationService {
   export type Input = {
-    StationId: number;
+    Station: {
+      Id?: number;
+      Et0?: number;
+    };
     Pluviometer: {
       Id?: number;
       Precipitation?: number;

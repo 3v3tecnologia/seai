@@ -1,24 +1,26 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchStationReadsWithLastMeasurementsProtocol } from "../../../domain/use-cases/equipments/fetch-stations-with-last-measurements";
 import { ok, serverError } from "../helpers";
+import { FetchPluviometersWithYesterdayMeasurementsProtocol } from "../../../domain/use-cases/equipments";
 
-export class FetchStationsWithLastMeasurementsController
+export class FetchPluviometersWithYesterdayMeasurementsController
   implements
     Controller<
-      FetchStationsWithLastMeasurementsControllerProtocol.Request,
+      FetchPluviometersWithYesterdayMeasurementsControllerProtocol.Request,
       HttpResponse
     >
 {
-  private useCase: FetchStationReadsWithLastMeasurementsProtocol.UseCase;
+  private useCase: FetchPluviometersWithYesterdayMeasurementsProtocol.UseCase;
 
-  constructor(useCase: FetchStationReadsWithLastMeasurementsProtocol.UseCase) {
+  constructor(
+    useCase: FetchPluviometersWithYesterdayMeasurementsProtocol.UseCase
+  ) {
     this.useCase = useCase;
   }
 
   async handle(
-    request: FetchStationsWithLastMeasurementsControllerProtocol.Request
+    request: FetchPluviometersWithYesterdayMeasurementsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
       const result = await this.useCase.execute(request);
@@ -31,7 +33,7 @@ export class FetchStationsWithLastMeasurementsController
   }
 }
 
-export namespace FetchStationsWithLastMeasurementsControllerProtocol {
+export namespace FetchPluviometersWithYesterdayMeasurementsControllerProtocol {
   export type Request = {
     latitude: number;
     longitude: number;

@@ -18,8 +18,8 @@ export class UpdateStationMeasures extends Command {
     request: UpdateStationMeasuresUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateStationMeasuresUseCaseProtocol.Response>> {
     const measureExists =
-      await this.equipmentsRepository.getStationReadsByIdRead({
-        idRead: request.IdRead,
+      await this.equipmentsRepository.getLatestStationMeasurements({
+        id: request.IdRead,
       });
 
     if (measureExists === null) {

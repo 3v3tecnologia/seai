@@ -3,7 +3,7 @@ import { StationReadEntity } from "../../entities/equipments/StationRead";
 
 import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class FetchStationReadsByIdRead {
+export class FetchLatestStationMeasurements {
   private readonly equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol;
 
   constructor(
@@ -12,20 +12,20 @@ export class FetchStationReadsByIdRead {
     this.equipmentMeasuresRepository = equipmentMeasuresRepository;
   }
   async execute(
-    request: FetchStationReadsByIdReadProtocol.Request
-  ): Promise<Either<Error, FetchStationReadsByIdReadProtocol.Response>> {
+    request: FetchLatestStationMeasurementsProtocol.Request
+  ): Promise<Either<Error, FetchLatestStationMeasurementsProtocol.Response>> {
     const result =
-      await this.equipmentMeasuresRepository.getStationReadsByIdRead({
-        idRead: request.idRead,
+      await this.equipmentMeasuresRepository.getLatestStationMeasurements({
+        id: request.id,
       });
 
     return right(result || null);
   }
 }
 
-export namespace FetchStationReadsByIdReadProtocol {
+export namespace FetchLatestStationMeasurementsProtocol {
   export type Request = {
-    idRead: number;
+    id: number;
   };
   export type Response = StationReadEntity | null;
 }

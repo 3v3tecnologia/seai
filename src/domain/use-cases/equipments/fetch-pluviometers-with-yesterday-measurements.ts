@@ -2,16 +2,16 @@ import { Either, right } from "../../../shared/Either";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class FetchPluviometersReadsWithLastMeasurements {
+export class FetchPluviometersWithYesterdayMeasurements {
   private readonly equipmentRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentRepository: EquipmentsRepositoryProtocol) {
     this.equipmentRepository = equipmentRepository;
   }
   async execute(
-    request: FetchPluviometersReadsWithLastMeasurementsProtocol.Request
+    request: FetchPluviometersWithYesterdayMeasurementsProtocol.Request
   ): Promise<
-    Either<Error, FetchPluviometersReadsWithLastMeasurementsProtocol.Response>
+    Either<Error, FetchPluviometersWithYesterdayMeasurementsProtocol.Response>
   > {
     let params: {
       latitude: number;
@@ -33,7 +33,7 @@ export class FetchPluviometersReadsWithLastMeasurements {
       }
     }
     const result =
-      await this.equipmentRepository.getPluviometersWithLastMeasurements(
+      await this.equipmentRepository.getPluviometersWithYesterdayMeasurements(
         params
       );
 
@@ -41,7 +41,7 @@ export class FetchPluviometersReadsWithLastMeasurements {
   }
 }
 
-export namespace FetchPluviometersReadsWithLastMeasurementsProtocol {
+export namespace FetchPluviometersWithYesterdayMeasurementsProtocol {
   export type Request = {
     latitude: number;
     longitude: number;
@@ -51,9 +51,9 @@ export namespace FetchPluviometersReadsWithLastMeasurementsProtocol {
 
   export interface UseCase {
     execute(
-      request: FetchPluviometersReadsWithLastMeasurementsProtocol.Request
+      request: FetchPluviometersWithYesterdayMeasurementsProtocol.Request
     ): Promise<
-      Either<Error, FetchPluviometersReadsWithLastMeasurementsProtocol.Response>
+      Either<Error, FetchPluviometersWithYesterdayMeasurementsProtocol.Response>
     >;
   }
 }

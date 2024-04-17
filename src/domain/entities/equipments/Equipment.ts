@@ -25,7 +25,7 @@ export type StationWithLastMeasurement = Omit<
   EquipmentEntity,
   "CreatedAt" | "UpdatedAt"
 > & {
-  ETO: number | null;
+  Et0: number;
 };
 
 export type PluviometerWithLastMeasurement = Omit<

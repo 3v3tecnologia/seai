@@ -65,31 +65,27 @@ export const equipmentsRouter = (): Router => {
     adaptRoute(EquipmentsControllerFactory.makeFetchEquipments())
   );
 
+  // Irrigant
   router.get(
     "/pluviometers",
     adaptRoute(
-      EquipmentsControllerFactory.makeFetchPluviometersWithLastMeasurements()
+      EquipmentsControllerFactory.makeFetchPluviometersWithYesterdayMeasurementsController()
     )
   );
 
+  // Irrigant
   router.get(
     "/stations",
     adaptRoute(
-      EquipmentsControllerFactory.makeFetchStationsWithLastMeasurements()
+      EquipmentsControllerFactory.makeFetchStationsWithYesterdayMeasurementsController()
     )
   );
 
-  router.get(
-    "/measures/pluviometers",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())
-  );
-
-  router.get(
-    "/measures/pluviometer/:id",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometerReadsByIdRead())
-  );
+  // router.get(
+  //   "/measures/pluviometers",
+  //   authorization,
+  //   adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())
+  // );
 
   router.put(
     "/measures/pluviometer/:id",
@@ -103,16 +99,26 @@ export const equipmentsRouter = (): Router => {
     adaptRoute(EquipmentsControllerFactory.makeUpdateStationMeasures())
   );
 
+  // router.get(
+  //   "/measures/stations",
+  //   authorization,
+  //   adaptRoute(EquipmentsControllerFactory.makeFetchStationsReads())
+  // );
+
   router.get(
-    "/measures/stations",
+    "/measurements/station/:id",
     authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchStationsReads())
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchLatestStationMeasurementsController()
+    )
   );
 
   router.get(
-    "/measures/station/:id",
+    "/measurements/pluviometer/:id",
     authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchStationReadsByIdRead())
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchLatestPluviometerMeasurementsController()
+    )
   );
 
   router.get(

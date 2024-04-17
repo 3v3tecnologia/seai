@@ -3,7 +3,7 @@ import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead
 
 import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class FetchPluviometerReadsByIdRead {
+export class FetchLatestPluviometerMeasurements {
   private readonly equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol;
 
   constructor(
@@ -12,20 +12,22 @@ export class FetchPluviometerReadsByIdRead {
     this.equipmentMeasuresRepository = equipmentMeasuresRepository;
   }
   async execute(
-    request: FetchPluviometerReadsByIdReadProtocol.Request
-  ): Promise<Either<Error, FetchPluviometerReadsByIdReadProtocol.Response>> {
+    request: FetchLatestPluviometerMeasurementsProtocol.Request
+  ): Promise<
+    Either<Error, FetchLatestPluviometerMeasurementsProtocol.Response>
+  > {
     const result =
-      await this.equipmentMeasuresRepository.getPluviometerReadsByIdRead({
-        idRead: request.idRead,
+      await this.equipmentMeasuresRepository.getLatestPluviometerMeasurements({
+        id: request.id,
       });
 
     return right(result || null);
   }
 }
 
-export namespace FetchPluviometerReadsByIdReadProtocol {
+export namespace FetchLatestPluviometerMeasurementsProtocol {
   export type Request = {
-    idRead: number;
+    id: number;
   };
   export type Response = PluviometerReadEntity | null;
 }

@@ -15,8 +15,8 @@ export class UpdatePluviometerMeasures extends Command {
     request: UpdatePluviometerMeasuresUseCaseProtocol.Request
   ): Promise<Either<Error, UpdatePluviometerMeasuresUseCaseProtocol.Response>> {
     const measureExists =
-      await this.equipmentsRepository.getPluviometerReadsByIdRead({
-        idRead: request.IdRead,
+      await this.equipmentsRepository.getLatestPluviometerMeasurements({
+        id: request.IdRead,
       });
 
     if (measureExists === null) {

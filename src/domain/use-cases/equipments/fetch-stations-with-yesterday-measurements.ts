@@ -2,16 +2,16 @@ import { Either, right } from "../../../shared/Either";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class FetchStationReadsWithLastMeasurements {
+export class FetchStationsWithYesterdayMeasurements {
   private readonly equipmentRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentRepository: EquipmentsRepositoryProtocol) {
     this.equipmentRepository = equipmentRepository;
   }
   async execute(
-    request: FetchStationReadsWithLastMeasurementsProtocol.Request
+    request: FetchStationsWithYesterdayMeasurementsProtocol.Request
   ): Promise<
-    Either<Error, FetchStationReadsWithLastMeasurementsProtocol.Response>
+    Either<Error, FetchStationsWithYesterdayMeasurementsProtocol.Response>
   > {
     let params: {
       latitude: number;
@@ -34,13 +34,15 @@ export class FetchStationReadsWithLastMeasurements {
     }
 
     const result =
-      await this.equipmentRepository.getStationsWithLastMeasurements(params);
+      await this.equipmentRepository.getStationsWithYesterdayMeasurements(
+        params
+      );
 
     return right(result || null);
   }
 }
 
-export namespace FetchStationReadsWithLastMeasurementsProtocol {
+export namespace FetchStationsWithYesterdayMeasurementsProtocol {
   export type Request = {
     latitude: number;
     longitude: number;
@@ -50,9 +52,9 @@ export namespace FetchStationReadsWithLastMeasurementsProtocol {
 
   export interface UseCase {
     execute(
-      request: FetchStationReadsWithLastMeasurementsProtocol.Request
+      request: FetchStationsWithYesterdayMeasurementsProtocol.Request
     ): Promise<
-      Either<Error, FetchStationReadsWithLastMeasurementsProtocol.Response>
+      Either<Error, FetchStationsWithYesterdayMeasurementsProtocol.Response>
     >;
   }
 }

@@ -5,6 +5,178 @@ import { PaginationSchema } from "../commons/withPagination";
 
 const TAGS = ["Equipments"];
 
+const IRRIGANT = {
+  [`${BASE_URL.V1}/equipments/pluviometers`]: {
+    get: {
+      tags: [...TAGS, "Irrigant"],
+      summary: "Get all pluviometers with yesterday's measurements",
+      parameters: [
+        {
+          name: "latitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "longitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "distance",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                example: {
+                  data: [
+                    {
+                      Id: 133,
+                      Code: "24302",
+                      Name: "MINEIROLANDIA",
+                      Type: {
+                        Id: 2,
+                        Name: "pluviometer",
+                      },
+                      Organ: {
+                        Id: 2,
+                        Name: "FUNCEME",
+                      },
+                      Altitude: null,
+                      Location: {
+                        Coordinates: [-5.567, -39.633305556],
+                      },
+                      Precipitation: 38,
+                    },
+                    {
+                      Id: 132,
+                      Code: "24110",
+                      Name: "SAO GONCALO DO AMARANTE",
+                      Type: {
+                        Id: 2,
+                        Name: "pluviometer",
+                      },
+                      Organ: {
+                        Id: 2,
+                        Name: "FUNCEME",
+                      },
+                      Altitude: null,
+                      Location: {
+                        Coordinates: [-3.674722222, -38.979722222],
+                      },
+                      Precipitation: 21,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${BASE_URL.V1}/equipments/stations`]: {
+    get: {
+      tags: [...TAGS, "Irrigant"],
+      summary: "Get all stations with last measurement record",
+      parameters: [
+        {
+          name: "latitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "longitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "distance",
+          description: "Distance in Kilometers",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                example: {
+                  data: [
+                    {
+                      Id: 1,
+                      Code: "B850A89C",
+                      Name: "São Benedito - Sítio Ingazeira",
+                      Type: {
+                        Id: 1,
+                        Name: "station",
+                      },
+                      Organ: {
+                        Id: 2,
+                        Name: "FUNCEME",
+                      },
+                      Altitude: 844,
+                      Location: {
+                        Coordinates: [-3.995388889, -40.955111111],
+                      },
+                      Et0: 3.0475848,
+                    },
+                    {
+                      Id: 36,
+                      Code: "32321",
+                      Name: "Fortaleza - Itaperi",
+                      Type: {
+                        Id: 1,
+                        Name: "station",
+                      },
+                      Organ: {
+                        Id: 2,
+                        Name: "FUNCEME",
+                      },
+                      Altitude: 28,
+                      Location: {
+                        Coordinates: [-3.795127, -38.557368],
+                      },
+                      Et0: 1.577899,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+};
+
 export const EQUIPMENTS = {
   [`${BASE_URL.V1}/equipments`]: {
     get: {
@@ -175,131 +347,6 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },
-    /*post: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Create equipment",
-      description: "Create meteorological equipment",
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                IdEquipmentExternal: {
-                  type: "string",
-                },
-                Name: {
-                  type: "string",
-                },
-                Altitude: {
-                  type: "string",
-                },
-                Location: {
-                  type: "object",
-                  properties: {
-                    Name: {
-                      type: "string",
-                    },
-                    Coordinates: {
-                      type: "array",
-                      items: {
-                        type: "number",
-                      },
-                    },
-                  },
-                },
-                Fk_Organ: {
-                  type: "string",
-                },
-                Fk_Type: {
-                  type: "string",
-                },
-                Enable: "boolean",
-              },
-              example: {
-                IdEquipmentExternal: "TESTE1",
-                Name: "teste123",
-                Altitude: 54,
-                Location: {
-                  Name: "Test3",
-                  Coordinates: [-38.5162, -4.1124],
-                },
-                Fk_Organ: 2,
-                Fk_Type: 1,
-                Enable: true,
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Equipment created successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: 6,
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },*/
-
-    /*delete: {
-      tags: TAGS,
-      summary: "Delete equipment",
-      description: "Delete equipment by id",
-      security: [BEARER_AUTH],
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Equipment Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "Equipment deleted successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Equipamento 4 deletado com sucesso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },*/
   },
   [`${BASE_URL.V1}/equipments/{id}`]: {
     put: {
@@ -359,202 +406,5 @@ export const EQUIPMENTS = {
       },
     },
   },
-  [`${BASE_URL.V1}/equipments/pluviometers`]: {
-    get: {
-      tags: TAGS,
-      summary: "Get all pluviometers with last measurement record",
-      parameters: [
-        {
-          name: "latitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "longitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "distance",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "All equipments",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                example: {
-                  data: [
-                    {
-                      Id: 2,
-                      Code: "TESTE",
-                      Name: "PLUV",
-                      Type: {
-                        Id: 2,
-                        Name: "pluviometer",
-                      },
-                      Organ: {
-                        Id: 2,
-                        Name: "FUNCEME",
-                      },
-                      Altitude: 1,
-                      Location: null,
-                      Measurements: {
-                        Time: "2024-03-12T00:00:00.000Z",
-                        Hour: null,
-                        Precipitation: {
-                          Unit: "mm",
-                          Value: 0,
-                        },
-                      },
-                    },
-                    {
-                      Id: 3,
-                      Code: "23978",
-                      Name: "ABAIARA",
-                      Type: {
-                        Id: 2,
-                        Name: "pluviometer",
-                      },
-                      Organ: {
-                        Id: 2,
-                        Name: "FUNCEME",
-                      },
-                      Altitude: 1,
-                      Location: null,
-                      Measurements: {
-                        Time: "2024-03-12T00:00:00.000Z",
-                        Hour: null,
-                        Precipitation: {
-                          Unit: "mm",
-                          Value: 4.5,
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/equipments/stations`]: {
-    get: {
-      tags: TAGS,
-      summary: "Get all stations with last measurement record",
-      parameters: [
-        {
-          name: "latitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "longitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "distance",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "All equipments",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                example: {
-                  data: [
-                    {
-                      Id: 4,
-                      Code: "TEST",
-                      Name: "ESTACAO-TESTE",
-                      Type: {
-                        Id: 1,
-                        Name: "station",
-                      },
-                      Organ: {
-                        Id: 2,
-                        Name: "FUNCEME",
-                      },
-                      Altitude: 1,
-                      Location: null,
-                      Measurements: {
-                        Time: "2024-03-12T00:00:00.000Z",
-                        Hour: null,
-                        Altitude: {
-                          Unit: "m",
-                          Value: 1,
-                        },
-                        ETO: {
-                          Unit: "mm",
-                          Value: null,
-                        },
-                      },
-                    },
-                    {
-                      Id: 1,
-                      Code: "32321",
-                      Name: "Fortaleza - Itaperi",
-                      Type: {
-                        Id: 1,
-                        Name: "station",
-                      },
-                      Organ: {
-                        Id: 2,
-                        Name: "FUNCEME",
-                      },
-                      Altitude: 30.4,
-                      Location: null,
-                      Measurements: {
-                        Time: "2024-03-12T00:00:00.000Z",
-                        Hour: null,
-                        Altitude: {
-                          Unit: "m",
-                          Value: 30.4,
-                        },
-                        ETO: {
-                          Unit: "mm",
-                          Value: null,
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
+  ...IRRIGANT,
 };

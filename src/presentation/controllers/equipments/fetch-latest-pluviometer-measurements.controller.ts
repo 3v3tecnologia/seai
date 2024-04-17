@@ -1,25 +1,25 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchStationReadsByIdRead } from "../../../domain/use-cases/equipments/fetch-station-reads-by-id-read";
+import { FetchLatestPluviometerMeasurements } from "../../../domain/use-cases/equipments";
 import { Notification } from "../../../shared/notification/notification";
 import { badRequest, ok, serverError } from "../helpers";
 
-export class FetchStationReadsByIdReadController
+export class FetchLatestPluviometerMeasurementsController
   implements
     Controller<
-      FetchStationReadsByIdReadControllerProtocol.Request,
+      FetchLatestPluviometerMeasurementsControllerProtocol.Request,
       HttpResponse
     >
 {
-  private fetchStationsReads: FetchStationReadsByIdRead;
+  private fetchMeasurements: FetchLatestPluviometerMeasurements;
 
-  constructor(fetchStationsReads: FetchStationReadsByIdRead) {
-    this.fetchStationsReads = fetchStationsReads;
+  constructor(fetchStationsReads: FetchLatestPluviometerMeasurements) {
+    this.fetchMeasurements = fetchStationsReads;
   }
 
   async handle(
-    request: FetchStationReadsByIdReadControllerProtocol.Request
+    request: FetchLatestPluviometerMeasurementsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
       const errors = new Notification();
@@ -37,10 +37,10 @@ export class FetchStationReadsByIdReadController
       }
 
       const dto = {
-        idRead: request.id,
+        id: request.id,
       };
 
-      const result = await this.fetchStationsReads.execute(dto);
+      const result = await this.fetchMeasurements.execute(dto);
 
       return ok(result.value);
     } catch (error) {
@@ -50,7 +50,7 @@ export class FetchStationReadsByIdReadController
   }
 }
 
-export namespace FetchStationReadsByIdReadControllerProtocol {
+export namespace FetchLatestPluviometerMeasurementsControllerProtocol {
   export type Request = {
     id: number;
   };

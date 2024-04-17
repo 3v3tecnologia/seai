@@ -3,6 +3,10 @@ export interface StationReadEntity {
   IdEquipment: number;
   Time: string;
   Hour: string;
+  Altitude: {
+    Unit: string;
+    Value: number | null;
+  };
   TotalRadiation: {
     Unit: string;
     Value: number | null;
@@ -35,7 +39,11 @@ export interface StationReadEntity {
     Unit: string;
     Value: number | null;
   };
-  ETO: {
+  WindVelocity: {
+    Unit: string;
+    Value: number | null;
+  };
+  Et0: {
     Unit: string;
     Value: number | null;
   };

@@ -5,14 +5,14 @@ import {
   DeleteMeteorologicalOrganController,
   FetchEquipmentsController,
   FetchMeteorologicalOrganController,
-  FetchPluviometerReadsByIdReadController,
   FetchPluviometersReadsController,
-  FetchPluviometersWithLastMeasurementsController,
-  FetchStationReadsByIdReadController,
   FetchStationsReadsController,
-  FetchStationsWithLastMeasurementsController,
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
+  FetchLatestPluviometerMeasurementsController,
+  FetchLatestStationMeasurementsController,
+  FetchPluviometersWithYesterdayMeasurementsController,
+  FetchStationsWithYesterdayMeasurementsController,
 } from "../../../../presentation/controllers/equipments";
 import { UpdatePluviometerController } from "../../../../presentation/controllers/equipments/update-pluviometer-measures.controller";
 import { UpdateStationMeasuresController } from "../../../../presentation/controllers/equipments/update-station-measures.controller";
@@ -58,9 +58,9 @@ export class EquipmentsControllerFactory {
       EquipmentsUseCasesFactory.makeFetchMeteorologicalOrgan()
     );
   }
-  static makeFetchPluviometerReadsByIdRead(): Controller {
-    return new FetchPluviometerReadsByIdReadController(
-      EquipmentsUseCasesFactory.makeFetchPluviometerReadsByIdRead()
+  static makeFetchLatestPluviometerMeasurementsController(): Controller {
+    return new FetchLatestPluviometerMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchLatestPluviometerMeasurements()
     );
   }
   static makeFetchPluviometersReads(): Controller {
@@ -68,9 +68,9 @@ export class EquipmentsControllerFactory {
       EquipmentsUseCasesFactory.makeFetchPluviometersReads()
     );
   }
-  static makeFetchStationReadsByIdRead(): Controller {
-    return new FetchStationReadsByIdReadController(
-      EquipmentsUseCasesFactory.makeFetchStationReadsByIdRead()
+  static makeFetchLatestStationMeasurementsController(): Controller {
+    return new FetchLatestStationMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchLatestStationMeasurements()
     );
   }
   static makeFetchStationsReads(): Controller {
@@ -104,14 +104,14 @@ export class EquipmentsControllerFactory {
     );
   }
 
-  static makeFetchStationsWithLastMeasurements(): Controller {
-    return new FetchStationsWithLastMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchStationsWithLastMeasurements()
+  static makeFetchStationsWithYesterdayMeasurementsController(): Controller {
+    return new FetchStationsWithYesterdayMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchStationsWithYesterdayMeasurements()
     );
   }
-  static makeFetchPluviometersWithLastMeasurements(): Controller {
-    return new FetchPluviometersWithLastMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchPluviometersWithLastMeasurements()
+  static makeFetchPluviometersWithYesterdayMeasurementsController(): Controller {
+    return new FetchPluviometersWithYesterdayMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchPluviometersWithYesterdayMeasurements()
     );
   }
 }

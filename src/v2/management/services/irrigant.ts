@@ -37,17 +37,26 @@ export class IrrigationRecommendationServices {
     const yesterDay = getYesterDayDate("-");
 
     console.log("Buscando ETO pela a data de ontem ", yesterDay);
-    //  [Dúvida] O que é feito com a leitura do pluviômetro?
-    const lastStationMeasurements =
-      await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
-        command.StationId,
-        yesterDay
-      );
 
-    if (lastStationMeasurements == null) {
+    let Et0: number | null = null;
+
+    if (Reflect.has(command.Station, "Et0")) {
+      Et0 = command.Station.Et0 as number;
+    } else {
+      const lastStationMeasurements =
+        await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
+          command.Station.Id as number,
+          yesterDay
+        );
+
+      if (lastStationMeasurements?.Et0) Et0 = lastStationMeasurements.Et0;
+    }
+
+    if (Et0 == null) {
       return left(new ManagementIrrigantErrors.StationMeasurementsNotFound());
     }
-    const { Et0 } = lastStationMeasurements;
+
+    console.log("[ET0] :: ", Et0);
 
     let Precipitation: number | null = null;
 
