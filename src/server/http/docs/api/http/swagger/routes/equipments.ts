@@ -93,7 +93,7 @@ const IRRIGANT = {
   [`${BASE_URL.V1}/equipments/stations`]: {
     get: {
       tags: ["Irrigant"],
-      summary: "Get all stations with last measurement record",
+      summary: "Get all stations with yesterday's measurements",
       parameters: [
         {
           name: "latitude",
