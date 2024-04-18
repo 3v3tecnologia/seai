@@ -1,5 +1,6 @@
 import { Express, Router } from "express";
 
+import { managementRoutes } from "../../v2/management/routes/routes";
 import {
   accessKeyRouter,
   backgroundJobsRouter,
@@ -9,9 +10,7 @@ import {
   loginRouter,
   newsRouter,
   userRouter,
-  managementRouter,
 } from "./http-routes";
-import { managementRoutes } from "../../v2/management/routes/routes";
 
 export function setRoutes(app: Express): void {
   const router = Router();

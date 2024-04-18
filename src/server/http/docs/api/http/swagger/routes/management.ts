@@ -797,8 +797,7 @@ export const MANAGEMENT = {
   },
   [`${BASE_URL.V2}/management/blade_suggestion`]: {
     post: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
+      tags: ["Irrigant"],
       requestBody: {
         content: {
           "application/json": {
