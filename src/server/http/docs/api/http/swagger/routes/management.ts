@@ -805,20 +805,20 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                data: {
-                  StationId: 1,
-                  CropId: 1,
-                  Pluviometer: {
-                    Id: 2,
+                Station: {
+                  Id: 36,
+                  Et0: 2.1,
+                },
+                CropId: 1,
+                Pluviometer: {
+                  Precipitation: 26.0,
+                },
+                PlantingDate: "14/04/2024",
+                System: {
+                  Type: "Aspersão",
+                  Measurements: {
+                    Efficiency: 75,
                     Precipitation: 2,
-                  },
-                  PlantingDate: "17/04/2024",
-                  IrrigationEfficiency: 75,
-                  System: {
-                    Type: "Aspersão",
-                    Measurements: {
-                      Precipitation: 1,
-                    },
                   },
                 },
               },

@@ -190,7 +190,7 @@ export const MEASURES = {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Get latest station measurements",
+      summary: "Get latest equipment measurements",
       parameters: [
         {
           name: "type",
