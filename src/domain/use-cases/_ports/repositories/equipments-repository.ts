@@ -159,7 +159,7 @@ export namespace MeasuresRepositoryDTOProtocol {
       MaxAtmosphericTemperature: number | null;
       MinAtmosphericTemperature: number | null;
       AtmosphericPressure: number | null;
-      ETO: number | null;
+      Et0: number | null;
       WindVelocity: number | null;
     };
 

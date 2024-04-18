@@ -357,7 +357,7 @@ export const MEASURES = {
                 MaxAtmosphericTemperature: "number",
                 MinAtmosphericTemperature: "number",
                 AtmosphericPressure: "number",
-                ETO: "number",
+                Et0: "number",
               },
               example: {
                 TotalRadiation: 1,
@@ -368,7 +368,7 @@ export const MEASURES = {
                 MaxAtmosphericTemperature: 11.4,
                 MinAtmosphericTemperature: 11.4,
                 AtmosphericPressure: 11.4,
-                ETO: 11.4,
+                Et0: 11.4,
               },
             },
           },

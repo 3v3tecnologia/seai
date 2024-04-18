@@ -182,7 +182,7 @@ export class DbEquipmentsRepository
           MinAtmosphericTemperature: request.MinAtmosphericTemperature,
           AtmosphericPressure: request.AtmosphericPressure,
           WindVelocity: request.WindVelocity,
-          Et0: request.ETO,
+          Et0: request.Et0,
         })
         .where("IdRead", request.IdRead);
     });
