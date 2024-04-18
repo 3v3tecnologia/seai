@@ -7,7 +7,7 @@ const TAGS = ["Management"];
 export const MANAGEMENT = {
   [`${BASE_URL.V2}/management/crop`]: {
     get: {
-      tags: TAGS,
+      tags: ["Irrigant"],
       parameters: [
         {
           name: "name",
