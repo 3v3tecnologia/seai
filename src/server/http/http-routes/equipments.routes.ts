@@ -66,18 +66,18 @@ export const equipmentsRouter = (): Router => {
   );
 
   // Irrigant
-  router.get(
-    "/pluviometers",
-    adaptRoute(
-      EquipmentsControllerFactory.makeFetchPluviometersWithYesterdayMeasurementsController()
-    )
-  );
+  // router.get(
+  //   "/pluviometers",
+  //   adaptRoute(
+  //     EquipmentsControllerFactory.makeFetchPluviometersWithYesterdayMeasurementsController()
+  //   )
+  // );
 
   // Irrigant
   router.get(
-    "/stations",
+    "/activated",
     adaptRoute(
-      EquipmentsControllerFactory.makeFetchStationsWithYesterdayMeasurementsController()
+      EquipmentsControllerFactory.makeFetchEquipmentsWithYesterdayMeasurementsController()
     )
   );
 
@@ -106,18 +106,10 @@ export const equipmentsRouter = (): Router => {
   // );
 
   router.get(
-    "/measurements/station/:id",
+    "/measurements/:id",
     authorization,
     adaptRoute(
-      EquipmentsControllerFactory.makeFetchLatestStationMeasurementsController()
-    )
-  );
-
-  router.get(
-    "/measurements/pluviometer/:id",
-    authorization,
-    adaptRoute(
-      EquipmentsControllerFactory.makeFetchLatestPluviometerMeasurementsController()
+      EquipmentsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
     )
   );
 

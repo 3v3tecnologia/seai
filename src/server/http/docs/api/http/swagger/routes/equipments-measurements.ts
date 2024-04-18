@@ -186,12 +186,22 @@ export const MEASURES = {
   //     },
   //   },
   // },
-  [`${BASE_URL.V1}/equipments/measurements/station/{id}`]: {
+  [`${BASE_URL.V1}/equipments/measurements/{id}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Get latest station measurements",
       parameters: [
+        {
+          name: "type",
+          in: "query",
+          description: "Equipment type",
+          required: true,
+          schema: {
+            type: "string",
+            enum: ["station", "pluviometer"],
+          },
+        },
         {
           name: "id",
           in: "path",

@@ -4,15 +4,13 @@ import {
   DeleteEquipmentController,
   DeleteMeteorologicalOrganController,
   FetchEquipmentsController,
+  FetchEquipmentsWithYesterdayMeasurementsController,
+  FetchLatestEquipmentMeasurementsController,
   FetchMeteorologicalOrganController,
   FetchPluviometersReadsController,
   FetchStationsReadsController,
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
-  FetchLatestPluviometerMeasurementsController,
-  FetchLatestStationMeasurementsController,
-  FetchPluviometersWithYesterdayMeasurementsController,
-  FetchStationsWithYesterdayMeasurementsController,
 } from "../../../../presentation/controllers/equipments";
 import { UpdatePluviometerController } from "../../../../presentation/controllers/equipments/update-pluviometer-measures.controller";
 import { UpdateStationMeasuresController } from "../../../../presentation/controllers/equipments/update-station-measures.controller";
@@ -58,19 +56,14 @@ export class EquipmentsControllerFactory {
       EquipmentsUseCasesFactory.makeFetchMeteorologicalOrgan()
     );
   }
-  static makeFetchLatestPluviometerMeasurementsController(): Controller {
-    return new FetchLatestPluviometerMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchLatestPluviometerMeasurements()
-    );
-  }
   static makeFetchPluviometersReads(): Controller {
     return new FetchPluviometersReadsController(
       EquipmentsUseCasesFactory.makeFetchPluviometersReads()
     );
   }
-  static makeFetchLatestStationMeasurementsController(): Controller {
-    return new FetchLatestStationMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchLatestStationMeasurements()
+  static makeFetchLatestEquipmentMeasurementsController(): Controller {
+    return new FetchLatestEquipmentMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchLatestEquipmentMeasurements()
     );
   }
   static makeFetchStationsReads(): Controller {
@@ -104,14 +97,14 @@ export class EquipmentsControllerFactory {
     );
   }
 
-  static makeFetchStationsWithYesterdayMeasurementsController(): Controller {
-    return new FetchStationsWithYesterdayMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchStationsWithYesterdayMeasurements()
+  static makeFetchEquipmentsWithYesterdayMeasurementsController(): Controller {
+    return new FetchEquipmentsWithYesterdayMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchEquipmentsWithYesterdayMeasurements()
     );
   }
-  static makeFetchPluviometersWithYesterdayMeasurementsController(): Controller {
-    return new FetchPluviometersWithYesterdayMeasurementsController(
-      EquipmentsUseCasesFactory.makeFetchPluviometersWithYesterdayMeasurements()
-    );
-  }
+  // static makeFetchPluviometersWithYesterdayMeasurementsController(): Controller {
+  //   return new FetchPluviometersWithYesterdayMeasurementsController(
+  //     EquipmentsUseCasesFactory.makeFetchPluviometersWithYesterdayMeasurements()
+  //   );
+  // }
 }

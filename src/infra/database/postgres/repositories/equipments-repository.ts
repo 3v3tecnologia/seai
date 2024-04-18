@@ -1,19 +1,18 @@
-import { Knex } from "knex";
 import {
   PluviometerWithLastMeasurement,
   StationWithLastMeasurement,
 } from "../../../../domain/entities/equipments/Equipment";
 import {
+  EquipmentRepositoryDTOProtocol,
   EquipmentsMeasuresRepositoryProtocol,
   EquipmentsRepositoryProtocol,
-  MeteorologicalOrganRepositoryProtocol,
   MeasuresRepositoryDTOProtocol,
   MeteorologicalOrganRepositoryDTOProtocol,
-  EquipmentRepositoryDTOProtocol,
+  MeteorologicalOrganRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
+import { getYesterDayDate } from "../../../../shared/utils/date";
 import { equipments } from "../connection/knexfile";
 import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
-import { getYesterDayDate } from "../../../../shared/utils/date";
 
 /*
   TO-DO : Create domain layer
@@ -849,7 +848,7 @@ export class DbEquipmentsRepository
     params: {
       latitude: number;
       longitude: number;
-      distance: number;
+      distance?: number;
     } | null
   ): Promise<Array<StationWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
@@ -924,7 +923,7 @@ export class DbEquipmentsRepository
     params: {
       latitude: number;
       longitude: number;
-      distance: number;
+      distance?: number;
     } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior

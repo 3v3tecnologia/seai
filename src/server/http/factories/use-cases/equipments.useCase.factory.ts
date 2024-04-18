@@ -5,11 +5,9 @@ import {
   DeleteMeteorologicalOrgan,
   FetchEquipments,
   FetchMeteorologicalOrgans,
-  FetchLatestPluviometerMeasurements,
+  FetchLatestEquipmentMeasurements,
   FetchPluviometersReads,
-  FetchLatestStationMeasurements,
-  FetchPluviometersWithYesterdayMeasurements,
-  FetchStationsWithYesterdayMeasurements,
+  FetchEquipmentsWithYesterdayMeasurements,
   FetchStationsReads,
   UpdateEquipment,
   UpdateMeteorologicalOrgan,
@@ -50,16 +48,8 @@ export class EquipmentsUseCasesFactory {
     return new FetchMeteorologicalOrgans(this.repository);
   }
 
-  static makeFetchLatestPluviometerMeasurements(): FetchLatestPluviometerMeasurements {
-    return new FetchLatestPluviometerMeasurements(this.repository);
-  }
-
   static makeFetchPluviometersReads(): FetchPluviometersReads {
     return new FetchPluviometersReads(this.repository);
-  }
-
-  static makeFetchLatestStationMeasurements(): FetchLatestStationMeasurements {
-    return new FetchLatestStationMeasurements(this.repository);
   }
 
   static makeFetchStationsReads(): FetchStationsReads {
@@ -77,10 +67,11 @@ export class EquipmentsUseCasesFactory {
   static makeUpdateStationMeasures(): UpdateStationMeasures {
     return new UpdateStationMeasures(this.repository);
   }
-  static makeFetchPluviometersWithYesterdayMeasurements(): FetchPluviometersWithYesterdayMeasurements {
-    return new FetchPluviometersWithYesterdayMeasurements(this.repository);
+  static makeFetchEquipmentsWithYesterdayMeasurements(): FetchEquipmentsWithYesterdayMeasurements {
+    return new FetchEquipmentsWithYesterdayMeasurements(this.repository);
   }
-  static makeFetchStationsWithYesterdayMeasurements(): FetchStationsWithYesterdayMeasurements {
-    return new FetchStationsWithYesterdayMeasurements(this.repository);
+
+  static makeFetchLatestEquipmentMeasurements(): FetchLatestEquipmentMeasurements {
+    return new FetchLatestEquipmentMeasurements(this.repository);
   }
 }

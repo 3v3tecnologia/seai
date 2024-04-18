@@ -253,14 +253,14 @@ export interface EquipmentsRepositoryProtocol
     params: {
       latitude: number;
       longitude: number;
-      distance: number;
+      distance?: number;
     } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null>;
   getStationsWithYesterdayMeasurements(
     params: {
       latitude: number;
       longitude: number;
-      distance: number;
+      distance?: number;
     } | null
   ): Promise<Array<StationWithLastMeasurement> | null>;
 }
