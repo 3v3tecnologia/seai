@@ -2,12 +2,12 @@ import { Either, left, right } from "../../../shared/Either";
 import { MeteorologicalOrganEntity } from "../../entities/equipments/MetereologicalOrgan";
 import { Command } from "../_ports/core/command";
 
-import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { IEquipmentsMeasuresRepository } from "../_ports/repositories/equipments-measurements.repository";
 
 export class UpdatePluviometerMeasures extends Command {
-  private readonly equipmentsRepository: EquipmentsMeasuresRepositoryProtocol;
+  private readonly equipmentsRepository: IEquipmentsMeasuresRepository;
 
-  constructor(equipmentsRepository: EquipmentsMeasuresRepositoryProtocol) {
+  constructor(equipmentsRepository: IEquipmentsMeasuresRepository) {
     super();
     this.equipmentsRepository = equipmentsRepository;
   }

@@ -1,6 +1,7 @@
 export * from "./access-key.controller.factory";
 export * from "./census.controller.factory";
 export * from "./equipments.controller.factory";
+export * from "./equipments-measurements.factory";
 export * from "./faq.controller.factory";
 export * from "./indicators-census.controller.factory";
 export * from "./jobs.controller.factory";

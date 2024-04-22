@@ -3,15 +3,13 @@ import { StationReadEntity } from "../../entities/equipments/StationRead";
 import { IInputWithPagination } from "../_ports/repositories/dto/input";
 import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
-import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { IEquipmentsMeasuresRepository } from "../_ports/repositories/equipments-measurements.repository";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchStationsReads {
-  private readonly equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol;
+  private readonly equipmentMeasuresRepository: IEquipmentsMeasuresRepository;
 
-  constructor(
-    equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol
-  ) {
+  constructor(equipmentMeasuresRepository: IEquipmentsMeasuresRepository) {
     this.equipmentMeasuresRepository = equipmentMeasuresRepository;
   }
   async execute(

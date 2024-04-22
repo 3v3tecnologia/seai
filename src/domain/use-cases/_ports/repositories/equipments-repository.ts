@@ -4,8 +4,6 @@ import {
   StationWithLastMeasurement,
 } from "../../../entities/equipments/Equipment";
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
-import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
-import { StationReadEntity } from "../../../entities/equipments/StationRead";
 import { IInputWithPagination } from "./dto/input";
 import { IOuputWithPagination } from "./dto/output";
 
@@ -95,87 +93,6 @@ export namespace EquipmentRepositoryDTOProtocol {
     export type Result = Promise<IOuputWithPagination<EquipmentEntity>>;
   }
 }
-export namespace MeasuresRepositoryDTOProtocol {
-  export namespace GetStations {
-    export type Params = {
-      idEquipment: number;
-      time?: {
-        start: string;
-        end: string | null;
-      } | null;
-    } & IInputWithPagination;
-    export type Result = Promise<IOuputWithPagination<StationReadEntity>>;
-  }
-  export namespace GetLatestStationMeasurements {
-    export type Params = {
-      id: number;
-    };
-    export type Result = Promise<StationReadEntity | null>;
-  }
-
-  export namespace GetLatestPluviometerMeasurements {
-    export type Params = {
-      id: number;
-    };
-
-    export type Result = Promise<PluviometerReadEntity | null>;
-  }
-  export namespace CheckIfStationMeasureTimeAlreadyExists {
-    export type Params = {
-      idRead: number;
-      time: string;
-    };
-    export type Result = Promise<boolean>;
-  }
-  export namespace CheckIfPluviometerMeasureTimeAlreadyExists {
-    export type Params = {
-      idRead: number;
-      time: string;
-    };
-    export type Result = Promise<boolean>;
-  }
-  export namespace GetPluviometers {
-    export type Params = {
-      idEquipment: number;
-      time?: {
-        start: string;
-        end: string | null;
-      } | null;
-    } & IInputWithPagination;
-
-    export type Result = Promise<IOuputWithPagination<PluviometerReadEntity>>;
-  }
-
-  export namespace UpdateStationMeasures {
-    export type Params = {
-      IdRead: number;
-      Time: string;
-      Hour: number | null;
-      TotalRadiation: number | null;
-      AverageRelativeHumidity: number | null;
-      MinRelativeHumidity: number | null;
-      MaxRelativeHumidity: number | null;
-      AverageAtmosphericTemperature: number | null;
-      MaxAtmosphericTemperature: number | null;
-      MinAtmosphericTemperature: number | null;
-      AtmosphericPressure: number | null;
-      Et0: number | null;
-      WindVelocity: number | null;
-    };
-
-    export type Result = Promise<void>;
-  }
-  export namespace UpdatePluviometerMeasures {
-    export type Params = {
-      IdRead: number;
-      Time: string;
-      Hour: number | null;
-      Value: number | null;
-    };
-
-    export type Result = Promise<void>;
-  }
-}
 
 export interface MeteorologicalOrganRepositoryProtocol {
   checkIfOrganNameAlreadyExists(
@@ -194,32 +111,6 @@ export interface MeteorologicalOrganRepositoryProtocol {
   deleteMeteorologicalOrgan(
     params: MeteorologicalOrganRepositoryDTOProtocol.Delete.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.Delete.Result;
-}
-export interface EquipmentsMeasuresRepositoryProtocol {
-  getStationsReads(
-    params: MeasuresRepositoryDTOProtocol.GetStations.Params
-  ): MeasuresRepositoryDTOProtocol.GetStations.Result;
-  checkIfStationMeasureTimeAlreadyExists(
-    params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
-  ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result;
-  checkIfPluviometerMeasureTimeAlreadyExists(
-    params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
-  ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result;
-  getLatestStationMeasurements(
-    params: MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Params
-  ): MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Result;
-  getLatestPluviometerMeasurements(
-    params: MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Params
-  ): MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Result;
-  getPluviometersReads(
-    params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
-  ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result;
-  updateStationMeasures(
-    request: MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Params
-  ): MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Result;
-  updatePluviometerMeasures(
-    request: MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Params
-  ): MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Result;
 }
 
 export interface EquipmentsRepositoryProtocol

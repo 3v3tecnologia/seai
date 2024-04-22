@@ -2,14 +2,12 @@ import { Either, right } from "../../../shared/Either";
 import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../entities/equipments/StationRead";
 
-import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { IEquipmentsMeasuresRepository } from "../_ports/repositories/equipments-measurements.repository";
 
 export class FetchLatestEquipmentMeasurements {
-  private readonly equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol;
+  private readonly equipmentMeasuresRepository: IEquipmentsMeasuresRepository;
 
-  constructor(
-    equipmentMeasuresRepository: EquipmentsMeasuresRepositoryProtocol
-  ) {
+  constructor(equipmentMeasuresRepository: IEquipmentsMeasuresRepository) {
     this.equipmentMeasuresRepository = equipmentMeasuresRepository;
   }
   async execute(

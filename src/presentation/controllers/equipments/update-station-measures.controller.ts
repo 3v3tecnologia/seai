@@ -3,17 +3,17 @@ import { Controller } from "../ports/controllers";
 
 import { ok, badRequest, serverError } from "../helpers";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { UpdateStationMeasures } from "../../../domain/use-cases/equipments/update-station-measures";
+import { UpdateStationMeasurements } from "../../../domain/use-cases/equipments/update-station-measures";
 
 export class UpdateStationMeasuresController
   implements
     Controller<UpdateStationMeasuresControllerProtocol.Request, HttpResponse>
 {
-  private updateEquipment: UpdateStationMeasures;
+  private updateEquipment: UpdateStationMeasurements;
   private userLogs: RegisterUserLogs;
 
   constructor(
-    updateEquipment: UpdateStationMeasures,
+    updateEquipment: UpdateStationMeasurements,
     userLogs: RegisterUserLogs
   ) {
     this.updateEquipment = updateEquipment;
@@ -25,7 +25,8 @@ export class UpdateStationMeasuresController
   ): Promise<HttpResponse> {
     try {
       const dto = {
-        IdRead: request.id,
+        IdEquipment: request.id,
+        IdRead: request.IdRead,
         Time: request.Time,
         Hour: request.Hour,
         TotalRadiation: request.TotalRadiation,
@@ -36,8 +37,8 @@ export class UpdateStationMeasuresController
         MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: request.MinAtmosphericTemperature,
         AtmosphericPressure: request.AtmosphericPressure,
-        Et0: request.Et0,
         WindVelocity: request.WindVelocity,
+        Et0: request.Et0,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -60,6 +61,7 @@ export namespace UpdateStationMeasuresControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
+    IdRead: number;
     Time: string;
     Hour: number | null;
     TotalRadiation: number | null;

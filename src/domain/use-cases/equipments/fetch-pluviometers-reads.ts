@@ -4,13 +4,13 @@ import { PluviometerReadEntity } from "../../entities/equipments/PluviometerRead
 import { IInputWithPagination } from "../_ports/repositories/dto/input";
 import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
-import { EquipmentsMeasuresRepositoryProtocol } from "../_ports/repositories/equipments-repository";
+import { IEquipmentsMeasuresRepository } from "../_ports/repositories/equipments-measurements.repository";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchPluviometersReads {
-  private readonly measuresRepository: EquipmentsMeasuresRepositoryProtocol;
+  private readonly measuresRepository: IEquipmentsMeasuresRepository;
 
-  constructor(measuresRepository: EquipmentsMeasuresRepositoryProtocol) {
+  constructor(measuresRepository: IEquipmentsMeasuresRepository) {
     this.measuresRepository = measuresRepository;
   }
   async execute(
