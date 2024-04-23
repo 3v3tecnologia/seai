@@ -11,6 +11,46 @@ export const USER = {
       security: [BEARER_AUTH],
       summary: "Get users",
       description: "Get users",
+      parameters: [
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Pagination number. Default 1",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "limit",
+          in: "query",
+          description: "Data limit",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "type",
+          in: "query",
+          description: "User type",
+          required: false,
+          schema: {
+            type: "string",
+            enum: ["admin", "standard"],
+          },
+        },
+        {
+          name: "name",
+          in: "query",
+          description:
+            "Textual filter by equipment name or code or location name",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       responses: {
         200: {
           description: "Get users successfully",
@@ -53,17 +93,24 @@ export const USER = {
                   },
                 },
                 example: {
-                  data: [
-                    {
-                      id: 1,
-                      name: "test",
-                      login: "test",
-                      email: "test2@gmail.com",
-                      type: "standard",
-                      createdAt: "2023-06-29T21:06:44.887Z",
-                      updatedAt: "2023-06-29T21:06:44.887Z",
-                    },
-                  ],
+                  data: {
+                    Items: [
+                      {
+                        id: 1,
+                        name: "admin",
+                        login: "admin",
+                        email: "admin@gmail.com",
+                        type: "admin",
+                        createdAt:
+                          "Wed Jun 28 2023 11:23:10 GMT+0000 (Coordinated Universal Time)",
+                        updatedAt:
+                          "Wed Jun 28 2023 11:23:10 GMT+0000 (Coordinated Universal Time)",
+                      },
+                    ],
+                    TotalItems: 1,
+                    PageSize: 1,
+                    TotalPages: 1,
+                  },
                 },
               },
             },
