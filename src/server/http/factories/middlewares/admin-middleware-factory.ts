@@ -1,4 +1,4 @@
-import { DbAccountRepository } from "../../../../infra/database/postgres/repositories/account-repository";
+import { DbAccountRepository } from "../../../../infra/database/postgres/repositories/users-repository";
 import { AdminMiddleware } from "../../../../presentation/middlewares/admin-middleware";
 import { Middleware } from "../../../../presentation/middlewares/ports";
 

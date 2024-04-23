@@ -1,4 +1,3 @@
-import { AccountRepository } from "../../use-cases/_ports/repositories/account-repository";
 import { Either, left, right } from "../../../shared/Either";
 import {
   againstNullOrUndefinedBulk,
@@ -148,7 +147,7 @@ export class SystemModules {
 
   static checkIfModuleExists(
     newUserModuleAccess: SystemModulesProps,
-    systemModules: Array<AccountRepository.AccountModulesData> | null
+    systemModules: Array<{ id: number; name: string }> | null
   ): Either<UserModulesNotFound, boolean> {
     const systemModulesIds = systemModules?.map((module) => module.id);
 
@@ -180,7 +179,7 @@ export class SystemModules {
   static create(
     modules: Required<SystemModulesProps>,
     permission_type: UserType,
-    systemModules?: Array<AccountRepository.AccountModulesData>
+    systemModules?: Array<{ id: number; name: string }>
   ): Either<Error, SystemModules> {
     if (systemModules) {
       const isExistsOrError = SystemModules.checkIfModuleExists(

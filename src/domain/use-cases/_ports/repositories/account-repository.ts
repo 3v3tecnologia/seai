@@ -1,117 +1,58 @@
-import { UserType } from "../../../entities/user/user";
+import { UserType, UserTypes } from "../../../entities/user/user";
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
+import { User } from "../../user/model/user";
+import { UserAccount } from "../../user/model/user-with-modules";
+import { IInputWithPagination } from "./dto/input";
+import { IOuputWithPagination } from "./dto/output";
 
-export namespace AccountRepository {
-  export type UserData = {
-    id?: number;
-    name?: string;
-    login?: string;
+export interface AccountRepositoryProtocol {
+  add(data: {
     email: string;
-    type: string;
-    createdAt?: string;
+    type: UserType;
+    modules: SystemModulesProps;
+  }): Promise<number | null>;
+  list(
+    params: {
+      name?: string;
+      type?: Record<UserTypes, string>;
+    } & IInputWithPagination
+  ): Promise<IOuputWithPagination<User>>;
+  update(data: {
+    id: number;
+    email: string | null;
+    name: string | null;
+    login: string | null;
+    type?: string | null;
+    password?: string | null;
     modules?: SystemModulesProps | null;
-    updatedAt?: string;
-  };
-
-  export type FullUserData = UserData & { password: string };
-
-  export type userTypes = UserType;
-
-  export type AccountModulesData = {
+  }): Promise<boolean>;
+  updateUserPassword(user_id: number, password: string): Promise<void>;
+  deleteById(id_user: number): Promise<boolean>;
+  deleteByEmail(email: string): Promise<boolean>;
+  getByEmail(email: string): Promise<User | null>;
+  getByLogin(login: string): Promise<Required<UserAccount> | null>;
+  getById(id_user: number): Promise<Required<UserAccount> | null>;
+  checkIfEmailAlreadyExists(email: string): Promise<boolean>;
+  getUserById(id_user: number): Promise<{
     id: number;
     name: string;
-  };
-
-  export type system_modules_permissions = SystemModulesProps;
-
-  export interface Add {
-    add(data: {
-      email: string;
-      type: userTypes;
-      modules: system_modules_permissions;
-    }): Promise<number | null>;
-  }
-
-  export interface Fetch {
-    list(): Promise<Array<Required<AccountRepository.UserData>> | null>;
-  }
-
-  export interface Update {
-    update(data: {
-      id: number;
-      email: string | null;
-      name: string | null;
-      login: string | null;
-      type?: string | null;
-      password?: string | null;
-      modules?: AccountRepository.system_modules_permissions | null;
-    }): Promise<boolean>;
-  }
-  export interface UpdatePassword {
-    updateUserPassword(user_id: number, password: string): Promise<void>;
-  }
-
-  export interface DeleteById {
-    deleteById(id_user: number): Promise<boolean>;
-  }
-  export interface DeleteByEmail {
-    deleteByEmail(email: string): Promise<boolean>;
-  }
-
-  export interface GetById {
-    getById(
-      id_user: number
-    ): Promise<Required<AccountRepository.FullUserData> | null>;
-  }
-
-  export interface GetByEmail {
-    getByEmail(
-      email: string
-    ): Promise<Required<AccountRepository.UserData> | null>;
-  }
-
-  export interface GetByLogin {
-    getByLogin(
-      login: string
-    ): Promise<Required<AccountRepository.FullUserData> | null>;
-  }
-
-  export interface CheckIfEmailExists {
-    checkIfEmailAlreadyExists(email: string): Promise<boolean>;
-  }
-
-  export interface GetUserById {
-    getUserById(
-      id_user: number
-    ): Promise<Required<AccountRepository.UserData> | null>;
-  }
-
-  export interface GetModules {
-    getModules(): Promise<Array<AccountModulesData> | null>;
-  }
-
-  export interface GetUserModuleByName {
-    getUserModulesByName(
-      id_user: number,
-      name: string
-    ): Promise<{
-      id?: number;
-      read: boolean;
-      write: boolean;
-    } | null>;
-  }
+    login: string;
+    email: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+    modules: SystemModulesProps | null;
+  } | null>;
+  getModules(): Promise<Array<{
+    id: number;
+    name: string;
+  }> | null>;
+  getUserModulesByName(
+    id_user: number,
+    name: string
+  ): Promise<{
+    id?: number;
+    read: boolean;
+    write: boolean;
+  } | null>;
 }
-
-export interface AccountRepositoryProtocol
-  extends AccountRepository.Add,
-    AccountRepository.Fetch,
-    AccountRepository.Update,
-    AccountRepository.UpdatePassword,
-    AccountRepository.DeleteById,
-    AccountRepository.GetById,
-    AccountRepository.GetByEmail,
-    AccountRepository.GetByLogin,
-    AccountRepository.CheckIfEmailExists,
-    AccountRepository.GetUserById,
-    AccountRepository.GetModules,
-    AccountRepository.GetUserModuleByName {}

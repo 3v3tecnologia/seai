@@ -1,19 +1,21 @@
-import { UserType } from "../../../../domain/entities/user/user";
+import { UserType, UserTypes } from "../../../../domain/entities/user/user";
 import {
   Modules,
   SystemModulesProps,
 } from "../../../../domain/entities/user/user-modules-access";
-import {
-  AccountRepository,
-  AccountRepositoryProtocol,
-} from "../../../../domain/use-cases/_ports/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
+import { IInputWithPagination } from "../../../../domain/use-cases/_ports/repositories/dto/input";
+import { IOuputWithPagination } from "../../../../domain/use-cases/_ports/repositories/dto/output";
+import { User } from "../../../../domain/use-cases/user/model/user";
+import { UserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
 import { governmentDb } from "../connection/knexfile";
+import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
     type: UserType;
-    modules: AccountRepository.system_modules_permissions;
+    modules: SystemModulesProps;
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
@@ -70,7 +72,10 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return id_user;
   }
 
-  async getModules(): Promise<Array<AccountRepository.AccountModulesData> | null> {
+  async getModules(): Promise<Array<{
+    id: number;
+    name: string;
+  }> | null> {
     const modules = await governmentDb.select("*").from("Module");
 
     if (!modules) {
@@ -83,9 +88,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       };
     });
   }
-  async getUserById(
-    id_user: number
-  ): Promise<Required<AccountRepository.UserData> | null> {
+  async getUserById(id_user: number): Promise<{
+    id: number;
+    name: string;
+    login: string;
+    email: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+    modules: SystemModulesProps | null;
+  } | null> {
     const result = await governmentDb
       .select("Id", "Name", "Login", "Email", "Type", "CreatedAt", "UpdatedAt")
       .where({ Id: id_user })
@@ -176,29 +188,88 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return mods;
   }
 
-  async list(): Promise<Array<Required<AccountRepository.UserData>> | null> {
-    const result = await governmentDb.select("*").from("User");
+  async list(
+    params: {
+      name?: string;
+      type?: Record<UserTypes, string>;
+    } & IInputWithPagination
+  ): Promise<IOuputWithPagination<User>> {
+    const { pageNumber, limit, offset, name, type } = params;
 
-    if (!result) {
+    const pageLimit = limit;
+
+    const binding = [];
+    const queries: Array<any> = [];
+
+    if (name) {
+      queries.push(
+        `WHERE (to_tsvector('simple', coalesce(u."Name", ''))) @@ to_tsquery('simple', '${name}:*')`
+      );
+    }
+
+    if (type) {
+      const baseWhere = `WHERE u."Type" = ?`;
+      if (queries.length) {
+        queries.push(`AND ${baseWhere}`);
+      } else {
+        queries.push(baseWhere);
+      }
+      binding.push(type);
+    }
+
+    const countSQL = `
+      SELECT count(*)  FROM "User" u  ${queries.join(" ")}
+    `;
+
+    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
+
+    queries.push(`order by u."Id" LIMIT ? OFFSET ?`);
+    binding.push(pageLimit);
+    binding.push(offset);
+
+    const getUsersSQL = `
+      SELECT
+          u."Id" ,
+          u."Name" ,
+          u."Login" ,
+          u."Email" ,
+          u."Password" ,
+          u."Type" ,
+          u."CreatedAt" ,
+          u."UpdatedAt"
+      FROM
+          "User" u
+      ${queries.join(" ")}
+    `;
+
+    const response = await governmentDb.raw(getUsersSQL, binding);
+
+    const rows = response.rows;
+
+    if (!rows) {
       return null;
     }
 
-    const users = result.map((user) => {
+    const users = rows.map((row: any) => {
       // const modules = await this.getUserModules(user.Id);
 
       return {
-        id: Number(user.Id),
-        name: user.Name,
-        login: user.Login,
-        email: String(user.Email),
-        type: String(user.Type),
-        createdAt: String(user.CreatedAt),
-        updatedAt: String(user.UpdatedAt),
-        modules: null,
+        id: Number(row.Id),
+        name: row.Name,
+        login: row.Login,
+        email: String(row.Email),
+        type: String(row.Type),
+        createdAt: String(row.CreatedAt),
+        updatedAt: String(row.UpdatedAt),
       };
     });
 
-    return users;
+    return toPaginatedOutput({
+      data: users,
+      page: pageNumber,
+      count: countRows,
+      limit: pageLimit,
+    });
   }
 
   async updateUserPassword(user_id: number, password: string): Promise<void> {
@@ -214,8 +285,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     name: string | null;
     login: string | null;
     type?: string | null;
-    password?: string;
-    modules?: AccountRepository.system_modules_permissions | null;
+    password?: string | null;
+    modules?: SystemModulesProps | null;
   }): Promise<boolean> {
     let result = false;
     await governmentDb.transaction(async (trx) => {
@@ -284,9 +355,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return result;
   }
 
-  async getByEmail(
-    email: string
-  ): Promise<Required<AccountRepository.UserData> | null> {
+  async getByEmail(email: string): Promise<User | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
@@ -333,9 +402,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return user;
   }
 
-  async getByLogin(
-    login: string
-  ): Promise<Required<AccountRepository.FullUserData> | null> {
+  async getByLogin(login: string): Promise<Required<UserAccount> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
@@ -392,9 +459,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return true;
   }
 
-  async getById(
-    id_user: number
-  ): Promise<Required<AccountRepository.FullUserData> | null> {
+  async getById(id_user: number): Promise<Required<UserAccount> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
