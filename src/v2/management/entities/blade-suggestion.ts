@@ -1,12 +1,6 @@
 import { ManagementCropCycle } from "./crop-cycles";
 import { IrrigationSystemEntity } from "./irrigation-system";
-import {
-  Dripping,
-  MicroSprinkling,
-  Pivot,
-  Sprinkling,
-  Sulcos,
-} from "./irrigation-system-measurements";
+import { Pivot } from "./irrigation-system-measurements";
 
 export type BladeSuggestionProps = {
   Et0: number;
@@ -119,5 +113,5 @@ function decimalToHoursAndMinutes(decimalTime: number) {
   const formattedHours = hours.toString().padStart(2, "0");
   const formattedMinutes = minutes.toString().padStart(2, "0");
 
-  return `${formattedHours}:${formattedMinutes}`;
+  return `${formattedHours}Hrs ${formattedMinutes}Min`;
 }
