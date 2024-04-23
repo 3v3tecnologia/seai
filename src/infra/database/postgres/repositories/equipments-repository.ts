@@ -544,7 +544,7 @@ export class DbEquipmentsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                stations."Et0" AS "ETO"
+                TRUNC(stations."Et0"::numeric,2) AS "ETO"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
@@ -725,7 +725,7 @@ export class DbEquipmentsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                stations."Et0"
+                TRUNC(stations."Et0"::numeric,2) AS "Et0"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
@@ -891,7 +891,7 @@ export class DbEquipmentsRepository
                   rs."FK_Equipment" ,
                   rs."Time",
                   rs."Hour" ,
-                  rs."Et0"
+                  TRUNC("Et0"::numeric,2) AS "Et0"
               FROM
                   "ReadStations" rs
               WHERE
