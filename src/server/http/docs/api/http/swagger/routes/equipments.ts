@@ -1,8 +1,154 @@
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 import { BASE_URL } from "../commons/baseURL";
+import { PaginationSchema } from "../commons/withPagination";
 
 const TAGS = ["Equipments"];
+
+const IRRIGANT = {
+  [`${BASE_URL.V1}/equipments/activated`]: {
+    get: {
+      tags: ["Irrigant"],
+      summary: "Get all equipments with yesterday's measurements",
+      parameters: [
+        {
+          name: "type",
+          in: "query",
+          required: true,
+          description: "Equipment type",
+          schema: {
+            type: "string",
+            enum: ["station", "pluviometer"],
+          },
+        },
+        {
+          name: "latitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "longitude",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "distance",
+          description: "Distance in Kilometers",
+          in: "query",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                  },
+                },
+                example: {
+                  StationExample: {
+                    data: [
+                      {
+                        Id: 1,
+                        Code: "B850A89C",
+                        Name: "São Benedito - Sítio Ingazeira",
+                        Type: {
+                          Id: 1,
+                          Name: "station",
+                        },
+                        Organ: {
+                          Id: 2,
+                          Name: "FUNCEME",
+                        },
+                        Altitude: 844,
+                        Location: {
+                          Coordinates: [-3.995388889, -40.955111111],
+                        },
+                        Et0: 3.0475848,
+                      },
+                      {
+                        Id: 36,
+                        Code: "32321",
+                        Name: "Fortaleza - Itaperi",
+                        Type: {
+                          Id: 1,
+                          Name: "station",
+                        },
+                        Organ: {
+                          Id: 2,
+                          Name: "FUNCEME",
+                        },
+                        Altitude: 28,
+                        Location: {
+                          Coordinates: [-3.795127, -38.557368],
+                        },
+                        Et0: 1.577899,
+                      },
+                    ],
+                  },
+                  PluviometerExample: {
+                    data: [
+                      {
+                        Id: 133,
+                        Code: "24302",
+                        Name: "MINEIROLANDIA",
+                        Type: {
+                          Id: 2,
+                          Name: "pluviometer",
+                        },
+                        Organ: {
+                          Id: 2,
+                          Name: "FUNCEME",
+                        },
+                        Altitude: null,
+                        Location: {
+                          Coordinates: [-5.567, -39.633305556],
+                        },
+                        Precipitation: 38,
+                      },
+                      {
+                        Id: 132,
+                        Code: "24110",
+                        Name: "SAO GONCALO DO AMARANTE",
+                        Type: {
+                          Id: 2,
+                          Name: "pluviometer",
+                        },
+                        Organ: {
+                          Id: 2,
+                          Name: "FUNCEME",
+                        },
+                        Altitude: null,
+                        Location: {
+                          Coordinates: [-3.674722222, -38.979722222],
+                        },
+                        Precipitation: 21,
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+};
 
 export const EQUIPMENTS = {
   [`${BASE_URL.V1}/equipments`]: {
@@ -71,7 +217,7 @@ export const EQUIPMENTS = {
                   properties: {
                     data: {
                       type: "object",
-                      Equipments: {
+                      Items: {
                         type: "array",
                         items: {
                           type: "object",
@@ -97,8 +243,6 @@ export const EQUIPMENTS = {
                             Location: {
                               type: "object",
                               properties: {
-                                Id: "number",
-                                Name: "string",
                                 Coordinates: {
                                   type: "array",
                                   items: {
@@ -109,135 +253,65 @@ export const EQUIPMENTS = {
                             },
                             CreatedAt: "string",
                             UpdatedAt: "string",
+                            Enable: "boolean",
                           },
                         },
                       },
-                      PageNumber: {
-                        type: "number",
-                      },
-                      QtdRows: {
-                        type: "number",
-                      },
-                      PageLimitRows: {
-                        type: "number",
-                      },
-                      QtdPages: {
-                        type: "number",
-                      },
+                      ...PaginationSchema,
                     },
                   },
                 },
                 example: {
                   data: {
-                    Equipments: [
-                      {
-                        Id: 17,
-                        Code: "B8524E9A",
-                        Name: "Alto Santo - Castanhão",
-                        Type: {
-                          Id: 1,
-                          Name: "station",
-                        },
-                        Organ: {
-                          Id: 2,
-                          Name: "FUNCEME",
-                        },
-                        Altitude: 4,
-                        Location: {
-                          Id: 3,
-                          Name: "Test3",
-                          Coordinates: [-30.1162, -8.9124],
-                        },
-                        CreatedAt: "2023-11-06T12:52:23.953Z",
-                        UpdatedAt: "2023-11-06T12:55:17.233Z",
-                      },
-                    ],
-                    PageNumber: 0,
-                    QtdRows: 1,
-                    PageLimitRows: 90,
-                    QtdPages: 1,
-                  },
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-    post: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Create equipment",
-      description: "Create meteorological equipment",
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                IdEquipmentExternal: {
-                  type: "string",
-                },
-                Name: {
-                  type: "string",
-                },
-                Altitude: {
-                  type: "string",
-                },
-                Location: {
-                  type: "object",
-                  properties: {
-                    Name: {
-                      type: "string",
-                    },
-                    Coordinates: {
-                      type: "array",
-                      items: {
-                        type: "number",
-                      },
-                    },
-                  },
-                },
-                Fk_Organ: {
-                  type: "string",
-                },
-                Fk_Type: {
-                  type: "string",
-                },
-              },
-              example: {
-                IdEquipmentExternal: "TESTE1",
-                Name: "teste123",
-                Altitude: 54,
-                Location: {
-                  Name: "Test3",
-                  Coordinates: [-38.5162, -4.1124],
-                },
-                Fk_Organ: 2,
-                Fk_Type: 1,
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Equipment created successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
                     data: {
-                      type: "string",
+                      Items: [
+                        {
+                          Id: 1,
+                          Code: "B850A89C",
+                          Name: "São Benedito - Sítio Ingazeira",
+                          Type: {
+                            Id: 1,
+                            Name: "station",
+                          },
+                          Organ: {
+                            Id: 2,
+                            Name: "FUNCEME",
+                          },
+                          Altitude: 844,
+                          Location: {
+                            Coordinates: [-3.995388889, -40.955111111],
+                          },
+                          CreatedAt: "2024-03-29T02:34:51.281+00:00",
+                          UpdatedAt: "2024-04-01T19:56:15.697297+00:00",
+                          Enable: true,
+                        },
+                        {
+                          Id: 2,
+                          Code: "A315",
+                          Name: "BARBALHA",
+                          Type: {
+                            Id: 1,
+                            Name: "station",
+                          },
+                          Organ: {
+                            Id: 2,
+                            Name: "FUNCEME",
+                          },
+                          Altitude: 409.41,
+                          Location: {
+                            Coordinates: [-7.300925, -39.271107],
+                          },
+                          CreatedAt: "2024-03-29T02:34:51.281+00:00",
+                          UpdatedAt: "2024-04-01T19:56:50.264197+00:00",
+                          Enable: true,
+                        },
+                      ],
+                      TotalItems: 94,
+                      Page: 1,
+                      PageSize: 2,
+                      TotalPages: 47,
                     },
                   },
-                },
-                example: {
-                  data: "Sucesso ao criar equipamento 6.",
                 },
               },
             },
@@ -246,6 +320,8 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },
+  },
+  [`${BASE_URL.V1}/equipments/{id}`]: {
     put: {
       tags: TAGS,
       summary: "Update equipments",
@@ -268,46 +344,10 @@ export const EQUIPMENTS = {
             schema: {
               type: "object",
               properties: {
-                IdEquipmentExternal: {
-                  type: "string",
-                },
-                Name: {
-                  type: "string",
-                },
-                Altitude: {
-                  type: "number",
-                },
-                Location: {
-                  type: "object",
-                  properties: {
-                    Name: {
-                      type: "string",
-                    },
-                    Coordinates: {
-                      type: "array",
-                      items: {
-                        type: "number",
-                      },
-                    },
-                  },
-                },
-                Fk_Organ: {
-                  type: "string",
-                },
-                Fk_Type: {
-                  type: "string",
-                },
+                Enable: "boolean",
               },
               example: {
-                IdEquipmentExternal: "TESTE1",
-                Name: "teste12",
-                Altitude: 4,
-                Location: {
-                  Name: "Test3",
-                  Coordinates: [-38.5162, -4.1124],
-                },
-                Fk_Organ: 2,
-                Fk_Type: 1,
+                Enable: true,
               },
             },
           },
@@ -338,46 +378,6 @@ export const EQUIPMENTS = {
         ...DEFAULT_RESPONSES,
       },
     },
-    delete: {
-      tags: TAGS,
-      summary: "Delete equipment",
-      description: "Delete equipment by id",
-      security: [BEARER_AUTH],
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Equipment Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "Equipment deleted successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Equipamento 4 deletado com sucesso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
   },
+  ...IRRIGANT,
 };

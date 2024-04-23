@@ -1,4 +1,4 @@
-import { ManagementCensusStudy } from "../../../entities/management/study";
+import { ManagementCensusStudy } from "./../../../entities/management/study";
 import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
 import { DatabaseOperationOutputLog } from "./dto/output";
 

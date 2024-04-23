@@ -65,40 +65,52 @@ export const equipmentsRouter = (): Router => {
     adaptRoute(EquipmentsControllerFactory.makeFetchEquipments())
   );
 
+  // Irrigant
+  // router.get(
+  //   "/pluviometers",
+  //   adaptRoute(
+  //     EquipmentsControllerFactory.makeFetchPluviometersWithYesterdayMeasurementsController()
+  //   )
+  // );
+
+  // Irrigant
   router.get(
-    "/measures/pluviometers",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())
+    "/activated",
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchEquipmentsWithYesterdayMeasurementsController()
+    )
   );
 
-  router.get(
-    "/measures/pluviometer/:id",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchPluviometerReadsByIdRead())
-  );
+  // router.get(
+  //   "/measures/pluviometers",
+  //   authorization,
+  //   adaptRoute(EquipmentsControllerFactory.makeFetchPluviometersReads())
+  // );
 
   router.put(
-    "/measures/pluviometer/:id",
+    "/measurements/pluviometer/:id",
     authorization,
     adaptRoute(EquipmentsControllerFactory.makeUpdatePluviometerMeasures())
   );
 
   router.put(
-    "/measures/station/:id",
+    "/measurements/station/:id",
     authorization,
     adaptRoute(EquipmentsControllerFactory.makeUpdateStationMeasures())
   );
 
-  router.get(
-    "/measures/stations",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchStationsReads())
-  );
+  // router.get(
+  //   "/measures/stations",
+  //   authorization,
+  //   adaptRoute(EquipmentsControllerFactory.makeFetchStationsReads())
+  // );
 
   router.get(
-    "/measures/station/:id",
+    "/measurements/:id",
     authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchStationReadsByIdRead())
+    adaptRoute(
+      EquipmentsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
+    )
   );
 
   router.get(

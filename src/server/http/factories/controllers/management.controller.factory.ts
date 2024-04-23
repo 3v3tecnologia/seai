@@ -1,54 +1,16 @@
-import {
-  DeleteManagementStudiesByBasinController,
-  DeleteManagementWeightsByBasinController,
-  GetManagementStudiesByBasinController,
-  GetManagementWeightsByBasinController,
-  InsertManagementStudiesByBasinController,
-  InsertManagementWeightsByBasinController,
-} from "../../../../presentation/controllers/management";
-import { ManagementCropController } from "../../../../presentation/controllers/management/crop.controller";
+import { GetManagementWeightsByBasinController } from "../../../../presentation/controllers/management/get-weights-by-basin";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import { makeLogControllerDecorator } from "../decorators";
-import {
-  ManagementUseCasesFactory,
-  ManagementWeightsUseCasesFactory,
-  SystemLogsUseCaseFactory,
-  managementCropUseCasesFactory,
-} from "../use-cases";
+import { ManagementWeightsUseCasesFactory } from "../use-cases/management.useCase.factory";
 
 export class ManagementControllersFactory {
-  static makeDeleteStudiesByBasin(): Controller {
-    return makeLogControllerDecorator(
-      new DeleteManagementStudiesByBasinController(
-        ManagementUseCasesFactory.makeDeleteManagementStudiesByBasin(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
-  }
-
-  static makeGetStudiesByBasin(): Controller {
-    return new GetManagementStudiesByBasinController(
-      ManagementUseCasesFactory.makeGetManagementStudiesByBasin()
-    );
-  }
-
-  static makeInsertManagementStudies(): Controller {
-    return makeLogControllerDecorator(
-      new InsertManagementStudiesByBasinController(
-        ManagementUseCasesFactory.makeInsertManagementStudies(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
-  }
-
-  static makeDeleteWeightsByBasin(): Controller {
-    return makeLogControllerDecorator(
-      new DeleteManagementWeightsByBasinController(
-        ManagementWeightsUseCasesFactory.makeDeleteManagementWeightsByBasin(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
-  }
+  //   static makeDeleteWeightsByBasin(): Controller {
+  //     return makeLogControllerDecorator(
+  //       new DeleteManagementWeightsByBasinController(
+  //         ManagementWeightsUseCasesFactory.makeDeleteManagementWeightsByBasin(),
+  //         SystemLogsUseCaseFactory.makeRegisterUserLogs()
+  //       )
+  //     );
+  //   }
 
   static makeGetWeightsByBasin(): Controller {
     return new GetManagementWeightsByBasinController(
@@ -56,16 +18,16 @@ export class ManagementControllersFactory {
     );
   }
 
-  static makeInsertManagementWeights(): Controller {
-    return makeLogControllerDecorator(
-      new InsertManagementWeightsByBasinController(
-        ManagementWeightsUseCasesFactory.makeInsertManagementWeights(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
-  }
+  //   static makeInsertManagementWeights(): Controller {
+  //     return makeLogControllerDecorator(
+  //       new InsertManagementWeightsByBasinController(
+  //         ManagementWeightsUseCasesFactory.makeInsertManagementWeights(),
+  //         SystemLogsUseCaseFactory.makeRegisterUserLogs()
+  //       )
+  //     );
+  //   }
 }
 
-export const managementControllerFactory = new ManagementCropController(
-  managementCropUseCasesFactory
-);
+// export const managementControllerFactory = new ManagementCropController(
+//   managementCropUseCasesFactory
+// );

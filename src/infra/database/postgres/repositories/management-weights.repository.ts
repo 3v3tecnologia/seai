@@ -1,10 +1,10 @@
-import { CultureWeightsMapper } from "../../../../domain/entities/management/mappers/weights";
 import { DatabaseOperationOutputLogFactory } from "../../../../domain/use-cases/_ports/repositories/dto/output";
 import {
   ManagementWeightsRepositoryDTO,
   ManagementWeightsRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/management-weights.repository";
 import { DATABASES } from "../../../../shared/db/tableNames";
+import { CultureWeightsMapper } from "../../../../v2/management/entities/mappers/weights";
 import { managementDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
@@ -13,8 +13,8 @@ export class DbManagementWeightsRepository
 {
   async create(
     request: ManagementWeightsRepositoryDTO.Create.Request
-  ): ManagementWeightsRepositoryDTO.Create.Response {
-    const toPersistency = CultureWeightsMapper.toPersistency(request);
+  ): Promise<any> {
+    /*const toPersistency = CultureWeightsMapper.toPersistency(request);
 
     const result = await managementDb
       .batchInsert(DATABASES.MANAGEMENT.TABLES.WEIGHTS, toPersistency)
@@ -24,7 +24,7 @@ export class DbManagementWeightsRepository
 
     return DatabaseOperationOutputLogFactory.insert(
       DATABASES.MANAGEMENT.TABLES.WEIGHTS
-    );
+    );*/
   }
 
   async delete(
@@ -45,7 +45,8 @@ export class DbManagementWeightsRepository
 
   async getByBasin(
     request: ManagementWeightsRepositoryDTO.GetByBasin.Request
-  ): ManagementWeightsRepositoryDTO.GetByBasin.Response {
+  ): Promise<any> {
+    console.log(request);
     const query = managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.WEIGHTS)

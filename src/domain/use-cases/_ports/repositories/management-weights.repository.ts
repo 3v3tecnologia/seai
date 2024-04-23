@@ -37,13 +37,11 @@ export namespace ManagementWeightsRepositoryDTO {
 }
 
 export interface ManagementWeightsRepositoryProtocol {
-  create(
-    request: ManagementWeightsRepositoryDTO.Create.Request
-  ): ManagementWeightsRepositoryDTO.Create.Response;
+  create(request: ManagementWeightsRepositoryDTO.Create.Request): Promise<any>;
   delete(
     request: ManagementWeightsRepositoryDTO.Delete.Request
   ): ManagementWeightsRepositoryDTO.Delete.Response;
   getByBasin(
     request: ManagementWeightsRepositoryDTO.GetByBasin.Request
-  ): ManagementWeightsRepositoryDTO.GetByBasin.Response;
+  ): Promise<any>;
 }

@@ -36,7 +36,7 @@ export class UpdateStationMeasuresController
         MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: request.MinAtmosphericTemperature,
         AtmosphericPressure: request.AtmosphericPressure,
-        ETO: request.ETO,
+        Et0: request.Et0,
         WindVelocity: request.WindVelocity,
       };
 
@@ -70,7 +70,7 @@ export namespace UpdateStationMeasuresControllerProtocol {
     MaxAtmosphericTemperature: number | null;
     MinAtmosphericTemperature: number | null;
     AtmosphericPressure: number | null;
-    ETO: number | null;
+    Et0: number | null;
     WindVelocity: number | null;
   };
 }

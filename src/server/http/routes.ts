@@ -1,15 +1,15 @@
 import { Express, Router } from "express";
 
+import { managementRoutes } from "../../v2/management/routes/routes";
 import {
-  loginRouter,
-  userRouter,
-  faqRouter,
+  accessKeyRouter,
+  backgroundJobsRouter,
   censusRouter,
   equipmentsRouter,
+  faqRouter,
+  loginRouter,
   newsRouter,
-  backgroundJobsRouter,
-  accessKeyRouter,
-  managementRouter,
+  userRouter,
 } from "./http-routes";
 
 export function setRoutes(app: Express): void {
@@ -23,13 +23,13 @@ export function setRoutes(app: Express): void {
   router.use("/news", newsRouter());
   router.use("/jobs", backgroundJobsRouter());
   router.use("/accessKey", accessKeyRouter());
-  router.use("/management", managementRouter());
 
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });
   });
 
   app.use("/api/v1", router);
+  app.use("/api/v2/management", managementRoutes());
 
   app.use("*", (req, res) => {
     res.status(404).json({

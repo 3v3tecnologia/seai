@@ -13,7 +13,7 @@ import {
   FetchProductivitySecurityCensusByCountyController,
 } from "../../../../presentation/controllers/indicators-census";
 import { FetchCensusLocationsController } from "../../../../presentation/controllers/census";
-import { GetCulturesIndicatorsFromBasinController } from "../../../../presentation/controllers/management/get-cultures-indicators-from-basin.controller";
+import { GetCulturesIndicatorsFromBasinController } from "../../../../presentation/controllers/census/fetch-crop-indicators-from-basin.controller";
 
 export class SecurityIndicatorsControllersFactory {
   static makeFetchCensusLocations(): Controller {
@@ -82,7 +82,7 @@ export class SecurityIndicatorsControllersFactory {
 
   static makeGetCulturesIndicatorsFromBasin(): Controller {
     return new GetCulturesIndicatorsFromBasinController(
-      SecurityIndicatorsUseCaseFactory.makeGetCultureIndicatorsFromBasin()
+      SecurityIndicatorsUseCaseFactory.makeGetCropsIndicatorsFromBasin()
     );
   }
 }

@@ -4,6 +4,7 @@ import { Controller } from "../ports/controllers";
 import { ok, badRequest, serverError } from "../helpers";
 import { FetchStationsReads } from "../../../domain/use-cases/equipments/fetch-stations-reads";
 import { Notification } from "../../../shared/notification/notification";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchStationsReadsController
   implements
@@ -35,8 +36,7 @@ export class FetchStationsReadsController
 
       const dto = {
         idEquipment: request.idEquipment,
-        pageNumber: request.pageNumber || 1,
-        limit: request.limit,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       };
 
       if (request.start) {

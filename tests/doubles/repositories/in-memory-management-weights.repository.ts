@@ -1,12 +1,12 @@
-import { CultureWeightsMapper } from "../../../src/domain/entities/management/mappers/weights";
 import { DatabaseOperationOutputLogFactory } from "../../../src/domain/use-cases/_ports/repositories/dto/output";
+import { withPagination } from "../../../src/infra/database/postgres/repositories/mapper/WithPagination";
+import { DATABASES } from "../../../src/shared/db/tableNames";
+import { CultureWeightsMapper } from "../../../src/v2/management/entities/mappers/weights";
 import {
   CultureWeightsToPersistency,
   ManagementWeightsRepositoryDTO,
   ManagementWeightsRepositoryProtocol,
-} from "../../../src/domain/use-cases/_ports/repositories/management-weights.repository";
-import { withPagination } from "../../../src/infra/database/postgres/repositories/mapper/WithPagination";
-import { DATABASES } from "../../../src/shared/db/tableNames";
+} from "../../../src/v2/management/ports/weights/repository";
 
 export class InMemoryManagementWeightsRepository
   implements ManagementWeightsRepositoryProtocol
@@ -26,7 +26,7 @@ export class InMemoryManagementWeightsRepository
     request: ManagementWeightsRepositoryDTO.Delete.Request
   ): ManagementWeightsRepositoryDTO.Delete.Response {
     this.data.splice(
-      this.data.findIndex((weight) => weight.Id_Basin === request.Id_Basin),
+      this.data.findIndex((weight) => weight.Id_Basin === request.id_basin),
       1
     );
 

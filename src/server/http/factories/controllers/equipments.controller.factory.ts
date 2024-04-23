@@ -4,10 +4,10 @@ import {
   DeleteEquipmentController,
   DeleteMeteorologicalOrganController,
   FetchEquipmentsController,
+  FetchEquipmentsWithYesterdayMeasurementsController,
+  FetchLatestEquipmentMeasurementsController,
   FetchMeteorologicalOrganController,
-  FetchPluviometerReadsByIdReadController,
   FetchPluviometersReadsController,
-  FetchStationReadsByIdReadController,
   FetchStationsReadsController,
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
@@ -56,19 +56,14 @@ export class EquipmentsControllerFactory {
       EquipmentsUseCasesFactory.makeFetchMeteorologicalOrgan()
     );
   }
-  static makeFetchPluviometerReadsByIdRead(): Controller {
-    return new FetchPluviometerReadsByIdReadController(
-      EquipmentsUseCasesFactory.makeFetchPluviometerReadsByIdRead()
-    );
-  }
   static makeFetchPluviometersReads(): Controller {
     return new FetchPluviometersReadsController(
       EquipmentsUseCasesFactory.makeFetchPluviometersReads()
     );
   }
-  static makeFetchStationReadsByIdRead(): Controller {
-    return new FetchStationReadsByIdReadController(
-      EquipmentsUseCasesFactory.makeFetchStationReadsByIdRead()
+  static makeFetchLatestEquipmentMeasurementsController(): Controller {
+    return new FetchLatestEquipmentMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchLatestEquipmentMeasurements()
     );
   }
   static makeFetchStationsReads(): Controller {
@@ -101,4 +96,15 @@ export class EquipmentsControllerFactory {
       SystemLogsUseCaseFactory.makeRegisterUserLogs()
     );
   }
+
+  static makeFetchEquipmentsWithYesterdayMeasurementsController(): Controller {
+    return new FetchEquipmentsWithYesterdayMeasurementsController(
+      EquipmentsUseCasesFactory.makeFetchEquipmentsWithYesterdayMeasurements()
+    );
+  }
+  // static makeFetchPluviometersWithYesterdayMeasurementsController(): Controller {
+  //   return new FetchPluviometersWithYesterdayMeasurementsController(
+  //     EquipmentsUseCasesFactory.makeFetchPluviometersWithYesterdayMeasurements()
+  //   );
+  // }
 }

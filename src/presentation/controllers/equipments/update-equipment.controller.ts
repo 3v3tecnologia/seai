@@ -23,12 +23,13 @@ export class UpdateEquipmentsController
     try {
       const dto = {
         IdEquipment: request.id,
-        IdEquipmentExternal: request.IdEquipmentExternal,
+        /*IdEquipmentExternal: request.IdEquipmentExternal,
         Name: request.Name,
         Fk_Organ: request.Fk_Organ,
         Fk_Type: request.Fk_Type,
         Altitude: request.Altitude,
-        Location: request.Location,
+        Location: request.Location,*/
+        Enable: request.Enable,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -51,7 +52,7 @@ export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    IdEquipmentExternal: string;
+    /*IdEquipmentExternal: string;
     Name: string;
     Fk_Organ: number;
     Fk_Type: number;
@@ -59,6 +60,7 @@ export namespace UpdateEquipmentsControllerProtocol {
     Location: {
       Name: string;
       Coordinates: Array<number>;
-    };
+    };*/
+    Enable: boolean;
   };
 }

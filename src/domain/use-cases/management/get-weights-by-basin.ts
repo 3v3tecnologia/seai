@@ -1,8 +1,7 @@
+import { ManagementWeightsRepositoryProtocol } from "./../../../v2/management/ports/weights/repository";
 import { Either, right } from "../../../shared/Either";
 import { CultureWeights } from "../../entities/management/weights";
-
-import { ManagementWeightsRepositoryProtocol } from "../_ports/repositories/management-weights.repository";
-import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../census";
+import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../census/fetch-cultures-indicators-by-basin";
 import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
@@ -16,11 +15,11 @@ export interface CropWeightsModel {
 export class GetManagementWeightsByBasin
   implements GetManagementWeightsByBasinUseCaseProtocol.UseCase
 {
-  private repository: ManagementWeightsRepositoryProtocol;
+  private repository: any;
   private getCulturesIndicatorsByBasin: GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase;
 
   constructor(
-    repository: ManagementWeightsRepositoryProtocol,
+    repository: any,
     getCulturesIndicatorsByBasin: GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase
   ) {
     this.repository = repository;
@@ -83,7 +82,7 @@ export class GetManagementWeightsByBasin
 
     const cropsWeights = new Map<string, CropWeightsModel>();
 
-    weights.forEach((weight) => {
+    weights.forEach((weight: any) => {
       cropsWeights.set(weight.culture, {
         id_basin: weight.idBasin,
         productivity: weight.productivity,

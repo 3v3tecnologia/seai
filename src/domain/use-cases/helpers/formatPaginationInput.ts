@@ -11,10 +11,12 @@ export function formatPaginationInput(
     defaultPageNumber: 1,
   }
 ): InputWithPagination {
+  const pageLimit = limit ? Number(limit) : options.defaultLimit;
+  const pageNumber =
+    page && Number(page) > 0 ? Number(page) : options.defaultPageNumber;
   return {
-    limit: limit ? Number(limit) : options.defaultLimit,
-    pageNumber: page
-      ? (limit as number) * (page - 1)
-      : options.defaultPageNumber,
+    limit: pageLimit,
+    pageNumber,
+    offset: pageLimit * (pageNumber - 1),
   };
 }

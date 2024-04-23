@@ -5,22 +5,22 @@ import {
   DeleteMeteorologicalOrgan,
   FetchEquipments,
   FetchMeteorologicalOrgans,
-  FetchPluviometerReadsByIdRead,
+  FetchLatestEquipmentMeasurements,
   FetchPluviometersReads,
-  FetchStationReadsByIdRead,
+  FetchEquipmentsWithYesterdayMeasurements,
   FetchStationsReads,
   UpdateEquipment,
   UpdateMeteorologicalOrgan,
   UpdatePluviometerMeasures,
   UpdateStationMeasures,
 } from "../../../../domain/use-cases/equipments";
+
 import { DbEquipmentsRepository } from "../../../../infra/database/postgres/repositories/equipments-repository";
 
 export class EquipmentsUseCasesFactory {
   private static repository = new DbEquipmentsRepository();
 
   static makeCreateEquipment(): CreateEquipments {
-    const repository = new DbEquipmentsRepository();
     return new CreateEquipments(this.repository);
   }
 
@@ -37,7 +37,6 @@ export class EquipmentsUseCasesFactory {
   }
 
   static makeDeleteMeteorologicalOrgan(): DeleteMeteorologicalOrgan {
-    const repository = new DbEquipmentsRepository();
     return new DeleteMeteorologicalOrgan(this.repository);
   }
 
@@ -49,16 +48,8 @@ export class EquipmentsUseCasesFactory {
     return new FetchMeteorologicalOrgans(this.repository);
   }
 
-  static makeFetchPluviometerReadsByIdRead(): FetchPluviometerReadsByIdRead {
-    return new FetchPluviometerReadsByIdRead(this.repository);
-  }
-
   static makeFetchPluviometersReads(): FetchPluviometersReads {
     return new FetchPluviometersReads(this.repository);
-  }
-
-  static makeFetchStationReadsByIdRead(): FetchStationReadsByIdRead {
-    return new FetchStationReadsByIdRead(this.repository);
   }
 
   static makeFetchStationsReads(): FetchStationsReads {
@@ -75,5 +66,12 @@ export class EquipmentsUseCasesFactory {
 
   static makeUpdateStationMeasures(): UpdateStationMeasures {
     return new UpdateStationMeasures(this.repository);
+  }
+  static makeFetchEquipmentsWithYesterdayMeasurements(): FetchEquipmentsWithYesterdayMeasurements {
+    return new FetchEquipmentsWithYesterdayMeasurements(this.repository);
+  }
+
+  static makeFetchLatestEquipmentMeasurements(): FetchLatestEquipmentMeasurements {
+    return new FetchLatestEquipmentMeasurements(this.repository);
   }
 }

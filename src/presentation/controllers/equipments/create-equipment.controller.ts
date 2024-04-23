@@ -29,6 +29,7 @@ export class CreateEquipmentsController
         IdEquipmentExternal: request.IdEquipmentExternal,
         Altitude: request.Altitude,
         Location: request.Location,
+        Enable: request.Enable,
       });
 
       if (resultOrError.isLeft()) {
@@ -57,5 +58,6 @@ export namespace CreateEquipmentsControllerProtocol {
     };
     Fk_Organ: number;
     Fk_Type: number;
+    Enable: boolean;
   };
 }

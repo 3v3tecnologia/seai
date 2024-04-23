@@ -45,6 +45,7 @@ export class CreateEquipments extends Command {
       Location: request.Location,
       Altitude: request.Altitude,
       Name: request.Name,
+      Enable: request.Enable,
     });
 
     // TO-DO : add actions and table name as global constants
@@ -54,7 +55,7 @@ export class CreateEquipments extends Command {
       description: `Sucesso ao criar equipamento ${equipmentId}.`,
     });
 
-    return right(`Sucesso ao criar equipamento ${equipmentId}.`);
+    return right(equipmentId);
   }
 }
 
@@ -69,7 +70,8 @@ export namespace CreateEquipmentUseCaseProtocol {
       Name: string;
       Coordinates: Array<number>;
     };
+    Enable: boolean;
   };
 
-  export type Response = string;
+  export type Response = number | null;
 }

@@ -5,6 +5,8 @@ import { badRequest, ok, serverError } from "../helpers";
 
 import { FetchPluviometersReads } from "../../../domain/use-cases/equipments/fetch-pluviometers-reads";
 import { Notification } from "../../../shared/notification/notification";
+import { IInputWithPagination } from "../../../domain/use-cases/_ports/repositories/dto/input";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchPluviometersReadsController
   implements
@@ -39,8 +41,7 @@ export class FetchPluviometersReadsController
 
       const dto = {
         idEquipment: request.idEquipment,
-        pageNumber: request.pageNumber || 1,
-        limit: request.limit,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       };
 
       if (request.start) {
@@ -65,9 +66,7 @@ export class FetchPluviometersReadsController
 export namespace FetchPluviometersMeasuresControllerProtocol {
   export type Request = {
     idEquipment: number;
-    pageNumber: number;
-    limit: number;
     start?: string;
     end?: string | null;
-  };
+  } & IInputWithPagination;
 }
