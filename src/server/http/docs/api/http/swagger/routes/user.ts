@@ -263,11 +263,22 @@ export const USER = {
       },
     },
   },
-  [`${BASE_URL.V1}/user/profile`]: {
+  [`${BASE_URL.V1}/complete-register`]: {
     put: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Update user profile",
+      summary: "Update user",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "User Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       requestBody: {
         content: {
           "application/json": {
@@ -341,7 +352,7 @@ export const USER = {
                 },
               },
               example: {
-                email: "test@gmail.com",
+                email: "davispenha12@gmail.com",
                 modules: {
                   news: {
                     id: 1,
@@ -372,6 +383,62 @@ export const USER = {
       responses: {
         200: {
           description: "User created successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário tester atualizado com sucesso.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${BASE_URL.V1}/user/profile`]: {
+    put: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Update user profile",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                },
+                name: {
+                  type: "string",
+                },
+                login: {
+                  type: "string",
+                },
+              },
+              example: {
+                email: "test@gmail.com",
+                name: "tester",
+                login: "tester",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "User updated successfully",
           content: {
             "application/json": {
               schema: {

@@ -4,7 +4,11 @@ import {
   checkArgumentsTypesBulk,
   concatenateMessages,
 } from "../../../shared/Guard";
-import { UserModulesNotFound } from "../../use-cases/user/sign-up/errors/user-email-not-found";
+import {
+  UserModuleIdNotFound,
+  UserModulesNotFound,
+} from "../../use-cases/user/errors/user-account-not-found";
+
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserType } from "./user";
 
@@ -149,41 +153,34 @@ export class SystemModules {
     newUserModuleAccess: SystemModulesProps,
     systemModules: Array<{ id: number; name: string }> | null
   ): Either<UserModulesNotFound, boolean> {
-    console.log("[newUserModuleAccess] :: ", newUserModuleAccess);
-    console.log("[systemModules] :: ", systemModules);
-
     if (systemModules === undefined || systemModules?.length === 0) {
       return left(new UserModulesNotFound());
     }
-
-    const systemModulesIds = systemModules?.map((module) => module.id);
 
     const alreadyRegisteredModules = new Map<string, number>();
     systemModules?.forEach((module) =>
       alreadyRegisteredModules.set(module.name, module.id)
     );
 
-    const newUserModules = new Map(Object.entries(newUserModuleAccess));
+    const newUserModules = new Map<string, SystemModulesPermissions>();
 
-    alreadyRegisteredModules.forEach((value, key) => {});
+    for (let [moduleName, modulePermissions] of Object.entries(
+      newUserModuleAccess
+    )) {
+      newUserModules.set(moduleName, modulePermissions);
+    }
 
-    const userModulesAccess = [
-      newUserModuleAccess[Modules.NEWS].id,
-      newUserModuleAccess[Modules.REGISTER].id,
-      newUserModuleAccess[Modules.USER].id,
-      newUserModuleAccess[Modules.JOBS].id,
-    ];
+    for (const [moduleName, modulePermissions] of alreadyRegisteredModules) {
+      const newModule = newUserModules.get(moduleName);
 
-    // evitar ter que salvar usuário com módulos que não existem
-    userModulesAccess.forEach((userModuleId) => {
-      const moduleNotExists =
-        systemModulesIds?.some((moduleId) => moduleId === userModuleId) ===
-        false;
-
-      if (moduleNotExists) {
-        return left(new UserModulesNotFound());
+      if (!newModule) {
+        return left(new UserModulesNotFound(moduleName));
       }
-    });
+
+      if (newModule.id !== modulePermissions) {
+        return left(new UserModuleIdNotFound(moduleName));
+      }
+    }
 
     return right(true);
   }

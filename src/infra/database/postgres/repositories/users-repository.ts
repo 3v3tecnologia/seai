@@ -281,7 +281,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
   async update(data: {
     id: number;
-    email: string | null;
+    email?: string | null;
     name: string | null;
     login: string | null;
     type?: string | null;
@@ -291,7 +291,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     let result = false;
     await governmentDb.transaction(async (trx) => {
       const userToUpdate = {
-        Email: data.email,
         Name: data.name,
         Login: data.login,
         UpdatedAt: governmentDb.fn.now(),
@@ -305,6 +304,11 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       if (data.type) {
         Object.assign(userToUpdate, {
           Type: data.type,
+        });
+      }
+      if (data.email) {
+        Object.assign(userToUpdate, {
+          Email: data.email,
         });
       }
 

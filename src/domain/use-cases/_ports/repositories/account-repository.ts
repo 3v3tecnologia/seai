@@ -19,7 +19,7 @@ export interface AccountRepositoryProtocol {
   ): Promise<IOuputWithPagination<User>>;
   update(data: {
     id: number;
-    email: string | null;
+    email?: string | null;
     name: string | null;
     login: string | null;
     type?: string | null;

@@ -8,4 +8,5 @@ export * from "./send-forgot-password";
 export * from "./send-notification-to-user";
 export * from "./sign-in";
 export * from "./sign-up";
-export * from "./update-user";
+export * from "./update-user-account";
+export * from "./update-profile";

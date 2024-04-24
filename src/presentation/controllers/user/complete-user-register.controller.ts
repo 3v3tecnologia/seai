@@ -10,8 +10,8 @@ import { UpdateUser } from "../../../domain/use-cases/user";
 import { CommandController } from "../ports/command-controller";
 import { created, forbidden, serverError } from "../helpers";
 
-export class UpdateUserController extends CommandController<
-  UpdateUserController.Request,
+export class CompleteUserRegisterController extends CommandController<
+  CompleteUserRegisterDTO.Request,
   HttpResponse
 > {
   private updateUser: UpdateUser;
@@ -21,12 +21,14 @@ export class UpdateUserController extends CommandController<
     this.updateUser = updateUser;
   }
 
-  async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
+  async handle(
+    request: CompleteUserRegisterDTO.Request
+  ): Promise<HttpResponse> {
     try {
-      const { id, email, modules } = request;
+      const { accountId, email, modules } = request;
 
       const dto = {
-        id: Number(id),
+        id: Number(accountId),
         name: Reflect.has(request, "name") ? (request.name as string) : null,
         login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
@@ -46,7 +48,7 @@ export class UpdateUserController extends CommandController<
         return forbidden(updateOrError.value);
       }
 
-      await this.userLogs.log(request.id, this.updateUser);
+      await this.userLogs.log(request.accountId, this.updateUser);
 
       return created(updateOrError.value);
     } catch (error) {
@@ -56,9 +58,9 @@ export class UpdateUserController extends CommandController<
   }
 }
 
-export namespace UpdateUserController {
+export namespace CompleteUserRegisterDTO {
   export type Request = {
-    id: number;
+    accountId: number;
     email: string;
     type: UserType;
     name: string | null;
