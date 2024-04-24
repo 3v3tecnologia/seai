@@ -3,6 +3,7 @@ import { UserTypes } from "../../entities/user/user";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
 import { IInputWithPagination } from "../_ports/repositories/dto/input";
 import { IOuputWithPagination } from "../_ports/repositories/dto/output";
+import { formatPaginationInput } from "../helpers/formatPaginationInput";
 import { User } from "./model/user";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
@@ -21,9 +22,7 @@ export class FetchUsersUseCase implements IFetchUsersUseCase {
       data = await this.accountRepository.list({
         name: request.name,
         type: request.type,
-        limit: request.limit,
-        offset: request.offset,
-        pageNumber: request.pageNumber,
+        ...formatPaginationInput(request.pageNumber, request.limit),
       });
     }
     return right(data);

@@ -149,11 +149,23 @@ export class SystemModules {
     newUserModuleAccess: SystemModulesProps,
     systemModules: Array<{ id: number; name: string }> | null
   ): Either<UserModulesNotFound, boolean> {
-    const systemModulesIds = systemModules?.map((module) => module.id);
+    console.log("[newUserModuleAccess] :: ", newUserModuleAccess);
+    console.log("[systemModules] :: ", systemModules);
 
-    if (systemModulesIds === undefined || systemModulesIds?.length === 0) {
+    if (systemModules === undefined || systemModules?.length === 0) {
       return left(new UserModulesNotFound());
     }
+
+    const systemModulesIds = systemModules?.map((module) => module.id);
+
+    const alreadyRegisteredModules = new Map<string, number>();
+    systemModules?.forEach((module) =>
+      alreadyRegisteredModules.set(module.name, module.id)
+    );
+
+    const newUserModules = new Map(Object.entries(newUserModuleAccess));
+
+    alreadyRegisteredModules.forEach((value, key) => {});
 
     const userModulesAccess = [
       newUserModuleAccess[Modules.NEWS].id,
@@ -165,7 +177,7 @@ export class SystemModules {
     // evitar ter que salvar usuário com módulos que não existem
     userModulesAccess.forEach((userModuleId) => {
       const moduleNotExists =
-        systemModulesIds.some((moduleId) => moduleId === userModuleId) ===
+        systemModulesIds?.some((moduleId) => moduleId === userModuleId) ===
         false;
 
       if (moduleNotExists) {

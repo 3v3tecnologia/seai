@@ -37,6 +37,7 @@ export class UpdateUser extends Command {
       string
     >
   > {
+    console.log(request);
     const alreadyExistsAccount = await this.accountRepository.getById(
       request.id
     );
