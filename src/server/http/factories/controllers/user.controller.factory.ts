@@ -3,6 +3,7 @@ import { Controller } from "../../../../presentation/controllers/ports/controlle
 import { makeLogControllerDecorator } from "../decorators";
 import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 import {
+  CompleteUserRegisterController,
   CreateUserController,
   DeleteUserController,
   FetchUserByIdController,
@@ -96,8 +97,8 @@ export class UserControllersFactory {
   }
   static makeCompleteUserRegister(): Controller {
     return makeLogControllerDecorator(
-      new UpdateUserProfileController(
-        UserUseCasesFactory.makeUpdateUserProfile(),
+      new CompleteUserRegisterController(
+        UserUseCasesFactory.makeCompleteUserRegister(),
         SystemLogsUseCaseFactory.makeRegisterUserLogs()
       )
     );

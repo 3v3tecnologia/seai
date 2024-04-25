@@ -1,22 +1,17 @@
 import { HttpResponse } from "../ports";
 
-import { UserType } from "../../../domain/entities/user/user";
-import {
-  Modules,
-  SystemModulesPermissions,
-} from "../../../domain/entities/user/user-modules-access";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { UpdateUser } from "../../../domain/use-cases/user";
-import { CommandController } from "../ports/command-controller";
+import { CompleteUserRegister, UpdateUser } from "../../../domain/use-cases/user";
 import { created, forbidden, serverError } from "../helpers";
+import { CommandController } from "../ports/command-controller";
 
 export class CompleteUserRegisterController extends CommandController<
   CompleteUserRegisterDTO.Request,
   HttpResponse
 > {
-  private updateUser: UpdateUser;
+  private updateUser: CompleteUserRegister;
 
-  constructor(updateUser: UpdateUser, userLogs: RegisterUserLogs) {
+  constructor(updateUser: CompleteUserRegister, userLogs: RegisterUserLogs) {
     super(userLogs);
     this.updateUser = updateUser;
   }
@@ -25,21 +20,12 @@ export class CompleteUserRegisterController extends CommandController<
     request: CompleteUserRegisterDTO.Request
   ): Promise<HttpResponse> {
     try {
-      const { accountId, email, modules } = request;
-
       const dto = {
-        id: Number(accountId),
-        name: Reflect.has(request, "name") ? (request.name as string) : null,
-        login: Reflect.has(request, "login") ? (request.login as string) : null,
-        email,
-        password: Reflect.has(request, "password")
-          ? (request.password as string)
-          : null,
-        confirmPassword: Reflect.has(request, "confirmPassword")
-          ? (request.confirmPassword as string)
-          : null,
-        modules,
-        type: request.type,
+        id: Number(request.accountId),
+        name: request.name,
+        login: request.login,
+        password: request.password ,
+        confirmPassword: request.confirmPassword,
       };
 
       const updateOrError = await this.updateUser.execute(dto);
@@ -61,17 +47,9 @@ export class CompleteUserRegisterController extends CommandController<
 export namespace CompleteUserRegisterDTO {
   export type Request = {
     accountId: number;
-    email: string;
-    type: UserType;
-    name: string | null;
-    login: string | null;
-    password?: string | null;
-    confirmPassword?: string | null;
-    modules?: {
-      [Modules.NEWS]: Required<SystemModulesPermissions>;
-      [Modules.REGISTER]: Required<SystemModulesPermissions>;
-      [Modules.USER]: Required<SystemModulesPermissions>;
-      [Modules.JOBS]: Required<SystemModulesPermissions>;
-    };
+    name: string;
+    login: string;
+    password: string;
+    confirmPassword: string;
   };
 }

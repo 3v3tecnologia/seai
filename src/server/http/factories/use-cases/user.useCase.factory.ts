@@ -11,6 +11,7 @@ import {
   UpdateUser,
   UserAuthentication,
   UpdateUserProfile,
+  CompleteUserRegister,
 } from "../../../../domain/use-cases/user";
 import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
 import { JwtAdapter } from "../../../../infra/cryptography/jwt-adapter";
@@ -87,5 +88,8 @@ export class UserUseCasesFactory {
   }
   static makeUpdateUserProfile(): UpdateUserProfile {
     return new UpdateUserProfile(this.repository);
+  }
+  static makeCompleteUserRegister(): CompleteUserRegister {
+    return new CompleteUserRegister(this.repository,this.encoder);
   }
 }

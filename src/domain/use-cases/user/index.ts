@@ -10,3 +10,4 @@ export * from "./sign-in";
 export * from "./sign-up";
 export * from "./update-user-account";
 export * from "./update-profile";
+export * from "./complete-user-register";
