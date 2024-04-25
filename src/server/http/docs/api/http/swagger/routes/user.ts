@@ -209,23 +209,28 @@ export const USER = {
                 },
               },
               example: {
-                email: "davispenha12@gmail.com",
+                email: "d@test.com",
                 modules: {
                   news: {
                     id: 1,
-                    read: false,
-                    write: false,
-                  },
-                  register: {
-                    id: 2,
-                    read: false,
-                    write: true,
+                    read: true,
+                    write: true
                   },
                   user: {
+                    id: 2,
+                    read: false,
+                    write: false
+                  },
+                  register: {
                     id: 3,
                     read: true,
-                    write: false,
+                    write: true
                   },
+                  jobs: {
+                    id: 4,
+                    read: true,
+                    write: true
+                  }
                 },
                 type: "admin",
                 name: "tester",
@@ -285,59 +290,6 @@ export const USER = {
             schema: {
               type: "object",
               properties: {
-                email: {
-                  type: "string",
-                },
-                modules: {
-                  type: "object",
-                  properties: {
-                    news: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    register: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    user: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                  },
-                },
-                type: {
-                  type: "string",
-                },
                 name: {
                   type: "string",
                 },
@@ -352,28 +304,9 @@ export const USER = {
                 },
               },
               example: {
-                email: "davispenha12@gmail.com",
-                modules: {
-                  news: {
-                    id: 1,
-                    read: false,
-                    write: false,
-                  },
-                  register: {
-                    id: 2,
-                    read: false,
-                    write: true,
-                  },
-                  user: {
-                    id: 3,
-                    read: true,
-                    write: false,
-                  },
-                },
-                type: "admin",
                 name: "tester",
-                password: "1234567",
                 login: "tester",
+                password: "1234567",
                 confirmPassword: "1234567",
               },
             },
@@ -504,18 +437,23 @@ export const USER = {
                           news: {
                             id: 1,
                             read: true,
-                            write: true,
+                            write: true
                           },
                           user: {
                             id: 2,
-                            read: true,
-                            write: true,
+                            read: false,
+                            write: false
                           },
                           register: {
                             id: 3,
                             read: true,
-                            write: true,
+                            write: true
                           },
+                          jobs: {
+                            id: 4,
+                            read: true,
+                            write: true
+                          }
                         },
                       },
                     },
@@ -658,6 +596,20 @@ export const USER = {
                         },
                       },
                     },
+                    jobs: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -668,20 +620,25 @@ export const USER = {
                   news: {
                     id: 1,
                     read: true,
-                    write: true,
-                  },
-                  register: {
-                    id: 2,
-                    read: true,
-                    write: true,
+                    write: true
                   },
                   user: {
+                    id: 2,
+                    read: false,
+                    write: false
+                  },
+                  register: {
                     id: 3,
                     read: true,
-                    write: true,
+                    write: true
                   },
-                },
-              },
+                  jobs: {
+                    id: 4,
+                    read: true,
+                    write: true
+                  }
+                }
+              }
             },
           },
         },
