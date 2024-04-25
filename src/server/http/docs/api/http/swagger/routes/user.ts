@@ -264,7 +264,7 @@ export const USER = {
     },
   },
   [`${BASE_URL.V1}/complete-register`]: {
-    put: {
+    patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Update user",
@@ -407,7 +407,7 @@ export const USER = {
     },
   },
   [`${BASE_URL.V1}/user/profile`]: {
-    put: {
+    patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Update user profile",
