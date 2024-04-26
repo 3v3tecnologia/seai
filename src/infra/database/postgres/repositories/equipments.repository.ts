@@ -37,9 +37,8 @@ function mapEquipmentToDomain(row: any) {
 
 export class DbEquipmentsRepository
   implements
-    EquipmentsRepositoryProtocol,
-    MeteorologicalOrganRepositoryProtocol
-{
+  EquipmentsRepositoryProtocol,
+  MeteorologicalOrganRepositoryProtocol {
   async getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result {
     const data = await equipments
       .select("IdOrgan", "Name", "Host", "User")
@@ -518,10 +517,9 @@ export class DbEquipmentsRepository
                           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${
-        [params?.latitude, params?.longitude].every((e) => e)
-          ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-          : ""
+      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${[params?.latitude, params?.longitude].every((e) => e)
+        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        : ""
       })
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (

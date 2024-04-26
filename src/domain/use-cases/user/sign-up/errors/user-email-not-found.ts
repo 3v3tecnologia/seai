@@ -4,9 +4,3 @@ export class AccountEmailNotFound extends Error {
     this.name = "AccountEmailNotFound";
   }
 }
-export class UserModulesNotFound extends Error {
-  constructor() {
-    super("Acesso do usuário não existe");
-    this.name = "UserModulesNotFound";
-  }
-}

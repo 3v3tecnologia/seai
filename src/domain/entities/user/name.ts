@@ -14,8 +14,8 @@ export class UserName {
     return this.name;
   }
 
-  static create(name: string): Either<Error, UserName> {
-    if (name.length === 0 || name.length > UserName.maxLength) {
+  static create(name: string | null): Either<Error, UserName> {
+    if (!name || name.length === 0 || name.length > UserName.maxLength) {
       return left(new Error("Nome não deve ser vazio ou nulo"));
     }
     return right(new UserName(name));

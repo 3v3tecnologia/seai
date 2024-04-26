@@ -4,6 +4,7 @@ import {
   getYesterDayDate,
   parseBrazilianDateTime,
 } from "../../../shared/utils/date";
+import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
 import { BladeSuggestion } from "../entities/blade-suggestion";
 import { ManagementCropCycle } from "../entities/crop-cycles";
 import {
@@ -55,8 +56,6 @@ export class IrrigationRecommendationServices {
     if (Et0 == null) {
       return left(new ManagementIrrigantErrors.StationMeasurementsNotFound());
     }
-
-    console.log("[ET0] :: ", Et0);
 
     let Precipitation: number | null = null;
 
@@ -158,11 +157,14 @@ export class IrrigationRecommendationServices {
     });
 
     return right({
-      Etc: bladeSuggestion.Etc,
-      RepositionBlade: bladeSuggestion.repositionBlade,
+      Etc: DecimalFormatter.truncate(bladeSuggestion.Etc, 2),
+      RepositionBlade: DecimalFormatter.truncate(
+        bladeSuggestion.repositionBlade,
+        2
+      ),
       IrrigationTime: bladeSuggestion.irrigationTime,
       CropDays: cropDate,
-      Et0,
+      Et0: DecimalFormatter.truncate(Et0, 2),
       Precipitation,
       Kc: bladeSuggestion.Kc,
     });

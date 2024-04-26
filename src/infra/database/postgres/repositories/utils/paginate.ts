@@ -22,7 +22,7 @@ export function toPaginatedOutput<T>({
     Items: data,
     TotalItems: Number(total),
     Page: page,
-    PageSize: limit,
+    PageSize: Number(limit),
     TotalPages: totalPages,
   };
 }

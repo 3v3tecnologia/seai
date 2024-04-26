@@ -1,21 +1,23 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { User, UserTypes } from "../../../entities/user/user";
-import { SystemModules } from "../../../entities/user/user-modules-access";
-import { Command } from "../../_ports/core/command";
-import { Encoder } from "../../_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
+import { Either, left, right } from "../../../shared/Either";
+import { User, UserType } from "../../entities/user/user";
+import {
+  SystemModules,
+  SystemModulesProps,
+} from "../../entities/user/user-modules-access";
+import { Command } from "../_ports/core/command";
+import { Encoder } from "../_ports/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
 import {
   AccountNotFoundError,
   WrongPasswordError,
-} from "../authentication/errors";
+} from "./authentication/errors";
+import { LoginAlreadyExists } from "./errors/login-aready-exists";
 import {
   AccountEmailNotFound,
   UserModulesNotFound,
 } from "./errors/user-account-not-found";
-import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import { UpdateUserDTO } from "./ports/update-user";
 
-export class UpdateUser extends Command {
+export class UpdateUser extends Command implements IUpdateUserUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
 
@@ -26,7 +28,7 @@ export class UpdateUser extends Command {
   }
 
   async execute(
-    request: UpdateUserDTO.params
+    request: UpdateUserDTO.Params
   ): Promise<
     Either<
       | AccountEmailNotFound
@@ -37,6 +39,7 @@ export class UpdateUser extends Command {
       string
     >
   > {
+    console.log(request);
     const alreadyExistsAccount = await this.accountRepository.getById(
       request.id
     );
@@ -155,4 +158,33 @@ export class UpdateUser extends Command {
 
     return right(`Usuário atualizado com sucesso.`);
   }
+}
+
+export namespace UpdateUserDTO {
+  export type Params = {
+    id: number;
+    email: string;
+    type: UserType;
+    name: string | null;
+    login: string | null;
+    password?: string | null;
+    confirmPassword?: string | null;
+    modules?: SystemModulesProps;
+  };
+  export type Result = string;
+}
+
+export interface IUpdateUserUseCase {
+  execute(
+    user: UpdateUserDTO.Params
+  ): Promise<
+    Either<
+      | AccountEmailNotFound
+      | AccountNotFoundError
+      | WrongPasswordError
+      | LoginAlreadyExists
+      | UserModulesNotFound,
+      string
+    >
+  >;
 }
