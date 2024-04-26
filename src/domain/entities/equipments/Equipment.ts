@@ -11,7 +11,7 @@ export interface EquipmentEntity {
     // Id: number | null;
     Coordinates: Array<number> | null;
     // Name: string;
-  } | null;
+  };
   Organ: {
     Id: number;
     Name: string;
