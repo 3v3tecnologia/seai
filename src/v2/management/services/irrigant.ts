@@ -154,6 +154,7 @@ export class IrrigationRecommendationServices {
       Et0,
       irrigationSystem: irrigationSystem,
       plantingDate: command.PlantingDate,
+      cropDay: cropDate,
     });
 
     return right({

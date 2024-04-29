@@ -40,20 +40,20 @@ export namespace MeteorologicalOrganRepositoryDTOProtocol {
 }
 export namespace EquipmentRepositoryDTOProtocol {
   export namespace Create {
-    export type Params = {
+    export type Params = Array<{
       IdEquipmentExternal: string;
       Name: string;
       Fk_Organ: number;
       Fk_Type: number;
       Altitude: number;
       Location: {
-        Name: string;
-        Coordinates: Array<number>;
+        Latitude: number | null;
+        Longitude: number | null;
       };
-      Enable: boolean;
-    };
+      Enabled: boolean;
+    }>;
 
-    export type Result = Promise<number | null>;
+    export type Result = Promise<Map<string, number> | null>;
   }
 
   export namespace Update {

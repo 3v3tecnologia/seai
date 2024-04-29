@@ -5,9 +5,10 @@ import { Pivot } from "./irrigation-system-measurements";
 export type BladeSuggestionProps = {
   Et0: number;
   precipitation: number;
-  Kc: number;
+  cropCycle: ManagementCropCycle;
   plantingDate: string;
   irrigationSystem: IrrigationSystemEntity;
+  cropDay: number;
 };
 
 export class BladeSuggestion {
@@ -25,13 +26,14 @@ export class BladeSuggestion {
     Et0,
     plantingDate,
     precipitation,
-    Kc,
+    cropCycle,
     irrigationSystem,
+    cropDay
   }: BladeSuggestionProps) {
     this.Et0 = Et0;
     this.precipitation = precipitation;
     this.plantingDate = plantingDate;
-    this.Kc = Kc;
+    this.Kc = this.calcKc(cropDay, cropCycle);
     this.irrigationSystem = irrigationSystem;
 
     this.Etc = this.calcEtc(this.Et0, this.Kc);
@@ -64,6 +66,10 @@ export class BladeSuggestion {
     return repositionBlade / applicationRate;
   }
 
+  private calcKc(cropDay: number, cropCycle: ManagementCropCycle) {
+    return (cropDay - cropCycle.Start) * cropCycle.Increment + cropCycle.KC
+  }
+
   private calcRepositionBlade(
     Etc: number,
     precipitation: number,
@@ -83,13 +89,15 @@ export class BladeSuggestion {
     plantingDate: string;
     cropCycle: ManagementCropCycle;
     irrigationSystem: IrrigationSystemEntity;
+    cropDay: number;
   }) {
     const bladeSuggestion = new BladeSuggestion({
-      Kc: props.cropCycle.KC,
+      cropCycle: props.cropCycle,
       Et0: props.Et0,
       irrigationSystem: props.irrigationSystem,
       plantingDate: props.plantingDate,
       precipitation: props.precipitation,
+      cropDay: props.cropDay
     });
 
     return bladeSuggestion;

@@ -38,7 +38,7 @@ export class CreateEquipments extends Command {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
 
-    const equipmentId = await this.equipmentsRepository.createEquipment({
+    /*const equipmentId = await this.equipmentsRepository.createEquipment({
       Fk_Organ: request.Fk_Organ,
       IdEquipmentExternal: request.IdEquipmentExternal,
       Fk_Type: request.Fk_Type,
@@ -46,16 +46,16 @@ export class CreateEquipments extends Command {
       Altitude: request.Altitude,
       Name: request.Name,
       Enable: request.Enable,
-    });
+    });*/
 
     // TO-DO : add actions and table name as global constants
-    this.addLog({
+    /*this.addLog({
       action: "create",
       table: "MetereologicalEquipment",
       description: `Sucesso ao criar equipamento ${equipmentId}.`,
-    });
+    });*/
 
-    return right(equipmentId);
+    return right();
   }
 }
 
