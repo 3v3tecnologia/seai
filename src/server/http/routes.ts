@@ -1,6 +1,7 @@
 import { Express, Router } from "express";
 
 import { managementRoutes } from "../../v2/management/routes/routes";
+import { equipmentsRoutes } from "../../v2/equipments/routes";
 import {
   accessKeyRouter,
   backgroundJobsRouter,
@@ -29,7 +30,9 @@ export function setRoutes(app: Express): void {
   });
 
   app.use("/api/v1", router);
+
   app.use("/api/v2/management", managementRoutes());
+  app.use("/api/v2/equipments", equipmentsRoutes());
 
   app.use("*", (req, res) => {
     res.status(404).json({

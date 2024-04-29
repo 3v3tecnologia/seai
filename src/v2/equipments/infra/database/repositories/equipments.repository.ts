@@ -2,39 +2,63 @@ import { equipmentsDb } from "../connections/db";
 import { geoLocationExtension } from "../utils/geolocation";
 
 export class DbEquipmentsRepository {
-  static async getTypes() {
-    const type = new Map<string, number>();
+  static async getTypes(): Promise<Array<{
+    Type: string,
+    Name: number
+  }>> {
+    let types: Array<{
+      Type: string,
+      Name: number
+    }> = []
 
-    const result = await equipmentsDb
+    const response = await equipmentsDb
       .select("IdType", "Name")
       .from("EquipmentType");
 
-    result.forEach((raw: any) => {
-      type.set(raw.Name, raw.IdType);
-    });
 
-    return type;
+    types = response.map((raw: any) => ({
+      Type: raw.IdType,
+      Name: raw.Name
+    }))
+
+    return types;
   }
-  static async getOrganByName(organName: string) {
-    const result = await equipmentsDb
+  static async getOrganByName(organName: string): Promise<{
+    Id: number,
+    Host: string | null,
+    User: string | null,
+    Password: string | null
+  } | null> {
+    const response = await equipmentsDb
       .select("IdOrgan", "Host", "User", "Password")
       .from("MetereologicalOrgan")
       .where({ Name: organName })
       .first();
 
-    if (result) {
+    if (response) {
       return {
-        Id: result.IdOrgan,
-        Host: result.Host,
-        User: result.User,
-        Password: result.Password,
+        Id: response.IdOrgan,
+        Host: response.Host,
+        User: response.User,
+        Password: response.Password,
       };
     }
 
     return null;
   }
 
-  static async getByType(type: string) {
+  static async getByType(type: string): Promise<Array<{
+    IdEquipmentExternal: string,
+    Name: string,
+    Altitude: number | null,
+    Location: {
+      Latitude: number,
+      Longitude: number
+    } | null,
+    FK_Organ: number,
+    FK_Type: number,
+    Enabled: number
+  }>> {
     const response = await equipmentsDb.raw(
       `
         SELECT
@@ -62,6 +86,7 @@ export class DbEquipmentsRepository {
       const coordinates = eqp.GeoLocation
         ? eqp.GeoLocation["coordinates"]
         : null;
+
       return {
         Id: eqp.Id,
         Code: eqp.Code,
@@ -81,38 +106,45 @@ export class DbEquipmentsRepository {
     return data
   }
 
-  static async create(equipments = []) {
-    const insertedEquipments = new Map();
+  static async bulkInsert(equipments: Array<any>): Promise<Array<{ Code: string, Id: number }>> {
+    const insertedEquipments: Array<{ Code: string, Id: number }> = [];
 
     const st = geoLocationExtension(equipmentsDb);
 
     await equipmentsDb.transaction(async (trx) => {
       // TO-DO: how insert coordinates?
       // TO-DO: how measurements?
+      const toPersistency = equipments.map((equipment: any) => {
+        return {
+          IdEquipmentExternal: equipment.IdEquipmentExternal,
+          Name: equipment.Name,
+          Altitude: equipment.Altitude,
+          // Location: st.geomFromText("Point(-71.064544 44.28787)"),
+          Location: st.geomFromText(
+            `Point(${equipment.Location.Latitude} ${equipment.Location.Longitude})`
+          ),
+          FK_Organ: equipment.FK_Organ,
+          FK_Type: equipment.FK_Type,
+          Enable: equipment.Enabled,
+          CreatedAt: equipmentsDb.fn.now(),
+        };
+      })
+
       const eqps = await trx
         .batchInsert<any>(
           "MetereologicalEquipment",
-          equipments.map((equipment: any) => {
-            return {
-              IdEquipmentExternal: equipment.IdEquipmentExternal,
-              Name: equipment.Name,
-              Altitude: equipment.Altitude,
-              // Location: st.geomFromText("Point(-71.064544 44.28787)"),
-              Location: st.geomFromText(
-                `Point(${equipment.Location.Latitude} ${equipment.Location.Longitude})`
-              ),
-              FK_Organ: equipment.FK_Organ,
-              FK_Type: equipment.FK_Type,
-              Enable: equipment.Enabled,
-              CreatedAt: equipmentsDb.fn.now(),
-            };
-          })
+          toPersistency
         )
         .returning(["IdEquipment", "IdEquipmentExternal"]);
 
       // [ { IdEquipment: 1 }, { IdEquipment: 2 } ]
-      eqps.forEach((eqp) =>
-        insertedEquipments.set(eqp.IdEquipmentExternal, eqp.IdEquipment)
+      eqps.forEach((eqp) => {
+        // insertedEquipments.set(eqp.IdEquipmentExternal, eqp.IdEquipment)
+        insertedEquipments.push({
+          Code: eqp.IdEquipmentExternal,
+          Id: eqp.IdEquipment
+        })
+      }
       );
     });
 

@@ -46,7 +46,7 @@ export class DbEquipmentsMeasurementsRepository {
     return null;
   }
 
-  static async insertStationsMeasurements(measurements = []) {
+  static async insertStations(measurements: Array<any>) {
     await equipmentsDb.transaction(async (trx) => {
       await trx.batchInsert(
         "ReadStations",
@@ -73,7 +73,7 @@ export class DbEquipmentsMeasurementsRepository {
     });
   }
 
-  static async insertPluviometersMeasurements(measurements = []) {
+  static async insertPluviometers(measurements: Array<any>) {
     await equipmentsDb.transaction(async (trx) => {
       await trx.batchInsert(
         "ReadPluviometers",
@@ -90,7 +90,7 @@ export class DbEquipmentsMeasurementsRepository {
     });
   }
 
-  static async updateStationsMeasurements(measurements = []) {
+  static async updateStations(measurements: Array<any>) {
     try {
       await equipmentsDb.transaction(async (trx) => {
         const tempTableName = "Temp_ReadStations";
@@ -158,22 +158,22 @@ export class DbEquipmentsMeasurementsRepository {
           "AtmosphericPressure" = t."AtmosphericPressure",
           "WindVelocity" = t."WindVelocity",
           "Et0" = t."Et0"
-        FROM ${tempTableName} AS t
-        WHERE rs."IdRead" = t."IdRead";
+        FROM "${tempTableName}" AS t
+        WHERE rs."FK_Equipment" = t."FK_Equipment" and rs."Time" = t."Time";
     `);
 
         // Clean up the temporary table
-        //@ts-ignore
-        await trx.dropTable(tempTableName);
+        await trx.raw(`DROP TABLE "${tempTableName}"`)
 
         console.log("Batch update completed successfully.");
       });
     } catch (error) {
       console.error("Error during batch update:", error);
+      throw error
     }
   }
 
-  static async updatePluviometersMeasurements(measurements = []) {
+  static async updatePluviometers(measurements: Array<any>) {
     try {
       await equipmentsDb.transaction(async (trx) => {
         const tempTableName = "Temp_ReadPluviometers";
@@ -201,6 +201,8 @@ export class DbEquipmentsMeasurementsRepository {
           };
         });
 
+        console.log(toPersistency);
+
         // Insert new data into the temporary table
         await trx(tempTableName).insert(toPersistency);
 
@@ -213,18 +215,19 @@ export class DbEquipmentsMeasurementsRepository {
           "Time" = t."Time",
           "Hour" = t."Hour",
           "Value" = t."Value"
-        FROM ${tempTableName} AS t
-        WHERE rp."IdRead" = t."IdRead";
+        FROM "${tempTableName}" AS t
+        WHERE rp."FK_Equipment" = t."FK_Equipment" AND rp."Time" = t."Time";
     `);
 
         // Clean up the temporary table
-        //@ts-ignore
-        await trx.dropTable(tempTableName);
+        // await trx.dropTable(tempTableName);
+        await trx.raw(`DROP TABLE "${tempTableName}"`)
 
         console.log("Batch update completed successfully.");
       });
     } catch (error) {
       console.error("Error during batch update:", error);
+      throw error
     }
   }
 }
