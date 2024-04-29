@@ -3,6 +3,7 @@ import { Controller } from "../../../../presentation/controllers/ports/controlle
 import { makeLogControllerDecorator } from "../decorators";
 import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 import {
+  CompleteUserRegisterController,
   CreateUserController,
   DeleteUserController,
   FetchUserByIdController,
@@ -12,6 +13,7 @@ import {
   SignInController,
   SignUpController,
   UpdateUserController,
+  UpdateUserProfileController,
 } from "../../../../presentation/controllers/user";
 
 export class UserControllersFactory {
@@ -81,6 +83,22 @@ export class UserControllersFactory {
     return makeLogControllerDecorator(
       new UpdateUserController(
         UserUseCasesFactory.makeUpdateUser(),
+        SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      )
+    );
+  }
+  static makeUpdateUserProfile(): Controller {
+    return makeLogControllerDecorator(
+      new UpdateUserProfileController(
+        UserUseCasesFactory.makeUpdateUserProfile(),
+        SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      )
+    );
+  }
+  static makeCompleteUserRegister(): Controller {
+    return makeLogControllerDecorator(
+      new CompleteUserRegisterController(
+        UserUseCasesFactory.makeCompleteUserRegister(),
         SystemLogsUseCaseFactory.makeRegisterUserLogs()
       )
     );

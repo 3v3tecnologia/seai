@@ -14,8 +14,8 @@ export class UserLogin {
     return this.login;
   }
 
-  static create(login: string): Either<InvalidLoginError, UserLogin> {
-    if (login.length === 0 || login.length > UserLogin.maxLength) {
+  static create(login?: string | null): Either<InvalidLoginError, UserLogin> {
+    if (!login || login.length === 0 || login.length > UserLogin.maxLength) {
       return left(new InvalidLoginError());
     }
     return right(new UserLogin(login));

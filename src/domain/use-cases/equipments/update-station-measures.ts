@@ -1,40 +1,79 @@
 import { Either, left, right } from "../../../shared/Either";
-import { MeteorologicalOrganEntity } from "../../entities/equipments/MetereologicalOrgan";
+import { CalcEto } from "../../entities/equipments/Et0";
 import { Command } from "../_ports/core/command";
 
-import {
-  EquipmentsMeasuresRepositoryProtocol,
-  EquipmentsRepositoryProtocol,
-} from "../_ports/repositories/equipments-repository";
+import { IEquipmentsMeasuresRepository } from "../_ports/repositories/equipments-measurements.repository";
+import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class UpdateStationMeasures extends Command {
-  private readonly equipmentsRepository: EquipmentsMeasuresRepositoryProtocol;
+export class UpdateStationMeasurements extends Command {
+  private readonly equipmentsMeasurementsRepository: IEquipmentsMeasuresRepository;
+  private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
-  constructor(equipmentsRepository: EquipmentsMeasuresRepositoryProtocol) {
+  constructor(
+    equipmentsMeasurementsRepository: IEquipmentsMeasuresRepository,
+    equipmentsRepository: EquipmentsRepositoryProtocol
+  ) {
     super();
+    this.equipmentsMeasurementsRepository = equipmentsMeasurementsRepository;
     this.equipmentsRepository = equipmentsRepository;
   }
   async execute(
     request: UpdateStationMeasuresUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateStationMeasuresUseCaseProtocol.Response>> {
-    const measureExists =
-      await this.equipmentsRepository.getLatestStationMeasurements({
-        id: request.IdRead,
-      });
+    const measurementsNotExists =
+      (await this.equipmentsMeasurementsRepository.checkIfStationMeasurementsAlreadyExists(
+        request.IdRead
+      )) === false;
 
-    if (measureExists === null) {
+    if (measurementsNotExists) {
       return left(new Error("Medição não encontrada"));
     }
-    const hasMeasuresWithSameTime =
-      await this.equipmentsRepository.checkIfStationMeasureTimeAlreadyExists({
-        idRead: request.IdRead,
-        time: request.Time,
-      });
-    if (hasMeasuresWithSameTime) {
-      return left(new Error("Foi encontrado uma medição com o mesmo tempo."));
+
+    const equipment = await this.equipmentsRepository.getEquipmentId(
+      request.IdEquipment
+    );
+
+    if (equipment == null) {
+      return left(new Error("Equipmento não encontrado."));
     }
 
-    await this.equipmentsRepository.updateStationMeasures(request);
+    const eqpCoordinates = equipment.Location.Coordinates;
+
+    const Et0 = CalcEto({
+      date: new Date(request.Time),
+      location: {
+        altitude: equipment.Altitude as number,
+        latitude: (eqpCoordinates && eqpCoordinates[0]) || 0,
+        longitude: (eqpCoordinates && eqpCoordinates[1]) || 0,
+      },
+      measures: {
+        atmosphericPressure: request.AtmosphericPressure as number,
+        averageAtmosphericTemperature:
+          request.AverageAtmosphericTemperature as number,
+        averageRelativeHumidity: request.AverageRelativeHumidity as number,
+        maxAtmosphericTemperature: request.MaxAtmosphericTemperature as number,
+        maxRelativeHumidity: request.MaxRelativeHumidity as number,
+        minAtmosphericTemperature: request.MinAtmosphericTemperature as number,
+        minRelativeHumidity: request.MinRelativeHumidity as number,
+        totalRadiation: request.TotalRadiation as number,
+        windVelocity: request.WindVelocity as number,
+      },
+    });
+
+    await this.equipmentsMeasurementsRepository.updateStationMeasures({
+      IdRead: request.IdRead,
+      AtmosphericPressure: request.AtmosphericPressure as number,
+      AverageAtmosphericTemperature:
+        request.AverageAtmosphericTemperature as number,
+      AverageRelativeHumidity: request.AverageRelativeHumidity as number,
+      MaxAtmosphericTemperature: request.MaxAtmosphericTemperature as number,
+      MaxRelativeHumidity: request.MaxRelativeHumidity as number,
+      MinAtmosphericTemperature: request.MinAtmosphericTemperature as number,
+      MinRelativeHumidity: request.MinRelativeHumidity as number,
+      TotalRadiation: request.TotalRadiation as number,
+      WindVelocity: request.WindVelocity as number,
+      Et0: Et0,
+    });
 
     // TO-DO : add actions and table name as global constants
     this.addLog({
@@ -50,6 +89,7 @@ export class UpdateStationMeasures extends Command {
 export namespace UpdateStationMeasuresUseCaseProtocol {
   export type Request = {
     IdRead: number;
+    IdEquipment: number;
     Time: string;
     Hour: number | null;
     TotalRadiation: number | null;
@@ -60,7 +100,6 @@ export namespace UpdateStationMeasuresUseCaseProtocol {
     MaxAtmosphericTemperature: number | null;
     MinAtmosphericTemperature: number | null;
     AtmosphericPressure: number | null;
-    Et0: number | null;
     WindVelocity: number | null;
   };
 

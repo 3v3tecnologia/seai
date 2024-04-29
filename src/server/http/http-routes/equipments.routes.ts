@@ -7,7 +7,10 @@ import {
   registerManagerWriteAccessAuth,
 } from "../http-middlewares";
 
-import { EquipmentsControllerFactory } from "../factories/controllers";
+import {
+  EquipmentsControllerFactory,
+  EquipmentsMeasurementsControllerFactory,
+} from "../factories/controllers";
 import { SystemLogsControllersFactory } from "../factories/controllers";
 
 export const equipmentsRouter = (): Router => {
@@ -90,13 +93,22 @@ export const equipmentsRouter = (): Router => {
   router.put(
     "/measurements/pluviometer/:id",
     authorization,
-    adaptRoute(EquipmentsControllerFactory.makeUpdatePluviometerMeasures())
+    adaptRoute(
+      EquipmentsMeasurementsControllerFactory.makeUpdatePluviometerMeasures()
+    )
   );
 
   router.put(
     "/measurements/station/:id",
     authorization,
-    adaptRoute(EquipmentsControllerFactory.makeUpdateStationMeasures())
+    adaptRoute(
+      EquipmentsMeasurementsControllerFactory.makeUpdateStationMeasurements()
+    )
+  );
+
+  router.put(
+    "/measurements/et0",
+    adaptRoute(EquipmentsMeasurementsControllerFactory.makeUpdateEt0())
   );
 
   // router.get(
@@ -109,7 +121,7 @@ export const equipmentsRouter = (): Router => {
     "/measurements/:id",
     authorization,
     adaptRoute(
-      EquipmentsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
+      EquipmentsMeasurementsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
     )
   );
 

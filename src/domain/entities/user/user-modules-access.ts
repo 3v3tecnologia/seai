@@ -1,11 +1,14 @@
-import { AccountRepository } from "../../use-cases/_ports/repositories/account-repository";
 import { Either, left, right } from "../../../shared/Either";
 import {
   againstNullOrUndefinedBulk,
   checkArgumentsTypesBulk,
   concatenateMessages,
 } from "../../../shared/Guard";
-import { UserModulesNotFound } from "../../use-cases/user/sign-up/errors/user-email-not-found";
+import {
+  UserModuleIdNotFound,
+  UserModulesNotFound,
+} from "../../use-cases/user/errors/user-account-not-found";
+
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserType } from "./user";
 
@@ -148,31 +151,36 @@ export class SystemModules {
 
   static checkIfModuleExists(
     newUserModuleAccess: SystemModulesProps,
-    systemModules: Array<AccountRepository.AccountModulesData> | null
+    systemModules: Array<{ id: number; name: string }> | null
   ): Either<UserModulesNotFound, boolean> {
-    const systemModulesIds = systemModules?.map((module) => module.id);
-
-    if (systemModulesIds === undefined || systemModulesIds?.length === 0) {
+    if (systemModules === undefined || systemModules?.length === 0) {
       return left(new UserModulesNotFound());
     }
 
-    const userModulesAccess = [
-      newUserModuleAccess[Modules.NEWS].id,
-      newUserModuleAccess[Modules.REGISTER].id,
-      newUserModuleAccess[Modules.USER].id,
-      newUserModuleAccess[Modules.JOBS].id,
-    ];
+    const alreadyRegisteredModules = new Map<string, number>();
+    systemModules?.forEach((module) =>
+      alreadyRegisteredModules.set(module.name, module.id)
+    );
 
-    // evitar ter que salvar usuário com módulos que não existem
-    userModulesAccess.forEach((userModuleId) => {
-      const moduleNotExists =
-        systemModulesIds.some((moduleId) => moduleId === userModuleId) ===
-        false;
+    const newUserModules = new Map<string, SystemModulesPermissions>();
 
-      if (moduleNotExists) {
-        return left(new UserModulesNotFound());
+    for (let [moduleName, modulePermissions] of Object.entries(
+      newUserModuleAccess
+    )) {
+      newUserModules.set(moduleName, modulePermissions);
+    }
+
+    for (const [moduleName, modulePermissions] of alreadyRegisteredModules) {
+      const newModule = newUserModules.get(moduleName);
+
+      if (!newModule) {
+        return left(new UserModulesNotFound(moduleName));
       }
-    });
+
+      if (newModule.id !== modulePermissions) {
+        return left(new UserModuleIdNotFound(moduleName));
+      }
+    }
 
     return right(true);
   }
@@ -180,7 +188,7 @@ export class SystemModules {
   static create(
     modules: Required<SystemModulesProps>,
     permission_type: UserType,
-    systemModules?: Array<AccountRepository.AccountModulesData>
+    systemModules?: Array<{ id: number; name: string }>
   ): Either<Error, SystemModules> {
     if (systemModules) {
       const isExistsOrError = SystemModules.checkIfModuleExists(

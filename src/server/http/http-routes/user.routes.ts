@@ -18,17 +18,26 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeCreateUser())
   );
 
-  router.put(
-    "/profile",
+  router.patch(
+    "/profile/:id",
     authorization,
-    adaptRoute(UserControllersFactory.makeUpdateUser())
+    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
   );
 
+  // Update user account
   router.put(
     "/:id",
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeUpdateUser())
+  );
+
+  // Complete user account register
+  router.patch(
+    "/complete-register",
+    authorization,
+    userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
   );
 
   router.delete(

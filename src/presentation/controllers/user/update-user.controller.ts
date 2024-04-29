@@ -6,9 +6,9 @@ import {
   SystemModulesPermissions,
 } from "../../../domain/entities/user/user-modules-access";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { UpdateUser } from "../../../domain/use-cases/user/update-user";
-import { created, forbidden, serverError } from "../helpers";
+import { UpdateUser } from "../../../domain/use-cases/user";
 import { CommandController } from "../ports/command-controller";
+import { created, forbidden, serverError } from "../helpers";
 
 export class UpdateUserController extends CommandController<
   UpdateUserController.Request,
@@ -23,10 +23,10 @@ export class UpdateUserController extends CommandController<
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
-      const { id, accountId, email, modules } = request;
+      const { id, email, modules } = request;
 
       const dto = {
-        id: Number(accountId) || Number(id),
+        id: Number(id),
         name: Reflect.has(request, "name") ? (request.name as string) : null,
         login: Reflect.has(request, "login") ? (request.login as string) : null,
         email,
@@ -59,7 +59,6 @@ export class UpdateUserController extends CommandController<
 export namespace UpdateUserController {
   export type Request = {
     id: number;
-    accountId: number;
     email: string;
     type: UserType;
     name: string | null;

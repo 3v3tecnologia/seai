@@ -4,20 +4,18 @@ import {
 } from "../../../../domain/entities/equipments/Equipment";
 import {
   EquipmentRepositoryDTOProtocol,
-  EquipmentsMeasuresRepositoryProtocol,
   EquipmentsRepositoryProtocol,
-  MeasuresRepositoryDTOProtocol,
   MeteorologicalOrganRepositoryDTOProtocol,
   MeteorologicalOrganRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { getYesterDayDate } from "../../../../shared/utils/date";
 import { equipments } from "../connection/knexfile";
+import { geoLocationExtension } from "./utils/geolocation";
 import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 /*
   TO-DO : Create domain layer
 */
-
 function mapEquipmentToDomain(row: any) {
   return {
     Id: Number(row.Id),
@@ -40,10 +38,8 @@ function mapEquipmentToDomain(row: any) {
 
 export class DbEquipmentsRepository
   implements
-    EquipmentsRepositoryProtocol,
-    EquipmentsMeasuresRepositoryProtocol,
-    MeteorologicalOrganRepositoryProtocol
-{
+  EquipmentsRepositoryProtocol,
+  MeteorologicalOrganRepositoryProtocol {
   async getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result {
     const data = await equipments
       .select("IdOrgan", "Name", "Host", "User")
@@ -113,41 +109,58 @@ export class DbEquipmentsRepository
   }
 
   async createEquipment(
-    equipment: EquipmentRepositoryDTOProtocol.Create.Params
+    equipmentsList: EquipmentRepositoryDTOProtocol.Create.Params
   ): EquipmentRepositoryDTOProtocol.Create.Result {
-    let idEquipment = null;
+    const insertedEquipments = new Map<string, number>();
 
-    await equipments.transaction(async (trx) => {
-      const rawResult = await trx
-        .insert({
-          IdEquipmentExternal: equipment.IdEquipmentExternal,
-          Name: equipment.Name,
-          Altitude: equipment.Altitude,
-          FK_Organ: equipment.Fk_Organ,
-          FK_Type: equipment.Fk_Type,
-          Enable: equipment.Enable,
-          CreatedAt: equipments.fn.now(),
-        })
-        .returning("IdEquipment")
-        .into("MetereologicalEquipment")
-        .transacting(trx);
 
-      idEquipment = rawResult[0].IdEquipment;
+    // const st = geoLocationExtension(equipments);
 
-      const toGeometryPointSQL = `'POINT(${equipment.Location.Coordinates[0]} ${equipment.Location.Coordinates[1]})'::geometry`;
-
-      await trx
-        .raw(
-          `INSERT INTO "EquipmentLocation" ("Location","Name","FK_Equipment") 
-        VALUES (${toGeometryPointSQL},?,?)`,
-          [equipment.Location.Name, idEquipment]
+    /*await equipments.transaction(async (trx) => {
+      // TO-DO: how insert coordinates?
+      // TO-DO: how measurements?
+      const eqps = await trx
+        .batchInsert<any>(
+          "MetereologicalEquipment",
+          equipmentsList.map((equipment) => {
+            return {
+              IdEquipmentExternal: equipment.IdEquipmentExternal,
+              Name: equipment.Name,
+              Altitude: equipment.Altitude,
+              // Location: st.geomFromText("Point(-71.064544 44.28787)"),
+              Location: st.geomFromText(
+                `Point(${equipment.Location.Latitude} ${equipment.Location.Longitude})`
+              ),
+              FK_Organ: equipment.Fk_Organ,
+              FK_Type: equipment.Fk_Type,
+              Enable: equipment.Enabled,
+              CreatedAt: equipments.fn.now(),
+            };
+          })
         )
-        .transacting(trx);
+        .returning(["IdEquipment", "IdEquipmentExternal"]);
 
-      console.log(`Equipamento ${idEquipment} cadastrado com sucesso`);
+      // [ { IdEquipment: 1 }, { IdEquipment: 2 } ]
+      eqps.forEach((eqp) =>
+        insertedEquipments.set(eqp.IdEquipmentExternal, eqp.IdEquipment)
+      );
+    });*/
+
+    return insertedEquipments;
+  }
+
+  async getEquipmentsTypes() {
+    const type = new Map<string, number>();
+
+    const result = await equipments
+      .select("IdType", "Name")
+      .from("EquipmentType");
+
+    result.forEach((raw: any) => {
+      type.set(raw.Name, raw.IdType);
     });
 
-    return idEquipment ? Number(idEquipment) : null;
+    return type;
   }
 
   async updateEquipment(equipment: {
@@ -163,41 +176,6 @@ export class DbEquipmentsRepository
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
     });
-  }
-
-  async updateStationMeasures(
-    request: MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Params
-  ): MeasuresRepositoryDTOProtocol.UpdateStationMeasures.Result {
-    await equipments.transaction(async (trx) => {
-      await trx("ReadStations")
-        .update({
-          Time: request.Time,
-          Hour: request.Hour,
-          TotalRadiation: request.TotalRadiation,
-          AverageRelativeHumidity: request.AverageRelativeHumidity,
-          MinRelativeHumidity: request.MinRelativeHumidity,
-          MaxRelativeHumidity: request.MaxRelativeHumidity,
-          AverageAtmosphericTemperature: request.AverageAtmosphericTemperature,
-          MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
-          MinAtmosphericTemperature: request.MinAtmosphericTemperature,
-          AtmosphericPressure: request.AtmosphericPressure,
-          WindVelocity: request.WindVelocity,
-          Et0: request.Et0,
-        })
-        .where("IdRead", request.IdRead);
-    });
-  }
-
-  async updatePluviometerMeasures(
-    request: MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Params
-  ): MeasuresRepositoryDTOProtocol.UpdatePluviometerMeasures.Result {
-    await equipments("ReadPluviometers")
-      .update({
-        Value: request.Value,
-        Time: request.Time,
-        Hour: request.Hour,
-      })
-      .where("IdRead", request.IdRead);
   }
 
   async checkIfOrganExists(
@@ -244,38 +222,6 @@ export class DbEquipmentsRepository
 
     return exists ? true : false;
   }
-  async checkIfStationMeasureTimeAlreadyExists(
-    params: MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Params
-  ): MeasuresRepositoryDTOProtocol.CheckIfStationMeasureTimeAlreadyExists.Result {
-    const measure = await equipments
-      .select("IdRead")
-      .from("ReadStations")
-      .where({ Time: params.time })
-      .andWhereNot({ IdRead: params.idRead })
-      .first();
-
-    if (!measure) {
-      return false;
-    }
-
-    return measure.IdRead >= 0;
-  }
-  async checkIfPluviometerMeasureTimeAlreadyExists(
-    params: MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Params
-  ): MeasuresRepositoryDTOProtocol.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
-    const measure = await equipments
-      .select("IdRead")
-      .from("ReadPluviometers")
-      .where({ Time: params.time })
-      .andWhereNot({ IdRead: params.idRead })
-      .first();
-
-    if (!measure) {
-      return false;
-    }
-
-    return measure.IdRead >= 0;
-  }
 
   async getEquipmentIdByExternalCode(
     idEquipmentExternal: string
@@ -289,7 +235,7 @@ export class DbEquipmentsRepository
     return rawResult ? Number(rawResult.IdEquipment) : null;
   }
   async getEquipmentId(
-    id: EquipmentRepositoryDTOProtocol.GetIdBy.Params
+    id: number
   ): EquipmentRepositoryDTOProtocol.GetIdBy.Result {
     const result = await equipments.raw(
       `
@@ -482,367 +428,6 @@ export class DbEquipmentsRepository
       count: countRows,
     });
   }
-  async getStationsReads(
-    params: MeasuresRepositoryDTOProtocol.GetStations.Params
-  ): MeasuresRepositoryDTOProtocol.GetStations.Result {
-    const { idEquipment, pageNumber, limit, time } = params;
-    const pageLimit = limit || 20;
-    console.log(pageNumber);
-    // TODO: add format input here!
-    const pageOffset = pageNumber;
-
-    const binding = [];
-    const queries: Array<any> = [];
-
-    queries.push(`WHERE equipment."IdEquipment" = ?`);
-    binding.push(idEquipment);
-
-    if (time) {
-      queries.push(`AND stations."Time" >= ?`);
-      binding.push(time.start);
-
-      if (time.end !== null) {
-        queries.push(`AND stations."Time" <= ?`);
-        binding.push(time.end);
-      }
-    }
-
-    const countSQL = `
-      SELECT
-                     count(equipment."IdEquipment")
-                 FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
-            ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
-            ON organ."IdOrgan" = stations."FK_Organ"
-                     ${queries.join(" ")}
-    `;
-
-    const countRows = await countTotalRows(equipments)(countSQL, binding);
-
-    queries.push('ORDER BY stations."Time" ASC');
-    queries.push(`LIMIT ? OFFSET ?`);
-    binding.push(pageLimit);
-    binding.push(pageOffset);
-
-    const sqlQuery = `
-              SELECT
-                stations."IdRead",
-                stations."Time" AS "Date",
-                stations."Hour",
-                equipment."IdEquipment",
-                equipment."IdEquipmentExternal" AS "EquipmentCode",
-                organ."IdOrgan",
-                organ."Name" AS "OrganName",
-                equipment."Altitude",
-                stations."TotalRadiation",
-                stations."MaxRelativeHumidity",
-                stations."MinRelativeHumidity",
-                stations."AverageRelativeHumidity",
-                stations."MaxAtmosphericTemperature",
-                stations."MinAtmosphericTemperature",
-                stations."AverageAtmosphericTemperature" ,
-                stations."AtmosphericPressure" ,
-                stations."WindVelocity",
-                stations."Et0" AS "ETO"
-            FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
-            ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
-            ON organ."IdOrgan" = stations."FK_Organ"
-            ${queries.join(" ")}
-    `;
-
-    const data = await equipments.raw(sqlQuery, binding);
-
-    const rows = data.rows;
-
-    if (!rows.length) {
-      return null;
-    }
-
-    const measuresToDomain = rows.map((row: any) => ({
-      IdRead: Number(row.IdRead) || null,
-      Time: row.Date,
-      Hour: row.Hour,
-      Altitude: {
-        Unit: "m",
-        Value: Number(row.Altitude) || null,
-      },
-      TotalRadiation: {
-        Unit: "W/m",
-        Value: Number(row.TotalRadiation) || null,
-      },
-      AverageRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.AverageRelativeHumidity) || null,
-      },
-      MinRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MinRelativeHumidity) || null,
-      },
-      MaxRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MaxRelativeHumidity) || null,
-      },
-      AverageAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.AverageAtmosphericTemperature) || null,
-      },
-      MaxAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MaxAtmosphericTemperature) || null,
-      },
-      MinAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MinAtmosphericTemperature) || null,
-      },
-      AtmosphericPressure: {
-        Unit: "°C",
-        Value: Number(row.AtmosphericPressure) || null,
-      },
-      WindVelocity: {
-        Unit: "m/s",
-        Value: Number(row.WindVelocity) || null,
-      },
-      ETO: {
-        Unit: "mm",
-        Value: Number(row.ETO) || null,
-      },
-    }));
-
-    return toPaginatedOutput({
-      data: measuresToDomain,
-      page: pageNumber,
-      limit: pageLimit,
-      count: countRows,
-    });
-  }
-  async getPluviometersReads(
-    params: MeasuresRepositoryDTOProtocol.GetPluviometers.Params
-  ): MeasuresRepositoryDTOProtocol.GetPluviometers.Result {
-    const { idEquipment, pageNumber, limit, time } = params;
-
-    const binding = [];
-    const queries: Array<any> = [];
-    const pageLimit = limit || 20;
-    const offset = pageNumber;
-
-    queries.push(`WHERE equipment."IdEquipment" = ?`);
-    binding.push(idEquipment);
-
-    if (time) {
-      queries.push(`AND pluviometer."Time" >= ?`);
-      binding.push(time.start);
-
-      if (time.end !== null) {
-        queries.push(`AND pluviometer."Time" <= ?`);
-        binding.push(time.end);
-      }
-    }
-
-    const countSQL = `
-      SELECT
-          count("IdEquipment")
-      FROM
-        "MetereologicalEquipment" AS equipment 
-      INNER JOIN "ReadPluviometers" AS pluviometer
-        ON equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
-          ON organ."IdOrgan" = equipment."FK_Organ"
-                     ${queries.join(" ")}
-    `;
-
-    const countRows = await countTotalRows(equipments)(countSQL, binding);
-
-    console.log("[COUNT] ", countRows);
-
-    queries.push('ORDER BY pluviometer."Time" ASC');
-    queries.push(`LIMIT ? OFFSET ?`);
-    binding.push(pageLimit);
-    binding.push(offset);
-
-    const sql = `
-      SELECT
-          pluviometer."IdRead",
-          pluviometer."Time" ,
-          pluviometer."Hour" ,
-          organ."Name" AS "OrganName",
-          organ."IdOrgan",
-          pluviometer."Value"
-      FROM
-        "MetereologicalEquipment" AS equipment 
-      INNER JOIN "ReadPluviometers" AS pluviometer
-        ON equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
-          ON organ."IdOrgan" = equipment."FK_Organ"
-      ${queries.join(" ")};
-  `;
-
-    const data = await equipments.raw(sql, binding);
-
-    const rows = data.rows;
-
-    if (!rows.length) {
-      return null;
-    }
-
-    const toDomain = rows.map((row: any) => ({
-      IdRead: Number(row.IdRead) || null,
-      Time: row.Time,
-      Hour: row.Hour,
-      Precipitation: {
-        Unit: "mm",
-        Value: Number(row.Value) || null,
-      },
-    }));
-
-    return toPaginatedOutput({
-      data: toDomain,
-      page: pageNumber,
-      limit: pageLimit,
-      count: countRows,
-    });
-  }
-
-  async getLatestStationMeasurements(
-    params: MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Params
-  ): MeasuresRepositoryDTOProtocol.GetLatestStationMeasurements.Result {
-    const { id } = params;
-
-    const sqlQuery = `
-      SELECT
-                equipment."IdEquipment",
-                stations."IdRead",
-                stations."Time" AS "Date",
-                stations."Hour",
-                stations."TotalRadiation",
-                stations."MaxRelativeHumidity",
-                stations."MinRelativeHumidity",
-                stations."AverageRelativeHumidity",
-                stations."MaxAtmosphericTemperature",
-                stations."MinAtmosphericTemperature",
-                stations."AverageAtmosphericTemperature" ,
-                stations."AtmosphericPressure" ,
-                stations."WindVelocity",
-                stations."Et0"
-            FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
-            ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
-            ON organ."IdOrgan" = stations."FK_Organ"
-            WHERE equipment."IdEquipment" = ?
-            ORDER BY stations."IdRead" DESC
-            LIMIT 1;
-    `;
-
-    const data = await equipments.raw(sqlQuery, [id]);
-
-    if (!data.rows.length) {
-      return null;
-    }
-
-    const row = data.rows[0];
-
-    return {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.IdEquipment),
-      Time: row.Date,
-      Hour: row.Hour,
-      Altitude: {
-        Unit: "m",
-        Value: Number(row.Altitude) || null,
-      },
-      TotalRadiation: {
-        Unit: "W/m",
-        Value: Number(row.TotalRadiation) || null,
-      },
-      AverageRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.AverageRelativeHumidity) || null,
-      },
-      MinRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MinRelativeHumidity) || null,
-      },
-      MaxRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MaxRelativeHumidity) || null,
-      },
-      AverageAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.AverageAtmosphericTemperature) || null,
-      },
-      MaxAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MaxAtmosphericTemperature) || null,
-      },
-      MinAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MinAtmosphericTemperature) || null,
-      },
-      AtmosphericPressure: {
-        Unit: "°C",
-        Value: Number(row.AtmosphericPressure) || null,
-      },
-      WindVelocity: {
-        Unit: "m/s",
-        Value: Number(row.WindVelocity) || null,
-      },
-      Et0: {
-        Unit: "mm",
-        Value: Number(row.Et0) || null,
-      },
-    };
-  }
-  async getLatestPluviometerMeasurements(
-    params: MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Params
-  ): MeasuresRepositoryDTOProtocol.GetLatestPluviometerMeasurements.Result {
-    const { id } = params;
-
-    const sqlQuery = `
-      SELECT
-          pluviometer."IdRead",
-          pluviometer."Time" ,
-          pluviometer."Hour" ,
-          organ."Name" AS "OrganName",
-          organ."IdOrgan",
-          pluviometer."Value",
-          pluviometer."FK_Equipment"
-      FROM
-                    "MetereologicalEquipment" AS equipment
-      INNER JOIN "ReadPluviometers" AS pluviometer
-                    ON
-                equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
-                      ON
-                organ."IdOrgan" = equipment."FK_Organ"
-      WHERE
-                equipment."IdEquipment" = ?
-      ORDER BY
-          pluviometer."IdRead" DESC
-      LIMIT 1;
-    `;
-
-    const data = await equipments.raw(sqlQuery, [id]);
-
-    if (!data.rows.length) {
-      return null;
-    }
-
-    const row = data.rows[0];
-
-    return {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.FK_Equipment),
-      Time: row.Time,
-      Hour: row.Hour,
-      Precipitation: {
-        Unit: "mm",
-        Value: Number(row.Value),
-      },
-    };
-  }
 
   async getStationsWithYesterdayMeasurements(
     params: {
@@ -928,6 +513,7 @@ export class DbEquipmentsRepository
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
     const yesterdayDate = getYesterDayDate("-");
+
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -949,10 +535,9 @@ export class DbEquipmentsRepository
                           organ."IdOrgan" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${
-        [params?.latitude, params?.longitude].every((e) => e)
-          ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-          : ""
+      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${[params?.latitude, params?.longitude].every((e) => e)
+        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        : ""
       })
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (
@@ -987,5 +572,69 @@ export class DbEquipmentsRepository
     );
 
     return pluviometers.length ? pluviometers : null;
+  }
+  async getEquipmentsByType(type: string) {
+    const response = await equipments.raw(
+      `
+        SELECT
+          equipment."IdEquipment" AS "Id",
+          equipment."IdEquipmentExternal" AS "Code",
+          equipment."Name" AS "Location",
+          equipment."Altitude",
+          ST_AsGeoJSON(
+              equipment."Location"::geometry
+          )::json AS "GeoLocation",
+          eqp_type."Name" AS "Type",
+          organ."Name" AS "Organ",
+          organ."IdOrgan" AS "Organ_Id"
+        FROM
+          "MetereologicalEquipment" equipment
+        INNER JOIN "EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
+        INNER JOIN "MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
+        WHERE
+          eqp_type."Name" = ?
+        `,
+      [type]
+    );
+
+    const data = response.rows.map((eqp: any) => {
+      const coordinates = eqp.GeoLocation
+        ? eqp.GeoLocation["coordinates"]
+        : null;
+      return {
+        Id: eqp.Id,
+        Code: eqp.Code,
+        Altitude: eqp.Altitude,
+        Location:
+          coordinates !== null
+            ? {
+              Latitude: coordinates[0],
+              Longitude: coordinates[1],
+            }
+            : null,
+        Type: eqp.Type,
+        Organ: eqp.Organ,
+        Id_Organ: eqp.Organ_Id,
+      };
+    });
+    return data
+  }
+  async getOrganByName(organName: string) {
+    const result = await equipments
+      .select("IdOrgan", "Host", "User", "Password")
+      .from("MetereologicalOrgan")
+      .where({ Name: organName })
+      .first();
+
+    if (result) {
+      return {
+        Id: result.IdOrgan,
+        Host: result.Host,
+        User: result.User,
+        Password: result.Password,
+      };
+    }
+
+    return null;
   }
 }

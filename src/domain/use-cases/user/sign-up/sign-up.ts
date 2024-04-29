@@ -12,10 +12,8 @@ import {
   AuthenticationDTO,
   AuthenticationService,
 } from "../authentication/ports/authentication-service";
-import {
-  AccountEmailNotFound,
-  UserModulesNotFound,
-} from "./errors/user-email-not-found";
+import { UserModulesNotFound } from "../errors/user-account-not-found";
+import { AccountEmailNotFound } from "./errors/user-email-not-found";
 import { LoginAlreadyExists } from "./errors/user-login";
 import { SignUpDTO } from "./ports/sign-up";
 

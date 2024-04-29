@@ -4,21 +4,16 @@ import {
   DeleteEquipment,
   DeleteMeteorologicalOrgan,
   FetchEquipments,
-  FetchMeteorologicalOrgans,
-  FetchLatestEquipmentMeasurements,
-  FetchPluviometersReads,
   FetchEquipmentsWithYesterdayMeasurements,
-  FetchStationsReads,
+  FetchMeteorologicalOrgans,
   UpdateEquipment,
   UpdateMeteorologicalOrgan,
-  UpdatePluviometerMeasures,
-  UpdateStationMeasures,
 } from "../../../../domain/use-cases/equipments";
 
-import { DbEquipmentsRepository } from "../../../../infra/database/postgres/repositories/equipments-repository";
+import { DbEquipmentsRepository } from "../../../../infra/database/postgres/repositories/equipments.repository";
 
 export class EquipmentsUseCasesFactory {
-  private static repository = new DbEquipmentsRepository();
+  static repository = new DbEquipmentsRepository();
 
   static makeCreateEquipment(): CreateEquipments {
     return new CreateEquipments(this.repository);
@@ -48,30 +43,11 @@ export class EquipmentsUseCasesFactory {
     return new FetchMeteorologicalOrgans(this.repository);
   }
 
-  static makeFetchPluviometersReads(): FetchPluviometersReads {
-    return new FetchPluviometersReads(this.repository);
-  }
-
-  static makeFetchStationsReads(): FetchStationsReads {
-    return new FetchStationsReads(this.repository);
-  }
-
   static makeUpdateMeteorologicalOrgan(): UpdateMeteorologicalOrgan {
     return new UpdateMeteorologicalOrgan(this.repository);
   }
 
-  static makeUpdatePluviometerMeasures(): UpdatePluviometerMeasures {
-    return new UpdatePluviometerMeasures(this.repository);
-  }
-
-  static makeUpdateStationMeasures(): UpdateStationMeasures {
-    return new UpdateStationMeasures(this.repository);
-  }
   static makeFetchEquipmentsWithYesterdayMeasurements(): FetchEquipmentsWithYesterdayMeasurements {
     return new FetchEquipmentsWithYesterdayMeasurements(this.repository);
-  }
-
-  static makeFetchLatestEquipmentMeasurements(): FetchLatestEquipmentMeasurements {
-    return new FetchLatestEquipmentMeasurements(this.repository);
   }
 }

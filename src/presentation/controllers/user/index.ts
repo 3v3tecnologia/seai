@@ -7,3 +7,5 @@ export * from "./reset-password.controller";
 export * from "./sign-in.controller";
 export * from "./sign-up.controller";
 export * from "./update-user.controller";
+export * from "./update-profile.controller";
+export * from "./complete-user-register.controller";
