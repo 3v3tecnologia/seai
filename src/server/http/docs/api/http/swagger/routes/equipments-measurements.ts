@@ -186,7 +186,7 @@ export const MEASURES = {
   //     },
   //   },
   // },
-  [`${BASE_URL.V1}/equipments/measurements/{id}`]: {
+  [`${BASE_URL.V1}/equipments/measurements/station/{id}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -331,12 +331,13 @@ export const MEASURES = {
     },
     put: {
       tags: TAGS,
+      summary: "Update station measures",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
           in: "path",
-          description: "Equipment Id",
+          description: "Id equipment",
           required: true,
           schema: {
             type: "number",
@@ -349,6 +350,9 @@ export const MEASURES = {
             schema: {
               type: "object",
               properties: {
+                IdRead: "number",
+                Time: "string",
+                Hour: "number",
                 TotalRadiation: "number",
                 AverageRelativeHumidity: "number",
                 MinRelativeHumidity: "number",
@@ -360,15 +364,18 @@ export const MEASURES = {
                 Et0: "number",
               },
               example: {
-                TotalRadiation: 1,
-                AverageRelativeHumidity: 11.4,
-                MinRelativeHumidity: 11.4,
-                MaxRelativeHumidity: 11.4,
-                AverageAtmosphericTemperature: 11.4,
-                MaxAtmosphericTemperature: 11.4,
-                MinAtmosphericTemperature: 11.4,
-                AtmosphericPressure: 11.4,
-                Et0: 11.4,
+                IdRead: 1,
+                Time: "2022-10-02",
+                Hour: null,
+                TotalRadiation: 2,
+                AverageRelativeHumidity: 2,
+                MinRelativeHumidity: 2,
+                MaxRelativeHumidity: 2,
+                AverageAtmosphericTemperature: 2,
+                MaxAtmosphericTemperature: 2,
+                MinAtmosphericTemperature: 2,
+                AtmosphericPressure: 2,
+                WindVelocity: 2
               },
             },
           },
@@ -587,7 +594,7 @@ export const MEASURES = {
         {
           name: "id",
           in: "query",
-          description: "Id read",
+          description: "Id equipment",
           required: true,
           schema: {
             type: "number",

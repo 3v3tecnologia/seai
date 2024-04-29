@@ -7,8 +7,7 @@ import { UpdateStationMeasurements } from "../../../domain/use-cases/equipments/
 
 export class UpdateStationMeasuresController
   implements
-    Controller<UpdateStationMeasuresControllerProtocol.Request, HttpResponse>
-{
+  Controller<UpdateStationMeasuresControllerProtocol.Request, HttpResponse> {
   private updateEquipment: UpdateStationMeasurements;
   private userLogs: RegisterUserLogs;
 
@@ -37,8 +36,7 @@ export class UpdateStationMeasuresController
         MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: request.MinAtmosphericTemperature,
         AtmosphericPressure: request.AtmosphericPressure,
-        WindVelocity: request.WindVelocity,
-        Et0: request.Et0,
+        WindVelocity: request.WindVelocity
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -72,7 +70,6 @@ export namespace UpdateStationMeasuresControllerProtocol {
     MaxAtmosphericTemperature: number | null;
     MinAtmosphericTemperature: number | null;
     AtmosphericPressure: number | null;
-    Et0: number | null;
     WindVelocity: number | null;
   };
 }
