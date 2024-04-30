@@ -91,7 +91,7 @@ export const equipmentsRouter = (): Router => {
   // );
 
   router.put(
-    "/measurements/pluviometer/:id",
+    "/pluviometer/measurements/:id",
     authorization,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeUpdatePluviometerMeasures()
@@ -99,7 +99,7 @@ export const equipmentsRouter = (): Router => {
   );
 
   router.put(
-    "/measurements/station/:id",
+    "/station/measurements/:id",
     authorization,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeUpdateStationMeasurements()

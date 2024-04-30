@@ -7,8 +7,7 @@ import { UpdateStationMeasurements } from "../../../domain/use-cases/equipments/
 
 export class UpdateStationMeasuresController
   implements
-    Controller<UpdateStationMeasuresControllerProtocol.Request, HttpResponse>
-{
+  Controller<UpdateStationMeasuresControllerProtocol.Request, HttpResponse> {
   private updateEquipment: UpdateStationMeasurements;
   private userLogs: RegisterUserLogs;
 
@@ -25,10 +24,7 @@ export class UpdateStationMeasuresController
   ): Promise<HttpResponse> {
     try {
       const dto = {
-        IdEquipment: request.id,
-        IdRead: request.IdRead,
-        Time: request.Time,
-        Hour: request.Hour,
+        IdRead: Number(request.id),
         TotalRadiation: request.TotalRadiation,
         AverageRelativeHumidity: request.AverageRelativeHumidity,
         MinRelativeHumidity: request.MinRelativeHumidity,
@@ -37,8 +33,7 @@ export class UpdateStationMeasuresController
         MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: request.MinAtmosphericTemperature,
         AtmosphericPressure: request.AtmosphericPressure,
-        WindVelocity: request.WindVelocity,
-        Et0: request.Et0,
+        WindVelocity: request.WindVelocity
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -61,9 +56,6 @@ export namespace UpdateStationMeasuresControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    IdRead: number;
-    Time: string;
-    Hour: number | null;
     TotalRadiation: number | null;
     AverageRelativeHumidity: number | null;
     MinRelativeHumidity: number | null;
@@ -72,7 +64,6 @@ export namespace UpdateStationMeasuresControllerProtocol {
     MaxAtmosphericTemperature: number | null;
     MinAtmosphericTemperature: number | null;
     AtmosphericPressure: number | null;
-    Et0: number | null;
     WindVelocity: number | null;
   };
 }

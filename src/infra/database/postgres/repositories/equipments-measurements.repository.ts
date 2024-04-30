@@ -7,6 +7,60 @@ import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 export class EquipmentsMeasurementsRepository
   implements IEquipmentsMeasuresRepository {
+  async getStationMeasurementsById(
+    id: IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Params
+  ): IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Result {
+    const whereSQL = `
+      WHERE
+              rs."IdRead" = ?
+    `;
+    const querySQL = `
+      WITH StationMeasurements AS (
+          SELECT
+              rs.*
+          FROM
+              "ReadStations" AS rs
+          ${whereSQL}
+      )
+      SELECT
+          me."IdEquipment",
+          me."Altitude" ,
+          ST_AsGeoJSON(
+                                    me."Location"::geometry
+          )::json AS "GeoLocation" ,
+          rs.*
+      FROM
+          StationMeasurements AS rs
+      INNER JOIN equipments.public."MetereologicalEquipment" me 
+      ON
+          me."IdEquipment" = rs."FK_Equipment"
+    `;
+
+
+    const response = await equipments.raw(querySQL, id);
+
+    const rawMeasure = response.rows[0]
+
+    if (rawMeasure) {
+      return {
+        IdRead: rawMeasure.IdRead,
+        IdEquipment: rawMeasure.IdEquipment,
+        Time: rawMeasure.Time,
+        Hour: rawMeasure.Hour,
+        AverageAtmosphericTemperature: rawMeasure.AverageAtmosphericTemperature,
+        MinAtmosphericTemperature: rawMeasure.MinAtmosphericTemperature,
+        MaxAtmosphericTemperature: rawMeasure.MaxAtmosphericTemperature,
+        AverageRelativeHumidity: rawMeasure.AverageRelativeHumidity,
+        MaxRelativeHumidity: rawMeasure.MaxRelativeHumidity,
+        MinRelativeHumidity: rawMeasure.MinRelativeHumidity,
+        AtmosphericPressure: rawMeasure.AtmosphericPressure,
+        TotalRadiation: rawMeasure.TotalRadiation,
+        WindVelocity: rawMeasure.WindVelocity,
+      }
+    }
+
+    return null;
+  }
   async getStationsMeasurementsByIds(
     ids: IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Params
   ): IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Result {
@@ -428,6 +482,45 @@ export class EquipmentsMeasurementsRepository
       },
     };
   }
+  async checkIfPluviometerMeasurementsExists(
+    params: IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Params
+  ): IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Result {
+    const { id } = params;
+
+    const sqlQuery = `
+      SELECT
+          pluviometer."IdRead",
+          pluviometer."Time" ,
+          pluviometer."Hour" ,
+          organ."Name" AS "OrganName",
+          organ."IdOrgan",
+          pluviometer."Value",
+          pluviometer."FK_Equipment"
+      FROM
+                    "MetereologicalEquipment" AS equipment
+      INNER JOIN "ReadPluviometers" AS pluviometer
+                    ON
+                equipment."IdEquipment" = pluviometer."FK_Equipment"
+      INNER JOIN "MetereologicalOrgan" AS organ
+                      ON
+                organ."IdOrgan" = equipment."FK_Organ"
+      WHERE
+                equipment."IdEquipment" = ?
+      ORDER BY
+          pluviometer."IdRead" DESC
+      LIMIT 1;
+    `;
+
+    const response = await equipments.raw(sqlQuery, [id]);
+
+    if (!response.rows.length) {
+      return false;
+    }
+
+    const data = response.rows[0];
+
+    return !!data
+  }
   async checkIfPluviometerMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
@@ -500,9 +593,7 @@ export class EquipmentsMeasurementsRepository
   ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
     await equipments("ReadPluviometers")
       .update({
-        Value: request.Value,
-        Time: request.Time,
-        Hour: request.Hour,
+        Value: request.Value
       })
       .where("IdRead", request.IdRead);
   }
