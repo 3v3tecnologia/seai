@@ -7,6 +7,60 @@ import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 export class EquipmentsMeasurementsRepository
   implements IEquipmentsMeasuresRepository {
+  async getStationMeasurementsById(
+    id: IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Params
+  ): IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Result {
+    const whereSQL = `
+      WHERE
+              rs."IdRead" = ?
+    `;
+    const querySQL = `
+      WITH StationMeasurements AS (
+          SELECT
+              rs.*
+          FROM
+              "ReadStations" AS rs
+          ${whereSQL}
+      )
+      SELECT
+          me."IdEquipment",
+          me."Altitude" ,
+          ST_AsGeoJSON(
+                                    me."Location"::geometry
+          )::json AS "GeoLocation" ,
+          rs.*
+      FROM
+          StationMeasurements AS rs
+      INNER JOIN equipments.public."MetereologicalEquipment" me 
+      ON
+          me."IdEquipment" = rs."FK_Equipment"
+    `;
+
+
+    const response = await equipments.raw(querySQL, id);
+
+    const rawMeasure = response.rows[0]
+
+    if (rawMeasure) {
+      return {
+        IdRead: rawMeasure.IdRead,
+        IdEquipment: rawMeasure.IdEquipment,
+        Time: rawMeasure.Time,
+        Hour: rawMeasure.Hour,
+        AverageAtmosphericTemperature: rawMeasure.AverageAtmosphericTemperature,
+        MinAtmosphericTemperature: rawMeasure.MinAtmosphericTemperature,
+        MaxAtmosphericTemperature: rawMeasure.MaxAtmosphericTemperature,
+        AverageRelativeHumidity: rawMeasure.AverageRelativeHumidity,
+        MaxRelativeHumidity: rawMeasure.MaxRelativeHumidity,
+        MinRelativeHumidity: rawMeasure.MinRelativeHumidity,
+        AtmosphericPressure: rawMeasure.AtmosphericPressure,
+        TotalRadiation: rawMeasure.TotalRadiation,
+        WindVelocity: rawMeasure.WindVelocity,
+      }
+    }
+
+    return null;
+  }
   async getStationsMeasurementsByIds(
     ids: IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Params
   ): IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Result {
@@ -428,6 +482,45 @@ export class EquipmentsMeasurementsRepository
       },
     };
   }
+  async checkIfPluviometerMeasurementsExists(
+    params: IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Params
+  ): IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Result {
+    const { id } = params;
+
+    const sqlQuery = `
+      SELECT
+          pluviometer."IdRead",
+          pluviometer."Time" ,
+          pluviometer."Hour" ,
+          organ."Name" AS "OrganName",
+          organ."IdOrgan",
+          pluviometer."Value",
+          pluviometer."FK_Equipment"
+      FROM
+                    "MetereologicalEquipment" AS equipment
+      INNER JOIN "ReadPluviometers" AS pluviometer
+                    ON
+                equipment."IdEquipment" = pluviometer."FK_Equipment"
+      INNER JOIN "MetereologicalOrgan" AS organ
+                      ON
+                organ."IdOrgan" = equipment."FK_Organ"
+      WHERE
+                equipment."IdEquipment" = ?
+      ORDER BY
+          pluviometer."IdRead" DESC
+      LIMIT 1;
+    `;
+
+    const response = await equipments.raw(sqlQuery, [id]);
+
+    if (!response.rows.length) {
+      return false;
+    }
+
+    const data = response.rows[0];
+
+    return !!data
+  }
   async checkIfPluviometerMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
@@ -500,9 +593,7 @@ export class EquipmentsMeasurementsRepository
   ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
     await equipments("ReadPluviometers")
       .update({
-        Value: request.Value,
-        Time: request.Time,
-        Hour: request.Hour,
+        Value: request.Precipitation
       })
       .where("IdRead", request.IdRead);
   }
@@ -527,243 +618,5 @@ export class EquipmentsMeasurementsRepository
       console.error(error);
       await trx.rollback();
     }
-  }
-  async getPluviometersCodesWithMeasurements(equipmentsCodes = [], time: string) {
-    const result = await equipments
-      .select("MetereologicalEquipment.IdEquipmentExternal")
-      .from("ReadPluviometers")
-      .innerJoin(
-        "MetereologicalEquipment",
-        "MetereologicalEquipment.IdEquipment",
-        "ReadPluviometers.FK_Equipment"
-      )
-      .whereIn("IdEquipmentExternal", equipmentsCodes)
-      .andWhere({ Time: time });
-
-    const equipmentsWithMeasures = new Set();
-
-    if (result.length) {
-      result.forEach((eqp) => {
-        const { IdEquipmentExternal } = eqp;
-
-        equipmentsWithMeasures.add(IdEquipmentExternal);
-      });
-    }
-
-    return equipmentsWithMeasures;
-  }
-  async getStationCodesWithMeasurements(equipmentsCodes = [], time: string) {
-    const result = await equipments
-      .select("MetereologicalEquipment.IdEquipmentExternal")
-      .from("ReadStations")
-      .innerJoin(
-        "MetereologicalEquipment",
-        "MetereologicalEquipment.IdEquipment",
-        "ReadStations.FK_Equipment"
-      )
-      .whereIn("IdEquipmentExternal", equipmentsCodes)
-      .andWhere({ Time: time });
-
-    const equipmentsWithMeasures = new Set();
-
-    if (result.length) {
-      result.forEach((eqp) => {
-        const { IdEquipmentExternal } = eqp;
-
-        equipmentsWithMeasures.add(IdEquipmentExternal);
-      });
-    }
-
-    return equipmentsWithMeasures;
-  }
-  async updatePluviometersMeasurements(measurements: Array<any>) {
-    await equipments.transaction(async (trx) => {
-      const tempTableName = "Temp_ReadPluviometers";
-
-      // Create a temporary table
-      await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
-          "IdRead" INT GENERATED ALWAYS AS IDENTITY,
-          "Value" REAL,
-          "Time" DATE NOT NULL,
-          "Hour" SMALLINT DEFAULT NULL,
-          "FK_Organ" INT,
-          "FK_Equipment" INT,
-          PRIMARY KEY("IdRead")
-        );
-      `);
-
-      const toPersistency = measurements.map((eqp) => {
-        return {
-          FK_Equipment: eqp.FK_Equipment,
-          FK_Organ: eqp.FK_Organ,
-          Time: eqp.Time,
-          Hour: eqp.Hour,
-          Value: eqp.Value,
-        };
-      });
-
-      // Insert new data into the temporary table
-      await trx(tempTableName).insert(toPersistency);
-
-      // Perform the batch update
-      await trx.raw(`
-        UPDATE "ReadPluviometers" AS rp
-        SET
-          "FK_Equipment" = t."FK_Equipment",
-          "FK_Organ" = t."FK_Organ",
-          "Time" = t."Time",
-          "Hour" = t."Hour",
-          "Value" = t."Value"
-        FROM "${tempTableName}" AS t
-        WHERE rp."Time" = t."Time" AND rp."FK_Equipment" = t."FK_Equipment";
-    `);
-
-      // Clean up the temporary table
-      await trx.raw(`DROP TABLE IF EXISTS "${tempTableName}"`);
-    });
-  }
-  async updateStationsMeasurements(measurements: Array<any>): Promise<Array<number> | null> {
-    let updatedIds: Array<number> = [];
-
-    await equipments.transaction(async (trx) => {
-      const tempTableName = "Temp_ReadStations";
-
-      // Create a temporary table
-      await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
-        "IdRead" INT GENERATED ALWAYS AS IDENTITY,
-        "Time" DATE NOT NULL,
-        "Hour" SMALLINT DEFAULT NULL,
-        "TotalRadiation" REAL DEFAULT NULL,
-        "MaxRelativeHumidity" REAL DEFAULT NULL,
-        "MinRelativeHumidity" REAL DEFAULT NULL,
-        "AverageRelativeHumidity" REAL DEFAULT NULL,
-        "MaxAtmosphericTemperature" REAL DEFAULT NULL,
-        "MinAtmosphericTemperature" REAL DEFAULT NULL,
-        "AverageAtmosphericTemperature" REAL DEFAULT NULL,
-        "AtmosphericPressure" REAL DEFAULT NULL,
-        "WindVelocity" REAL DEFAULT NULL,
-        "Et0" REAL DEFAULT NULL,
-        "FK_Organ" INT,
-        "FK_Equipment" INT,
-        PRIMARY KEY("IdRead")
-        );
-      `);
-
-      const toPersistency = measurements.map((measures) => {
-        return {
-          FK_Equipment: measures.FK_Equipment,
-          FK_Organ: measures.FK_Organ,
-          Time: measures.Time,
-          Hour: measures.Hour,
-          TotalRadiation: measures.TotalRadiation,
-          MaxRelativeHumidity: measures.MaxRelativeHumidity,
-          MinRelativeHumidity: measures.MinRelativeHumidity,
-          AverageRelativeHumidity: measures.AverageRelativeHumidity,
-          MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
-          MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
-          AverageAtmosphericTemperature: measures.AverageAtmosphericTemperature,
-          AtmosphericPressure: measures.AtmosphericPressure,
-          WindVelocity: measures.WindVelocity,
-        };
-      });
-
-      // Insert new data into the temporary table
-      await trx(tempTableName).insert(toPersistency);
-
-      updatedIds = await trx.select("IdRead").from(tempTableName);
-
-      // Perform the batch update
-      await trx.raw(`
-        UPDATE "ReadStations" AS rs
-        SET
-          "FK_Equipment" =  t."FK_Equipment",
-          "FK_Organ" = t."FK_Organ",
-          "Time" = t."Time",
-          "Hour" = t."Hour",
-          "TotalRadiation" = t."TotalRadiation",
-          "MaxRelativeHumidity" = t."MaxRelativeHumidity",
-          "MinRelativeHumidity" = t."MinRelativeHumidity",
-          "AverageRelativeHumidity" = t."AverageRelativeHumidity",
-          "MaxAtmosphericTemperature" = t."MaxAtmosphericTemperature",
-          "MinAtmosphericTemperature" = t."MinAtmosphericTemperature",
-          "AverageAtmosphericTemperature" = t."AverageAtmosphericTemperature",
-          "AtmosphericPressure" = t."AtmosphericPressure",
-          "WindVelocity" = t."WindVelocity"
-        FROM "${tempTableName}" AS t
-        WHERE rs."Time" = t."Time" AND rs."FK_Equipment" = t."FK_Equipment";
-    `);
-
-      // Clean up the temporary table
-      await trx.raw(`DROP TABLE IF EXISTS "${tempTableName}"`);
-    });
-
-    return updatedIds;
-  }
-  async insertStationsMeasurements(measurements: Array<any>): Promise<Array<number>> {
-    let ids: Array<number> = []
-    await equipments.transaction(async (trx) => {
-      const response = await trx
-        .batchInsert<{
-          IdRead: number,
-          FK_Equipment: number,
-          FK_Organ: number,
-          Time: string,
-          Hour: number | null,
-          TotalRadiation: number | null,
-          MaxRelativeHumidity: number | null,
-          MinRelativeHumidity: number | null,
-          AverageRelativeHumidity: number | null,
-          MaxAtmosphericTemperature: number | null,
-          MinAtmosphericTemperature: number | null,
-          AverageAtmosphericTemperature:
-          number | null,
-          AtmosphericPressure: number | null,
-          WindVelocity: number | null,
-          Et0: null
-        }>(
-          "ReadStations",
-          measurements.map((measures) => {
-            return {
-              FK_Equipment: measures.FK_Equipment,
-              FK_Organ: measures.FK_Organ,
-              Time: measures.Time,
-              Hour: measures.Hour,
-              TotalRadiation: measures.TotalRadiation,
-              MaxRelativeHumidity: measures.MaxRelativeHumidity,
-              MinRelativeHumidity: measures.MinRelativeHumidity,
-              AverageRelativeHumidity: measures.AverageRelativeHumidity,
-              MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
-              MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
-              AverageAtmosphericTemperature:
-                measures.AverageAtmosphericTemperature,
-              AtmosphericPressure: measures.AtmosphericPressure,
-              WindVelocity: measures.WindVelocity,
-              Et0: null,
-            };
-          })
-        ).returning("IdRead")
-
-      ids = response.length ? response.map((item) => item.IdRead) : []
-    });
-
-    return ids
-  }
-  async insertPluviometersMeasurements(measurements: Array<any> = []) {
-    await equipments.transaction(async (trx) => {
-      await trx.batchInsert(
-        "ReadPluviometers",
-        measurements.map((eqp) => {
-          return {
-            FK_Equipment: eqp.FK_Equipment,
-            FK_Organ: eqp.FK_Organ,
-            Time: eqp.Time,
-            Hour: eqp.Hour,
-            Value: eqp.Value,
-          };
-        })
-      );
-    });
   }
 }

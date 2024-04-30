@@ -7,8 +7,7 @@ import { badRequest, ok, serverError } from "../helpers";
 
 export class UpdatePluviometerController
   implements
-    Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse>
-{
+  Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse> {
   private updateEquipment: UpdatePluviometerMeasures;
   private userLogs: RegisterUserLogs;
 
@@ -26,9 +25,7 @@ export class UpdatePluviometerController
     try {
       const dto = {
         IdRead: request.id,
-        Time: request.Time,
-        Hour: request.Hour,
-        Value: request.Value,
+        Precipitation: request.Precipitation,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -51,8 +48,6 @@ export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Time: string;
-    Hour: number | null;
-    Value: number | null;
+    Precipitation: number | null;
   };
 }

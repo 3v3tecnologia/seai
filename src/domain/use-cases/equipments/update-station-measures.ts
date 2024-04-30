@@ -20,27 +20,28 @@ export class UpdateStationMeasurements extends Command {
   async execute(
     request: UpdateStationMeasuresUseCaseProtocol.Request
   ): Promise<Either<Error, UpdateStationMeasuresUseCaseProtocol.Response>> {
-    const measurementsNotExists =
-      (await this.equipmentsMeasurementsRepository.checkIfStationMeasurementsAlreadyExists(
-        request.IdRead
-      )) === false;
+    const measurements = await this.equipmentsMeasurementsRepository.getStationMeasurementsById(
+      request.IdRead
+    )
 
-    if (measurementsNotExists) {
+    if (measurements === null) {
       return left(new Error("Medição não encontrada"));
     }
 
     const equipment = await this.equipmentsRepository.getEquipmentId(
-      request.IdEquipment
+      measurements.IdEquipment
     );
+
 
     if (equipment == null) {
       return left(new Error("Equipmento não encontrado."));
     }
 
+
     const eqpCoordinates = equipment.Location.Coordinates;
 
     const Et0 = CalcEto({
-      date: new Date(request.Time),
+      date: new Date(measurements.Time),
       location: {
         altitude: equipment.Altitude as number,
         latitude: (eqpCoordinates && eqpCoordinates[0]) || 0,
@@ -89,9 +90,6 @@ export class UpdateStationMeasurements extends Command {
 export namespace UpdateStationMeasuresUseCaseProtocol {
   export type Request = {
     IdRead: number;
-    IdEquipment: number;
-    Time: string;
-    Hour: number | null;
     TotalRadiation: number | null;
     AverageRelativeHumidity: number | null;
     MinRelativeHumidity: number | null;

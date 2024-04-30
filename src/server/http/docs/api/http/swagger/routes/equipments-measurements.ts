@@ -205,7 +205,7 @@ export const MEASURES = {
         {
           name: "id",
           in: "path",
-          description: "Id read",
+          description: "Id equipment",
           required: true,
           schema: {
             type: "number",
@@ -271,56 +271,70 @@ export const MEASURES = {
                   },
                 },
                 example: {
-                  data: {
-                    IdRead: 1,
-                    IdEquipment: 1,
-                    Time: "2023-11-20T00:00:00.000Z",
-                    Hour: null,
-                    Altitude: {
-                      Unit: "m",
-                      Value: 30.4,
-                    },
-                    TotalRadiation: {
-                      Unit: "W/m",
-                      Value: 255.68,
-                    },
-                    AverageRelativeHumidity: {
-                      Unit: "%",
-                      Value: 74.87,
-                    },
-                    MinRelativeHumidity: {
-                      Unit: "%",
-                      Value: 52.41,
-                    },
-                    MaxRelativeHumidity: {
-                      Unit: "%",
-                      Value: 87.5,
-                    },
-                    AverageAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 28.31,
-                    },
-                    MaxAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 32.97,
-                    },
-                    MinAtmosphericTemperature: {
-                      Unit: "°C",
-                      Value: 25.29,
-                    },
-                    AtmosphericPressure: {
-                      Unit: "°C",
-                      Value: 1008.94,
-                    },
-                    WindVelocity: {
-                      Unit: "m/s",
-                      Value: 3.5,
-                    },
-                    Et0: {
-                      Unit: "mm",
-                      Value: 4.911332,
+                  StationExample: {
+                    data: {
+                      IdRead: 1,
+                      IdEquipment: 1,
+                      Time: "2023-11-20T00:00:00.000Z",
+                      Hour: null,
+                      Altitude: {
+                        Unit: "m",
+                        Value: 30.4,
+                      },
+                      TotalRadiation: {
+                        Unit: "W/m",
+                        Value: 255.68,
+                      },
+                      AverageRelativeHumidity: {
+                        Unit: "%",
+                        Value: 74.87,
+                      },
+                      MinRelativeHumidity: {
+                        Unit: "%",
+                        Value: 52.41,
+                      },
+                      MaxRelativeHumidity: {
+                        Unit: "%",
+                        Value: 87.5,
+                      },
+                      AverageAtmosphericTemperature: {
+                        Unit: "°C",
+                        Value: 28.31,
+                      },
+                      MaxAtmosphericTemperature: {
+                        Unit: "°C",
+                        Value: 32.97,
+                      },
+                      MinAtmosphericTemperature: {
+                        Unit: "°C",
+                        Value: 25.29,
+                      },
+                      AtmosphericPressure: {
+                        Unit: "°C",
+                        Value: 1008.94,
+                      },
+                      WindVelocity: {
+                        Unit: "m/s",
+                        Value: 3.5,
+                      },
+                      Et0: {
+                        Unit: "mm",
+                        Value: 4.911332,
+                      },
                     },
                   },
+                  PluviometerExample: {
+                    data: {
+                      IdRead: 4319,
+                      IdEquipment: 550,
+                      Time: "2024-04-17T00:00:00.000Z",
+                      Hour: null,
+                      Precipitation: {
+                        Unit: "mm",
+                        Value: 0
+                      }
+                    }
+                  }
                 },
               },
             },
@@ -329,14 +343,17 @@ export const MEASURES = {
         ...DEFAULT_RESPONSES,
       },
     },
+  },
+  [`${BASE_URL.V1}/equipments/station/measurements/{id}`]: {
     put: {
       tags: TAGS,
+      summary: "Update station measurements",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
           in: "path",
-          description: "Equipment Id",
+          description: "Measurement Id",
           required: true,
           schema: {
             type: "number",
@@ -356,19 +373,18 @@ export const MEASURES = {
                 AverageAtmosphericTemperature: "number",
                 MaxAtmosphericTemperature: "number",
                 MinAtmosphericTemperature: "number",
-                AtmosphericPressure: "number",
-                Et0: "number",
+                AtmosphericPressure: "number"
               },
               example: {
-                TotalRadiation: 1,
-                AverageRelativeHumidity: 11.4,
-                MinRelativeHumidity: 11.4,
-                MaxRelativeHumidity: 11.4,
-                AverageAtmosphericTemperature: 11.4,
-                MaxAtmosphericTemperature: 11.4,
-                MinAtmosphericTemperature: 11.4,
-                AtmosphericPressure: 11.4,
-                Et0: 11.4,
+                TotalRadiation: 2,
+                AverageRelativeHumidity: 2,
+                MinRelativeHumidity: 2,
+                MaxRelativeHumidity: 2,
+                AverageAtmosphericTemperature: 2,
+                MaxAtmosphericTemperature: 2,
+                MinAtmosphericTemperature: 2,
+                AtmosphericPressure: 2,
+                WindVelocity: 2
               },
             },
           },
@@ -510,90 +526,37 @@ export const MEASURES = {
   //     },
   //   },
   // },
-  [`${BASE_URL.V1}/equipments/measurements/pluviometer/{id}`]: {
-    get: {
+  [`${BASE_URL.V1}/equipments/pluviometer/measurements/{id}`]: {
+    put: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Get latest pluviometer measurements",
+      summary: "Update pluviometer measurements",
       parameters: [
         {
           name: "id",
           in: "query",
-          description: "Id read",
+          description: "Measurement Id",
           required: true,
           schema: {
             type: "number",
           },
         },
       ],
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "object",
-                      items: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            Date: "number",
-                            IdRead: "number",
-                            IdEquipment: "number",
-                            Code: "number",
-                            Name: "string",
-                            Precipitation: {
-                              type: "object",
-                              properties: {
-                                Unit: "string",
-                                Value: "number",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: {
-                    IdRead: 1,
-                    IdEquipment: 5,
-                    Time: "2023-11-20T00:00:00.000Z",
-                    Hour: null,
-                    Precipitation: {
-                      Unit: "mm",
-                      Value: 0,
-                    },
-                  },
-                },
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                Precipitation: "number"
+              },
+              example: {
+                Precipitation: 1
               },
             },
           },
         },
-        ...DEFAULT_RESPONSES,
       },
-    },
-    put: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Update pluviometer measures",
-      parameters: [
-        {
-          name: "id",
-          in: "query",
-          description: "Id read",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
       responses: {
         200: {
           content: {
