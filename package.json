@@ -15,7 +15,11 @@
     "build:start": "npm run build:clean && npm start",
     "dev:watch": "concurrently -s all \"tsc -w\" nodemon dist/src/index.js",
     "start:dev": "cross-env NODE_ENV=development nodemon",
-    "start:prod": "cross-env NODE_ENV=production node dist/src/index.js"
+    "start:prod": "cross-env NODE_ENV=production node dist/src/index.js",
+    "container:up:dev": "docker compose -f docker-compose.dev.yml up -d ",
+    "container:down:dev": "docker compose -f docker-compose.dev.yml down -d ",
+    "container:logs": "docker container logs --tail 200 seai-server",
+    "container:logs:watch": "docker container logs -f --tail 100 seai-server"
   },
   "keywords": [],
   "license": "ISC",
