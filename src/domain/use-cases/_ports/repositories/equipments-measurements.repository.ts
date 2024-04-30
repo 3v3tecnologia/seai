@@ -86,7 +86,7 @@ export namespace IEquipsMeasurementsRepoDTO {
       IdRead: number;
       // Time: string;
       // Hour: number | null;
-      Value: number | null;
+      Precipitation: number | null;
     };
 
     export type Result = Promise<void>;

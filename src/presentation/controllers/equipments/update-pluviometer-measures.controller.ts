@@ -25,7 +25,7 @@ export class UpdatePluviometerController
     try {
       const dto = {
         IdRead: request.id,
-        Value: request.Value,
+        Precipitation: request.Precipitation,
       };
 
       const resultOrError = await this.updateEquipment.execute(dto);
@@ -48,6 +48,6 @@ export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    Value: number | null;
+    Precipitation: number | null;
   };
 }

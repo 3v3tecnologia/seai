@@ -344,16 +344,16 @@ export const MEASURES = {
       },
     },
   },
-  [`${BASE_URL.V1}/equipments/measurements/station/{id}`]: {
+  [`${BASE_URL.V1}/equipments/station/measurements/{id}`]: {
     put: {
       tags: TAGS,
-      summary: "Update station measures",
+      summary: "Update station measurements",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "id",
           in: "path",
-          description: "Id equipment",
+          description: "Measurement Id",
           required: true,
           schema: {
             type: "number",
@@ -366,9 +366,6 @@ export const MEASURES = {
             schema: {
               type: "object",
               properties: {
-                IdRead: "number",
-                Time: "string",
-                Hour: "number",
                 TotalRadiation: "number",
                 AverageRelativeHumidity: "number",
                 MinRelativeHumidity: "number",
@@ -376,13 +373,9 @@ export const MEASURES = {
                 AverageAtmosphericTemperature: "number",
                 MaxAtmosphericTemperature: "number",
                 MinAtmosphericTemperature: "number",
-                AtmosphericPressure: "number",
-                Et0: "number",
+                AtmosphericPressure: "number"
               },
               example: {
-                IdRead: 1,
-                Time: "2022-10-02",
-                Hour: null,
                 TotalRadiation: 2,
                 AverageRelativeHumidity: 2,
                 MinRelativeHumidity: 2,
@@ -533,22 +526,37 @@ export const MEASURES = {
   //     },
   //   },
   // },
-  [`${BASE_URL.V1}/equipments/measurements/pluviometer/{id}`]: {
+  [`${BASE_URL.V1}/equipments/pluviometer/measurements/{id}`]: {
     put: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Update pluviometer measures",
+      summary: "Update pluviometer measurements",
       parameters: [
         {
           name: "id",
           in: "query",
-          description: "Id equipment",
+          description: "Measurement Id",
           required: true,
           schema: {
             type: "number",
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                Precipitation: "number"
+              },
+              example: {
+                Precipitation: 1
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           content: {

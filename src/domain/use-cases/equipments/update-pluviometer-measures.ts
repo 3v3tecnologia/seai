@@ -41,7 +41,7 @@ export class UpdatePluviometerMeasures extends Command {
 export namespace UpdatePluviometerMeasuresUseCaseProtocol {
   export type Request = {
     IdRead: number;
-    Value: number | null;
+    Precipitation: number | null;
   };
 
   export type Response = string;

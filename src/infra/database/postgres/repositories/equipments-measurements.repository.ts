@@ -593,7 +593,7 @@ export class EquipmentsMeasurementsRepository
   ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
     await equipments("ReadPluviometers")
       .update({
-        Value: request.Value
+        Value: request.Precipitation
       })
       .where("IdRead", request.IdRead);
   }
