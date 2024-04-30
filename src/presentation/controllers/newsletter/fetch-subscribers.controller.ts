@@ -2,8 +2,10 @@ import { HttpResponse } from "../ports";
 
 import { FetchSubscribersUseCaseProtocol } from "../../../domain/use-cases/newsletter";
 import { created, forbidden, serverError } from "../helpers";
+import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
+import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 
-export class FetchNewsletterSubscribersController  {
+export class FetchNewsletterSubscribersController {
   private useCase: FetchSubscribersUseCaseProtocol.UseCase;
 
   constructor(
@@ -16,23 +18,27 @@ export class FetchNewsletterSubscribersController  {
     request: FetchNewsletterSubscribersControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const createdOrError = await this.useCase.execute({
-        email: request.email,
-        limit: request.limit,
-        pageNumber: request.pageNumber,
-      });
+      const dto = { ...formatPaginationInput(request.pageNumber, request.limit) }
 
-      console.log("[FetchNewsletterSubscribersController] ",{
-        email: request.email,
-        limit: request.limit,
-        pageNumber: request.pageNumber,
-      })
-
-      if (createdOrError.isLeft()) {
-        return forbidden(createdOrError.value);
+      if (request.name) {
+        Object.assign(dto, {
+          name: request.name
+        })
       }
 
-      return created(createdOrError.value);
+      if (request.email) {
+        Object.assign(dto, {
+          email: request.email
+        })
+      }
+      const resultOrError = await this.useCase.execute(dto);
+
+
+      if (resultOrError.isLeft()) {
+        return forbidden(resultOrError.value);
+      }
+
+      return created(resultOrError.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -41,8 +47,5 @@ export class FetchNewsletterSubscribersController  {
 }
 
 export namespace FetchNewsletterSubscribersControllerProtocol {
-  export type Request = { email?: string } & Omit<
-    FetchSubscribersUseCaseProtocol.Request,
-    "Id"
-  >;
+  export type Request = { email?: string, name?: string } & InputWithPagination
 }
