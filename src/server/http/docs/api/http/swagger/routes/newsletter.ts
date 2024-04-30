@@ -12,6 +12,35 @@ export const NEWSLETTER = {
       tags: TAGS,
       summary: "Get all news",
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "title",
+          in: "query",
+          required: false,
+          description: "News title",
+          schema: {
+            type: "string"
+          },
+        },
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Pagination number. Default 1",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "limit",
+          in: "query",
+          description: "Data limit",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       responses: {
         200: {
           content: {
@@ -57,27 +86,26 @@ export const NEWSLETTER = {
                 },
                 example: {
                   data: {
-                    Data: [
+                    Items: [
                       {
-                        Id: 4,
+                        Id: 2,
                         Author: {
                           Id: 1,
-                          Email: "testSender@gmail.com",
-                          Organ: "FUNCEME",
+                          Email: "test@gmail.com",
+                          Organ: "Funceme"
                         },
-                        Title: "TESTINHO",
-                        Description: "Testinho",
-                        CreatedAt: "2023-12-12T11:24:24.600Z",
-                        UpdatedAt: "2023-12-12T11:24:24.600Z",
-                      },
+                        Title: "Test",
+                        Description: "Test",
+                        CreatedAt: "2024-04-30T14:37:34.297Z",
+                        UpdatedAt: "2024-04-30T14:37:34.297Z"
+                      }
                     ],
-                    Pagination: {
-                      PageLimitRows: 40,
-                      PageNumber: 1,
-                      QtdRows: 1,
-                    },
-                  },
-                },
+                    TotalItems: 1,
+                    Page: 1,
+                    PageSize: 40,
+                    TotalPages: 1
+                  }
+                }
               },
             },
           },
@@ -346,16 +374,25 @@ export const NEWSLETTER = {
       },
     },
   },
-  [`${URL}/registered/list`]: {
+  [`${URL}/subscribers`]: {
     get: {
       tags: TAGS,
-      summary: "Get subscribers or subcriber",
+      summary: "Get newsletter subscribers",
       security: [BEARER_AUTH],
       parameters: [
         {
           name: "email",
           in: "query",
           description: "Email",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+        {
+          name: "name",
+          in: "query",
+          description: "Name",
           required: false,
           schema: {
             type: "string",
@@ -370,29 +407,21 @@ export const NEWSLETTER = {
                 type: "object",
                 example: {
                   data: {
-                    Data: [
+                    Items: [
                       {
                         Id: 1,
                         Email: "tester@gmail.com",
                         Name: "Tester",
-                        CreatedAt: "2024-01-23T20:07:44.973Z",
-                        UpdatedAt: "2024-01-23T20:07:44.973Z",
-                      },
-                      {
-                        Id: 3,
-                        Email: "tester2@gmail.com",
-                        Name: "Tester",
-                        CreatedAt: "2024-01-23T20:08:53.246Z",
-                        UpdatedAt: "2024-01-23T20:08:53.246Z",
-                      },
+                        CreatedAt: "2024-04-30T16:11:16.522Z",
+                        UpdatedAt: "2024-04-30T16:11:16.522Z"
+                      }
                     ],
-                    Pagination: {
-                      PageLimitRows: 50,
-                      PageNumber: 1,
-                      QtdRows: 2,
-                    },
-                  },
-                },
+                    TotalItems: 1,
+                    Page: 1,
+                    PageSize: 40,
+                    TotalPages: 1
+                  }
+                }
               },
             },
           },
