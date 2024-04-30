@@ -7,6 +7,7 @@ import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
+import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 
 export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(
@@ -28,7 +29,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async associateJobToNews(id_job: string, id_news: number): Promise<void> {
-    const result = await newsletterDb
+    await newsletterDb
       .insert({
         Fk_Job: id_job,
         Fk_News: id_news,
@@ -38,7 +39,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async deleteJobFromNews(id_news: number): Promise<void> {
-    const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
+    await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
       .where({
         Fk_News: id_news,
       })
@@ -63,7 +64,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async update(
     request: ContentRepositoryDTO.Update.Request
   ): ContentRepositoryDTO.Update.Response {
-    const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS)
+    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
       .where({
         Id: request.Id,
       })
@@ -114,34 +115,64 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async getAll(
-    request: InputWithPagination
+    params: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response {
-    const result = await newsletterDb.raw(`
-      SELECT 
-          n."Id" ,
-          n."Fk_Sender" ,
-          n."Title" ,
-          n."Description" ,
-          n."CreatedAt" ,
-          n."UpdatedAt",
-          s."Email" ,
-          s."Organ" 
-      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
-      ON s."Id" = n."Fk_Sender" 
-      LIMIT ${request.limit} OFFSET  ${request.pageNumber}
-    `);
+    console.log(params);
+    const { pageNumber, limit, offset, title } = params;
 
-    if (result.rows.length === 0) {
+    const binding = [];
+
+    const queries: Array<string> = [];
+
+    if (title) {
+      queries.push(`WHERE (
+          to_tsvector('simple', coalesce(news."Title", '')) 
+          ) @@ to_tsquery('simple', '${title}:*')`);
+    }
+
+    const countSQL = `
+      SELECT count(news."Id") FROM "${DATABASES.NEWSLETTER.NEWS}" as news
+      ${queries.join(" ")}
+    `;
+
+    const countRows = await countTotalRows(newsletterDb)(countSQL);
+
+    queries.push(`order by news."Id" LIMIT ? OFFSET ?`);
+
+    binding.push(limit);
+    binding.push(offset);
+
+    const response = await newsletterDb.raw(`
+      SELECT 
+          news."Id" ,
+          news."Fk_Sender" ,
+          news."Title" ,
+          news."Description" ,
+          news."CreatedAt" ,
+          news."UpdatedAt",
+          sender."Email" ,
+          sender."Organ" 
+      FROM "${DATABASES.NEWSLETTER.NEWS}" as news 
+      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" as sender
+      ON sender."Id" = news."Fk_Sender" 
+      ${queries.join(" ")}
+    `, binding);
+
+    const rows = response.rows
+
+    if (rows.length === 0) {
       return null;
     }
 
-    const data = result.rows.map((row: any) => NewsMapper.toDomain(row));
+    const news = rows.map((row: any) => NewsMapper.toDomain(row));
 
-    return withPagination(data, {
-      count: result.rows.length,
-      limit: request.limit,
-      offset: request.pageNumber,
+    console.log(news);
+
+    return toPaginatedOutput({
+      data: news,
+      page: pageNumber,
+      limit: limit,
+      count: countRows,
     });
   }
 }

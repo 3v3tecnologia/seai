@@ -8,9 +8,9 @@ import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
+import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
 export class DbNewsLetterSubscriberRepository
-  implements SubscriberRepositoryProtocol
-{
+  implements SubscriberRepositoryProtocol {
   async create(
     request: SubscriberRepositoryDTO.Create.Request
   ): SubscriberRepositoryDTO.Create.Response {
@@ -68,26 +68,82 @@ export class DbNewsLetterSubscriberRepository
   }
 
   async getAll(
-    request: InputWithPagination
+    params: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response {
-    const result = await newsletterDb.raw(`
-      SELECT "Id", "Name", "Email", "CreatedAt", "UpdatedAt"
-      FROM "${DATABASES.NEWSLETTER.SUBSCRIBER}" n 
-      LIMIT ${request.limit} OFFSET  ${request.pageNumber}
-    `);
+    console.log(params);
+    const { pageNumber, limit, offset, name, email } = params;
 
-    if (result.rows.length === 0) {
+    const binding = [];
+    const queries: Array<string> = [];
+
+    if (name) {
+      queries.push(`WHERE (
+          to_tsvector('simple', coalesce(sub."Name", ''))
+          ) @@ to_tsquery('simple', '${name}:*')`);
+    }
+
+    if (email) {
+      const byEmail = `
+        (
+            to_tsvector(
+              'simple',
+              COALESCE(
+                  sub."Email",
+                  ''
+              )
+          )
+        ) @@ to_tsquery(
+        'simple',
+        '${email}:*'
+        )
+      `
+
+      if (queries.length) {
+        queries.push(`OR ${byEmail}`)
+      } else {
+        queries.push(`WHERE ${byEmail}`)
+      }
+    }
+
+    const countSQL = `
+      SELECT
+        count(sub."Id")
+      FROM
+          "${DATABASES.NEWSLETTER.SUBSCRIBER}" AS sub
+      ${queries.join(" ")}
+    `;
+
+    const countRows = await countTotalRows(newsletterDb)(countSQL);
+
+    queries.push(`order by sub."Id" LIMIT ? OFFSET ?`);
+
+    binding.push(limit);
+    binding.push(offset);
+
+    const sql = `
+      SELECT "Id", "Name", "Email", "CreatedAt", "UpdatedAt"
+      FROM "${DATABASES.NEWSLETTER.SUBSCRIBER}" as sub 
+      ${queries.join(" ")}
+    `
+
+    const response = await newsletterDb.raw(sql, binding);
+
+
+    const rows = response.rows
+
+    if (rows.length === 0) {
       return null;
     }
 
-    const data = result.rows.map((row: any) =>
+    const data = rows.map((row: any) =>
       NewsSubscriberMapper.toDomain(row)
     );
 
-    return withPagination(data, {
-      count: result.rows.length,
-      limit: request.limit,
-      offset: request.pageNumber,
+    return toPaginatedOutput({
+      data: data,
+      page: pageNumber,
+      limit: limit,
+      count: countRows,
     });
   }
 }

@@ -3,6 +3,7 @@ import { Content } from "../../../entities/newsletter/news";
 import { Sender } from "../../../entities/newsletter/sender";
 import { Subscriber } from "../../../entities/newsletter/subscriber";
 import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { IOuputWithPagination } from "./dto/output";
 
 export namespace NewsletterSenderRepositoryDTO {
   export namespace Create {
@@ -38,18 +39,19 @@ export namespace NewsletterSenderRepositoryDTO {
 
   export namespace GetAll {
     export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<
+    export type Response = Promise<IOuputWithPagination<
       Required<Sender>
-    > | null>;
+    >>;
   }
 }
 
 export namespace ContentRepositoryDTO {
   export namespace GetAll {
-    export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<
+    export type Request = { title?: string } & InputWithPagination;
+
+    export type Response = Promise<IOuputWithPagination<
       Required<Content>
-    > | null>;
+    >>;
   }
 
   export namespace Create {
@@ -97,8 +99,8 @@ export namespace ContentRepositoryDTO {
 
 export namespace SubscriberRepositoryDTO {
   export namespace GetAll {
-    export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<Subscriber> | null>;
+    export type Request = { name?: string, email?: string } & InputWithPagination;
+    export type Response = Promise<IOuputWithPagination<Subscriber>>;
   }
 
   export namespace Create {

@@ -22,7 +22,7 @@ export const newsRouter = (): Router => {
   );
 
   router.get(
-    "/registered/list",
+    "/subscribers",
     authorization,
     adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribers())
   );

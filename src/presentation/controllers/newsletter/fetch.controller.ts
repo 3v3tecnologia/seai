@@ -14,9 +14,15 @@ export class FetchNewsController {
 
   async handle(request: FetchNewsController.Request): Promise<HttpResponse> {
     try {
-      const createdOrError = await this.useCase.create({
-        ...formatPaginationInput(request.pageNumber, request.limit),
-      });
+      const dto = { ...formatPaginationInput(request.pageNumber, request.limit) }
+
+      if (request.title) {
+        Object.assign(dto, {
+          title: request.title
+        })
+      }
+
+      const createdOrError = await this.useCase.execute(dto);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -32,8 +38,8 @@ export class FetchNewsController {
 
 export namespace FetchNewsController {
   export type Request = {
-    accountId: number;
-    start?: string;
-    end?: string | null;
+    title?: string;
+    // start?: string;
+    // end?: string | null;
   } & InputWithPagination;
 }
