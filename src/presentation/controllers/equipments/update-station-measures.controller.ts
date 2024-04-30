@@ -24,10 +24,7 @@ export class UpdateStationMeasuresController
   ): Promise<HttpResponse> {
     try {
       const dto = {
-        IdEquipment: request.id,
-        IdRead: request.IdRead,
-        Time: request.Time,
-        Hour: request.Hour,
+        IdRead: Number(request.id),
         TotalRadiation: request.TotalRadiation,
         AverageRelativeHumidity: request.AverageRelativeHumidity,
         MinRelativeHumidity: request.MinRelativeHumidity,
@@ -59,9 +56,6 @@ export namespace UpdateStationMeasuresControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    IdRead: number;
-    Time: string;
-    Hour: number | null;
     TotalRadiation: number | null;
     AverageRelativeHumidity: number | null;
     MinRelativeHumidity: number | null;

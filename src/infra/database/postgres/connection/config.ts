@@ -104,7 +104,7 @@ export const db_config: { [index: string]: any } = {
       },
     },
   },
-  equipments: {
+  [DATABASES.EQUIPMENTS]: {
     development: {
       client: "pg",
       connection: {
@@ -112,7 +112,7 @@ export const db_config: { [index: string]: any } = {
         port: env.database.port,
         user: env.database.user,
         password: env.database.password,
-        database: "equipments",
+        database: DATABASES.EQUIPMENTS,
         charset: "utf8",
         timezone: "Brazil/East",
       },
@@ -126,7 +126,7 @@ export const db_config: { [index: string]: any } = {
       connection: {
         host: env.database.host,
         port: env.database.port,
-        database: "equipments",
+        database: DATABASES.EQUIPMENTS,
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",
