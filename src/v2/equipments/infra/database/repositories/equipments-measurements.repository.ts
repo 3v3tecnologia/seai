@@ -46,9 +46,11 @@ export class DbEquipmentsMeasurementsRepository {
     return null;
   }
 
-  static async insertStations(measurements: Array<any>) {
+  static async insertStations(measurements: Array<any>): Promise<Array<number>> {
+    let ids: Array<number> = [];
+
     await equipmentsDb.transaction(async (trx) => {
-      await trx.batchInsert(
+      ids = await trx.batchInsert<any>(
         "ReadStations",
         measurements.map((measures: any) => {
           return {
@@ -66,11 +68,14 @@ export class DbEquipmentsMeasurementsRepository {
               measures.AverageAtmosphericTemperature,
             AtmosphericPressure: measures.AtmosphericPressure,
             WindVelocity: measures.WindVelocity,
-            Et0: measures.Et0,
+            Et0: measures.Et0 || null,
           };
         })
-      );
+        //@ts-ignore
+      ).returning("IdRead");
     });
+
+    return ids
   }
 
   static async insertPluviometers(measurements: Array<any>) {
@@ -90,7 +95,8 @@ export class DbEquipmentsMeasurementsRepository {
     });
   }
 
-  static async updateStations(measurements: Array<any>) {
+  static async updateStations(measurements: Array<any>): Promise<Array<number>> {
+    let updatedIds: Array<number> = [];
     try {
       await equipmentsDb.transaction(async (trx) => {
         const tempTableName = "Temp_ReadStations";
@@ -140,6 +146,8 @@ export class DbEquipmentsMeasurementsRepository {
         // Insert new data into the temporary table
         await trx(tempTableName).insert(toPersistency);
 
+        updatedIds = await trx.select("IdRead").from(tempTableName);
+
         // Perform the batch update
         await trx.raw(`
         UPDATE "ReadStations" AS rs
@@ -167,6 +175,8 @@ export class DbEquipmentsMeasurementsRepository {
 
         console.log("Batch update completed successfully.");
       });
+
+      return updatedIds;
     } catch (error) {
       console.error("Error during batch update:", error);
       throw error
@@ -229,5 +239,54 @@ export class DbEquipmentsMeasurementsRepository {
       console.error("Error during batch update:", error);
       throw error
     }
+  }
+
+  static async getStationCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
+    const result = await equipmentsDb
+      .select("MetereologicalEquipment.IdEquipmentExternal")
+      .from("ReadStations")
+      .innerJoin(
+        "MetereologicalEquipment",
+        "MetereologicalEquipment.IdEquipment",
+        "ReadStations.FK_Equipment"
+      )
+      .whereIn("IdEquipmentExternal", equipmentsCodes)
+      .andWhere({ Time: time });
+
+    const equipmentsWithMeasures: Array<string> = [];
+
+    if (result.length) {
+      result.forEach((eqp: any) => {
+        const { IdEquipmentExternal } = eqp;
+
+        equipmentsWithMeasures.push(IdEquipmentExternal);
+      });
+    }
+
+    return equipmentsWithMeasures;
+  }
+  static async getPluviometersCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
+    const result = await equipmentsDb
+      .select("MetereologicalEquipment.IdEquipmentExternal")
+      .from("ReadPluviometers")
+      .innerJoin(
+        "MetereologicalEquipment",
+        "MetereologicalEquipment.IdEquipment",
+        "ReadPluviometers.FK_Equipment"
+      )
+      .whereIn("IdEquipmentExternal", equipmentsCodes)
+      .andWhere({ Time: time });
+
+    const equipmentsWithMeasures: Array<string> = [];
+
+    if (result.length) {
+      result.forEach((eqp: any) => {
+        const { IdEquipmentExternal } = eqp;
+
+        equipmentsWithMeasures.push(IdEquipmentExternal);
+      });
+    }
+
+    return equipmentsWithMeasures;
   }
 }

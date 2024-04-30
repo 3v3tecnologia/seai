@@ -8,6 +8,11 @@ export const setupEquipmentsMeasurementsRoutes = (router: Router): void => {
     //     adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
     // );
 
+    router.get(
+        "/measurements",
+        adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
+    );
+
     router.put(
         "/measurements/",
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkUpdate)

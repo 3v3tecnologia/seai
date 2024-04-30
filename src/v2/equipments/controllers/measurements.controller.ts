@@ -3,15 +3,19 @@ import { HttpResponse } from "../../../presentation/controllers/ports";
 import { EquipmentsMeasurementsServices } from "../services/measurements";
 
 export class EquipmentsMeasurementsControllers {
-    // static async getByEquipmentsCodesAndDate(codes: Array<number>, date: string, eqpType: 'station' | 'pluviometer'): Promise<HttpResponse> {
-    //     try {
-    //         const codes = 
-    //         return created('');
-    //     } catch (error) {
-    //         console.error(error);
-    //         return serverError(error as Error);
-    //     }
-    // }
+    static async getByEquipmentsCodesAndDate(request: { codes: Array<string>, date: string, type: 'station' | 'pluviometer' }): Promise<HttpResponse> {
+        try {
+            const codesOrError = await EquipmentsMeasurementsServices.getByEquipmentsCodesAndDate(request.type, request.codes, request.date)
+
+            if (codesOrError.isLeft()) {
+                return badRequest(codesOrError.value)
+            }
+            return created(codesOrError.value);
+        } catch (error) {
+            console.error(error);
+            return serverError(error as Error);
+        }
+    }
 
     static async bulkUpdate(request: { type: 'station' | 'pluviometer', items: Array<any> }): Promise<HttpResponse> {
         try {
