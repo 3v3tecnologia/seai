@@ -7,8 +7,6 @@ import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchEquipments {
-  private LIMIT: number = 40;
-  private PAGE_NUMBER: number = 0;
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {

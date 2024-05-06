@@ -1,3 +1,4 @@
+import { CalcEto } from "../../../domain/entities/equipments/Et0"
 import { Either, left, right } from "../../../shared/Either"
 import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositories/equipments-measurements.repository"
 
@@ -6,7 +7,42 @@ export namespace bulkUpdateMeasurementsDTO {
     export type Output = {}
 }
 
+export type StationMeasurementsToPersist = {
+    FK_Equipment: number,
+    FK_Organ: number,
+    Time: string,
+    Hour: number | null,
+    Altitude: number | null,
+    Longitude: number | null,
+    Latitude: number | null,
+    TotalRadiation: number | null,
+    MaxRelativeHumidity: number | null,
+    MinRelativeHumidity: number | null,
+    AverageRelativeHumidity: number | null,
+    MaxAtmosphericTemperature: number | null,
+    MinAtmosphericTemperature: number | null,
+    AverageAtmosphericTemperature: number | null,
+    AtmosphericPressure: number | null,
+    WindVelocity: number | null
+    Et0?: number | null
+}
+
+export type PluviometerMeasurementsToPersist = {
+    FK_Equipment: number,
+    FK_Organ: number,
+    Time: string,
+    Hour: number | null,
+    Altitude: number | null,
+    Longitude: number | null,
+    Latitude: number | null,
+    Precipitation: number | null,
+}
+
 export class EquipmentsMeasurementsServices {
+
+    static async getDateOfLastMeasurementTaken(): Promise<Either<Error, Array<any> | null>> {
+        return right(await DbEquipmentsMeasurementsRepository.getDateOfLastMeasurementTaken())
+    }
 
     static async getByEquipmentsCodesAndDate(eqpType: 'station' | 'pluviometer', codes: Array<string>, date: string): Promise<Either<Error, Array<string>>> {
         let data: Array<string> = []
@@ -36,7 +72,8 @@ export class EquipmentsMeasurementsServices {
 
         switch (type) {
             case "station":
-                ids = await DbEquipmentsMeasurementsRepository.updateStations(measurements)
+                const toPersist = calcEt0FromList(measurements)
+                ids = await DbEquipmentsMeasurementsRepository.updateStations(toPersist)
                 break;
             case "pluviometer":
                 await DbEquipmentsMeasurementsRepository.updatePluviometers(measurements)
@@ -49,21 +86,7 @@ export class EquipmentsMeasurementsServices {
 
     }
 
-    static async bulkInsert(type: 'station' | 'pluviometer', measurements: Array<{
-        FK_Equipment: number,
-        FK_Organ: number,
-        Time: string,
-        Hour: number | null,
-        TotalRadiation: number | null,
-        MaxRelativeHumidity: number | null,
-        MinRelativeHumidity: number | null,
-        AverageRelativeHumidity: number | null,
-        MaxAtmosphericTemperature: number | null,
-        MinAtmosphericTemperature: number | null,
-        AverageAtmosphericTemperature: number | null,
-        AtmosphericPressure: number | null,
-        WindVelocity: number | null
-    }>): Promise<Either<Error, Array<number>>> {
+    static async bulkInsert(type: 'station' | 'pluviometer', measurements: Array<StationMeasurementsToPersist | StationMeasurementsToPersist>): Promise<Either<Error, Array<number>>> {
         const noMeasurementsProvided = !measurements.length
 
 
@@ -75,7 +98,8 @@ export class EquipmentsMeasurementsServices {
 
         switch (type) {
             case "station":
-                ids = await DbEquipmentsMeasurementsRepository.insertStations(measurements)
+                const toPersist = calcEt0FromList(measurements)
+                ids = await DbEquipmentsMeasurementsRepository.insertStations(toPersist)
                 break;
             case "pluviometer":
                 await DbEquipmentsMeasurementsRepository.insertPluviometers(measurements)
@@ -87,4 +111,34 @@ export class EquipmentsMeasurementsServices {
         return right(ids)
     }
 
+}
+
+function calcEt0FromList(measurements: Array<any>) {
+    return measurements.map((item: any) => {
+        const Et0 = CalcEto({
+            date: new Date(item.Time),
+            location: {
+                altitude: item.Altitude as number,
+                latitude: item.Latitude as number,
+                longitude: item.Longitude as number,
+            },
+            measures: {
+                atmosphericPressure: item.AtmosphericPressure as number,
+                averageAtmosphericTemperature: item.AverageAtmosphericTemperature as number,
+                averageRelativeHumidity: item.AverageRelativeHumidity as number,
+                maxAtmosphericTemperature: item.MaxAtmosphericTemperature as number,
+                maxRelativeHumidity: item.MaxRelativeHumidity as number,
+                minAtmosphericTemperature: item.MinAtmosphericTemperature as number,
+                minRelativeHumidity: item.MinRelativeHumidity as number,
+                totalRadiation: item.TotalRadiation as number,
+                windVelocity: item.WindVelocity as number,
+            },
+        });
+
+        console.log("[ET0] :: ", Et0);
+
+        item.Et0 = Et0
+
+        return item
+    });
 }
