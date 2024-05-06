@@ -154,12 +154,11 @@ export const EQUIPMENTS = {
   [`${BASE_URL.V2}/equipments/last-update-date`]: {
     get: {
       tags: TAGS,
-      summary: "Get all equipments",
-      description: "List all stations and pluviometer",
+      summary: "Get last update date",
+      description: "Get by meteorological organ",
       security: [BEARER_AUTH],
       responses: {
         200: {
-          description: "All equipments",
           content: {
             "application/json": {
               schema: {

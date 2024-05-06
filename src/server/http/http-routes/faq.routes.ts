@@ -7,70 +7,87 @@ import {
 } from "../http-middlewares";
 import { FaqControllersFactory } from "../factories/controllers";
 
-export const faqRouter = (): Router => {
-  const router = Router();
+const setupCategoryRoutes = (router: Router): void => {
+  router.get(
+    "/category",
+    authorization,
+    adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
+  );
+
+  router.put(
+    "/category",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
+  );
+
   router.post(
-    "/create",
+    "/category",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
+  );
+
+  router.delete(
+    "/category/:id",
+    authorization,
+    registerManagerWriteAccessAuth,
+    adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
+  );
+}
+
+const setupFaqRoutes = (router: Router): void => {
+  router.get(
+    "/by-categories",
+    authorization,
+    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
+  );
+
+  router.get(
+    "/by-category/:id",
+    authorization,
+    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
+  );
+
+  router.get(
+    "/",
+    authorization,
+    adaptRoute(FaqControllersFactory.makeFetchFaqsWithCategory())
+  );
+
+  router.get(
+    "/:id",
+    authorization,
+    adaptRoute(FaqControllersFactory.makeFetchFaqById())
+  );
+
+
+  router.post(
+    "/",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeCreateFaq())
   );
+
   router.put(
-    "/update",
+    "/",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeUpdateFaq())
   );
+
   router.delete(
-    "/delete/:id",
+    "/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeDeleteFaq())
   );
 
-  router.get(
-    "/list-by-categories",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
-  );
-  router.get(
-    "/list-by-category/:id",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
-  );
-  router.get(
-    "/list",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqsWithCategory())
-  );
-  router.get(
-    "/get/:id",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqById())
-  );
-  router.get(
-    "/category/list",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
-  );
-  router.put(
-    "/category/update",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
-  );
-  router.post(
-    "/category/create",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
-  );
-  router.delete(
-    "/category/delete/:id",
-    authorization,
-    registerManagerWriteAccessAuth,
-    adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
-  );
-
-  return router;
 };
+
+const faqRouter = Router();
+
+setupFaqRoutes(faqRouter)
+setupCategoryRoutes(faqRouter)
+
+export { faqRouter }
