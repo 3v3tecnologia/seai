@@ -118,7 +118,7 @@ export const equipmentsRouter = (): Router => {
   // );
 
   router.get(
-    "/measurements/:id",
+    "/:id/measurements",
     authorization,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeFetchLatestEquipmentMeasurementsController()

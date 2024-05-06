@@ -186,7 +186,7 @@ export const MEASURES = {
   //     },
   //   },
   // },
-  [`${BASE_URL.V1}/equipments/measurements/{id}`]: {
+  [`${BASE_URL.V1}/equipments/{id}/measurements`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
