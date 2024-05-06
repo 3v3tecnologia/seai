@@ -10,8 +10,7 @@ import {
 
 export class UpdateNews
   extends Command
-  implements UpdateNewsUseCaseProtocol.UseCase
-{
+  implements UpdateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
   private scheduleJob: CreateJobUseCaseProtocol.UseCase;
   private fetchJob: FetchJobUseCaseProtocol.UseCase;
@@ -74,8 +73,8 @@ export class UpdateNews
       id: oldJob.id,
       data: toUpdate.NewsId
         ? {
-            id: toUpdate.NewsId,
-          }
+          id: toUpdate.NewsId,
+        }
         : null,
       name: oldJob.name,
       priority: oldJob.priority,
@@ -89,34 +88,37 @@ export class UpdateNews
   private async createOrScheduleJob(
     request: UpdateNewsUseCaseProtocol.Request
   ) {
-    const associatedJobId = await this.repository.getIdJobFromNews(request.Id);
-    console.log("[associatedJobId] ", associatedJobId);
-    if (associatedJobId === null) {
-      return await this.createNewsletterJob(request);
+    try {
+      const associatedJobId = await this.repository.getIdJobFromNews(request.Id);
+      if (associatedJobId === null) {
+        return await this.createNewsletterJob(request);
+      }
+
+      const jobOrError = await this.fetchJob.execute({
+        id: associatedJobId,
+      });
+
+      if (jobOrError.isLeft()) {
+        return await this.createNewsletterJob(request);
+      }
+
+      const oldJob = jobOrError.value;
+
+
+      const currentDate = new Date().getTime();
+
+      const newSendDate = new Date(request.SendDate).getTime();
+
+      const isSendDateToFuture = currentDate - newSendDate < 0;
+
+      return await this.updateNewsletterJob(oldJob, {
+        NewsId: request.Id,
+        SendDate: isSendDateToFuture ? request.SendDate : oldJob.startafter,
+      });
+    } catch (error) {
+      console.error(error);
+      return left(new Error("Falha ao criar ou reagendar job de notícias"))
     }
-
-    const jobOrError = await this.fetchJob.execute({
-      id: associatedJobId,
-    });
-
-    if (jobOrError.isLeft()) {
-      return await this.createNewsletterJob(request);
-    }
-
-    const oldJob = jobOrError.value;
-
-    console.log("[oldJob] ", oldJob);
-
-    const currentDate = new Date().getTime();
-
-    const newSendDate = new Date(request.SendDate).getTime();
-
-    const isSendDateToFuture = currentDate - newSendDate < 0;
-
-    return await this.updateNewsletterJob(oldJob, {
-      NewsId: request.Id,
-      SendDate: isSendDateToFuture ? request.SendDate : oldJob.startafter,
-    });
   }
 
   async execute(
@@ -130,13 +132,6 @@ export class UpdateNews
       return left(new Error(`Notícia não encontrada.`));
     }
 
-    const updatedOrError = await this.createOrScheduleJob(request);
-
-    if (updatedOrError.isLeft()) {
-      console.error("Falha ao reagendar ou criar jobs");
-      console.error(updatedOrError.value);
-    }
-
     await this.repository.update(request);
 
     const successLog = `Notícia atualizada com sucessso.`;
@@ -146,6 +141,13 @@ export class UpdateNews
       table: DATABASES.NEWSLETTER.NEWS,
       description: successLog,
     });
+
+    const updatedOrError = await this.createOrScheduleJob(request);
+
+    if (updatedOrError.isLeft()) {
+      console.error("Falha ao reagendar ou criar jobs");
+      console.error(updatedOrError.value);
+    }
 
     return right(successLog);
   }

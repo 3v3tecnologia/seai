@@ -6,8 +6,7 @@ import { CreateJobUseCaseProtocol } from "../jobs";
 
 export class CreateNews
   extends Command
-  implements CreateNewsUseCaseProtocol.UseCase
-{
+  implements CreateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
   private readonly scheduleJob: CreateJobUseCaseProtocol.UseCase;
   constructor(
@@ -18,33 +17,52 @@ export class CreateNews
     this.repository = repository;
     this.scheduleJob = scheduleJob;
   }
+
+  private async createJob(newsId: number, sendDate?: string) {
+    try {
+      const jobOrError = await this.scheduleJob.execute({
+        name: "send-newsletter",
+        data: {
+          id: newsId,
+        },
+        priority: 1,
+        retryDelay: 60,
+        retryLimit: 3,
+        startAfter: sendDate,
+      });
+
+
+
+      if (jobOrError.isLeft()) {
+        return left(jobOrError.value);
+      }
+
+      const job = jobOrError.value;
+
+
+      await this.repository.associateJobToNews(job.id, newsId);
+
+      return right("Sucesso ao agentar job de notícias")
+    } catch (error) {
+      console.error(error)
+      return left(new Error("Falha ao agendar job de notícias"))
+    }
+  }
+
   async create(
     request: CreateNewsUseCaseProtocol.Request
   ): CreateNewsUseCaseProtocol.Response {
     const newsId = await this.repository.create(request);
 
-    const jobOrError = await this.scheduleJob.execute({
-      name: "send-newsletter",
-      data: {
-        id: newsId,
-      },
-      priority: 1,
-      retryDelay: 60,
-      retryLimit: 3,
-      startAfter: request.SendDate,
-    });
+    const scheduleJobOrError = await this.createJob(newsId, request.SendDate)
 
-    const successLog = `Notícia criada com sucessso.`;
-
-    if (jobOrError.isLeft()) {
-      return left(jobOrError.value);
+    if (scheduleJobOrError.isLeft()) {
+      console.error(scheduleJobOrError.value)
+    } else {
+      console.log(scheduleJobOrError.value);
     }
 
-    const job = jobOrError.value;
-
-    console.log("[CreateNews] : Deletando notícia");
-
-    await this.repository.associateJobToNews(job.id, newsId);
+    const successLog = `Notícia criada com sucessso.`;
 
     this.addLog({
       action: "create",
