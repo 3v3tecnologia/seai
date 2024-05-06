@@ -165,109 +165,6 @@ export const NEWSLETTER = {
         ...DEFAULT_RESPONSES,
       },
     },
-    put: {
-      tags: TAGS,
-      summary: "Update Newsletter by id",
-      description: "SendDate is Unix Timestamp",
-      security: [BEARER_AUTH],
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "News Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                FK_Author: "number",
-                Title: "string",
-                Description: "string",
-                SendDate: "string",
-                Data: "string",
-              },
-              example: {
-                FK_Author: 1,
-                Title: "TESTINHO",
-                Description: "Testinho",
-                Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
-                SendDate: 1702951200065,
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Sucesso ao atualizar notícia",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-    delete: {
-      tags: TAGS,
-      summary: "Delete news",
-      description: "Delete news by id",
-      security: [BEARER_AUTH],
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "News Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Notícia deletada com sucessso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
   },
   [`${URL}/{id}`]: {
     get: {
@@ -365,6 +262,109 @@ export const NEWSLETTER = {
                       ],
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    put: {
+      tags: TAGS,
+      summary: "Update Newsletter by id",
+      description: "SendDate is Unix Timestamp",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "News Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                FK_Author: "number",
+                Title: "string",
+                Description: "string",
+                SendDate: "string",
+                Data: "string",
+              },
+              example: {
+                FK_Author: 1,
+                Title: "TESTINHO",
+                Description: "Testinho",
+                Data: "data:text/html;charset=utf-8;base64,CiAgICA8aDE+M1YzIFVSTDwvaDE+CiAgICA8YSBocmVmPWh0dHA6Ly9zb2Z0d2FyZS4zdjMuZmFybT5WaXNpdGUgYSBzb2Z0d2FyZTwvYT4K",
+                SendDate: 1702951200065,
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao atualizar notícia",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      summary: "Delete news",
+      description: "Delete news by id",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "News Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Notícia deletada com sucessso.",
                 },
               },
             },
