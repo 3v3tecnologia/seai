@@ -4,5 +4,5 @@ export namespace CreateFaqCategoryDTO {
     description: string;
   };
 
-  export type result = string;
+  export type result = number;
 }

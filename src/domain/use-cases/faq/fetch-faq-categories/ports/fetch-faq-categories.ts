@@ -15,5 +15,5 @@ export namespace FetchFaqCategoriesDTO {
 }
 
 export interface FetchFaqCategoriesProtocol {
-  fetch(): Promise<Either<Error, FetchFaqCategoriesDTO.result>>;
+  execute(): Promise<Either<Error, FetchFaqCategoriesDTO.result>>;
 }

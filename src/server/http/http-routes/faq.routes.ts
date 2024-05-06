@@ -7,36 +7,36 @@ import {
 } from "../http-middlewares";
 import { FaqControllersFactory } from "../factories/controllers";
 
-const setupCategoryRoutes = (router: Router): void => {
+
+
+const setupFaqRoutes = (router: Router): void => {
   router.get(
-    "/category",
+    "/categories",
     authorization,
     adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
   );
 
   router.put(
-    "/category",
+    "/categories/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
   );
 
   router.post(
-    "/category",
+    "/categories",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
   );
 
   router.delete(
-    "/category/:id",
+    "/categories/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
   );
-}
 
-const setupFaqRoutes = (router: Router): void => {
   router.get(
     "/by-categories",
     authorization,
@@ -88,6 +88,5 @@ const setupFaqRoutes = (router: Router): void => {
 const faqRouter = Router();
 
 setupFaqRoutes(faqRouter)
-setupCategoryRoutes(faqRouter)
 
 export { faqRouter }

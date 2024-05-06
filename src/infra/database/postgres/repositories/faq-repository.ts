@@ -60,8 +60,8 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     return true;
   }
 
-  async addCategory(title: string, description: string): Promise<void> {
-    await governmentDb
+  async addCategory(title: string, description: string): Promise<number> {
+    const response = await governmentDb
       .insert({
         Title: title,
         Description: description,
@@ -69,6 +69,8 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
       })
       .returning("Id")
       .into("Category");
+
+    return response[0].Id
   }
 
   async loadAll(): Promise<Array<FaqRepository.FaqWithCategoriesData> | null> {

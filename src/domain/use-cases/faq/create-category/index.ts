@@ -8,8 +8,7 @@ import { CreateFaqCategoryProtocol } from "./protocol";
 
 export class CreateFaqCategory
   extends Command
-  implements CreateFaqCategoryProtocol
-{
+  implements CreateFaqCategoryProtocol {
   private readonly faqRepository: FaqRepositoryProtocol;
 
   constructor(faqRepository: FaqRepositoryProtocol) {
@@ -42,7 +41,7 @@ export class CreateFaqCategory
       return left(new CreateFaqCategoryErrors.CategoryAlreadyExists());
     }
 
-    await this.faqRepository.addCategory(
+    const id = await this.faqRepository.addCategory(
       category.title as string,
       category.description as string
     );
@@ -53,6 +52,6 @@ export class CreateFaqCategory
       description: `Categoria ${request.title} criada com sucesso`,
     });
 
-    return right("Categoria criada com sucesso");
+    return right(id);
   }
 }

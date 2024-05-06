@@ -65,7 +65,7 @@ export namespace CategoryRepository {
   };
 
   export interface Add {
-    addCategory(title: string, description: string): Promise<void>;
+    addCategory(title: string, description: string): Promise<number>;
   }
 
   export interface Update {
@@ -101,17 +101,17 @@ export namespace CategoryRepository {
 
 export interface FaqRepositoryProtocol
   extends FaqRepository.Add,
-    FaqRepository.FetchWithCategories,
-    FaqRepository.FetchByCategory,
-    FaqRepository.FetchById,
-    FaqRepository.Update,
-    FaqRepository.CheckIfAlreadyExists,
-    FaqRepository.CheckIfQuestionExists,
-    FaqRepository.DeleteById,
-    CategoryRepository.Add,
-    CategoryRepository.Update,
-    CategoryRepository.DeleteById,
-    CategoryRepository.Fetch,
-    CategoryRepository.FetchById,
-    CategoryRepository.FetchAllByIds,
-    CategoryRepository.FetchByTitle {}
+  FaqRepository.FetchWithCategories,
+  FaqRepository.FetchByCategory,
+  FaqRepository.FetchById,
+  FaqRepository.Update,
+  FaqRepository.CheckIfAlreadyExists,
+  FaqRepository.CheckIfQuestionExists,
+  FaqRepository.DeleteById,
+  CategoryRepository.Add,
+  CategoryRepository.Update,
+  CategoryRepository.DeleteById,
+  CategoryRepository.Fetch,
+  CategoryRepository.FetchById,
+  CategoryRepository.FetchAllByIds,
+  CategoryRepository.FetchByTitle { }

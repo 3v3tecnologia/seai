@@ -5,8 +5,7 @@ import { FetchFaqCategoriesProtocol } from "../../../domain/use-cases/faq/fetch-
 import { forbidden, ok, serverError } from "../helpers";
 
 export class FetchFaqCategoriesController
-  implements Controller<void, HttpResponse>
-{
+  implements Controller<void, HttpResponse> {
   private FetchFaq: FetchFaqCategoriesProtocol;
 
   constructor(FetchFaq: FetchFaqCategoriesProtocol) {
@@ -15,7 +14,8 @@ export class FetchFaqCategoriesController
 
   async handle(): Promise<HttpResponse> {
     try {
-      const result = await this.FetchFaq.fetch();
+      console.log('kkk');
+      const result = await this.FetchFaq.execute();
 
       if (result.isLeft()) {
         return forbidden(result.value);
