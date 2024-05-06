@@ -24,4 +24,8 @@ export class EquipmentsServices {
   static async getMeteorologicalOrganCredentials(organName: string): Promise<Either<Error, any | null>> {
     return right(await DbEquipmentsRepository.getOrganByName(organName))
   }
+
+  static async getDateOfLastMeasurementTaken(): Promise<Either<Error, Array<any> | null>> {
+    return right(await DbEquipmentsRepository.getDateOfLastMeasurementTaken())
+  }
 }

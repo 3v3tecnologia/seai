@@ -18,10 +18,7 @@ export const setupEquipmentsMeasurementsRoutes = (router: Router): void => {
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkUpdate)
     );
 
-    router.get(
-        "/measurements/last_taken/dateTime",
-        adaptRouteV2(EquipmentsMeasurementsControllers.getDateOfLastMeasurementTaken)
-    );
+
 
     router.post(
         "/measurements/",

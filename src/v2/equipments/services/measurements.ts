@@ -40,10 +40,6 @@ export type PluviometerMeasurementsToPersist = {
 
 export class EquipmentsMeasurementsServices {
 
-    static async getDateOfLastMeasurementTaken(): Promise<Either<Error, Array<any> | null>> {
-        return right(await DbEquipmentsMeasurementsRepository.getDateOfLastMeasurementTaken())
-    }
-
     static async getByEquipmentsCodesAndDate(eqpType: 'station' | 'pluviometer', codes: Array<string>, date: string): Promise<Either<Error, Array<string>>> {
         let data: Array<string> = []
 

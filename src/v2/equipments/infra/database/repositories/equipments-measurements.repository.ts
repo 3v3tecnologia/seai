@@ -2,29 +2,6 @@ import { equipmentsDb } from "../connections/db";
 
 
 export class DbEquipmentsMeasurementsRepository {
-  static async getDateOfLastMeasurementTaken(): Promise<null | Array<{ Time: string, Id_Organ: number }>> {
-    const meteorologicalOrganIds = await equipmentsDb.select("IdOrgan")
-      .from("MetereologicalOrgan")
-
-    if (meteorologicalOrganIds.length) {
-      const organsIds = meteorologicalOrganIds.map(item => item.IdOrgan)
-
-      const response = await equipmentsDb
-        .select("*")
-        .from("TimeOfLastMeasurementTaken")
-        .whereIn("fk_organ", organsIds)
-
-      if (!response) {
-        return null;
-      }
-
-      return response.map((item) => ({
-        Time: item.completedon,
-        Id_Organ: item.fk_organ,
-      }))
-    }
-    return null
-  }
   static async getLastMeasurementsFromStation(
     idStation: number,
     date: string

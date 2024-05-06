@@ -3,16 +3,7 @@ import { HttpResponse } from "../../../presentation/controllers/ports";
 import { EquipmentsMeasurementsServices } from "../services/measurements";
 
 export class EquipmentsMeasurementsControllers {
-    static async getDateOfLastMeasurementTaken(): Promise<HttpResponse> {
-        try {
-            const lastMeasurementsTaken = await EquipmentsMeasurementsServices.getDateOfLastMeasurementTaken()
 
-            return ok(lastMeasurementsTaken.value)
-        } catch (error) {
-            console.error(error);
-            return serverError(error as Error);
-        }
-    }
     static async getByEquipmentsCodesAndDate(request: { codes: Array<string>, date: string, type: 'station' | 'pluviometer' }): Promise<HttpResponse> {
         try {
             const codesOrError = await EquipmentsMeasurementsServices.getByEquipmentsCodesAndDate(request.type, request.codes, request.date)
