@@ -11,7 +11,7 @@ export class DbEquipmentsRepository {
 
       const response = await equipmentsDb
         .select("*")
-        .from("TimeOfLastMeasurementTaken")
+        .from("LastUpdateDate")
         .whereIn("fk_organ", organsIds)
 
       if (!response) {
