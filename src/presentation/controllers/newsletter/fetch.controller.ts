@@ -1,9 +1,8 @@
 import { HttpResponse } from "../ports";
 
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import { FetchAllNews } from "../../../domain/use-cases/newsletter/fetch";
 import { forbidden, ok, serverError } from "../helpers";
-import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
-import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
 
 export class FetchNewsController {
   private useCase: FetchAllNews.UseCase;
@@ -14,7 +13,12 @@ export class FetchNewsController {
 
   async handle(request: FetchNewsController.Request): Promise<HttpResponse> {
     try {
-      const dto = { ...formatPaginationInput(request.pageNumber, request.limit) }
+      const dto = {
+        ...parsePaginationInput({
+          page: request.pageNumber,
+          limit: request.limit
+        }),
+      }
 
       if (request.title) {
         Object.assign(dto, {
@@ -41,5 +45,5 @@ export namespace FetchNewsController {
     title?: string;
     // start?: string;
     // end?: string | null;
-  } & InputWithPagination;
+  } & IPaginationInput;
 }

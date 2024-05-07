@@ -1,8 +1,8 @@
+import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+
 import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../../entities/equipments/StationRead";
-import { IInputWithPagination } from "./dto/input";
-import { IOuputWithPagination } from "./dto/output";
-
+// import { IOuputWithPagination } from "./dto/output";
 export namespace IEquipsMeasurementsRepoDTO {
   export namespace GetStations {
     export type Params = {
@@ -11,8 +11,8 @@ export namespace IEquipsMeasurementsRepoDTO {
         start: string;
         end: string | null;
       } | null;
-    } & IInputWithPagination;
-    export type Result = Promise<IOuputWithPagination<StationReadEntity>>;
+    } & IPaginationInput;
+    export type Result = Promise<IOutputWithPagination<StationReadEntity>>;
   }
   export namespace GetLatestStationMeasurements {
     export type Params = {
@@ -59,9 +59,9 @@ export namespace IEquipsMeasurementsRepoDTO {
         start: string;
         end: string | null;
       } | null;
-    } & IInputWithPagination;
+    } & IPaginationInput;
 
-    export type Result = Promise<IOuputWithPagination<PluviometerReadEntity>>;
+    export type Result = Promise<IOutputWithPagination<PluviometerReadEntity>>;
   }
 
   export namespace UpdateStationMeasures {

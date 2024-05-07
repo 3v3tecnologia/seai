@@ -1,9 +1,8 @@
 import { HttpResponse } from "../ports";
 
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import { FetchSubscribersUseCaseProtocol } from "../../../domain/use-cases/newsletter";
 import { created, forbidden, serverError } from "../helpers";
-import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
-import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 
 export class FetchNewsletterSubscribersController {
   private useCase: FetchSubscribersUseCaseProtocol.UseCase;
@@ -18,7 +17,12 @@ export class FetchNewsletterSubscribersController {
     request: FetchNewsletterSubscribersControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const dto = { ...formatPaginationInput(request.pageNumber, request.limit) }
+      const dto = {
+        ...parsePaginationInput({
+          page: request.pageNumber,
+          limit: request.limit
+        }),
+      }
 
       if (request.name) {
         Object.assign(dto, {
@@ -47,5 +51,5 @@ export class FetchNewsletterSubscribersController {
 }
 
 export namespace FetchNewsletterSubscribersControllerProtocol {
-  export type Request = { email?: string, name?: string } & InputWithPagination
+  export type Request = { email?: string, name?: string } & IPaginationInput
 }

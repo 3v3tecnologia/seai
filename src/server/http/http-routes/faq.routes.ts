@@ -37,17 +37,6 @@ const setupFaqRoutes = (router: Router): void => {
     adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
   );
 
-  router.get(
-    "/by-categories",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
-  );
-
-  router.get(
-    "/by-category/:id",
-    authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqByCategory())
-  );
 
   router.get(
     "/",
@@ -70,7 +59,7 @@ const setupFaqRoutes = (router: Router): void => {
   );
 
   router.put(
-    "/",
+    "/:id",
     authorization,
     registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeUpdateFaq())

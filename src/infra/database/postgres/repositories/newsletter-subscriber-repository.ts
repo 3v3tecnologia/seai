@@ -4,11 +4,11 @@ import {
   SubscriberRepositoryDTO,
   SubscriberRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
-import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
+import { parsePaginationInput, toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
-import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { countTotalRows } from "./utils/paginate";
 export class DbNewsLetterSubscriberRepository
   implements SubscriberRepositoryProtocol {
   async create(

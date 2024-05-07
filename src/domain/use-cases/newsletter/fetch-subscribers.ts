@@ -1,8 +1,7 @@
 import { Either, right } from "../../../shared/Either";
 import { Subscriber } from "../../entities/newsletter/subscriber";
-import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 import { SubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
-import { InputWithPagination } from "../helpers/dto";
+import { IPaginationInput, IOutputWithPagination } from "../helpers/pagination";
 
 export class FetchSubscribers
   implements FetchSubscribersUseCaseProtocol.UseCase {
@@ -24,9 +23,9 @@ export class FetchSubscribers
 }
 
 export namespace FetchSubscribersUseCaseProtocol {
-  export type Request = { email?: string, name?: string } & InputWithPagination;
+  export type Request = { email?: string, name?: string } & IPaginationInput;
 
-  export type Response = IOuputWithPagination<Subscriber>;
+  export type Response = IOutputWithPagination<Subscriber>;
 
   export interface UseCase {
     execute(request: Request): Promise<Either<Error, any | null>>;

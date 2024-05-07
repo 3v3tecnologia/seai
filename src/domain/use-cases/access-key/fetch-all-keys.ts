@@ -1,7 +1,7 @@
 import { Either, right } from "../../../shared/Either";
 import { ApiKey } from "../../entities/apiKey/api-key";
 import { AccessKeyRepositoryProtocol } from "../_ports/repositories/acess-key.repository";
-import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
+import { IPaginationInput, OldOutputWithPagination } from "../helpers/pagination";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchAccessKeys implements FetchAccessKeysUseCaseProtocol.UseCase {
@@ -23,10 +23,10 @@ export class FetchAccessKeys implements FetchAccessKeysUseCaseProtocol.UseCase {
 }
 
 export namespace FetchAccessKeysUseCaseProtocol {
-  export type Request = InputWithPagination;
+  export type Request = IPaginationInput;
 
   export type Response = Promise<
-    Either<Error, OutputWithPagination<ApiKey> | null>
+    Either<Error, OldOutputWithPagination<ApiKey> | null>
   >;
 
   export interface UseCase {

@@ -4,12 +4,11 @@ import { Controller } from "../ports/controllers";
 import { FetchEquipments } from "../../../domain/use-cases/equipments/fetch-equipments";
 
 import { ok, serverError } from "../helpers";
-import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchEquipmentsController
   implements
-    Controller<FetchEquipmentsControllerProtocol.Request, HttpResponse>
-{
+  Controller<FetchEquipmentsControllerProtocol.Request, HttpResponse> {
   private fetchEquipments: FetchEquipments;
 
   constructor(fetchEquipments: FetchEquipments) {
@@ -20,7 +19,30 @@ export class FetchEquipmentsController
     request: FetchEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.fetchEquipments.execute(request);
+      const dto = {
+        ...parsePaginationInput({
+          page: request.pageNumber, limit: request.limit
+        }),
+      };
+
+      if (request.idOrgan) {
+        Object.assign(dto, {
+          idOrgan: request.idOrgan,
+        });
+      }
+
+      if (request.name) {
+        Object.assign(dto, {
+          name: request.name,
+        });
+      }
+
+      if (request.idType) {
+        Object.assign(dto, {
+          idType: request.idType,
+        });
+      }
+      const result = await this.fetchEquipments.execute(dto);
 
       return ok(result.value);
     } catch (error) {
@@ -36,5 +58,5 @@ export namespace FetchEquipmentsControllerProtocol {
     idOrgan?: number;
     idType?: number;
     name?: string;
-  } & InputWithPagination;
+  } & IPaginationInput;
 }

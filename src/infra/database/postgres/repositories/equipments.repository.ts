@@ -8,10 +8,10 @@ import {
   MeteorologicalOrganRepositoryDTOProtocol,
   MeteorologicalOrganRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
+import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { getYesterDayDate } from "../../../../shared/utils/date";
 import { equipments } from "../connection/knexfile";
-import { geoLocationExtension } from "./utils/geolocation";
-import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { countTotalRows } from "./utils/paginate";
 
 /*
   TO-DO : Create domain layer

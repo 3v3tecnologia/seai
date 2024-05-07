@@ -1,9 +1,7 @@
-import { Either } from "../../../../shared/Either";
 import { Content } from "../../../entities/newsletter/news";
 import { Sender } from "../../../entities/newsletter/sender";
 import { Subscriber } from "../../../entities/newsletter/subscriber";
-import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
-import { IOuputWithPagination } from "./dto/output";
+import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
 
 export namespace NewsletterSenderRepositoryDTO {
   export namespace Create {
@@ -38,8 +36,8 @@ export namespace NewsletterSenderRepositoryDTO {
   }
 
   export namespace GetAll {
-    export type Request = InputWithPagination;
-    export type Response = Promise<IOuputWithPagination<
+    export type Request = IPaginationInput;
+    export type Response = Promise<IOutputWithPagination<
       Required<Sender>
     >>;
   }
@@ -47,11 +45,11 @@ export namespace NewsletterSenderRepositoryDTO {
 
 export namespace ContentRepositoryDTO {
   export namespace GetAll {
-    export type Request = { title?: string } & InputWithPagination;
+    export type Request = { title?: string } & IPaginationInput;
 
-    export type Response = Promise<IOuputWithPagination<
+    export type Response = Promise<IOutputWithPagination<
       Required<Content>
-    >>;
+    > | null>;
   }
 
   export namespace Create {
@@ -99,8 +97,8 @@ export namespace ContentRepositoryDTO {
 
 export namespace SubscriberRepositoryDTO {
   export namespace GetAll {
-    export type Request = { name?: string, email?: string } & InputWithPagination;
-    export type Response = Promise<IOuputWithPagination<Subscriber>>;
+    export type Request = { name?: string, email?: string } & IPaginationInput;
+    export type Response = Promise<IOutputWithPagination<Subscriber>>;
   }
 
   export namespace Create {

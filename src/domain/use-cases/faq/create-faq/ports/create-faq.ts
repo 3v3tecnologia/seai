@@ -8,7 +8,7 @@ export namespace CreateFaqDTO {
     categories: Array<number>;
   };
 
-  export type result = string;
+  export type result = number;
 }
 
 export interface CreateFaqProtocol {

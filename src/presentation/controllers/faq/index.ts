@@ -2,7 +2,6 @@ export * from "./create-category.controller";
 export * from "./create.controller";
 export * from "./delete-category.controller";
 export * from "./delete.controller";
-export * from "./fetch-by-category.controller";
 export * from "./fetch-by-id.controller";
 export * from "./fetch-by-id.controller";
 export * from "./fetch-categories.controller";

@@ -6,10 +6,10 @@ import {
   FetchJobUseCaseProtocol,
 } from "../../../domain/use-cases/jobs";
 import { badRequest, ok, serverError } from "../helpers";
+import { parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchJobsController
-  implements Controller<FetchJobsControllerProtocol.Request, HttpResponse>
-{
+  implements Controller<FetchJobsControllerProtocol.Request, HttpResponse> {
   private useCase: FetchJobUseCaseProtocol.UseCase;
 
   constructor(useCase: FetchJobUseCaseProtocol.UseCase) {
@@ -20,12 +20,25 @@ export class FetchJobsController
     request: FetchJobsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.useCase.execute({
+      const dto = {
         id: request.id,
-        limit: request.limit,
-        pageNumber: request.pageNumber,
-        queue: request.queue,
-      });
+        ...parsePaginationInput({
+          page: request.pageNumber,
+          limit: request.limit
+        }),
+      }
+
+      if (request.queue)
+        Object.assign(dto, {
+          queue: request.queue,
+        });
+
+      if (request.state)
+        Object.assign(dto, {
+          queue: request.state,
+        });
+
+      const result = await this.useCase.execute(dto);
 
       if (result.isLeft()) {
         return badRequest(result.value);
@@ -40,7 +53,7 @@ export class FetchJobsController
 }
 
 export namespace FetchJobsControllerProtocol {
-  export type Request = { id?: string } & Omit<
+  export type Request = { id?: string, queue?: string; state?: string } & Omit<
     FetchCronUseCaseProtocol.Request,
     "id"
   >;

@@ -2,14 +2,13 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { FetchAccessKeysUseCaseProtocol } from "../../../domain/use-cases/access-key";
-import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 import { badRequest, ok, serverError } from "../helpers";
 import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
+import { IPaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchAccessKeysController
   implements
-    Controller<FetchAccessKeysControllerProtocol.Request, HttpResponse>
-{
+  Controller<FetchAccessKeysControllerProtocol.Request, HttpResponse> {
   private useCase: FetchAccessKeysUseCaseProtocol.UseCase;
 
   constructor(useCase: FetchAccessKeysUseCaseProtocol.UseCase) {
@@ -37,5 +36,5 @@ export class FetchAccessKeysController
 }
 
 export namespace FetchAccessKeysControllerProtocol {
-  export type Request = InputWithPagination;
+  export type Request = IPaginationInput;
 }

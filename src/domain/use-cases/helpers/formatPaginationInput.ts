@@ -1,4 +1,5 @@
-import { InputWithPagination } from "./dto";
+import { IPaginationInput } from "./pagination";
+
 
 export function formatPaginationInput(
   page?: number,
@@ -7,10 +8,10 @@ export function formatPaginationInput(
     defaultLimit: number;
     defaultPageNumber: number;
   } = {
-    defaultLimit: 40,
-    defaultPageNumber: 1,
-  }
-): InputWithPagination {
+      defaultLimit: 40,
+      defaultPageNumber: 1,
+    }
+): IPaginationInput {
   const pageLimit = limit ? Number(limit) : options.defaultLimit;
   const pageNumber =
     page && Number(page) > 0 ? Number(page) : options.defaultPageNumber;

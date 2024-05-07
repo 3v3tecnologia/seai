@@ -88,7 +88,11 @@ export class CreateFaq extends Command implements CreateFaqProtocol {
       ) as number[],
     };
 
-    await this.faqRepository.add(mappedToPersistence);
+    const faqId = await this.faqRepository.add(mappedToPersistence);
+
+    if (faqId === null) {
+      return left(new Error("Não foi possível completar registro do FAQ"));
+    }
 
     this.addLog({
       action: "create",
@@ -96,6 +100,6 @@ export class CreateFaq extends Command implements CreateFaqProtocol {
       description: `FAQ criado com sucesso`,
     });
 
-    return right("Faq criado com sucesso");
+    return right(faqId);
   }
 }

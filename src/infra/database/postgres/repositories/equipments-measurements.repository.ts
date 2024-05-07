@@ -2,8 +2,9 @@ import {
   IEquipsMeasurementsRepoDTO,
   IEquipmentsMeasuresRepository,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-measurements.repository";
+import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { equipments } from "../connection/knexfile";
-import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { countTotalRows } from "./utils/paginate";
 
 export class EquipmentsMeasurementsRepository
   implements IEquipmentsMeasuresRepository {

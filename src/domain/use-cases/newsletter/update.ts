@@ -10,8 +10,7 @@ import {
 
 export class UpdateNews
   extends Command
-  implements UpdateNewsUseCaseProtocol.UseCase
-{
+  implements UpdateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
   private scheduleJob: CreateJobUseCaseProtocol.UseCase;
   private fetchJob: FetchJobUseCaseProtocol.UseCase;
@@ -74,8 +73,8 @@ export class UpdateNews
       id: oldJob.id,
       data: toUpdate.NewsId
         ? {
-            id: toUpdate.NewsId,
-          }
+          id: toUpdate.NewsId,
+        }
         : null,
       name: oldJob.name,
       priority: oldJob.priority,

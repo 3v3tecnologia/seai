@@ -1,4 +1,4 @@
-import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { IPaginationInput, OldOutputWithPagination } from "../../helpers/pagination";
 
 export interface Jobs {
   id: string;
@@ -66,8 +66,8 @@ export namespace ScheduleRepositoryDTO {
     export type Response = Promise<any | null>;
   }
   export namespace GetAll {
-    export type Request = InputWithPagination & { queue?: string };
-    export type Response = Promise<OutputWithPagination<any> | null>;
+    export type Request = IPaginationInput & { queue?: string };
+    export type Response = Promise<OldOutputWithPagination<any> | null>;
   }
 }
 
@@ -109,11 +109,11 @@ export namespace JobsRepositoryDTO {
   }
 
   export namespace Fetch {
-    export type Request = InputWithPagination & {
+    export type Request = IPaginationInput & {
       queue?: string;
       state?: string;
     };
-    export type Response = Promise<OutputWithPagination<any> | null>;
+    export type Response = Promise<OldOutputWithPagination<any> | null>;
   }
 
   export namespace FetchById {
