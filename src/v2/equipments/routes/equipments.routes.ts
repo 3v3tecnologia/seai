@@ -18,7 +18,7 @@ export const setupEquipmentsRoutes = (router: Router): void => {
     );
 
     router.get(
-        "/last-update-date",
+        "/last-updated-at",
         authorization,
         adaptRouteV2(EquipmentsControllers.getDateOfLastMeasurementTaken)
     );
