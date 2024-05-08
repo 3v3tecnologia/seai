@@ -1,5 +1,5 @@
 import { DatabaseOperationOutputLog } from "../../../../domain/use-cases/_ports/repositories/dto/output";
-import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
+import { IPaginationInput } from "../../../../domain/use-cases/helpers/pagination";
 import { CultureWeights } from "../../entities/weights";
 
 export type CultureWeightsToPersistency = {
@@ -30,7 +30,7 @@ export namespace ManagementWeightsRepositoryDTO {
   }
 
   export namespace GetByBasin {
-    export type Request = { id_basin: number } & Partial<InputWithPagination>;
+    export type Request = { id_basin: number } & Partial<IPaginationInput>;
 
     export type Response = Promise<Array<CultureWeights> | null>;
   }

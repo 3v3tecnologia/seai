@@ -1,5 +1,5 @@
 import { ManagementCensusStudy } from "./../../../entities/management/study";
-import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { IPaginationInput, IOutputWithPagination, OldOutputWithPagination } from './../../helpers/pagination';
 import { DatabaseOperationOutputLog } from "./dto/output";
 
 export type ManagementStudyToPersistency = {
@@ -27,10 +27,10 @@ export namespace ManagementStudiesRepositoryDTO {
   }
 
   export namespace GetByBasin {
-    export type Request = { Id_Basin: number } & InputWithPagination;
+    export type Request = { Id_Basin: number } & IPaginationInput;
 
     export type Response =
-      Promise<OutputWithPagination<ManagementCensusStudy> | null>;
+      Promise<OldOutputWithPagination<ManagementCensusStudy> | null>;
   }
 
   export namespace GetAllByBasin {

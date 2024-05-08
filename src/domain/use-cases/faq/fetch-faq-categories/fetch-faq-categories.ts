@@ -12,8 +12,7 @@ export class FetchFaqCategories implements FetchFaqCategoriesProtocol {
   constructor(faqRepository: FaqRepositoryProtocol) {
     this.faqRepository = faqRepository;
   }
-  async fetch(): Promise<Either<Error, FetchFaqCategoriesDTO.result>> {
-    const categories = await this.faqRepository.loadCategories();
-    return right(categories);
+  async execute(): Promise<Either<Error, FetchFaqCategoriesDTO.result>> {
+    return right(await this.faqRepository.loadCategories());
   }
 }

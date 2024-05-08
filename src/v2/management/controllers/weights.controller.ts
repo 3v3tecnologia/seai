@@ -1,5 +1,5 @@
-import { InputWithPagination } from "../../../domain/use-cases/helpers/dto";
 import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
+import { IPaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import {
   created,
   forbidden,
@@ -37,7 +37,7 @@ export class ManagementWeightsController {
     request: {
       accountId: number;
       id: number;
-    } & InputWithPagination
+    } & IPaginationInput
   ): Promise<HttpResponse> {
     try {
       const deletedOrError = await ManagementWeightsUseCases.getByBasin({

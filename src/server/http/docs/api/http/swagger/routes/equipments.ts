@@ -151,6 +151,33 @@ const IRRIGANT = {
 };
 
 export const EQUIPMENTS = {
+  [`${BASE_URL.V2}/equipments/last-update-date`]: {
+    get: {
+      tags: TAGS,
+      summary: "Get last update date",
+      description: "Get by meteorological organ",
+      security: [BEARER_AUTH],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                example: {
+                  data: [
+                    {
+                      Time: "2024-05-03T18:52:22.192Z",
+                      Id_Organ: 1
+                    }
+                  ]
+                }
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${BASE_URL.V1}/equipments`]: {
     get: {
       tags: TAGS,

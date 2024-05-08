@@ -1,9 +1,9 @@
+import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
 import { UserType, UserTypes } from "../../../entities/user/user";
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 import { User } from "../../user/model/user";
 import { UserAccount } from "../../user/model/user-with-modules";
-import { IInputWithPagination } from "./dto/input";
-import { IOuputWithPagination } from "./dto/output";
+
 
 export interface AccountRepositoryProtocol {
   add(data: {
@@ -15,8 +15,8 @@ export interface AccountRepositoryProtocol {
     params: {
       name?: string;
       type?: Record<UserTypes, string>;
-    } & IInputWithPagination
-  ): Promise<IOuputWithPagination<User>>;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<User>>;
   update(data: {
     id: number;
     email?: string | null;

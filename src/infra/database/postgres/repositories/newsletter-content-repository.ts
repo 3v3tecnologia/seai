@@ -1,13 +1,13 @@
 import { NewsMapper } from "../../../../domain/entities/newsletter/mapper/news";
+import { Content } from "../../../../domain/entities/newsletter/news";
 import {
   ContentRepositoryDTO,
   NewsRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
-import { InputWithPagination } from "../../../../domain/use-cases/helpers/dto";
+import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
-import { withPagination } from "./mapper/WithPagination";
-import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { countTotalRows, } from "./utils/paginate";
 
 export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(
@@ -168,7 +168,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     console.log(news);
 
-    return toPaginatedOutput({
+    return toPaginatedOutput<Required<Content>>({
       data: news,
       page: pageNumber,
       limit: limit,

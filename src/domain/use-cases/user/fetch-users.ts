@@ -1,9 +1,7 @@
 import { Either, right } from "../../../shared/Either";
 import { UserTypes } from "../../entities/user/user";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
-import { IInputWithPagination } from "../_ports/repositories/dto/input";
-import { IOuputWithPagination } from "../_ports/repositories/dto/output";
-import { formatPaginationInput } from "../helpers/formatPaginationInput";
+import { IPaginationInput, IOutputWithPagination } from "../helpers/pagination";
 import { User } from "./model/user";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
@@ -19,11 +17,10 @@ export class FetchUsersUseCase implements IFetchUsersUseCase {
     if (request?.userId) {
       data = await this.accountRepository.getUserById(Number(request.userId));
     } else {
-      data = await this.accountRepository.list({
-        name: request.name,
-        type: request.type,
-        ...formatPaginationInput(request.pageNumber, request.limit),
-      });
+      data = await this.accountRepository.list(request as {
+        name?: string | undefined;
+        type?: Record<UserTypes, string> | undefined;
+      } & IPaginationInput);
     }
     return right(data);
   }
@@ -34,9 +31,9 @@ export namespace FetchUsersDTO {
     userId?: number;
     name?: string;
     type?: Record<UserTypes, string>;
-  } & IInputWithPagination;
+  } & Partial<IPaginationInput>;
 
-  export type Response = User | IOuputWithPagination<User> | null;
+  export type Response = User | IOutputWithPagination<User> | null;
 }
 
 export interface IFetchUsersUseCase {

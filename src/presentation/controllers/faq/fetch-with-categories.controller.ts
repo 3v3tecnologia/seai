@@ -1,21 +1,39 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchFaqWithCategoriesProtocol } from "../../../domain/use-cases/faq/fetch-faq-with-categories/ports/fetch-faq-with-categories";
 import { forbidden, ok, serverError } from "../helpers";
+import { GetFaqsUseCaseProtocol } from "../../../domain/use-cases/faq/fetch-all-faq/protocol";
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchFaqWithCategoriesController
-  implements Controller<void, HttpResponse>
-{
-  private FetchFaq: FetchFaqWithCategoriesProtocol;
+  implements Controller<FetchFaqWithCategoryControllerProtocol.Request, HttpResponse> {
+  private FetchFaqs: GetFaqsUseCaseProtocol.UseCase;
 
-  constructor(FetchFaq: FetchFaqWithCategoriesProtocol) {
-    this.FetchFaq = FetchFaq;
+  constructor(FetchFaq: GetFaqsUseCaseProtocol.UseCase) {
+    this.FetchFaqs = FetchFaq;
   }
 
-  async handle(): Promise<HttpResponse> {
+  async handle(request: FetchFaqWithCategoryControllerProtocol.Request): Promise<HttpResponse> {
     try {
-      const result = await this.FetchFaq.fetch();
+      const dto = {
+        ...parsePaginationInput({
+          page: request.pageNumber, limit: request.limit
+        }),
+      };
+
+      if (request.id_category) {
+        Object.assign(dto, {
+          id_category: request.id_category
+        })
+      }
+
+      if (request.question) {
+        Object.assign(dto, {
+          question: request.question
+        })
+      }
+
+      const result = await this.FetchFaqs.execute(dto);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -29,6 +47,6 @@ export class FetchFaqWithCategoriesController
   }
 }
 
-export namespace FetchFaqWithCategoryController {
-  export type Request = {};
+export namespace FetchFaqWithCategoryControllerProtocol {
+  export type Request = { id_category?: number, question?: string } & IPaginationInput;
 }

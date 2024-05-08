@@ -5,16 +5,14 @@ import { badRequest, ok, serverError } from "../helpers";
 
 import { FetchPluviometersReads } from "../../../domain/use-cases/equipments/fetch-pluviometers-reads";
 import { Notification } from "../../../shared/notification/notification";
-import { IInputWithPagination } from "../../../domain/use-cases/_ports/repositories/dto/input";
-import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
+import { parsePaginationInput, IPaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchPluviometersReadsController
   implements
-    Controller<
-      FetchPluviometersMeasuresControllerProtocol.Request,
-      HttpResponse
-    >
-{
+  Controller<
+    FetchPluviometersMeasuresControllerProtocol.Request,
+    HttpResponse
+  > {
   private fetchPluviometersReads: FetchPluviometersReads;
 
   constructor(fetchPluviometersReads: FetchPluviometersReads) {
@@ -41,7 +39,10 @@ export class FetchPluviometersReadsController
 
       const dto = {
         idEquipment: request.idEquipment,
-        ...formatPaginationInput(request.pageNumber, request.limit),
+        ...parsePaginationInput({
+          page: request.pageNumber,
+          limit: request.limit
+        }),
       };
 
       if (request.start) {
@@ -68,5 +69,5 @@ export namespace FetchPluviometersMeasuresControllerProtocol {
     idEquipment: number;
     start?: string;
     end?: string | null;
-  } & IInputWithPagination;
+  } & IPaginationInput;
 }

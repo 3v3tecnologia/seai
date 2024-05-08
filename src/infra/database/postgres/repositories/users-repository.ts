@@ -4,12 +4,11 @@ import {
   SystemModulesProps,
 } from "../../../../domain/entities/user/user-modules-access";
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
-import { IInputWithPagination } from "../../../../domain/use-cases/_ports/repositories/dto/input";
-import { IOuputWithPagination } from "../../../../domain/use-cases/_ports/repositories/dto/output";
+import { IOutputWithPagination, IPaginationInput, toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { User } from "../../../../domain/use-cases/user/model/user";
 import { UserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
 import { governmentDb } from "../connection/knexfile";
-import { countTotalRows, toPaginatedOutput } from "./utils/paginate";
+import { countTotalRows } from "./utils/paginate";
 
 export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
@@ -192,8 +191,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     params: {
       name?: string;
       type?: Record<UserTypes, string>;
-    } & IInputWithPagination
-  ): Promise<IOuputWithPagination<User>> {
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<User>> {
     const { pageNumber, limit, offset, name, type } = params;
 
     const pageLimit = limit;

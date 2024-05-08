@@ -3,7 +3,6 @@ import {
   CreateFaqController,
   DeleteFaqCategoryController,
   DeleteFaqController,
-  FetchFaqByCategoryController,
   FetchFaqByIdController,
   FetchFaqCategoriesController,
   FetchFaqWithCategoriesController,
@@ -47,10 +46,11 @@ export class FaqControllersFactory {
       )
     );
   }
-  static makeFetchFaqByCategory(): Controller {
+
+  static makeFetchFaqsWithCategory(): Controller {
     return makeLogControllerDecorator(
-      new FetchFaqByCategoryController(
-        FaqUseCasesFactory.makeFetchFaqByCategory()
+      new FetchFaqWithCategoriesController(
+        FaqUseCasesFactory.makeFetchFaqsWithCategories()
       )
     );
   }
@@ -63,13 +63,6 @@ export class FaqControllersFactory {
     return makeLogControllerDecorator(
       new FetchFaqCategoriesController(
         FaqUseCasesFactory.makeFetchFaqByCategories()
-      )
-    );
-  }
-  static makeFetchFaqsWithCategory(): Controller {
-    return makeLogControllerDecorator(
-      new FetchFaqWithCategoriesController(
-        FaqUseCasesFactory.makeFetchFaqsWithCategories()
       )
     );
   }

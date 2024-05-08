@@ -3,8 +3,6 @@ import { CultureWeights } from "../../entities/management/weights";
 
 import { ManagementWeightsRepositoryProtocol } from "../_ports/repositories/management-weights.repository";
 import { GetCulturesIndicatorsFromBasinUseCaseProtocol } from "../census/fetch-cultures-indicators-by-basin";
-import { InputWithPagination, OutputWithPagination } from "../helpers/dto";
-import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export interface CropWeightsModel {
   id_basin: number;
@@ -14,8 +12,7 @@ export interface CropWeightsModel {
   waterConsumption: Map<"m³/ha", number>;
 }
 export class GetManagementWeightsByBasin
-  implements GetManagementWeightsByBasinUseCaseProtocol.UseCase
-{
+  implements GetManagementWeightsByBasinUseCaseProtocol.UseCase {
   private repository: ManagementWeightsRepositoryProtocol;
   private getCulturesIndicatorsByBasin: GetCulturesIndicatorsFromBasinUseCaseProtocol.UseCase;
 
@@ -83,7 +80,7 @@ export class GetManagementWeightsByBasin
 
     const cropsWeights = new Map<string, CropWeightsModel>();
 
-    weights.forEach((weight) => {
+    weights.forEach((weight: any) => {
       cropsWeights.set(weight.culture, {
         id_basin: weight.idBasin,
         productivity: weight.productivity,
@@ -155,7 +152,7 @@ export class GetManagementWeightsByBasin
         cropWeights.productivity.set(
           "kg/m³",
           cultureIndicator.ProductivityPerMeters /
-            maximumAmongCulturesIndicators.productivityPerMeters
+          maximumAmongCulturesIndicators.productivityPerMeters
         );
       }
 
@@ -163,7 +160,7 @@ export class GetManagementWeightsByBasin
         cropWeights.productivity.set(
           "kg/m³",
           cultureIndicator.ProductivityPerHectare /
-            maximumAmongCulturesIndicators.productivityPerHectare
+          maximumAmongCulturesIndicators.productivityPerHectare
         );
       }
 
@@ -171,7 +168,7 @@ export class GetManagementWeightsByBasin
         cropWeights.jobs.set(
           "ha",
           cultureIndicator.SocialPerHectare /
-            maximumAmongCulturesIndicators.jobsPerHectare
+          maximumAmongCulturesIndicators.jobsPerHectare
         );
       }
 
@@ -179,7 +176,7 @@ export class GetManagementWeightsByBasin
         cropWeights.jobs.set(
           "1000m³",
           cultureIndicator.SocialPerMeters /
-            maximumAmongCulturesIndicators.jobsPerMeters
+          maximumAmongCulturesIndicators.jobsPerMeters
         );
       }
 
@@ -187,7 +184,7 @@ export class GetManagementWeightsByBasin
         cropWeights.profitability.set(
           "R$/ha",
           cultureIndicator.EconomicPerHectare /
-            maximumAmongCulturesIndicators.jobsPerHectare
+          maximumAmongCulturesIndicators.jobsPerHectare
         );
       }
 
@@ -195,7 +192,7 @@ export class GetManagementWeightsByBasin
         cropWeights.profitability.set(
           "R$/m³",
           cultureIndicator.EconomicPerMeters /
-            maximumAmongCulturesIndicators.profitabilityPerMeters
+          maximumAmongCulturesIndicators.profitabilityPerMeters
         );
       }
 
@@ -203,7 +200,7 @@ export class GetManagementWeightsByBasin
         cropWeights.waterConsumption.set(
           "m³/ha",
           cultureIndicator.Consumption /
-            maximumAmongCulturesIndicators.consumption
+          maximumAmongCulturesIndicators.consumption
         );
       }
     });

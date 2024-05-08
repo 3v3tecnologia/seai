@@ -4,12 +4,11 @@ import { Controller } from "../ports/controllers";
 import { ok, badRequest, serverError } from "../helpers";
 import { FetchStationsReads } from "../../../domain/use-cases/equipments/fetch-stations-reads";
 import { Notification } from "../../../shared/notification/notification";
-import { formatPaginationInput } from "../../../domain/use-cases/helpers/formatPaginationInput";
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchStationsReadsController
   implements
-    Controller<FetchStationsMeasuresControllerProtocol.Request, HttpResponse>
-{
+  Controller<FetchStationsMeasuresControllerProtocol.Request, HttpResponse> {
   private fetchStationsReads: FetchStationsReads;
 
   constructor(fetchStationsReads: FetchStationsReads) {
@@ -36,7 +35,10 @@ export class FetchStationsReadsController
 
       const dto = {
         idEquipment: request.idEquipment,
-        ...formatPaginationInput(request.pageNumber, request.limit),
+        ...parsePaginationInput({
+          page: request.pageNumber,
+          limit: request.limit
+        }),
       };
 
       if (request.start) {
@@ -61,9 +63,7 @@ export class FetchStationsReadsController
 export namespace FetchStationsMeasuresControllerProtocol {
   export type Request = {
     idEquipment: number;
-    pageNumber: number;
-    limit: number;
     start?: string;
     end?: string | null;
-  };
+  } & IPaginationInput;
 }

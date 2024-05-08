@@ -1,5 +1,7 @@
+import { IOutputWithPagination, IPaginationInput } from "../../helpers/pagination";
+
 export namespace FaqRepository {
-  export type FaqWithCategoriesData = {
+  export type FaqWithCategoriesModel = {
     id: number;
     question: string;
     answer: string;
@@ -15,7 +17,7 @@ export namespace FaqRepository {
       answer: string;
       order: number;
       categories: Array<number>;
-    }): Promise<boolean>;
+    }): Promise<number | null>;
   }
 
   export interface DeleteById {
@@ -29,21 +31,26 @@ export namespace FaqRepository {
       answer: string;
       order: number;
       categories: Array<number>;
-    }): Promise<boolean>;
+    }): Promise<void>;
   }
 
   export interface FetchWithCategories {
-    loadAll(): Promise<Array<FaqWithCategoriesData> | null>;
+    loadAll(params: {
+      question?: string
+    } & IPaginationInput): Promise<IOutputWithPagination<FaqRepository.FaqWithCategoriesModel>>;
   }
 
   export interface FetchByCategory {
     loadByCategory(
-      id_category: number
-    ): Promise<Array<FaqWithCategoriesData> | null>;
+      params: {
+        id_category: number;
+      } & IPaginationInput
+    ): Promise<IOutputWithPagination<FaqRepository.FaqWithCategoriesModel>>;
   }
 
+
   export interface FetchById {
-    loadById(id: number): Promise<FaqWithCategoriesData | null>;
+    loadById(id: number): Promise<FaqWithCategoriesModel | null>;
   }
 
   export interface CheckIfAlreadyExists {
@@ -65,7 +72,7 @@ export namespace CategoryRepository {
   };
 
   export interface Add {
-    addCategory(title: string, description: string): Promise<void>;
+    addCategory(title: string, description: string): Promise<number>;
   }
 
   export interface Update {
@@ -73,7 +80,7 @@ export namespace CategoryRepository {
       id_category: number,
       title: string,
       description: string
-    ): Promise<boolean>;
+    ): Promise<void>;
   }
 
   export interface DeleteById {
@@ -101,17 +108,17 @@ export namespace CategoryRepository {
 
 export interface FaqRepositoryProtocol
   extends FaqRepository.Add,
-    FaqRepository.FetchWithCategories,
-    FaqRepository.FetchByCategory,
-    FaqRepository.FetchById,
-    FaqRepository.Update,
-    FaqRepository.CheckIfAlreadyExists,
-    FaqRepository.CheckIfQuestionExists,
-    FaqRepository.DeleteById,
-    CategoryRepository.Add,
-    CategoryRepository.Update,
-    CategoryRepository.DeleteById,
-    CategoryRepository.Fetch,
-    CategoryRepository.FetchById,
-    CategoryRepository.FetchAllByIds,
-    CategoryRepository.FetchByTitle {}
+  FaqRepository.FetchWithCategories,
+  FaqRepository.FetchByCategory,
+  FaqRepository.FetchById,
+  FaqRepository.Update,
+  FaqRepository.CheckIfAlreadyExists,
+  FaqRepository.CheckIfQuestionExists,
+  FaqRepository.DeleteById,
+  CategoryRepository.Add,
+  CategoryRepository.Update,
+  CategoryRepository.DeleteById,
+  CategoryRepository.Fetch,
+  CategoryRepository.FetchById,
+  CategoryRepository.FetchAllByIds,
+  CategoryRepository.FetchByTitle { }

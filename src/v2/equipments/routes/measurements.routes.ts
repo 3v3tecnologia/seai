@@ -18,6 +18,8 @@ export const setupEquipmentsMeasurementsRoutes = (router: Router): void => {
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkUpdate)
     );
 
+
+
     router.post(
         "/measurements/",
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkInsert)

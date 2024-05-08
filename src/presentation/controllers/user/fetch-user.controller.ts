@@ -6,10 +6,10 @@ import {
   IFetchUsersUseCase,
 } from "../../../domain/use-cases/user/fetch-users";
 import { ok, serverError } from "../helpers";
+import { parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchUserController
-  implements Controller<FetchUserControllerProtocol.Request, HttpResponse>
-{
+  implements Controller<FetchUserControllerProtocol.Request, HttpResponse> {
   private fetchUser: IFetchUsersUseCase;
 
   constructor(fetchUser: IFetchUsersUseCase) {
@@ -20,7 +20,22 @@ export class FetchUserController
     request: FetchUserControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const result = await this.fetchUser.execute(request);
+
+      if (request.userId) {
+        const result = await this.fetchUser.execute({
+          userId: request.userId
+        });
+
+        return ok(result.value);
+      }
+
+      const dto = {
+        name: request.name,
+        type: request.type,
+        ...parsePaginationInput({ page: request.pageNumber, limit: request.limit }),
+      }
+
+      const result = await this.fetchUser.execute(dto);
 
       return ok(result.value);
     } catch (error) {

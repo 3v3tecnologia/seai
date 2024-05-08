@@ -1,14 +1,11 @@
 import { Either, right } from "../../../shared/Either";
 import { EquipmentEntity } from "../../entities/equipments/Equipment";
-import { IInputWithPagination } from "../_ports/repositories/dto/input";
-import { IOuputWithPagination } from "../_ports/repositories/dto/output";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
+import { IOutputWithPagination, IPaginationInput } from "../helpers/pagination";
 
 export class FetchEquipments {
-  private LIMIT: number = 40;
-  private PAGE_NUMBER: number = 0;
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
@@ -24,29 +21,7 @@ export class FetchEquipments {
       return right(equipment);
     }
 
-    const dto = {
-      ...formatPaginationInput(request.pageNumber, request.limit),
-    };
-
-    if (request.idOrgan) {
-      Object.assign(dto, {
-        idOrgan: request.idOrgan,
-      });
-    }
-
-    if (request.name) {
-      Object.assign(dto, {
-        name: request.name,
-      });
-    }
-
-    if (request.idType) {
-      Object.assign(dto, {
-        idType: request.idType,
-      });
-    }
-
-    const result = await this.equipmentsRepository.getEquipments(dto);
+    const result = await this.equipmentsRepository.getEquipments(request);
 
     return right(result);
   }
@@ -57,9 +32,9 @@ export namespace FetchEquipmentsUseCaseProtocol {
     idOrgan?: number;
     idType?: number;
     name?: string;
-  } & IInputWithPagination;
+  } & IPaginationInput;
   export type Response =
-    | IOuputWithPagination<EquipmentEntity>
+    | IOutputWithPagination<EquipmentEntity>
     | EquipmentEntity
     | null;
 }

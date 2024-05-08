@@ -1,5 +1,5 @@
 import { ApiKey } from "../../../entities/apiKey/api-key";
-import { InputWithPagination, OutputWithPagination } from "../../helpers/dto";
+import { OldOutputWithPagination, IPaginationInput } from "../../helpers/pagination";
 
 export namespace AccessKeyRepositoryDTO {
   export namespace Create {
@@ -38,8 +38,8 @@ export namespace AccessKeyRepositoryDTO {
     export type Response = Promise<Required<ApiKey> | null>;
   }
   export namespace GetAll {
-    export type Request = InputWithPagination;
-    export type Response = Promise<OutputWithPagination<ApiKey> | null>;
+    export type Request = IPaginationInput;
+    export type Response = Promise<OldOutputWithPagination<ApiKey> | null>;
   }
   export namespace GetByKey {
     export type Request = {

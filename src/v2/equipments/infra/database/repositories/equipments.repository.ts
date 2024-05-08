@@ -2,6 +2,29 @@ import { equipmentsDb } from "../connections/db";
 import { geoLocationExtension } from "../utils/geolocation";
 
 export class DbEquipmentsRepository {
+  static async getDateOfLastMeasurementTaken(): Promise<null | Array<{ Time: string, Id_Organ: number }>> {
+    const meteorologicalOrganIds = await equipmentsDb.select("IdOrgan")
+      .from("MetereologicalOrgan")
+
+    if (meteorologicalOrganIds.length) {
+      const organsIds = meteorologicalOrganIds.map(item => item.IdOrgan)
+
+      const response = await equipmentsDb
+        .select("*")
+        .from("LastUpdateDate")
+        .whereIn("fk_organ", organsIds)
+
+      if (!response) {
+        return null;
+      }
+
+      return response.map((item) => ({
+        Time: item.completedon,
+        Id_Organ: item.fk_organ,
+      }))
+    }
+    return null
+  }
   static async getTypes(): Promise<Array<{
     Type: string,
     Name: number

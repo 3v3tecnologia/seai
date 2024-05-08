@@ -52,23 +52,23 @@ export class DbEquipmentsMeasurementsRepository {
     await equipmentsDb.transaction(async (trx) => {
       ids = await trx.batchInsert<any>(
         "ReadStations",
-        measurements.map((measures: any) => {
+        measurements.map((item: any) => {
           return {
-            FK_Equipment: measures.FK_Equipment,
-            FK_Organ: measures.FK_Organ,
-            Time: measures.Time,
-            Hour: measures.Hour,
-            TotalRadiation: measures.TotalRadiation,
-            MaxRelativeHumidity: measures.MaxRelativeHumidity,
-            MinRelativeHumidity: measures.MinRelativeHumidity,
-            AverageRelativeHumidity: measures.AverageRelativeHumidity,
-            MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
-            MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
+            FK_Equipment: item.FK_Equipment,
+            FK_Organ: item.FK_Organ,
+            Time: item.Time,
+            Hour: item.Hour,
+            TotalRadiation: item.TotalRadiation,
+            MaxRelativeHumidity: item.MaxRelativeHumidity,
+            MinRelativeHumidity: item.MinRelativeHumidity,
+            AverageRelativeHumidity: item.AverageRelativeHumidity,
+            MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
+            MinAtmosphericTemperature: item.MinAtmosphericTemperature,
             AverageAtmosphericTemperature:
-              measures.AverageAtmosphericTemperature,
-            AtmosphericPressure: measures.AtmosphericPressure,
-            WindVelocity: measures.WindVelocity,
-            Et0: measures.Et0 || null,
+              item.AverageAtmosphericTemperature,
+            AtmosphericPressure: item.AtmosphericPressure,
+            WindVelocity: item.WindVelocity,
+            Et0: item.Et0 || null,
           };
         })
         //@ts-ignore
