@@ -1,10 +1,14 @@
-import { Either, right } from "../../../shared/Either"
+import { Either, left, right } from "../../../shared/Either"
 import { DbEquipmentsRepository } from "../infra/database/repositories/equipments.repository"
 
 export class EquipmentsServices {
   static async bulkInsert(
     equipments: Array<any>
   ): Promise<Either<Error, Array<{ Code: string, Id: number }>>> {
+    console.log(equipments);
+    if (!equipments.length) {
+      return left(new Error("Necessário informar alguma leitura"))
+    }
     const codes = await DbEquipmentsRepository.bulkInsert(equipments)
     return right(codes)
   }

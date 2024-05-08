@@ -35,6 +35,7 @@ export class EquipmentsMeasurementsControllers {
 
     static async bulkInsert(request: { type: 'station' | 'pluviometer', items: Array<any> }): Promise<HttpResponse> {
         try {
+            console.log(request);
             const successOrError = await EquipmentsMeasurementsServices.bulkInsert(request.type, request.items)
 
             if (successOrError.isLeft()) {
