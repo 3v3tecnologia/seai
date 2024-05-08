@@ -151,7 +151,7 @@ const IRRIGANT = {
 };
 
 export const EQUIPMENTS = {
-  [`${BASE_URL.V2}/equipments/last-update-date`]: {
+  [`${BASE_URL.V2}/equipments/last-updated-at`]: {
     get: {
       tags: TAGS,
       summary: "Get last update date",
