@@ -1,3 +1,4 @@
+import { PluviometerMeasurementsToPersist, StationMeasurementsToPersist } from "../../../services/measurements";
 import { equipmentsDb } from "../connections/db";
 
 
@@ -78,163 +79,74 @@ export class DbEquipmentsMeasurementsRepository {
     return ids
   }
 
-  static async insertPluviometers(measurements: Array<any>) {
-    await equipmentsDb.transaction(async (trx) => {
-      await trx.batchInsert(
-        "ReadPluviometers",
-        measurements.map((eqp: any) => {
-          return {
-            FK_Equipment: eqp.FK_Equipment,
-            FK_Organ: eqp.FK_Organ,
-            Time: eqp.Time,
-            Hour: eqp.Hour,
-            Value: eqp.Value,
-          };
-        })
-      );
-    });
-  }
+  static async bulkInsert(measurements: Array<StationMeasurementsToPersist | PluviometerMeasurementsToPersist>, type: 'station' | 'pluviometer') {
+    let ids: Array<number> = [];
 
-  static async updateStations(measurements: Array<any>): Promise<Array<number>> {
-    let updatedIds: Array<number> = [];
-    try {
-      await equipmentsDb.transaction(async (trx) => {
-        const tempTableName = "Temp_ReadStations";
+    switch (type) {
+      case "station":
 
-        // Create a temporary table
-        await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
-        "IdRead" INT GENERATED ALWAYS AS IDENTITY,
-        "Time" DATE NOT NULL,
-        "Hour" SMALLINT DEFAULT NULL,
-        "TotalRadiation" REAL DEFAULT NULL,
-        "MaxRelativeHumidity" REAL DEFAULT NULL,
-        "MinRelativeHumidity" REAL DEFAULT NULL,
-        "AverageRelativeHumidity" REAL DEFAULT NULL,
-        "MaxAtmosphericTemperature" REAL DEFAULT NULL,
-        "MinAtmosphericTemperature" REAL DEFAULT NULL,
-        "AverageAtmosphericTemperature" REAL DEFAULT NULL,
-        "AtmosphericPressure" REAL DEFAULT NULL,
-        "WindVelocity" REAL DEFAULT NULL,
-        "Et0" REAL DEFAULT NULL,
-        "FK_Organ" INT,
-        "FK_Equipment" INT,
-        PRIMARY KEY("IdRead")
-        );
-      `);
-
-        const toPersistency = measurements.map((measures: any) => {
-          return {
-            FK_Equipment: measures.FK_Equipment,
-            FK_Organ: measures.FK_Organ,
-            Time: measures.Time,
-            Hour: measures.Hour,
-            TotalRadiation: measures.TotalRadiation,
-            MaxRelativeHumidity: measures.MaxRelativeHumidity,
-            MinRelativeHumidity: measures.MinRelativeHumidity,
-            AverageRelativeHumidity: measures.AverageRelativeHumidity,
-            MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
-            MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
-            AverageAtmosphericTemperature:
-              measures.AverageAtmosphericTemperature,
-            AtmosphericPressure: measures.AtmosphericPressure,
-            WindVelocity: measures.WindVelocity,
-            Et0: measures.Et0,
-          };
+        await equipmentsDb.transaction(async (trx) => {
+          ids = await trx.batchInsert<any>(
+            "ReadStations",
+            measurements.map((item: any) => {
+              return {
+                FK_Equipment: item.FK_Equipment,
+                FK_Organ: item.FK_Organ,
+                Time: item.Time,
+                Hour: item.Hour,
+                TotalRadiation: item.TotalRadiation,
+                MaxRelativeHumidity: item.MaxRelativeHumidity,
+                MinRelativeHumidity: item.MinRelativeHumidity,
+                AverageRelativeHumidity: item.AverageRelativeHumidity,
+                MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
+                MinAtmosphericTemperature: item.MinAtmosphericTemperature,
+                AverageAtmosphericTemperature:
+                  item.AverageAtmosphericTemperature,
+                AtmosphericPressure: item.AtmosphericPressure,
+                WindVelocity: item.WindVelocity,
+                Et0: item.Et0 || null,
+              };
+            })
+          ).returning("IdRead");
         });
 
-        // Insert new data into the temporary table
-        await trx(tempTableName).insert(toPersistency);
+        return ids
 
-        updatedIds = await trx.select("IdRead").from(tempTableName);
-
-        // Perform the batch update
-        await trx.raw(`
-        UPDATE "ReadStations" AS rs
-        SET
-          "FK_Equipment" =  t."FK_Equipment",
-          "FK_Organ" = t."FK_Organ",
-          "Time" = t."Time",
-          "Hour" = t."Hour",
-          "TotalRadiation" = t."TotalRadiation",
-          "MaxRelativeHumidity" = t."MaxRelativeHumidity",
-          "MinRelativeHumidity" = t."MinRelativeHumidity",
-          "AverageRelativeHumidity" = t."AverageRelativeHumidity",
-          "MaxAtmosphericTemperature" = t."MaxAtmosphericTemperature",
-          "MinAtmosphericTemperature" = t."MinAtmosphericTemperature",
-          "AverageAtmosphericTemperature" = t."AverageAtmosphericTemperature",
-          "AtmosphericPressure" = t."AtmosphericPressure",
-          "WindVelocity" = t."WindVelocity",
-          "Et0" = t."Et0"
-        FROM "${tempTableName}" AS t
-        WHERE rs."FK_Equipment" = t."FK_Equipment" and rs."Time" = t."Time";
-    `);
-
-        // Clean up the temporary table
-        await trx.raw(`DROP TABLE "${tempTableName}"`)
-
-        console.log("Batch update completed successfully.");
-      });
-
-      return updatedIds;
-    } catch (error) {
-      console.error("Error during batch update:", error);
-      throw error
+      case "pluviometer":
+        await equipmentsDb.transaction(async (trx) => {
+          await trx.batchInsert(
+            "ReadPluviometers",
+            measurements.map((eqp: any) => {
+              return {
+                FK_Equipment: eqp.FK_Equipment,
+                FK_Organ: eqp.FK_Organ,
+                Time: eqp.Time,
+                Hour: eqp.Hour,
+                Value: eqp.Value,
+              };
+            })
+          );
+        });
+        break
+      default:
+        throw new Error("Necessário informar um tipo de equipamento válido")
     }
+
+    return ids
   }
 
-  static async updatePluviometers(measurements: Array<any>) {
+  static async bulkUpdate(measurements: Array<any>, type: 'station' | 'pluviometer'): Promise<void> {
     try {
-      await equipmentsDb.transaction(async (trx) => {
-        const tempTableName = "Temp_ReadPluviometers";
+      switch (type) {
+        case "station":
+          await updateStationsMeasurements(measurements)
+          break
+        case "pluviometer":
+          await updatePluviometerMeasurements(measurements)
+          break
+      }
 
-        // Create a temporary table
-        await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
-          "IdRead" INT GENERATED ALWAYS AS IDENTITY,
-          "Value" REAL,
-          "Time" DATE NOT NULL,
-          "Hour" SMALLINT DEFAULT NULL,
-          "FK_Organ" INT,
-          "FK_Equipment" INT,
-          PRIMARY KEY("IdRead")
-        );
-      `);
-
-        const toPersistency = measurements.map((eqp: any) => {
-          return {
-            FK_Equipment: eqp.FK_Equipment,
-            FK_Organ: eqp.FK_Organ,
-            Time: eqp.Time,
-            Hour: eqp.Hour,
-            Value: eqp.Value,
-          };
-        });
-
-        console.log(toPersistency);
-
-        // Insert new data into the temporary table
-        await trx(tempTableName).insert(toPersistency);
-
-        // Perform the batch update
-        await trx.raw(`
-        UPDATE "ReadPluviometers" AS rp
-        SET
-          "FK_Equipment" = t."FK_Equipment",
-          "FK_Organ" = t."FK_Organ",
-          "Time" = t."Time",
-          "Hour" = t."Hour",
-          "Value" = t."Value"
-        FROM "${tempTableName}" AS t
-        WHERE rp."FK_Equipment" = t."FK_Equipment" AND rp."Time" = t."Time";
-    `);
-
-        // Clean up the temporary table
-        // await trx.dropTable(tempTableName);
-        await trx.raw(`DROP TABLE "${tempTableName}"`)
-
-        console.log("Batch update completed successfully.");
-      });
+      console.log("Sucesso ao atualizar medições");
     } catch (error) {
       console.error("Error during batch update:", error);
       throw error
@@ -289,4 +201,168 @@ export class DbEquipmentsMeasurementsRepository {
 
     return equipmentsWithMeasures;
   }
+
+  static async getMeasurementsIdsByTime(time: string, type: 'station' | 'pluviometer', id_organ: number): Promise<Map<number, number>> {
+    const sqlQuery = equipmentsDb
+      .select("IdRead", "FK_Equipment")
+      .where({ Time: time })
+      .andWhere({ FK_Organ: id_organ })
+
+    switch (type) {
+      case "station":
+        sqlQuery.from("ReadStations")
+        break;
+      case "pluviometer":
+        sqlQuery.from("ReadPluviometers")
+        break;
+      default:
+        throw new Error("Necessário informar um tipo de equipamento válido")
+    }
+
+    const response = await sqlQuery
+
+    const ids: Map<number, number> = new Map();
+
+    if (response.length) {
+      response.forEach((m: any) => {
+        const { IdRead, FK_Equipment } = m;
+
+        ids.set(FK_Equipment, IdRead)
+      });
+    }
+
+    return ids;
+  }
 }
+
+async function updateStationsMeasurements(measurements: Array<StationMeasurementsToPersist>): Promise<Array<number>> {
+  let updatedIds: number[] = []
+
+  await equipmentsDb.transaction(async (trx) => {
+    const tempTableName = "Temp_ReadStations";
+
+    // Create a temporary table
+    await trx.raw(`
+        CREATE TABLE "${tempTableName}" (
+        "IdRead" INT GENERATED ALWAYS AS IDENTITY,
+        "Time" DATE NOT NULL,
+        "Hour" SMALLINT DEFAULT NULL,
+        "TotalRadiation" REAL DEFAULT NULL,
+        "MaxRelativeHumidity" REAL DEFAULT NULL,
+        "MinRelativeHumidity" REAL DEFAULT NULL,
+        "AverageRelativeHumidity" REAL DEFAULT NULL,
+        "MaxAtmosphericTemperature" REAL DEFAULT NULL,
+        "MinAtmosphericTemperature" REAL DEFAULT NULL,
+        "AverageAtmosphericTemperature" REAL DEFAULT NULL,
+        "AtmosphericPressure" REAL DEFAULT NULL,
+        "WindVelocity" REAL DEFAULT NULL,
+        "Et0" REAL DEFAULT NULL,
+        "FK_Organ" INT,
+        "FK_Equipment" INT,
+        PRIMARY KEY("IdRead")
+        );
+      `);
+
+    const toPersistency = measurements.map((measures: any) => {
+      return {
+        FK_Equipment: measures.FK_Equipment,
+        FK_Organ: measures.FK_Organ,
+        Time: measures.Time,
+        Hour: measures.Hour,
+        TotalRadiation: measures.TotalRadiation,
+        MaxRelativeHumidity: measures.MaxRelativeHumidity,
+        MinRelativeHumidity: measures.MinRelativeHumidity,
+        AverageRelativeHumidity: measures.AverageRelativeHumidity,
+        MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
+        MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
+        AverageAtmosphericTemperature:
+          measures.AverageAtmosphericTemperature,
+        AtmosphericPressure: measures.AtmosphericPressure,
+        WindVelocity: measures.WindVelocity,
+        Et0: measures.Et0,
+      };
+    });
+
+    // Insert new data into the temporary table
+    await trx(tempTableName).insert(toPersistency);
+
+    updatedIds = await trx.select("IdRead").from(tempTableName);
+
+    // Perform the batch update
+    await trx.raw(`
+        UPDATE "ReadStations" AS rs
+        SET
+          "FK_Equipment" =  t."FK_Equipment",
+          "FK_Organ" = t."FK_Organ",
+          "Time" = t."Time",
+          "Hour" = t."Hour",
+          "TotalRadiation" = t."TotalRadiation",
+          "MaxRelativeHumidity" = t."MaxRelativeHumidity",
+          "MinRelativeHumidity" = t."MinRelativeHumidity",
+          "AverageRelativeHumidity" = t."AverageRelativeHumidity",
+          "MaxAtmosphericTemperature" = t."MaxAtmosphericTemperature",
+          "MinAtmosphericTemperature" = t."MinAtmosphericTemperature",
+          "AverageAtmosphericTemperature" = t."AverageAtmosphericTemperature",
+          "AtmosphericPressure" = t."AtmosphericPressure",
+          "WindVelocity" = t."WindVelocity",
+          "Et0" = t."Et0"
+        FROM "${tempTableName}" AS t
+        WHERE rs."FK_Equipment" = t."FK_Equipment" and rs."Time" = t."Time";
+    `);
+
+    // Clean up the temporary table
+    await trx.raw(`DROP TABLE "${tempTableName}"`)
+
+  });
+
+  return updatedIds
+
+}
+async function updatePluviometerMeasurements(measurements: Array<PluviometerMeasurementsToPersist>) {
+  await equipmentsDb.transaction(async (trx) => {
+    const tempTableName = "Temp_ReadPluviometers";
+
+    // Create a temporary table
+    await trx.raw(`
+        CREATE TABLE "${tempTableName}" (
+          "IdRead" INT GENERATED ALWAYS AS IDENTITY,
+          "Value" REAL,
+          "Time" DATE NOT NULL,
+          "Hour" SMALLINT DEFAULT NULL,
+          "FK_Organ" INT,
+          "FK_Equipment" INT,
+          PRIMARY KEY("IdRead")
+        );
+      `);
+
+    const toPersistency = measurements.map((eqp: any) => {
+      return {
+        FK_Equipment: eqp.FK_Equipment,
+        FK_Organ: eqp.FK_Organ,
+        Time: eqp.Time,
+        Hour: eqp.Hour,
+        Value: eqp.Value,
+      };
+    });
+
+    // Insert new data into the temporary table
+    await trx(tempTableName).insert(toPersistency);
+
+    // Perform the batch update
+    await trx.raw(`
+        UPDATE "ReadPluviometers" AS rp
+        SET
+          "FK_Equipment" = t."FK_Equipment",
+          "FK_Organ" = t."FK_Organ",
+          "Time" = t."Time",
+          "Hour" = t."Hour",
+          "Value" = t."Value"
+        FROM "${tempTableName}" AS t
+        WHERE rp."FK_Equipment" = t."FK_Equipment" AND rp."Time" = t."Time";
+    `);
+
+    // Clean up the temporary table
+    // await trx.dropTable(tempTableName);
+    await trx.raw(`DROP TABLE "${tempTableName}"`)
+  });
+} 

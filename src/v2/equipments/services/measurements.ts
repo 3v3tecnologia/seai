@@ -57,84 +57,56 @@ export class EquipmentsMeasurementsServices {
         return right(data)
     }
 
-    static async bulkUpdate(type: 'station' | 'pluviometer', measurements: Array<any>): Promise<Either<Error, Array<number>>> {
-        const noMeasurementsProvided = !measurements.length
 
-        if (noMeasurementsProvided) {
+    static async bulkInsert(type: 'station' | 'pluviometer', date: string, measurements: Array<any>, id_organ: number): Promise<Either<Error, string>> {
+        if (measurements.length === 0 || !measurements) {
             return left(new Error("Necessário informar medições"))
         }
 
-        let ids: Array<number> = []
+        const alreadyExistsCodes = await DbEquipmentsMeasurementsRepository.getMeasurementsIdsByTime(date, type, id_organ)
 
-        switch (type) {
-            case "station":
-                const toPersist = calcEt0FromList(measurements)
-                ids = await DbEquipmentsMeasurementsRepository.updateStations(toPersist)
-                break;
-            case "pluviometer":
-                await DbEquipmentsMeasurementsRepository.updatePluviometers(measurements)
-                break;
-            default:
-                return left(new Error("Tipo de equipamentos não reconhecido"))
-        }
+        const toInsert = []
+        const toUpdate = []
 
-        return right(ids)
+        measurements.forEach((item) => {
+            if (type === 'station') {
+                const Et0 = CalcEto({
+                    date: new Date(item.Time),
+                    location: {
+                        altitude: item.Altitude as number,
+                        latitude: item.Latitude as number,
+                        longitude: item.Longitude as number,
+                    },
+                    measures: {
+                        atmosphericPressure: item.AtmosphericPressure as number,
+                        averageAtmosphericTemperature: item.AverageAtmosphericTemperature as number,
+                        averageRelativeHumidity: item.AverageRelativeHumidity as number,
+                        maxAtmosphericTemperature: item.MaxAtmosphericTemperature as number,
+                        maxRelativeHumidity: item.MaxRelativeHumidity as number,
+                        minAtmosphericTemperature: item.MinAtmosphericTemperature as number,
+                        minRelativeHumidity: item.MinRelativeHumidity as number,
+                        totalRadiation: item.TotalRadiation as number,
+                        windVelocity: item.WindVelocity as number,
+                    },
+                });
 
-    }
+                item.Et0 = Et0
+            }
 
-    static async bulkInsert(type: 'station' | 'pluviometer', measurements: Array<StationMeasurementsToPersist | StationMeasurementsToPersist>): Promise<Either<Error, Array<number>>> {
-        const noMeasurementsProvided = !measurements.length
+            if (alreadyExistsCodes.has(item.FK_Equipment)) {
+                toUpdate.push(item)
+                return
+            }
 
-
-        if (noMeasurementsProvided) {
-            return left(new Error("Necessário informar medições"))
-        }
-
-        let ids: Array<number> = []
-
-        switch (type) {
-            case "station":
-                const toPersist = calcEt0FromList(measurements)
-                ids = await DbEquipmentsMeasurementsRepository.insertStations(toPersist)
-                break;
-            case "pluviometer":
-                await DbEquipmentsMeasurementsRepository.insertPluviometers(measurements)
-                break;
-            default:
-                return left(new Error("Tipo de equipamentos não reconhecido"))
-        }
-
-        return right(ids)
-    }
-
-}
-
-function calcEt0FromList(measurements: Array<any>) {
-    return measurements.map((item: any) => {
-        const Et0 = CalcEto({
-            date: new Date(item.Time),
-            location: {
-                altitude: item.Altitude as number,
-                latitude: item.Latitude as number,
-                longitude: item.Longitude as number,
-            },
-            measures: {
-                atmosphericPressure: item.AtmosphericPressure as number,
-                averageAtmosphericTemperature: item.AverageAtmosphericTemperature as number,
-                averageRelativeHumidity: item.AverageRelativeHumidity as number,
-                maxAtmosphericTemperature: item.MaxAtmosphericTemperature as number,
-                maxRelativeHumidity: item.MaxRelativeHumidity as number,
-                minAtmosphericTemperature: item.MinAtmosphericTemperature as number,
-                minRelativeHumidity: item.MinRelativeHumidity as number,
-                totalRadiation: item.TotalRadiation as number,
-                windVelocity: item.WindVelocity as number,
-            },
+            toInsert.push(item)
         });
 
-        console.log("[ET0] :: ", Et0);
+        if (toInsert.length) await DbEquipmentsMeasurementsRepository.bulkInsert(measurements, type)
 
-        item.Et0 = Et0
+        if (toUpdate.length) await DbEquipmentsMeasurementsRepository.bulkUpdate(measurements, type)
 
-        return item
-    });
+        return right("Sucesso ao realizar inserções de dados de medições")
+    }
+
 }
+

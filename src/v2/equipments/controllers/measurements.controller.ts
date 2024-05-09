@@ -18,25 +18,9 @@ export class EquipmentsMeasurementsControllers {
         }
     }
 
-    static async bulkUpdate(request: { type: 'station' | 'pluviometer', items: Array<any> }): Promise<HttpResponse> {
+    static async bulkInsert(request: { type: 'station' | 'pluviometer', items: Array<any>, organId: number, date: string }): Promise<HttpResponse> {
         try {
-            const successOrError = await EquipmentsMeasurementsServices.bulkUpdate(request.type, request.items)
-
-            if (successOrError.isLeft()) {
-                return badRequest(successOrError.value)
-            }
-
-            return created(successOrError.value);
-        } catch (error) {
-            console.error(error);
-            return serverError(error as Error);
-        }
-    }
-
-    static async bulkInsert(request: { type: 'station' | 'pluviometer', items: Array<any> }): Promise<HttpResponse> {
-        try {
-            console.log(request);
-            const successOrError = await EquipmentsMeasurementsServices.bulkInsert(request.type, request.items)
+            const successOrError = await EquipmentsMeasurementsServices.bulkInsert(request.type, request.date, request.items, request.organId)
 
             if (successOrError.isLeft()) {
                 return badRequest(successOrError.value)
