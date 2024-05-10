@@ -3,13 +3,16 @@ import { DbEquipmentsRepository } from "../infra/database/repositories/equipment
 
 export class EquipmentsServices {
   static async bulkInsert(
-    equipments: Array<any>
+    equipments: Array<any>,
+    id_organ: number
   ): Promise<Either<Error, Array<{ Code: string, Id: number }>>> {
-    console.log(equipments);
     if (!equipments.length) {
       return left(new Error("Necessário informar alguma leitura"))
     }
     const codes = await DbEquipmentsRepository.bulkInsert(equipments)
+
+    await DbEquipmentsRepository.insertLastUpdatedAtByOrgan(id_organ)
+
     return right(codes)
   }
 
@@ -21,7 +24,6 @@ export class EquipmentsServices {
   }
 
   static async getByType(type: 'station' | 'pluviometer'): Promise<Either<Error, Array<any> | null>> {
-    console.log(type);
     return right(await DbEquipmentsRepository.getByType(type))
   }
 

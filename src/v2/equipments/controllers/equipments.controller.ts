@@ -35,6 +35,7 @@ export class EquipmentsControllers {
     }
   }
   static async bulkInsert(request: {
+    id_organ: number,
     items: Array<{
       IdEquipmentExternal: string,
       Name: string,
@@ -49,7 +50,7 @@ export class EquipmentsControllers {
     }>
   }): Promise<HttpResponse> {
     try {
-      const successOrError = await EquipmentsServices.bulkInsert(request.items)
+      const successOrError = await EquipmentsServices.bulkInsert(request.items, request.id_organ)
 
       if (successOrError.isLeft()) {
         return badRequest(successOrError.value)

@@ -1,6 +1,7 @@
 import { CalcEto } from "../../../domain/entities/equipments/Et0"
 import { Either, left, right } from "../../../shared/Either"
 import { DbEquipmentsMeasurementsRepository } from "../infra/database/repositories/equipments-measurements.repository"
+import { DbEquipmentsRepository } from "../infra/database/repositories/equipments.repository"
 
 export namespace bulkUpdateMeasurementsDTO {
     export type Input = {}
@@ -58,8 +59,11 @@ export class EquipmentsMeasurementsServices {
     }
 
 
-    static async bulkInsert(type: 'station' | 'pluviometer', date: string, measurements: Array<any>, id_organ: number): Promise<Either<Error, string>> {
-        if (measurements.length === 0 || !measurements) {
+    static async bulkInsert(params: { type: 'station' | 'pluviometer', date: string, items: Array<any>, id_organ: number }): Promise<Either<Error, string>> {
+        const { date, id_organ, items, type } = params
+        console.log(params);
+
+        if (items.length === 0 || !items) {
             return left(new Error("Necessário informar medições"))
         }
 
@@ -68,7 +72,7 @@ export class EquipmentsMeasurementsServices {
         const toInsert = []
         const toUpdate = []
 
-        measurements.forEach((item) => {
+        items.forEach((item) => {
             if (type === 'station') {
                 const Et0 = CalcEto({
                     date: new Date(item.Time),
@@ -101,9 +105,11 @@ export class EquipmentsMeasurementsServices {
             toInsert.push(item)
         });
 
-        if (toInsert.length) await DbEquipmentsMeasurementsRepository.bulkInsert(measurements, type)
+        if (toInsert.length) await DbEquipmentsMeasurementsRepository.bulkInsert(items, type)
 
-        if (toUpdate.length) await DbEquipmentsMeasurementsRepository.bulkUpdate(measurements, type)
+        if (toUpdate.length) await DbEquipmentsMeasurementsRepository.bulkUpdate(items, type)
+
+        await DbEquipmentsRepository.insertLastUpdatedAtByOrgan(id_organ)
 
         return right("Sucesso ao realizar inserções de dados de medições")
     }

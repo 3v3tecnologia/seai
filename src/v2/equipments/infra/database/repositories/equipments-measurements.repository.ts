@@ -365,4 +365,4 @@ async function updatePluviometerMeasurements(measurements: Array<PluviometerMeas
     // await trx.dropTable(tempTableName);
     await trx.raw(`DROP TABLE "${tempTableName}"`)
   });
-} 
+}

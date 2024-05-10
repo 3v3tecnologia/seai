@@ -18,9 +18,9 @@ export class EquipmentsMeasurementsControllers {
         }
     }
 
-    static async bulkInsert(request: { type: 'station' | 'pluviometer', items: Array<any>, organId: number, date: string }): Promise<HttpResponse> {
+    static async bulkInsert(request: { type: 'station' | 'pluviometer', items: Array<any>, id_organ: number, date: string }): Promise<HttpResponse> {
         try {
-            const successOrError = await EquipmentsMeasurementsServices.bulkInsert(request.type, request.date, request.items, request.organId)
+            const successOrError = await EquipmentsMeasurementsServices.bulkInsert(request)
 
             if (successOrError.isLeft()) {
                 return badRequest(successOrError.value)

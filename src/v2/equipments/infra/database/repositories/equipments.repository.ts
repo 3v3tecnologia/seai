@@ -2,6 +2,29 @@ import { equipmentsDb } from "../connections/db";
 import { geoLocationExtension } from "../utils/geolocation";
 
 export class DbEquipmentsRepository {
+  static async insertLastUpdatedAtByOrgan(organId: number) {
+    await equipmentsDb.raw(`
+        INSERT
+            INTO
+            public."LastUpdatedAt" (
+                fk_organ,
+                completedon
+            )
+        VALUES
+            (
+              ?,
+              NOW()
+            )
+        ON
+        CONFLICT (fk_organ)
+        DO
+        UPDATE
+        SET
+            completedon = NOW();
+    `, [organId])
+
+  }
+
   static async getDateOfLastMeasurementTaken(): Promise<null | Array<{ Time: string, Id_Organ: number }>> {
     const meteorologicalOrganIds = await equipmentsDb.select("IdOrgan")
       .from("MetereologicalOrgan")
