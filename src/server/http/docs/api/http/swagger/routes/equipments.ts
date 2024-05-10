@@ -77,6 +77,7 @@ const IRRIGANT = {
                         Location: {
                           Coordinates: [-3.995388889, -40.955111111],
                         },
+                        LastSync: "2024-05 - 10T18: 26:07.738Z",
                         Et0: 3.0475848,
                       },
                       {
@@ -95,6 +96,7 @@ const IRRIGANT = {
                         Location: {
                           Coordinates: [-3.795127, -38.557368],
                         },
+                        LastSync: "2024-05 - 10T18: 26:07.738Z",
                         Et0: 1.577899,
                       },
                     ],
@@ -117,6 +119,7 @@ const IRRIGANT = {
                         Location: {
                           Coordinates: [-5.567, -39.633305556],
                         },
+                        LastSync: "2024-05 - 10T18: 26:07.738Z",
                         Precipitation: 38,
                       },
                       {
@@ -135,6 +138,7 @@ const IRRIGANT = {
                         Location: {
                           Coordinates: [-3.674722222, -38.979722222],
                         },
+                        LastSync: "2024-05 - 10T18: 26:07.738Z",
                         Precipitation: 21,
                       },
                     ],
@@ -278,6 +282,7 @@ export const EQUIPMENTS = {
                                 },
                               },
                             },
+                            LastSync: "string",
                             CreatedAt: "string",
                             UpdatedAt: "string",
                             Enable: "boolean",
@@ -308,6 +313,7 @@ export const EQUIPMENTS = {
                           Location: {
                             Coordinates: [-3.995388889, -40.955111111],
                           },
+                          LastSync: "2024-05 - 10T18: 26:07.738Z",
                           CreatedAt: "2024-03-29T02:34:51.281+00:00",
                           UpdatedAt: "2024-04-01T19:56:15.697297+00:00",
                           Enable: true,
@@ -328,6 +334,7 @@ export const EQUIPMENTS = {
                           Location: {
                             Coordinates: [-7.300925, -39.271107],
                           },
+                          LastSync: "2024-05 - 10T18: 26:07.738Z",
                           CreatedAt: "2024-03-29T02:34:51.281+00:00",
                           UpdatedAt: "2024-04-01T19:56:50.264197+00:00",
                           Enable: true,
