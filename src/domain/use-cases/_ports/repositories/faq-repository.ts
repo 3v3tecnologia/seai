@@ -8,7 +8,7 @@ export namespace FaqRepository {
     order: number;
     created_at?: string;
     updated_at?: string;
-    categories: Array<CategoryRepository.FaqCategoriesData> | Array<void>;
+    category: CategoryRepository.FaqCategoriesData;
   };
 
   export interface Add {
@@ -16,7 +16,7 @@ export namespace FaqRepository {
       question: string;
       answer: string;
       order: number;
-      categories: Array<number>;
+      category_id: number;
     }): Promise<number | null>;
   }
 
@@ -30,7 +30,7 @@ export namespace FaqRepository {
       question: string;
       answer: string;
       order: number;
-      categories: Array<number>;
+      category_id: number;
     }): Promise<void>;
   }
 

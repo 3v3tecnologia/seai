@@ -11,9 +11,9 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     question: string;
     answer: string;
     order: number;
-    categories: Array<number>;
+    category_id: number;
   }): Promise<number | null> {
-    const { question, answer, order, categories } = data;
+    const { question, answer, order, category_id } = data;
 
     let faq_id: number | null = null;
 
@@ -30,13 +30,12 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
       const id = response[0].Id;
 
-      const categoriesToPersist = categories.map((category_id) => ({
-        Fk_FAQ: id,
-        Fk_Category: category_id,
-      }))
 
       await trx
-        .insert(categoriesToPersist)
+        .insert({
+          Fk_FAQ: id,
+          Fk_Category: category_id,
+        })
         .into("FAQ_Category");
 
       faq_id = id
@@ -80,7 +79,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
     const table = "FAQ AS faq"
 
-    const fetchFaqsQuery = governmentDb(table).select("*");
+    const fetchFaqsQuery = governmentDb(table).select("faq.*", "cat.Id as IdCategory", "cat.Title", "cat.Description");
     const fetchFaqsCountQuery = governmentDb(table);
 
     if (question) {
@@ -94,7 +93,10 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
     const totalCount = Number(totalCountReponse[0].count)
 
-    const faqsRows = await fetchFaqsQuery.limit(limit).offset(offset)
+    const faqsRows = await fetchFaqsQuery
+      .innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
+      .limit(limit)
+      .offset(offset)
 
     if (!faqsRows) {
       return null;
@@ -108,18 +110,22 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
         order: row.Order,
         created_at: row.CreatedAt,
         updated_at: row.UpdatedAt,
-        categories: [],
+        category: {
+          id: row.IdCategory,
+          title: row.Title,
+          description: row.Description
+        },
       }));
 
     // TO-DO: refactor
-    await Promise.allSettled(
-      faqsToDomain.map(async (faq) => {
-        const categories = await this.loadCategoriesByFaqId(faq.id);
-        console.log(categories);
-        faq.categories = categories || [];
-        return faq;
-      })
-    );
+    // await Promise.allSettled(
+    //   faqsToDomain.map(async (faq) => {
+    //     const categories = await this.loadCategoriesByFaqId(faq.id);
+    //     console.log(categories);
+    //     faq.categories = categories || [];
+    //     return faq;
+    //   })
+    // );
 
     return toPaginatedOutput({
       data: faqsToDomain,
@@ -155,7 +161,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     question: string;
     answer: string;
     order: number;
-    categories: Array<number>;
+    category_id: number;
   }): Promise<void> {
     const { id, question, answer, order, categories } = data;
 
@@ -166,36 +172,37 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
             Question: question,
             Answer: answer,
             Order: order,
+            Fk_Category: category_id,
             UpdatedAt: governmentDb.fn.now(),
           },
           ["Id"]
         )
         .where({ Id: id });
 
-      await trx("FAQ_Category").where("Fk_FAQ", id).del();
+      // await trx("FAQ_Category").where("Fk_FAQ", id).del();
 
-      const categoriesToPersist = categories.map((category_id) => ({
-        Fk_FAQ: id,
-        Fk_Category: category_id,
-      }))
+      // const categoriesToPersist = categories.map((category_id) => ({
+      //   Fk_FAQ: id,
+      //   Fk_Category: category_id,
+      // }))
 
-      await trx
-        .insert(categoriesToPersist)
-        .into("FAQ_Category");
+      // await trx
+      //   .insert(categoriesToPersist)
+      //   .into("FAQ_Category");
     });
 
   }
 
   async deleteById(id_faq: number): Promise<boolean> {
     await governmentDb.transaction(async (trx) => {
-      await trx("FAQ_Category").where("Fk_FAQ", id_faq).del();
+      // await trx("FAQ_Category").where("Fk_FAQ", id_faq).del();
       await trx("FAQ").where("Id", id_faq).del();
     });
     return true;
   }
   async deleteCategoryById(id_category: number): Promise<boolean> {
     await governmentDb.transaction(async (trx) => {
-      await trx("FAQ_Category").where("Fk_Category", id_category).del();
+      // await trx("FAQ_Category").where("Fk_Category", id_category).del();
       await trx("Category").where("Id", id_category).del();
     });
     return true;
