@@ -33,6 +33,7 @@ function mapEquipmentToDomain(row: any) {
     Location: {
       Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
     },
+    LastSync: row.LastSync
   };
 }
 
@@ -376,6 +377,7 @@ export class DbEquipmentsRepository
                     equipment."CreatedAt",
                     equipment."UpdatedAt" ,
                     equipment."Enable",
+                    lastSync."completedon" as "LastSync",
                     organ."IdOrgan" AS "IdOrgan",
                     organ."Name" AS "OrganName",
                     eqpType."IdType" AS "IdType",
@@ -387,6 +389,8 @@ export class DbEquipmentsRepository
                     "MetereologicalEquipment" AS equipment
                 INNER JOIN "MetereologicalOrgan" AS organ ON
                     organ."IdOrgan" = equipment."FK_Organ"
+                INNER JOIN "LastUpdatedAt" AS lastSync
+                  ON lastSync."fk_organ" = equipment."FK_Organ"
                 INNER JOIN "EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
@@ -401,21 +405,7 @@ export class DbEquipmentsRepository
     }
 
     const toDomain = rows.measures.map((row: any) => ({
-      Id: Number(row.Id),
-      Code: row.EqpCode || null,
-      Name: row.Name,
-      Type: {
-        Id: Number(row.IdType),
-        Name: row.EqpType,
-      },
-      Organ: {
-        Id: Number(row.IdOrgan),
-        Name: row.OrganName,
-      },
-      Altitude: Number(row.Altitude) || null,
-      Location: {
-        Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
-      },
+      ...mapEquipmentToDomain(row),
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
       Enable: row.Enable,
@@ -436,7 +426,6 @@ export class DbEquipmentsRepository
       distance?: number;
     } | null
   ): Promise<Array<StationWithLastMeasurement> | null> {
-    // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
@@ -455,6 +444,7 @@ export class DbEquipmentsRepository
                           equipment."Name",
                           equipment."Altitude" ,
                           equipment."CreatedAt",
+                          lastSync."completedon" as "LastSync",
                           equipment."UpdatedAt" ,
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
@@ -467,6 +457,8 @@ export class DbEquipmentsRepository
                           "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN "LastUpdatedAt" AS lastSync
+      ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
       WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${coordinateFilter})
@@ -488,6 +480,7 @@ export class DbEquipmentsRepository
     `;
 
     const data = await equipments.raw(query);
+
 
     const rows = data.rows;
 
@@ -521,7 +514,8 @@ export class DbEquipmentsRepository
                           equipment."Name",
                           equipment."Altitude" ,
                           equipment."CreatedAt",
-                          equipment."UpdatedAt" ,
+                          equipment."UpdatedAt",
+                          lastSync."completedon" as "LastSync",
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
@@ -533,6 +527,8 @@ export class DbEquipmentsRepository
                           "MetereologicalEquipment" AS equipment
       INNER JOIN "MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN "LastUpdatedAt" AS lastSync
+      ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN "EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
       WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${[params?.latitude, params?.longitude].every((e) => e)
