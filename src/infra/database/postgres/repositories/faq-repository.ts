@@ -38,7 +38,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     question?: string
   } & IPaginationInput): Promise<IOutputWithPagination<FaqWithCategoriesData>> {
     const { question, pageNumber, limit, offset, } = params
-    console.log('kk');
 
     const table = "FAQ AS faq"
 
@@ -294,7 +293,13 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     return null;
   }
 
+  async checkIfCategoryIsAlreadyAssociated(category_id: number): Promise<boolean> {
+    const response = await governmentDb('FAQ as f')
+      .select(governmentDb.raw('CASE WHEN f."Fk_Category" = ? THEN true ELSE false END AS result', [category_id]))
+      .first()
 
+    return response ? response.result : false
+  }
   async getCategoryById(
     id_category: number
   ): Promise<FaqCategoriesData | null> {

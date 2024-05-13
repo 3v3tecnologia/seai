@@ -29,8 +29,6 @@ export class CreateFaq extends Command implements CreateFaqProtocol {
       request.id_category
     );
 
-    console.log("category ", category);
-
     if (category === null) {
       return left(new Error("Não foi possível localizar categoria"));
     }

@@ -37,7 +37,7 @@ export interface FaqRepositoryProtocol {
   checkIfFaqAlreadyExists(id: number): Promise<boolean>;
 
   checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
-
+  checkIfCategoryIsAlreadyAssociated(category_id: number): Promise<boolean>
   addCategory(title: string, description: string): Promise<number>
   updateCategory(
     id_category: number,

@@ -19,6 +19,12 @@ export class DeleteFaqCategory
     request: DeleteFaqCategoryDTO.params
   ): Promise<Either<Error, string | null>> {
     this.resetLog();
+    const isAssociatedWithFaq = await this.faqRepository.checkIfCategoryIsAlreadyAssociated(request.id_category)
+
+    if (isAssociatedWithFaq) {
+      return left(new Error("Não é possível apagar categorias associadas a algum FAQ"))
+    }
+
     const exists = await this.faqRepository.getCategoryById(
       request.id_category
     );

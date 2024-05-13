@@ -14,6 +14,7 @@ export class DeleteFaq extends Command implements DeleteFaqProtocol {
     request: DeleteFaqDTO.params
   ): Promise<Either<Error, DeleteFaqDTO.result>> {
     this.resetLog();
+
     const exists = await this.faqRepository.getFaqById(request.id);
 
     if (!exists) {
