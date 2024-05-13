@@ -15,7 +15,7 @@ interface FaqProps {
   question: Question;
   answer: Answer;
   order?: number | null;
-  categories: Categories;
+  category: Category;
 }
 
 export class Faq {
@@ -23,14 +23,14 @@ export class Faq {
   private _question: Question;
   private _answer: Answer;
   private _order?: number | null;
-  private _categories: Categories;
+  private _category: Category;
 
   constructor(props: FaqProps, id?: number) {
     this._id = id || null;
     this._question = props.question;
     this._answer = props.answer;
     this._order = props.order || null;
-    this._categories = props.categories;
+    this._category = props.category;
   }
 
   get id() {
@@ -48,8 +48,8 @@ export class Faq {
     return this._order;
   }
 
-  get categories() {
-    return this._categories;
+  get category() {
+    return this._category;
   }
 
   public updateAnswer(answer: string): Either<NullOrUndefinedError, void> {
@@ -73,13 +73,7 @@ export class Faq {
   }
 
   public addCategory(category: Category): Either<Error, void> {
-    const exists = this._categories.values.some(
-      (item) => item.id === category.id
-    );
-    if (exists) {
-      return left(new Error("Categoria já existe"));
-    }
-    this._categories.values.push(category);
+    this._category = category
     return right();
   }
 
@@ -88,7 +82,7 @@ export class Faq {
       question: string;
       answer: string;
       order?: number;
-      categories: Categories;
+      category: Category;
     },
     id?: number
   ): Either<Error, Faq> {
@@ -97,7 +91,7 @@ export class Faq {
     const args: GuardArgumentCollection = [
       { argument: props.question, argumentName: "questão" },
       { argument: props.answer, argumentName: "resposta" },
-      { argument: props.categories, argumentName: "categorias" },
+      { argument: props.category, argumentName: "categoria" },
     ];
 
     if (props.order) {
@@ -110,9 +104,9 @@ export class Faq {
       return left(new Error(concatenateMessages(guardArgs.value)));
     }
 
-    if (props.categories.values.length === 0) {
+    if (props.category === null || props.category === undefined) {
       errors.addError(
-        new Error("é necessário informar pelo menos uma categoria")
+        new Error("é necessário informar a categoria")
       );
     }
 
@@ -137,7 +131,7 @@ export class Faq {
         {
           answer: answerOrError.value as Answer,
           question: questionOrError.value as Question,
-          categories: props.categories,
+          category: props.category,
           order: props.order || null,
         },
         id

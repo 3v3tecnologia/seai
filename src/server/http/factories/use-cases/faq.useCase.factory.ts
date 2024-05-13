@@ -9,9 +9,9 @@ import {
   UpdateFaq,
   UpdateFaqCategory,
 } from "../../../../domain/use-cases/faq";
-import { GetFaqsUseCaseProtocol } from "../../../../domain/use-cases/faq/fetch-all-faq/protocol";
-import { FetchFaqByIdProtocol } from "../../../../domain/use-cases/faq/fetch-faq-by-id/ports/fetch-faq-by-id";
-import { FetchFaqCategoriesProtocol } from "../../../../domain/use-cases/faq/fetch-faq-categories/ports/fetch-faq-categories";
+import { GetFaqsUseCaseProtocol } from "../../../../domain/use-cases/faq/protocols/fetch-all-faq";
+import { FetchFaqByIdProtocol } from "../../../../domain/use-cases/faq/protocols/fetch-faq-by-id";
+import { FetchFaqCategoriesProtocol } from "../../../../domain/use-cases/faq/protocols/fetch-faq-categories";
 import { DbFaqRepository } from "../../../../infra/database/postgres/repositories/faq-repository";
 
 export class FaqUseCasesFactory {
@@ -32,7 +32,7 @@ export class FaqUseCasesFactory {
   static makeFetchFaqById(): FetchFaqByIdProtocol {
     return new FetchFaqById(this.repository);
   }
-  static makeFetchFaqByCategories(): FetchFaqCategoriesProtocol {
+  static makeFetchFaqCategories(): FetchFaqCategoriesProtocol {
     return new FetchFaqCategories(this.repository);
   }
   static makeFetchFaqsWithCategories(): GetFaqsUseCaseProtocol.UseCase {

@@ -1,124 +1,51 @@
 import { IOutputWithPagination, IPaginationInput } from "../../helpers/pagination";
+import { FaqCategoriesData, FaqWithCategoriesData } from "./models/faqData";
 
-export namespace FaqRepository {
-  export type FaqWithCategoriesModel = {
+
+export interface FaqRepositoryProtocol {
+  addFaq(data: {
+    question: string;
+    answer: string;
+    order: number;
+    category_id: number;
+  }): Promise<number | null>;
+
+  deleteFaqById(id_faq: number): Promise<number | null>;
+
+  updateFaq(data: {
     id: number;
     question: string;
     answer: string;
     order: number;
-    created_at?: string;
-    updated_at?: string;
-    category: CategoryRepository.FaqCategoriesData;
-  };
+    category_id: number;
+  }): Promise<void>;
+  getFaqs(params: {
+    question?: string
+  } & IPaginationInput): Promise<IOutputWithPagination<FaqWithCategoriesData>>;
 
-  export interface Add {
-    add(data: {
-      question: string;
-      answer: string;
-      order: number;
-      category_id: number;
-    }): Promise<number | null>;
-  }
-
-  export interface DeleteById {
-    deleteById(id: number): Promise<boolean>;
-  }
-
-  export interface Update {
-    update(data: {
-      id: number;
-      question: string;
-      answer: string;
-      order: number;
-      category_id: number;
-    }): Promise<void>;
-  }
-
-  export interface FetchWithCategories {
-    loadAll(params: {
-      question?: string
-    } & IPaginationInput): Promise<IOutputWithPagination<FaqRepository.FaqWithCategoriesModel>>;
-  }
-
-  export interface FetchByCategory {
-    loadByCategory(
-      params: {
-        id_category: number;
-      } & IPaginationInput
-    ): Promise<IOutputWithPagination<FaqRepository.FaqWithCategoriesModel>>;
-  }
+  getFagsByCategory(
+    params: {
+      id_category: number;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<FaqWithCategoriesData>>;
 
 
-  export interface FetchById {
-    loadById(id: number): Promise<FaqWithCategoriesModel | null>;
-  }
+  getFaqById(
+    id_faq: number
+  ): Promise<FaqWithCategoriesData | null>;
 
-  export interface CheckIfAlreadyExists {
-    checkIfFaqAlreadyExists(id: number): Promise<boolean>;
-  }
+  checkIfFaqAlreadyExists(id: number): Promise<boolean>;
 
-  export interface CheckIfQuestionExists {
-    checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
-  }
+  checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
+
+  addCategory(title: string, description: string): Promise<number>
+  updateCategory(
+    id_category: number,
+    title: string,
+    description: string
+  ): Promise<void>
+  deleteCategoryById(id_category: number): Promise<number | null>
+  getCategories(): Promise<Array<FaqCategoriesData> | null>;
+  getCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
+  getCategoryByTitle(title: string): Promise<FaqCategoriesData | null>;
 }
-
-export namespace CategoryRepository {
-  export type FaqCategoriesData = {
-    id: number;
-    title: string;
-    description: string;
-    created_at: string;
-    updated_at: string;
-  };
-
-  export interface Add {
-    addCategory(title: string, description: string): Promise<number>;
-  }
-
-  export interface Update {
-    updateCategory(
-      id_category: number,
-      title: string,
-      description: string
-    ): Promise<void>;
-  }
-
-  export interface DeleteById {
-    deleteCategoryById(id_category: number): Promise<boolean>;
-  }
-
-  export interface Fetch {
-    loadCategories(): Promise<Array<FaqCategoriesData> | null>;
-  }
-
-  export interface FetchAllByIds {
-    loadCategoriesByIds(
-      ids: Array<number>
-    ): Promise<Array<CategoryRepository.FaqCategoriesData> | null>;
-  }
-
-  export interface FetchById {
-    loadCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
-  }
-
-  export interface FetchByTitle {
-    loadCategoryByTitle(title: string): Promise<FaqCategoriesData | null>;
-  }
-}
-
-export interface FaqRepositoryProtocol
-  extends FaqRepository.Add,
-  FaqRepository.FetchWithCategories,
-  FaqRepository.FetchByCategory,
-  FaqRepository.FetchById,
-  FaqRepository.Update,
-  FaqRepository.CheckIfAlreadyExists,
-  FaqRepository.CheckIfQuestionExists,
-  FaqRepository.DeleteById,
-  CategoryRepository.Add,
-  CategoryRepository.Update,
-  CategoryRepository.DeleteById,
-  CategoryRepository.Fetch,
-  CategoryRepository.FetchById,
-  CategoryRepository.FetchAllByIds,
-  CategoryRepository.FetchByTitle { }
