@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category/update-faq-category";
+import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
@@ -28,7 +28,7 @@ export class UpdateFaqCategoryController extends CommandController<
         title: request.title,
         description: request.description,
       };
-      const result = await this.UpdateFaqCategory.update(dto);
+      const result = await this.UpdateFaqCategory.execute(dto);
 
       if (result.isLeft()) {
         return forbidden(result.value);

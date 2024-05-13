@@ -229,21 +229,18 @@ const FAQ = {
                 answer: {
                   type: "string",
                 },
-                order: {
+                // order: {
+                //   type: "number",
+                // },
+                id_category: {
                   type: "number",
-                },
-                categories: {
-                  type: "array",
-                  items: {
-                    type: "number",
-                  },
                 },
               },
               example: {
                 question: "O que é TDD?",
                 answer: "Test-Driven Development",
-                order: 1,
-                categories: [2, 3, 4],
+                // order: 1,
+                id_category: 7
               },
             },
           },
@@ -370,18 +367,13 @@ const FAQ = {
                         id: 1,
                         question: "O que é TDD2?",
                         answer: "Desenvolvimento orientado a testes",
-                        order: 1,
                         created_at: "2024-05-06T20:25:13.732Z",
                         updated_at: "2024-05-06T20:25:13.732Z",
-                        categories: [
-                          {
-                            id: 1,
-                            title: "categoria 1",
-                            description: "descrição da categoria 1",
-                            created_at: "2024-05-06T21:06:15.860Z",
-                            updated_at: "2024-05-06T21:06:15.860Z"
-                          }
-                        ]
+                        category: {
+                          id: 3,
+                          title: "categoria 1",
+                          description: "descrição da categoria 1"
+                        }
                       },
                     ],
                     TotalItems: 1,
@@ -426,29 +418,7 @@ const FAQ = {
                   type: "object",
                   properties: {
                     data: {
-                      type: "object",
-                      properties: {
-                        id: "number",
-                        question: "string",
-                        answer: "string",
-                        order: "number",
-                        description: "string",
-                        created_at: "string",
-                        updated_at: "string",
-                        categories: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              id: "number",
-                              title: "string",
-                              description: "string",
-                              created_at: "string",
-                              updated_at: "string",
-                            },
-                          },
-                        },
-                      },
+                      type: "object"
                     },
                   },
                 },
@@ -549,18 +519,15 @@ const FAQ = {
                 order: {
                   type: "number",
                 },
-                categories: {
-                  type: "array",
-                  items: {
-                    type: "number",
-                  },
+                id_category: {
+                  type: "number",
                 },
               },
               example: {
                 question: "O que é TDD?",
                 answer: "Test-Driven Development",
                 order: 1,
-                categories: [2, 3, 4],
+                id_category: 4,
               },
             },
           },

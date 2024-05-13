@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { CreateFaq } from "../../../domain/use-cases/faq/create-faq/create-faq";
+import { CreateFaq } from "../../../domain/use-cases/faq/create-faq";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
@@ -18,7 +18,7 @@ export class CreateFaqController extends CommandController<
 
   async handle(request: CreateFaqController.Request): Promise<HttpResponse> {
     try {
-      const result = await this.CreateFaq.create(request);
+      const result = await this.CreateFaq.execute(request);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -40,6 +40,6 @@ export namespace CreateFaqController {
     question: string;
     answer: string;
     order: number;
-    categories: Array<number>;
+    id_category: number;
   };
 }

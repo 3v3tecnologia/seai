@@ -1,12 +1,11 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchFaqByIdProtocol } from "../../../domain/use-cases/faq/fetch-faq-by-id/ports/fetch-faq-by-id";
+import { FetchFaqByIdProtocol } from "../../../domain/use-cases/faq/protocols/fetch-faq-by-id";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 export class FetchFaqByIdController
-  implements Controller<FetchFaqByIdController.Request, HttpResponse>
-{
+  implements Controller<FetchFaqByIdController.Request, HttpResponse> {
   private FetchFaq: FetchFaqByIdProtocol;
 
   constructor(FetchFaq: FetchFaqByIdProtocol) {
@@ -19,7 +18,7 @@ export class FetchFaqByIdController
       if (!id_faq) {
         return badRequest(new Error("Id do FAQ é obrigatório"));
       }
-      const result = await this.FetchFaq.fetch({ id_faq: Number(id_faq) });
+      const result = await this.FetchFaq.execute({ id_faq: Number(id_faq) });
 
       if (result.isLeft()) {
         return forbidden(result.value);

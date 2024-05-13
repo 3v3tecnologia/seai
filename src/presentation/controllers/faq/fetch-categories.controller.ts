@@ -1,8 +1,8 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchFaqCategoriesProtocol } from "../../../domain/use-cases/faq/fetch-faq-categories/ports/fetch-faq-categories";
 import { forbidden, ok, serverError } from "../helpers";
+import { FetchFaqCategoriesProtocol } from "../../../domain/use-cases/faq/protocols/fetch-faq-categories";
 
 export class FetchFaqCategoriesController
   implements Controller<void, HttpResponse> {

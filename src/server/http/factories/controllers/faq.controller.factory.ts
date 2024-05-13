@@ -62,7 +62,7 @@ export class FaqControllersFactory {
   static makeFetchFaqCategories(): Controller {
     return makeLogControllerDecorator(
       new FetchFaqCategoriesController(
-        FaqUseCasesFactory.makeFetchFaqByCategories()
+        FaqUseCasesFactory.makeFetchFaqCategories()
       )
     );
   }

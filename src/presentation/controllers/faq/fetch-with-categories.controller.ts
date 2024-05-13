@@ -2,7 +2,7 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { forbidden, ok, serverError } from "../helpers";
-import { GetFaqsUseCaseProtocol } from "../../../domain/use-cases/faq/fetch-all-faq/protocol";
+import { GetFaqsUseCaseProtocol } from "../../../domain/use-cases/faq/protocols/fetch-all-faq";
 import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 
 export class FetchFaqWithCategoriesController

@@ -1,6 +1,6 @@
 import { HttpResponse } from "../ports";
 
-import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category/delete-faq-category";
+import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
@@ -26,7 +26,7 @@ export class DeleteFaqCategoryController extends CommandController<
       if (!request.id) {
         return badRequest(new Error("É necessário informar o ID da categoria"));
       }
-      const result = await this.DeleteFaqCategory.delete({
+      const result = await this.DeleteFaqCategory.execute({
         id_category: request.id,
       });
 
