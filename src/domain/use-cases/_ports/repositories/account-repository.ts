@@ -10,6 +10,7 @@ export interface AccountRepositoryProtocol {
     email: string;
     type: UserType;
     modules: SystemModulesProps;
+    code: string;
   }): Promise<number | null>;
   list(
     params: {

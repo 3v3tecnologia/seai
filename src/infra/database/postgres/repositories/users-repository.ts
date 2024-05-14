@@ -14,7 +14,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(data: {
     email: string;
     type: UserType;
-    modules: SystemModulesProps;
+    modules: SystemModulesProps,
+    code: string,
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
@@ -22,6 +23,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         .insert({
           Email: data.email,
           Type: data.type,
+          Code: data.code,
           CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")

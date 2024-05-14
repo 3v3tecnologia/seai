@@ -52,6 +52,7 @@ export namespace CreateUserController {
     accountId: number;
     email: string;
     type: UserType;
+    code: string;
     modules: {
       [Modules.NEWS]: Required<SystemModulesPermissions>;
       [Modules.REGISTER]: Required<SystemModulesPermissions>;

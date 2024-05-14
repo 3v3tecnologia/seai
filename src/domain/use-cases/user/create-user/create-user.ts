@@ -1,4 +1,4 @@
-import env from "../../../../server/http/env";
+import { Either, left, right } from "../../../../shared/Either";
 import { User } from "../../../entities/user/user";
 import {
   SystemModules,
@@ -12,9 +12,34 @@ import {
   AvailablesEmailServices,
   ScheduleUserAccountNotification,
 } from "../send-notification-to-user/send-notification-to-user";
-import { Either, left, right } from "../../../../shared/Either";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
 import { CreateUserDTO, CreateUserProtocol } from "./ports";
+import crypto from 'crypto'
+
+
+function validateHash(inputData: string, storedHash: string, storedSalt: string, iterations: number, keylen: number, digest: string) {
+  // Generate the hash with the input data and the stored salt
+  const derivedKey = crypto.pbkdf2Sync(inputData, storedSalt, iterations, keylen, digest);
+
+  // Convert to hex format for comparison
+  const hash = derivedKey.toString('hex');
+
+  // Compare the newly generated hash with the stored hash
+  // Return true if they match, false otherwise
+  return hash === storedHash;
+}
+
+async function generateHash(userEmail: string, salt: string, iterations: number, keylen: number, digest: string): Promise<Error | string> {
+  // Asynchronously generate the hash
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(userEmail, salt, iterations, keylen, digest, (err, derivedKey) => {
+      if (err) reject(err);
+      // The derivedKey is the hash code generated from the user's email and the salt
+      const hash = derivedKey.toString('hex');
+      resolve(hash)
+    });
+  })
+}
 
 export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -73,10 +98,21 @@ export class CreateUser extends Command implements CreateUserProtocol {
 
     const user = userOrError.value as User;
 
+    const salt = "89af61e3502242626b5ea5f54199126e"
+
+    const iterations = 100;
+    const keylen = 10;
+    const digest = 'sha512';
+
+    const userHash = await generateHash(user.email?.value as string, salt, iterations, keylen, digest)
+
+
+
     const user_id = await this.accountRepository.add({
       email: user.email?.value as string,
       type: user.type,
       modules: user.access?.value as SystemModulesProps,
+      code: userHash as string
     });
 
     if (user_id) {
@@ -90,15 +126,17 @@ export class CreateUser extends Command implements CreateUserProtocol {
       // const exp_date = this.dateProvider.addHours(3);
 
       // TODO criar token e adicionar ao email
-      await this.scheduleUserAccountNotification.schedule({
+      /*await this.scheduleUserAccountNotification.schedule({
         user: {
           email: user.email?.value as string,
           token,
         },
         subject: "Bem vindo ao SEAI",
         action: AvailablesEmailServices.CREATE_ACCOUNT,
-      });
+      });*/
+
     }
+
 
     this.addLog({
       action: "create",
