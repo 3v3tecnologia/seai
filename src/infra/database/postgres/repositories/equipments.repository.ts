@@ -467,8 +467,8 @@ export class DbEquipmentsRepository
               SELECT
                   rs."FK_Equipment" ,
                   rs."Time",
-                  rs."Hour" ,
-                  rs."Et0"
+                  rs."Hour",
+                  TRUNC(rs."Et0"::numeric,2) AS "Et0"
               FROM
                   "ReadStations" rs
               WHERE
@@ -540,8 +540,8 @@ export class DbEquipmentsRepository
               SELECT
                   rs."FK_Equipment" ,
                   rs."Time",
-                  rs."Hour" ,
-                  rs."Value"
+                  rs."Hour",
+                  TRUNC(rs."Value"::numeric,2) AS "Value"
               FROM
                   "ReadPluviometers" rs
               WHERE

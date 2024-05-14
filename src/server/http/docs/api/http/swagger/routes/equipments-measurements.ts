@@ -319,7 +319,7 @@ export const MEASURES = {
                       },
                       Et0: {
                         Unit: "mm",
-                        Value: 4.911332,
+                        Value: 4.91,
                       },
                     },
                   },

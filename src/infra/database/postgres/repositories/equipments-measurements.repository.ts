@@ -185,7 +185,7 @@ export class EquipmentsMeasurementsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                stations."Et0" AS "ETO"
+                TRUNC(stations."Et0"::numeric,2) AS "Et0"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
@@ -246,9 +246,9 @@ export class EquipmentsMeasurementsRepository
         Unit: "m/s",
         Value: Number(row.WindVelocity) || null,
       },
-      ETO: {
+      Et0: {
         Unit: "mm",
-        Value: Number(row.ETO) || null,
+        Value: Number(row.Et0) || null,
       },
     }));
 
@@ -310,7 +310,7 @@ export class EquipmentsMeasurementsRepository
           pluviometer."Hour" ,
           organ."Name" AS "OrganName",
           organ."IdOrgan",
-          pluviometer."Value"
+          TRUNC(pluviometer."Value"::numeric,2) AS "Value"
       FROM
         "MetereologicalEquipment" AS equipment 
       INNER JOIN "ReadPluviometers" AS pluviometer
@@ -365,7 +365,7 @@ export class EquipmentsMeasurementsRepository
                 stations."AverageAtmosphericTemperature" ,
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
-                stations."Et0"
+                TRUNC(stations."Et0"::numeric,2) AS "Et0"
             FROM "MetereologicalEquipment" AS equipment  
             LEFT JOIN "ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
@@ -447,7 +447,7 @@ export class EquipmentsMeasurementsRepository
           pluviometer."Hour" ,
           organ."Name" AS "OrganName",
           organ."IdOrgan",
-          pluviometer."Value",
+          TRUNC(pluviometer."Value"::numeric,2) AS "Value",
           pluviometer."FK_Equipment"
       FROM
                     "MetereologicalEquipment" AS equipment

@@ -13,7 +13,6 @@ export class JwtAdapter implements TokenProvider {
   }
 
   async sign(payload: TokenPayload, expires?: string): Promise<string> {
-    console.log("CRIANDO TOKEN = ", payload);
     return jwt.sign(payload, this.secret, {
       subject: `${payload.accountId}`,
       expiresIn: expires || "30d",
