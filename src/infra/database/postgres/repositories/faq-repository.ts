@@ -115,11 +115,11 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
   }
 
   async deleteFaqById(id_faq: number): Promise<number | null> {
-    const response = await governmentDb("FAQ").where("Id", id_faq).returning("Id");
+    const response = await governmentDb("FAQ").where("Id", id_faq).del().returning("Id");
 
     if (response.length > 0) {
       const deleteFaqId = response[0]
-      console.log(`FAQ com ID ${deleteFaqId} deletado com sucesso.`);
+      console.log(`FAQ com ID ${deleteFaqId.Id} deletado com sucesso.`);
       return Number(deleteFaqId)
     }
 
