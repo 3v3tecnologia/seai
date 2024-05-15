@@ -6,13 +6,13 @@ import { Command } from "../_ports/core/command";
 import { Encoder } from "../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
 import {
-    AccountNotFoundError,
-    WrongPasswordError,
+  AccountNotFoundError,
+  WrongPasswordError,
 } from "./authentication/errors";
 import { LoginAlreadyExists } from "./errors/login-aready-exists";
 import {
-    AccountEmailNotFound,
-    UserModulesNotFound,
+  AccountEmailNotFound,
+  UserModulesNotFound,
 } from "./errors/user-account-not-found";
 
 export class CompleteUserRegister extends Command implements ICompleteUserRegisterUseCase {
@@ -38,8 +38,8 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     >
   > {
 
-    const alreadyExistsAccount = await this.accountRepository.getById(
-      request.id
+    const alreadyExistsAccount = await this.accountRepository.getUserByCode(
+      request.code
     );
 
     const userNotFound = alreadyExistsAccount === null;
@@ -49,21 +49,21 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     }
 
     const userWithLogin = await this.accountRepository.getByLogin(
-        request.login
-      );
+      request.login
+    );
 
-      if (userWithLogin) {
-        // Se login não for do mesmo usuário então é sinal que já existe um login
-        // cadastrado e o sistema deve bloquear a edição.
-        const hasOtherAccountWithSameLogin =
-          userWithLogin.id !== request.id && userWithLogin.login !== null;
+    if (userWithLogin) {
+      // Se login não for do mesmo usuário então é sinal que já existe um login
+      // cadastrado e o sistema deve bloquear a edição.
+      const hasOtherAccountWithSameLogin =
+        userWithLogin.id !== request.id && userWithLogin.login !== null;
 
-        if (hasOtherAccountWithSameLogin) {
-          return left(
-            new Error(`Usuário com login ${request.login} já existe.`)
-          );
-        }
+      if (hasOtherAccountWithSameLogin) {
+        return left(
+          new Error(`Usuário com login ${request.login} já existe.`)
+        );
       }
+    }
 
     const userLoginOrError = UserLogin.create(request.login);
     const userNameOrError = UserName.create(request.name);
@@ -77,13 +77,13 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     }
 
     const passwordOrError = UserPassword.create({
-        value: request.password,
-        confirm: request.confirmPassword,
-        isHashed: false
+      value: request.password,
+      confirm: request.confirmPassword,
+      isHashed: false
     })
 
-    if(passwordOrError.isLeft()){
-        return left(passwordOrError.value)
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value)
     }
 
     const login = userLoginOrError.value?.value as string
@@ -93,10 +93,10 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     const hashedPassword = await this.encoder.hash(password);
 
     await this.accountRepository.update({
-        id: request.id,
-        login: login,
-        name: name,
-        password: hashedPassword
+      id: request.id,
+      login: login,
+      name: name,
+      password: hashedPassword
     });
 
     this.addLog({
@@ -111,11 +111,11 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
 
 export namespace CompleteUserRegisterDTO {
   export type Params = {
-    id: number;
+    code: string;
     name: string;
     login: string;
     password: string;
-    confirmPassword: string ;
+    confirmPassword: string;
   };
   export type Result = string;
 }

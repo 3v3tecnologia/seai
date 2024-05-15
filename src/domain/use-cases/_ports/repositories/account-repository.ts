@@ -33,6 +33,17 @@ export interface AccountRepositoryProtocol {
   getByEmail(email: string): Promise<User | null>;
   getByLogin(login: string): Promise<Required<UserAccount> | null>;
   getById(id_user: number): Promise<Required<UserAccount> | null>;
+  getUserByCode(code: string): Promise<{
+    id: number;
+    name: string;
+    login: string;
+    email: string;
+    type: string;
+    code: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  } | null>
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   getUserById(id_user: number): Promise<{
     id: number;

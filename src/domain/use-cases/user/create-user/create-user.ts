@@ -106,46 +106,40 @@ export class CreateUser extends Command implements CreateUserProtocol {
 
     const userHash = await generateHash(user.email?.value as string, salt, iterations, keylen, digest)
 
-
+    const userEmail = user.email?.value as string
 
     const user_id = await this.accountRepository.add({
-      email: user.email?.value as string,
+      email: userEmail,
       type: user.type,
       modules: user.access?.value as SystemModulesProps,
       code: userHash as string
     });
 
     if (user_id) {
-      const token = await this.tokenProvider.sign(
-        {
-          accountId: user_id as number,
-        },
-        "1d"
-      );
 
+      this.addLog({
+        action: "create",
+        table: "User",
+        description: `Usuário criado com sucessso, aguardando confirmação do cadastro.`,
+      });
       // const exp_date = this.dateProvider.addHours(3);
 
-      // TODO criar token e adicionar ao email
-      /*await this.scheduleUserAccountNotification.schedule({
+      const notificationSuccessOrError = await this.scheduleUserAccountNotification.schedule({
         user: {
-          email: user.email?.value as string,
-          token,
+          email: userEmail,
+          base64Code: Buffer.from(userEmail).toString('base64')
         },
-        subject: "Bem vindo ao SEAI",
-        action: AvailablesEmailServices.CREATE_ACCOUNT,
-      });*/
+        templateName: AvailablesEmailServices.CREATE_ACCOUNT,
+      });
 
+      if (notificationSuccessOrError.isRight()) {
+        console.log(notificationSuccessOrError.value);
+      }
     }
 
 
-    this.addLog({
-      action: "create",
-      table: "User",
-      description: `Usuário criado com sucessso, aguardando confirmação do cadastro`,
-    });
-
     return right(
-      `Sucesso ao criar usuário, email enviado com sucesso para ${user.email?.value}`
+      `Usuário criado com sucessso, aguardando confirmação do cadastro.`
     );
   }
 }

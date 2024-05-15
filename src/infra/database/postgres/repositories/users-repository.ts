@@ -11,7 +11,7 @@ import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 export class DbAccountRepository implements AccountRepositoryProtocol {
-  async add(data: {
+  async add(params: {
     email: string;
     type: UserType;
     modules: SystemModulesProps,
@@ -21,9 +21,9 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     await governmentDb.transaction(async (trx) => {
       const id = await trx
         .insert({
-          Email: data.email,
-          Type: data.type,
-          Code: data.code,
+          Email: params.email,
+          Type: params.type,
+          Code: params.code,
           CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")
@@ -31,39 +31,41 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
       const user_id = id.length && id[0].Id;
 
+      // Refactor: Bulk insert
+      // Refactor: add user permissions mapper
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.NEWS].id,
-          Read: data.modules[Modules.NEWS].read,
-          Write: data.modules[Modules.NEWS].write,
+          Fk_Module: params.modules[Modules.NEWS].id,
+          Read: params.modules[Modules.NEWS].read,
+          Write: params.modules[Modules.NEWS].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.REGISTER].id,
-          Read: data.modules[Modules.REGISTER].read,
-          Write: data.modules[Modules.REGISTER].write,
+          Fk_Module: params.modules[Modules.REGISTER].id,
+          Read: params.modules[Modules.REGISTER].read,
+          Write: params.modules[Modules.REGISTER].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.USER].id,
-          Read: data.modules[Modules.USER].read,
-          Write: data.modules[Modules.USER].write,
+          Fk_Module: params.modules[Modules.USER].id,
+          Read: params.modules[Modules.USER].read,
+          Write: params.modules[Modules.USER].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.JOBS].id,
-          Read: data.modules[Modules.JOBS].read,
-          Write: data.modules[Modules.JOBS].write,
+          Fk_Module: params.modules[Modules.JOBS].id,
+          Read: params.modules[Modules.JOBS].read,
+          Write: params.modules[Modules.JOBS].write,
         })
         .into("User_Access");
 
@@ -88,6 +90,54 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         name: module.Name,
       };
     });
+  }
+  async getUserByCode(code: string): Promise<{
+    id: number;
+    name: string;
+    login: string;
+    email: string;
+    type: string;
+    code: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  } | null> {
+    const result = await governmentDb
+      .select("Id", "Name", "Login", "Email", "Type", "Code", "Status", "CreatedAt", "UpdatedAt")
+      .where({ Code: code })
+      .from("User")
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } = result;
+
+    const user: {
+      id: number;
+      name: string;
+      login: string;
+      email: string;
+      type: string;
+      createdAt: string;
+      updatedAt: string;
+      code: string;
+      status: string;
+    } = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      code: Code,
+      status: Status,
+    };
+
+
+    return user;
   }
   async getUserById(id_user: number): Promise<{
     id: number;
