@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
+import { base64Decode } from "../../../shared/utils/base64Encoder";
 import { UserLogin } from "../../entities/user/login";
 import { UserName } from "../../entities/user/name";
 import { UserPassword } from "../../entities/user/userPassword";
@@ -15,10 +16,7 @@ import {
   UserModulesNotFound,
 } from "./errors/user-account-not-found";
 
-function base64Decode(text: string) {
-  let buffer = Buffer.from(text, 'base64');
-  return buffer.toString('ascii');
-}
+
 
 export class CompleteUserRegister extends Command implements ICompleteUserRegisterUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -53,8 +51,6 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     if (account === null) {
       return left(new AccountNotFoundError(request.login));
     }
-
-    console.log(account);
 
     if (account.status === 'registered') {
       return left(new Error("Usuário já registrado."))

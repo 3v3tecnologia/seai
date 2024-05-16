@@ -106,8 +106,6 @@ export class CreateUser extends Command implements CreateUserProtocol {
 
     const userHash = await generateHash(user.email?.value as string, salt, iterations, keylen, digest)
 
-    console.log("[USER] :: ", userHash);
-
     const userEmail = user.email?.value as string
 
     const user_id = await this.accountRepository.add({

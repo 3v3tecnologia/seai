@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { UserPassword } from "../../../entities/user/userPassword";
 import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
@@ -8,6 +9,7 @@ import {
   TokenProvider,
   TokenResponse,
 } from "../authentication/ports/token-provider";
+import { AccountNotFoundError } from "../errors/user-account-not-found";
 import { ResetPasswordProtocol } from "./protocol";
 
 export class ResetPassword extends Command implements ResetPasswordProtocol {
@@ -29,27 +31,23 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
     this.encoder = encoder;
   }
   async execute(
-    access_token: string,
+    code: string,
     password: string,
     confirmPassword: string
   ): Promise<Either<Error, null>> {
-    if (!access_token) {
-      return left(new Error("Token não informado"));
+
+    if (!code) {
+      return left(new Error("Código não informado"));
     }
 
-    let token: TokenResponse;
+    const userEmailToString = base64Decode(code)
 
-    try {
-      token = await this.tokenProvider.verify(access_token);
-    } catch (error) {
-      console.error(error);
-      return left(new Error("Token inválido"));
-    }
+    const account = await this.accountRepository.getByEmail(
+      userEmailToString
+    );
 
-    const user = await this.accountRepository.getById(Number(token.sub));
-
-    if (!user) {
-      return left(new Error("Usuário não encontado"));
+    if (account === null) {
+      return left(new AccountNotFoundError());
     }
 
     const passwordOrError = UserPassword.create({
@@ -64,17 +62,17 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
 
     const newPassword = await this.encoder.hash(password);
 
-    user.password = newPassword;
+    account.password = newPassword;
 
     await this.accountRepository.updateUserPassword(
-      user.id as number,
-      user.password
+      account.id as number,
+      account.password
     );
 
     this.addLog({
       action: "update",
       table: "User",
-      description: `Senha do usuário ${user.login} resetada com sucesso`,
+      description: `Senha do usuário ${account.login} resetada com sucesso`,
     });
     return right(null);
   }
