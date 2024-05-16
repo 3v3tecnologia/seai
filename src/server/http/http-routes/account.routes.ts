@@ -4,7 +4,7 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 import { authorization } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
 
-export const loginRouter = (): Router => {
+export const accountRouter = (): Router => {
   const router = Router();
   router.post(
     "/password/reset",

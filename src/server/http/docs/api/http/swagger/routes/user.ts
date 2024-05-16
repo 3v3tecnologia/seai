@@ -268,19 +268,19 @@ export const USER = {
       },
     },
   },
-  [`${BASE_URL.V1}/complete-register`]: {
+  [`${BASE_URL.V1}/user/complete-register/{code}`]: {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Update user",
       parameters: [
         {
-          name: "id",
+          name: "code",
           in: "path",
-          description: "User Id",
+          description: "User Code",
           required: true,
           schema: {
-            type: "number",
+            type: "string",
           },
         },
       ],

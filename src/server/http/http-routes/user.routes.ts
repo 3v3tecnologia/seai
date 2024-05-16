@@ -34,9 +34,9 @@ export const userRouter = (): Router => {
 
   // Complete user account register
   router.patch(
-    "/complete-register",
-    authorization,
-    userWriteAccessAuth,
+    "/complete-register/:code",
+    // authorization,
+    // userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeCompleteUserRegister())
   );
 

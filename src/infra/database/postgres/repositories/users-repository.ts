@@ -24,6 +24,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           Email: params.email,
           Type: params.type,
           Code: params.code,
+          Status: 'pending',
           CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")
@@ -91,17 +92,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       };
     });
   }
-  async getUserByCode(code: string): Promise<{
-    id: number;
-    name: string;
-    login: string;
-    email: string;
-    type: string;
-    code: string;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-  } | null> {
+  async getUserByCode(code: string): Promise<User | null> {
     const result = await governmentDb
       .select("Id", "Name", "Login", "Email", "Type", "Code", "Status", "CreatedAt", "UpdatedAt")
       .where({ Code: code })
@@ -114,17 +105,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
     const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } = result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      code: string;
-      status: string;
-    } = {
+    const user: User = {
       id: Id,
       name: Name,
       login: Login,
@@ -136,21 +117,11 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       status: Status,
     };
 
-
     return user;
   }
-  async getUserById(id_user: number): Promise<{
-    id: number;
-    name: string;
-    login: string;
-    email: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-    modules: SystemModulesProps | null;
-  } | null> {
+  async getUserById(id_user: number): Promise<User | null> {
     const result = await governmentDb
-      .select("Id", "Name", "Login", "Email", "Type", "CreatedAt", "UpdatedAt")
+      .select("Id", "Name", "Login", "Code", "Status", "Email", "Type", "CreatedAt", "UpdatedAt")
       .where({ Id: id_user })
       .from("User")
       .first();
@@ -159,21 +130,14 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt } = result;
+    const { Id, Name, Login, Code, Status, Email, Type, CreatedAt, UpdatedAt } = result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: User = {
       id: Id,
       name: Name,
       login: Login,
+      code: Code,
+      status: Status,
       email: Email,
       type: Type,
       createdAt: CreatedAt,
@@ -214,6 +178,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
     return modules as SystemModulesProps;
   }
+
   async getUserModulesByName(
     id_user: number,
     name: string
@@ -331,7 +296,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
 
   async update(data: {
-    id: number;
+    id?: number;
+    code?: string;
     email?: string | null;
     name: string | null;
     login: string | null;
@@ -363,7 +329,12 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         });
       }
 
-      await trx("User").where({ Id: data.id }).update(userToUpdate);
+      if (data.id) {
+        await trx("User").where({ Id: data.id }).update(userToUpdate);
+      }
+      else {
+        await trx("User").where({ Code: data.code }).update(userToUpdate);
+      }
 
       if (data.modules) {
         await trx("User_Access")
@@ -421,24 +392,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
       result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      password: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: User = {
       id: Id,
       name: Name,
       login: Login,
       email: Email,
+      code: Code,
+      status: Status,
       type: Type,
       password: Password,
       createdAt: CreatedAt,
@@ -514,7 +477,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return true;
   }
 
-  async getById(id_user: number): Promise<Required<UserAccount> | null> {
+  async getById(id_user: number): Promise<Required<User> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
@@ -525,24 +488,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
       result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      password: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: Required<User> = {
       id: Id,
       name: Name,
       login: Login,
       email: Email,
+      code: Code,
+      status: Status,
       type: Type,
       password: Password,
       createdAt: CreatedAt,

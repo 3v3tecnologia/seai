@@ -8,6 +8,7 @@ import {
   ScheduleUserAccountNotification,
 } from "../send-notification-to-user/send-notification-to-user";
 import { AccountEmailNotFound } from "../sign-up/errors/user-email-not-found";
+import crypto from 'crypto'
 
 export class ForgotPassword {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -34,20 +35,12 @@ export class ForgotPassword {
       return left(new AccountEmailNotFound(email));
     }
 
-    const token = await this.tokenProvider.sign(
-      {
-        accountId: account.id as number,
-      },
-      "1d"
-    );
-
     await this.scheduleUserAccountNotification.schedule({
       user: {
         email: account.email,
-        token,
+        base64Code: Buffer.from(account.email).toString('base64')
       },
-      action: AvailablesEmailServices.FORGOT_PASSWORD,
-      subject: "Resetar senhar",
+      templateName: AvailablesEmailServices.FORGOT_PASSWORD,
     });
 
     return right(

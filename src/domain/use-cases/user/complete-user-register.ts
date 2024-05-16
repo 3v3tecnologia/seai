@@ -15,6 +15,11 @@ import {
   UserModulesNotFound,
 } from "./errors/user-account-not-found";
 
+function base64Decode(text: string) {
+  let buffer = Buffer.from(text, 'base64');
+  return buffer.toString('ascii');
+}
+
 export class CompleteUserRegister extends Command implements ICompleteUserRegisterUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
@@ -38,31 +43,21 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     >
   > {
 
-    const alreadyExistsAccount = await this.accountRepository.getUserByCode(
-      request.code
+    // Decode user code to base64
+    const userEmailToString = base64Decode(request.code)
+
+    const account = await this.accountRepository.getByEmail(
+      userEmailToString
     );
 
-    const userNotFound = alreadyExistsAccount === null;
-
-    if (userNotFound) {
+    if (account === null) {
       return left(new AccountNotFoundError(request.login));
     }
 
-    const userWithLogin = await this.accountRepository.getByLogin(
-      request.login
-    );
+    console.log(account);
 
-    if (userWithLogin) {
-      // Se login não for do mesmo usuário então é sinal que já existe um login
-      // cadastrado e o sistema deve bloquear a edição.
-      const hasOtherAccountWithSameLogin =
-        userWithLogin.id !== request.id && userWithLogin.login !== null;
-
-      if (hasOtherAccountWithSameLogin) {
-        return left(
-          new Error(`Usuário com login ${request.login} já existe.`)
-        );
-      }
+    if (account.status === 'registered') {
+      return left(new Error("Usuário já registrado."))
     }
 
     const userLoginOrError = UserLogin.create(request.login);
@@ -93,7 +88,7 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     const hashedPassword = await this.encoder.hash(password);
 
     await this.accountRepository.update({
-      id: request.id,
+      code: userEmailToString,
       login: login,
       name: name,
       password: hashedPassword
