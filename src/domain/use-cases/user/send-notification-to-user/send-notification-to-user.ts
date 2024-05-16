@@ -23,8 +23,8 @@ export class ScheduleUserAccountNotification {
       retryLimit: 3,
       data: {
         email: params.user.email,
-        code: params.user.base64Code,
-        template: params.templateName,
+        base64Code: params.user.base64Code,
+        templateName: params.templateName,
       },
     });
   }
