@@ -22,6 +22,8 @@ export class DeleteUserController extends CommandController<
       id: Reflect.has(request, 'id') ? request.id : request.accountId,
     };
 
+    console.log(dto);
+
     if (request.email) {
       Object.assign(dto, {
         email: request.email,

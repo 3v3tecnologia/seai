@@ -14,6 +14,7 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   async execute(
     request: DeleteUserProtocol.Request
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
+    console.log('request :: ', request);
     let account = null;
 
     if (request.email) {

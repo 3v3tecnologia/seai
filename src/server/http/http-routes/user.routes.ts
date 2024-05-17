@@ -55,10 +55,8 @@ export const userRouter = (): Router => {
     "/:id",
     authorization,
     userReadAccessAuth,
-    adaptRoute(UserControllersFactory.makeGetUsers())
+    adaptRoute(UserControllersFactory.makeFetchUserById())
   );
-
-
 
   router.delete(
     "/:id",
@@ -69,7 +67,7 @@ export const userRouter = (): Router => {
 
   router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
 
-  router.put(
+  router.patch(
     "/complete-registration/:code",
     adaptRoute(UserControllersFactory.makeCompleteUserRegister())
   );
