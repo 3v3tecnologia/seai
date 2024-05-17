@@ -10,7 +10,26 @@ import { UserControllersFactory } from "../factories/controllers";
 
 export const userRouter = (): Router => {
   const router = Router();
-  // criar novo usuário
+
+  router.get(
+    "/profile",
+    authorization,
+    adaptRoute(UserControllersFactory.makeFetchUserById())
+  );
+
+  router.delete(
+    "/profile",
+    authorization,
+    userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeDeleteUser())
+  );
+
+  router.patch(
+    "/profile",
+    authorization,
+    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
+  );
+
   router.post(
     "/",
     authorization,
@@ -19,47 +38,38 @@ export const userRouter = (): Router => {
   );
 
   router.patch(
-    "/profile/:id",
-    authorization,
-    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
-  );
-
-  // Update user account
-  router.put(
     "/:id",
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeUpdateUser())
   );
 
+  router.get(
+    "/",
+    authorization,
+    userReadAccessAuth,
+    adaptRoute(UserControllersFactory.makeGetUsers())
+  );
+
+  router.get(
+    "/:id",
+    authorization,
+    userReadAccessAuth,
+    adaptRoute(UserControllersFactory.makeGetUsers())
+  );
+
+
+
   router.delete(
-    "/delete",
+    "/:id",
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeDeleteUser())
   );
 
-  router.get(
-    "/get/:id",
-    authorization,
-    userReadAccessAuth,
-    adaptRoute(UserControllersFactory.makeGetUsers())
-  );
+  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
 
-  router.get(
-    "/list",
-    authorization,
-    userReadAccessAuth,
-    adaptRoute(UserControllersFactory.makeGetUsers())
-  );
-
-  router.get(
-    "/profile",
-    authorization,
-    adaptRoute(UserControllersFactory.makeFetchUserById())
-  );
-
-  router.patch(
+  router.put(
     "/complete-registration/:code",
     adaptRoute(UserControllersFactory.makeCompleteUserRegister())
   );
@@ -74,13 +84,11 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeForgotPassword())
   );
 
-  router.post(
-    "/sign-up",
-    authorization,
-    adaptRoute(UserControllersFactory.makeSignUp())
-  );
-
-  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
+  // router.post(
+  //   "/sign-up",
+  //   authorization,
+  //   adaptRoute(UserControllersFactory.makeSignUp())
+  // );
 
   return router;
 };

@@ -4,6 +4,7 @@ import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register
 import { DeleteUser } from "../../../domain/use-cases/user/delete-user/delete-user";
 import { forbidden, ok } from "../helpers";
 import { CommandController } from "../ports/command-controller";
+import { left } from "../../../shared/Either";
 
 export class DeleteUserController extends CommandController<
   DeleteUserController.Request,
@@ -18,13 +19,17 @@ export class DeleteUserController extends CommandController<
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
     const dto = {
-      id: request.id,
+      id: Reflect.has(request, 'id') ? request.id : request.accountId,
     };
 
     if (request.email) {
       Object.assign(dto, {
         email: request.email,
       });
+    }
+
+    if ([Reflect.has(dto, 'id'), Reflect.has(dto, 'email')].every((c => c == false))) {
+      return forbidden(new Error("Necessário informar a identificação do usuário"))
     }
 
     const result = await this.deleteUser.execute(dto);

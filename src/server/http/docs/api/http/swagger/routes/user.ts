@@ -5,7 +5,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 const TAGS = ["User"];
 
 export const USER = {
-  [`${BASE_URL.V1}/user/list`]: {
+  [`${BASE_URL.V1}/user`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -124,7 +124,7 @@ export const USER = {
     put: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Update user",
+      summary: "Update a user",
       parameters: [
         {
           name: "id",
@@ -198,31 +198,24 @@ export const USER = {
                 name: {
                   type: "string",
                 },
-                password: {
-                  type: "string",
-                },
-                confirmPassword: {
-                  type: "string",
-                },
-                login: {
-                  type: "string",
-                },
               },
               example: {
-                email: "d@test.com",
+                type: "admin",
+                email: "teste@gmail.com",
+                name: "test",
                 modules: {
                   news: {
                     id: 1,
                     read: true,
                     write: true
                   },
-                  user: {
-                    id: 2,
-                    read: false,
-                    write: false
-                  },
                   register: {
                     id: 3,
+                    read: true,
+                    write: true
+                  },
+                  user: {
+                    id: 2,
                     read: true,
                     write: true
                   },
@@ -231,12 +224,7 @@ export const USER = {
                     read: true,
                     write: true
                   }
-                },
-                type: "admin",
-                name: "tester",
-                password: "1234567",
-                login: "tester",
-                confirmPassword: "1234567",
+                }
               },
             },
           },
@@ -244,7 +232,6 @@ export const USER = {
       },
       responses: {
         200: {
-          description: "User created successfully",
           content: {
             "application/json": {
               schema: {
@@ -258,7 +245,7 @@ export const USER = {
                   },
                 },
                 example: {
-                  data: "Usuário tester atualizado com sucesso.",
+                  data: "Usuário  atualizado com sucesso.",
                 },
               },
             },
@@ -268,7 +255,7 @@ export const USER = {
       },
     },
   },
-  [`${BASE_URL.V1}/user/complete-register/{code}`]: {
+  [`${BASE_URL.V1}/user/complete-registration/{code}`]: {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -277,7 +264,7 @@ export const USER = {
         {
           name: "code",
           in: "path",
-          description: "User Code",
+          description: "User base64 code",
           required: true,
           schema: {
             type: "string",
@@ -329,7 +316,7 @@ export const USER = {
                   },
                 },
                 example: {
-                  data: "Usuário tester atualizado com sucesso.",
+                  data: "Sucesso ao completar cadastro de usuário",
                 },
               },
             },

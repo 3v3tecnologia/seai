@@ -5,8 +5,7 @@ import { FetchUserById } from "../../../domain/use-cases/user/fetch-user-by-id/f
 import { forbidden, ok, serverError } from "../helpers";
 
 export class FetchUserByIdController
-  implements Controller<FetchUserByIdControllerProtocol.Request, HttpResponse>
-{
+  implements Controller<FetchUserByIdControllerProtocol.Request, HttpResponse> {
   private loadUser: FetchUserById;
 
   constructor(loadUser: FetchUserById) {
