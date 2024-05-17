@@ -771,7 +771,6 @@ export const USER = {
   [`${URL}/complete-registration/{code}`]: {
     patch: {
       tags: TAGS,
-      security: [BEARER_AUTH],
       summary: "Update user",
       parameters: [
         {
