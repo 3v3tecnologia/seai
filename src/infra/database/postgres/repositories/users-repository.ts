@@ -329,17 +329,28 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         });
       }
 
+      const updateUserQueryBuilder = trx("User")
+
       if (data.id) {
-        await trx("User").where({ Id: data.id }).update(userToUpdate);
+        updateUserQueryBuilder.where({
+          Id: data.id
+        })
       }
       else {
-        await trx("User").where({ Code: data.code }).update(userToUpdate);
+        updateUserQueryBuilder.where({
+          Code: data.code
+        })
+
+        Object.assign(userToUpdate, {
+          Status: 'registered'
+        })
       }
+
+      const updatedUserRows = await updateUserQueryBuilder.update(userToUpdate);
 
       if (data.modules) {
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
           .update({
             Read: data.modules[Modules.NEWS].read,
             Write: data.modules[Modules.NEWS].write,
@@ -347,7 +358,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.JOBS].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
           .update({
             Read: data.modules[Modules.JOBS].read,
             Write: data.modules[Modules.JOBS].write,
@@ -358,7 +368,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
           })
-          // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
           .update({
             Read: data.modules[Modules.REGISTER].read,
             Write: data.modules[Modules.REGISTER].write,
@@ -367,7 +376,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.USER].id })
           .update({
             Read: data.modules[Modules.USER].read,
             Write: data.modules[Modules.USER].write,
@@ -375,7 +383,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           });
       }
 
-      result = true;
+      result = updatedUserRows > 0 ? true : false;
     });
 
     return result;
@@ -514,6 +522,15 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     }
 
     return user;
+  }
+
+  async checkIfLoginAlreadyExists(login: string): Promise<boolean> {
+    const response = await governmentDb('User as u')
+      .select(governmentDb.raw('CASE WHEN u."Login" = ? THEN true ELSE false END AS result', [login]))
+      .where("Login", login)
+      .first()
+
+    return response ? response.result : false
   }
 
   async checkIfEmailAlreadyExists(email: string): Promise<boolean> {

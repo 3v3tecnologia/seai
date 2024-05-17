@@ -12,7 +12,7 @@ export const userRouter = (): Router => {
   const router = Router();
   // criar novo usuário
   router.post(
-    "/register",
+    "/",
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeCreateUser())
@@ -30,14 +30,6 @@ export const userRouter = (): Router => {
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeUpdateUser())
-  );
-
-  // Complete user account register
-  router.patch(
-    "/complete-register/:code",
-    // authorization,
-    // userWriteAccessAuth,
-    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
   );
 
   router.delete(
@@ -67,12 +59,28 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeFetchUserById())
   );
 
-  // router.get(
-  //   "/:id",
-  //   authorization,
-  //   userWriteAccessAuth,
-  //   adaptRoute(makeFetchUserByIdController())
-  // );
+  router.patch(
+    "/complete-registration/:code",
+    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
+  );
+
+  router.post(
+    "/password/reset/:code",
+    adaptRoute(UserControllersFactory.makeResetUser())
+  );
+
+  router.post(
+    "/password/forgot",
+    adaptRoute(UserControllersFactory.makeForgotPassword())
+  );
+
+  router.post(
+    "/sign-up",
+    authorization,
+    adaptRoute(UserControllersFactory.makeSignUp())
+  );
+
+  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
 
   return router;
 };

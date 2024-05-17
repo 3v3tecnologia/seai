@@ -36,6 +36,7 @@ export interface AccountRepositoryProtocol {
   getById(id_user: number): Promise<Required<User> | null>;
   getUserByCode(code: string): Promise<User | null>
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
+  checkIfLoginAlreadyExists(login: string): Promise<boolean>
   getUserById(id_user: number): Promise<User | null>;
   getModules(): Promise<Array<{
     id: number;

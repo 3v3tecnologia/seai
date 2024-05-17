@@ -6,6 +6,10 @@ import { UserPassword } from "../../entities/user/userPassword";
 import { Command } from "../_ports/core/command";
 import { Encoder } from "../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+import { NotExistsError } from "../errors/notFound-error";
+import { UserAlreadyExistsError } from "../errors/user-already-exists";
+import { UserAlreadyRegisteredError } from "../errors/user-already-registered";
+import { UserNotFoundError } from "../errors/user-not-found";
 import {
   AccountNotFoundError,
   WrongPasswordError,
@@ -49,11 +53,11 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     );
 
     if (account === null) {
-      return left(new AccountNotFoundError(request.login));
+      return left(new UserNotFoundError());
     }
 
     if (account.status === 'registered') {
-      return left(new Error("Usuário já registrado."))
+      return left(new UserAlreadyRegisteredError())
     }
 
     const userLoginOrError = UserLogin.create(request.login);
@@ -67,6 +71,8 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
       return left(userNameOrError.value);
     }
 
+
+
     const passwordOrError = UserPassword.create({
       value: request.password,
       confirm: request.confirmPassword,
@@ -78,25 +84,37 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     }
 
     const login = userLoginOrError.value?.value as string
+
+    const hasDuplicatedLogin = await this.accountRepository.checkIfLoginAlreadyExists(login)
+
+    if (hasDuplicatedLogin) {
+      return left(new LoginAlreadyExists())
+    }
+
     const name = userNameOrError.value?.value as string
     const password = passwordOrError.value?.value as string
 
     const hashedPassword = await this.encoder.hash(password);
 
-    await this.accountRepository.update({
-      code: userEmailToString,
+    const isUpdated = await this.accountRepository.update({
+      code: account.code,
       login: login,
       name: name,
       password: hashedPassword
     });
 
-    this.addLog({
-      action: "update",
-      table: "User",
-      description: `Usuário atualizado com sucesso`,
-    });
+    if (isUpdated) {
+      const successMessage = `Sucesso ao completar cadastro de usuário`
+      this.addLog({
+        action: "update",
+        table: "User",
+        description: successMessage,
+      });
 
-    return right(`Usuário atualizado com sucesso.`);
+      return right(successMessage);
+    }
+
+    return left(new Error("Não foi possível completar o cadastro do usuário."))
   }
 }
 

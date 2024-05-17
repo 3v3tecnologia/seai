@@ -5,36 +5,31 @@ import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 
-import {
-  TokenProvider,
-  TokenResponse,
-} from "../authentication/ports/token-provider";
 import { AccountNotFoundError } from "../errors/user-account-not-found";
 import { ResetPasswordProtocol } from "./protocol";
 
 export class ResetPassword extends Command implements ResetPasswordProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
-  // private readonly sendEmailToUser: SendEmailToUser;
-  private readonly tokenProvider: TokenProvider;
   private readonly encoder: Encoder;
 
   // sendEmailToUser: SendEmailToUser,
   constructor(
     accountRepository: AccountRepositoryProtocol,
-    tokenProvider: TokenProvider,
     encoder: Encoder
   ) {
     super();
     this.accountRepository = accountRepository;
-    // this.sendEmailToUser = sendEmailToUser;
-    this.tokenProvider = tokenProvider;
     this.encoder = encoder;
   }
   async execute(
-    code: string,
-    password: string,
-    confirmPassword: string
+    params: {
+      code: string,
+      password: string,
+      confirmPassword: string
+    }
   ): Promise<Either<Error, null>> {
+
+    const { code, confirmPassword, password } = params
 
     if (!code) {
       return left(new Error("Código não informado"));
@@ -72,7 +67,7 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
     this.addLog({
       action: "update",
       table: "User",
-      description: `Senha do usuário ${account.login} resetada com sucesso`,
+      description: `Usuário atualizado com sucesso`,
     });
     return right(null);
   }

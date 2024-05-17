@@ -44,20 +44,14 @@ async function generateHash(userEmail: string, salt: string, iterations: number,
 export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
-  private readonly dateProvider: IDateProvider;
-  private readonly tokenProvider: TokenProvider;
 
   constructor(
     accountRepository: AccountRepositoryProtocol,
     scheduleUserAccountNotification: ScheduleUserAccountNotification,
-    dateProvider: IDateProvider,
-    tokenProvider: TokenProvider
   ) {
     super();
     this.accountRepository = accountRepository;
     this.scheduleUserAccountNotification = scheduleUserAccountNotification;
-    this.dateProvider = dateProvider;
-    this.tokenProvider = tokenProvider;
   }
   async create(
     request: CreateUserDTO.Params

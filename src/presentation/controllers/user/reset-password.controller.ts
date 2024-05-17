@@ -20,15 +20,17 @@ export class ResetPasswordController extends CommandController<
   ): Promise<HttpResponse> {
     try {
       const createdOrError = await this.resetPassword.execute(
-        request.accessToken,
-        request.password,
-        request.confirmPassword
+        {
+          code: request.code,
+          password: request.password,
+          confirmPassword: request.confirmPassword
+        }
       );
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
-      await this.userLogs.log(request.accountId, this.resetPassword);
+      // await this.userLogs.log(request.accountId, this.resetPassword);
 
       return created("Senha resetada com sucesso");
     } catch (error) {
@@ -40,9 +42,8 @@ export class ResetPasswordController extends CommandController<
 
 export namespace ResetPasswordController {
   export type Request = {
-    accountId: number;
+    code: string;
     password: string;
     confirmPassword: string;
-    accessToken: string;
   };
 }
