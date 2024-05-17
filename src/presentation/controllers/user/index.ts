@@ -2,6 +2,7 @@ export * from "./create-user.controller";
 export * from "./delete-user.controller";
 export * from "./fetch-user-by-id.controller";
 export * from "./fetch-user.controller";
+export * from "./fetch-all-users.controller";
 export * from "./forgot-password.controller";
 export * from "./reset-password.controller";
 export * from "./sign-in.controller";

@@ -4,13 +4,16 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 
 const TAGS = ["User"];
 
+
+const URL = `${BASE_URL.V1}/user`
+
 export const USER = {
-  [`${BASE_URL.V1}/user/list`]: {
+  [`${URL}/`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Get users",
-      description: "Get users",
+      summary: "Get all users",
+      description: "Get all users when the user authenticated has authorization",
       parameters: [
         {
           name: "pageNumber",
@@ -119,424 +122,10 @@ export const USER = {
         ...DEFAULT_RESPONSES,
       },
     },
-  },
-  [`${BASE_URL.V1}/user`]: {
-    put: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Update user",
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "User Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                email: {
-                  type: "string",
-                },
-                modules: {
-                  type: "object",
-                  properties: {
-                    news: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    register: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    user: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                  },
-                },
-                type: {
-                  type: "string",
-                },
-                name: {
-                  type: "string",
-                },
-                password: {
-                  type: "string",
-                },
-                confirmPassword: {
-                  type: "string",
-                },
-                login: {
-                  type: "string",
-                },
-              },
-              example: {
-                email: "d@test.com",
-                modules: {
-                  news: {
-                    id: 1,
-                    read: true,
-                    write: true
-                  },
-                  user: {
-                    id: 2,
-                    read: false,
-                    write: false
-                  },
-                  register: {
-                    id: 3,
-                    read: true,
-                    write: true
-                  },
-                  jobs: {
-                    id: 4,
-                    read: true,
-                    write: true
-                  }
-                },
-                type: "admin",
-                name: "tester",
-                password: "1234567",
-                login: "tester",
-                confirmPassword: "1234567",
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "User created successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Usuário tester atualizado com sucesso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/complete-register`]: {
-    patch: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Update user",
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "User Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                name: {
-                  type: "string",
-                },
-                password: {
-                  type: "string",
-                },
-                confirmPassword: {
-                  type: "string",
-                },
-                login: {
-                  type: "string",
-                },
-              },
-              example: {
-                name: "tester",
-                login: "tester",
-                password: "1234567",
-                confirmPassword: "1234567",
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "User created successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Usuário tester atualizado com sucesso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/user/profile`]: {
-    patch: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Update user profile",
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                email: {
-                  type: "string",
-                },
-                name: {
-                  type: "string",
-                },
-                login: {
-                  type: "string",
-                },
-              },
-              example: {
-                email: "test@gmail.com",
-                name: "tester",
-                login: "tester",
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "User updated successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Usuário tester atualizado com sucesso.",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-    get: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Get user profile",
-      description: "Get user profile",
-      responses: {
-        200: {
-          description: "Get users successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        name: {
-                          type: "string",
-                        },
-                        login: {
-                          type: "string",
-                        },
-                        email: {
-                          type: "string",
-                        },
-                        type: {
-                          type: "string",
-                        },
-                        createdAt: {
-                          type: "string",
-                        },
-                        updatedAt: {
-                          type: "string",
-                        },
-                        modules: {
-                          news: {
-                            id: 1,
-                            read: true,
-                            write: true
-                          },
-                          user: {
-                            id: 2,
-                            read: false,
-                            write: false
-                          },
-                          register: {
-                            id: 3,
-                            read: true,
-                            write: true
-                          },
-                          jobs: {
-                            id: 4,
-                            read: true,
-                            write: true
-                          }
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: [
-                    {
-                      id: 1,
-                      name: "test",
-                      login: "test",
-                      email: "test2@gmail.com",
-                      type: "standard",
-                      createdAt: "2023-06-29T21:06:44.887Z",
-                      updatedAt: "2023-06-29T21:06:44.887Z",
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/user/delete`]: {
-    delete: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Delete user account by  id or email",
-      description: "Delete user account by or email",
-      parameters: [
-        {
-          name: "id",
-          in: "query",
-          description: "User Id",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "name",
-          in: "query",
-          description: "User name",
-          required: false,
-          schema: {
-            type: "string",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "User deleted",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Usuário deletado com sucesso",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/user/register`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Create user account by admin",
+      summary: "Create user account and invite user to complete registration",
       description:
         "In case of creating a new user account, should send email to user",
       requestBody: {
@@ -659,7 +248,789 @@ export const USER = {
                   },
                 },
                 example: {
-                  data: "Sucesso ao criar usuário, email enviado com sucesso para test@gmail.com",
+                  data: "Usuário criado com sucessso, aguardando confirmação do cadastro.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Delete user account by email",
+      parameters: [
+        {
+          name: "email",
+          in: "query",
+          description: "User email",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "User deleted",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário deletado com sucesso",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/{id}`]: {
+    patch: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Update a user",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "User Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                },
+                modules: {
+                  type: "object",
+                  properties: {
+                    news: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    register: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    user: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                  },
+                },
+                type: {
+                  type: "string",
+                },
+                name: {
+                  type: "string",
+                },
+              },
+              example: {
+                type: "admin",
+                email: "teste@gmail.com",
+                name: "test",
+                modules: {
+                  news: {
+                    id: 1,
+                    read: true,
+                    write: true
+                  },
+                  register: {
+                    id: 3,
+                    read: true,
+                    write: true
+                  },
+                  user: {
+                    id: 2,
+                    read: true,
+                    write: true
+                  },
+                  jobs: {
+                    id: 4,
+                    read: true,
+                    write: true
+                  }
+                }
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário  atualizado com sucesso.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Delete user account by id",
+      parameters: [
+        {
+          name: "id",
+          in: "query",
+          description: "User Id",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "User deleted",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário deletado com sucesso",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get user by id",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "User Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        name: {
+                          type: "string",
+                        },
+                        login: {
+                          type: "string",
+                        },
+                        status: {
+                          type: "string",
+                        },
+                        code: {
+                          type: "string",
+                        },
+                        email: {
+                          type: "string",
+                        },
+                        type: {
+                          type: "string",
+                        },
+                        createdAt: {
+                          type: "string",
+                        },
+                        updatedAt: {
+                          type: "string",
+                        },
+                        modules: {
+                          news: {
+                            id: 1,
+                            read: true,
+                            write: true
+                          },
+                          user: {
+                            id: 2,
+                            read: false,
+                            write: false
+                          },
+                          register: {
+                            id: 3,
+                            read: true,
+                            write: true
+                          },
+                          jobs: {
+                            id: 4,
+                            read: true,
+                            write: true
+                          }
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    id: 1,
+                    name: "super-admin",
+                    login: "super-admin",
+                    code: "c431ab3e43c5dc6f2c57",
+                    status: "registered",
+                    email: "test@gmail.com",
+                    type: "admin",
+                    createdAt: "2023-06-28T11:23:10.437Z",
+                    updatedAt: "2024-05-17T17:52:58.699Z",
+                    module: {
+                      news: {
+                        id: 1,
+                        read: true,
+                        write: true
+                      },
+                      user: {
+                        id: 2,
+                        read: true,
+                        write: true
+                      },
+                      register: {
+                        id: 3,
+                        read: true,
+                        write: true
+                      },
+                      jobs: {
+                        id: 4,
+                        read: true,
+                        write: true
+                      }
+                    }
+                  }
+                }
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/password/reset/{code}`]: {
+    post: {
+      tags: TAGS,
+      summary: "Reset user password",
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User base64 code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                password: {
+                  type: "string",
+                },
+                confirmPassword: {
+                  type: "string",
+                }
+              },
+              example: {
+                password: "1234",
+                confirmPassword: "1234"
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Senha resetada com sucesso.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/password/forgot`]: {
+    post: {
+      tags: TAGS,
+      summary: "Send an email to the user for reset the password",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                  description: "a valid email",
+                  required: true,
+                },
+              },
+              example: {
+                email: "teste@gmail.com",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Um email para rescuperação de senha será enviado em breve.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/sign-in`]: {
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "User login",
+      description: "User login",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                login: {
+                  type: "string",
+                },
+                password: {
+                  type: "string",
+                },
+              },
+              example: {
+                login: "admin",
+                password: "1234567",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Login successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      properties: {
+                        accessToken: {
+                          type: "string",
+                        },
+                        userName: {
+                          type: "string",
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    accessToken: "token",
+                    userName: "admin",
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/complete-registration/{code}`]: {
+    patch: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Update user",
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User base64 code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                name: {
+                  type: "string",
+                },
+                password: {
+                  type: "string",
+                },
+                confirmPassword: {
+                  type: "string",
+                },
+                login: {
+                  type: "string",
+                },
+              },
+              example: {
+                name: "tester",
+                login: "tester",
+                password: "1234567",
+                confirmPassword: "1234567",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "User created successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Sucesso ao completar cadastro de usuário",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/profile`]: {
+    patch: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Update user profile",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                  required: false
+                },
+                name: {
+                  type: "string",
+                  required: true
+                },
+                login: {
+                  type: "string",
+                  required: true
+                },
+              },
+              example: {
+                email: "test@gmail.com",
+                name: "tester",
+                login: "tester",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "User updated successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário tester atualizado com sucesso.",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get user profile",
+      description: "Get user profile",
+      responses: {
+        200: {
+          description: "Get users successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        name: {
+                          type: "string",
+                        },
+                        login: {
+                          type: "string",
+                        },
+                        status: {
+                          type: "string",
+                        },
+                        code: {
+                          type: "string",
+                        },
+                        email: {
+                          type: "string",
+                        },
+                        type: {
+                          type: "string",
+                        },
+                        createdAt: {
+                          type: "string",
+                        },
+                        updatedAt: {
+                          type: "string",
+                        },
+                        modules: {
+                          news: {
+                            id: 1,
+                            read: true,
+                            write: true
+                          },
+                          user: {
+                            id: 2,
+                            read: false,
+                            write: false
+                          },
+                          register: {
+                            id: 3,
+                            read: true,
+                            write: true
+                          },
+                          jobs: {
+                            id: 4,
+                            read: true,
+                            write: true
+                          }
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    id: 1,
+                    name: "super-admin",
+                    login: "super-admin",
+                    code: "c431ab3e43c5dc6f2c57",
+                    status: "registered",
+                    email: "test@gmail.com",
+                    type: "admin",
+                    createdAt: "2023-06-28T11:23:10.437Z",
+                    updatedAt: "2024-05-17T17:52:58.699Z",
+                    module: {
+                      news: {
+                        id: 1,
+                        read: true,
+                        write: true
+                      },
+                      user: {
+                        id: 2,
+                        read: true,
+                        write: true
+                      },
+                      register: {
+                        id: 3,
+                        read: true,
+                        write: true
+                      },
+                      jobs: {
+                        id: 4,
+                        read: true,
+                        write: true
+                      }
+                    }
+                  }
+                }
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    delete: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Delete user account profile",
+      responses: {
+        200: {
+          description: "User deleted",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Usuário deletado com sucesso",
                 },
               },
             },

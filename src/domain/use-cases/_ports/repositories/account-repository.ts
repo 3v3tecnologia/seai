@@ -10,6 +10,7 @@ export interface AccountRepositoryProtocol {
     email: string;
     type: UserType;
     modules: SystemModulesProps;
+    code: string;
   }): Promise<number | null>;
   list(
     params: {
@@ -18,7 +19,8 @@ export interface AccountRepositoryProtocol {
     } & IPaginationInput
   ): Promise<IOutputWithPagination<User>>;
   update(data: {
-    id: number;
+    id?: number;
+    code?: string;
     email?: string | null;
     name: string | null;
     login: string | null;
@@ -31,18 +33,11 @@ export interface AccountRepositoryProtocol {
   deleteByEmail(email: string): Promise<boolean>;
   getByEmail(email: string): Promise<User | null>;
   getByLogin(login: string): Promise<Required<UserAccount> | null>;
-  getById(id_user: number): Promise<Required<UserAccount> | null>;
+  getById(id_user: number): Promise<Required<User> | null>;
+  getUserByCode(code: string): Promise<User | null>
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
-  getUserById(id_user: number): Promise<{
-    id: number;
-    name: string;
-    login: string;
-    email: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-    modules: SystemModulesProps | null;
-  } | null>;
+  checkIfLoginAlreadyExists(login: string): Promise<boolean>
+  getUserById(id_user: number): Promise<User | null>;
   getModules(): Promise<Array<{
     id: number;
     name: string;

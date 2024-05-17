@@ -1,6 +1,6 @@
 export class LoginAlreadyExists extends Error {
-  constructor(login: string) {
-    super(`Usuário com login "${login}" já existe`);
+  constructor() {
+    super(`Não é possível cadastar usuário com login já existente`);
     this.name = "LoginAlreadyExists";
   }
 }

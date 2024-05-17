@@ -7,24 +7,24 @@ export enum AvailablesEmailServices {
 }
 export class ScheduleUserAccountNotification {
   private readonly backgroundJobs: CreateJobUseCaseProtocol.UseCase;
+
   constructor(backgroundJobs: CreateJobUseCaseProtocol.UseCase) {
     this.backgroundJobs = backgroundJobs;
   }
+
   async schedule(params: {
-    user: { email: string; token: string };
-    subject: string;
-    action: AvailablesEmailServices;
+    user: { email: string, base64Code: string };
+    templateName: AvailablesEmailServices;
   }): Promise<Either<Error, any | null>> {
     return await this.backgroundJobs.execute({
       name: "user-account-notification",
-      priority: 2,
+      priority: 1,
       retryDelay: 60,
       retryLimit: 3,
       data: {
-        to: params.user.email,
-        token: params.user.token,
-        subject: params.subject,
-        action: params.action,
+        email: params.user.email,
+        base64Code: params.user.base64Code,
+        templateName: params.templateName,
       },
     });
   }

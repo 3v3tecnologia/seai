@@ -6,6 +6,7 @@ import {
   CompleteUserRegisterController,
   CreateUserController,
   DeleteUserController,
+  FetchAllUsersController,
   FetchUserByIdController,
   FetchUserController,
   ForgotPasswordController,
@@ -37,7 +38,7 @@ export class UserControllersFactory {
 
   static makeGetUsers(): Controller {
     return makeLogControllerDecorator(
-      new FetchUserController(UserUseCasesFactory.makeGetUsers())
+      new FetchAllUsersController(UserUseCasesFactory.makeGetUsers())
     );
   }
 

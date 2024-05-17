@@ -1,6 +1,7 @@
 import { Either, left, right } from "../../../../shared/Either";
 import { Encoder } from "../../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
+import { UserNotFoundError } from "../delete-user/errors/user-not-found-error";
 import { AccountNotFoundError, WrongPasswordError } from "./errors";
 import {
   AuthenticationDTO,
@@ -32,7 +33,7 @@ export class UserAuthentication implements AuthenticationService {
     const account = await this.accountRepository.getByLogin(login);
 
     if (!account) {
-      return left(new AccountNotFoundError(login));
+      return left(new UserNotFoundError());
     }
     const isMatch = await this.encoder.compare(
       password,

@@ -34,9 +34,7 @@ export class UserUseCasesFactory {
   static makeCreateUser(): CreateUser {
     return new CreateUser(
       this.repository,
-      this.makeSendNotificationToUser(),
-      this.dateProvider,
-      this.tokenProvider
+      this.makeSendNotificationToUser()
     );
   }
 
@@ -48,8 +46,6 @@ export class UserUseCasesFactory {
     return new ForgotPassword(
       this.repository,
       this.makeSendNotificationToUser(),
-      this.dateProvider,
-      this.tokenProvider
     );
   }
 
@@ -62,7 +58,7 @@ export class UserUseCasesFactory {
   }
 
   static makeResetUserPassword(): ResetPassword {
-    return new ResetPassword(this.repository, this.tokenProvider, this.encoder);
+    return new ResetPassword(this.repository, this.encoder);
   }
 
   static makeSendNotificationToUser(): ScheduleUserAccountNotification {
@@ -90,6 +86,6 @@ export class UserUseCasesFactory {
     return new UpdateUserProfile(this.repository);
   }
   static makeCompleteUserRegister(): CompleteUserRegister {
-    return new CompleteUserRegister(this.repository,this.encoder);
+    return new CompleteUserRegister(this.repository, this.encoder);
   }
 }

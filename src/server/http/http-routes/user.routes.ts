@@ -10,56 +10,6 @@ import { UserControllersFactory } from "../factories/controllers";
 
 export const userRouter = (): Router => {
   const router = Router();
-  // criar novo usuário
-  router.post(
-    "/register",
-    authorization,
-    userWriteAccessAuth,
-    adaptRoute(UserControllersFactory.makeCreateUser())
-  );
-
-  router.patch(
-    "/profile/:id",
-    authorization,
-    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
-  );
-
-  // Update user account
-  router.put(
-    "/:id",
-    authorization,
-    userWriteAccessAuth,
-    adaptRoute(UserControllersFactory.makeUpdateUser())
-  );
-
-  // Complete user account register
-  router.patch(
-    "/complete-register",
-    authorization,
-    userWriteAccessAuth,
-    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
-  );
-
-  router.delete(
-    "/delete",
-    authorization,
-    userWriteAccessAuth,
-    adaptRoute(UserControllersFactory.makeDeleteUser())
-  );
-
-  router.get(
-    "/get/:id",
-    authorization,
-    userReadAccessAuth,
-    adaptRoute(UserControllersFactory.makeGetUsers())
-  );
-
-  router.get(
-    "/list",
-    authorization,
-    userReadAccessAuth,
-    adaptRoute(UserControllersFactory.makeGetUsers())
-  );
 
   router.get(
     "/profile",
@@ -67,11 +17,80 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeFetchUserById())
   );
 
-  // router.get(
-  //   "/:id",
+  router.delete(
+    "/profile",
+    authorization,
+    adaptRoute(UserControllersFactory.makeDeleteUser())
+  );
+
+  router.patch(
+    "/profile",
+    authorization,
+    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
+  );
+
+  router.post(
+    "/",
+    authorization,
+    userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeCreateUser())
+  );
+
+  router.patch(
+    "/:id",
+    authorization,
+    userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeUpdateUser())
+  );
+
+  router.get(
+    "/",
+    authorization,
+    userReadAccessAuth,
+    adaptRoute(UserControllersFactory.makeGetUsers())
+  );
+
+  router.get(
+    "/:id",
+    authorization,
+    userReadAccessAuth,
+    adaptRoute(UserControllersFactory.makeFetchUserById())
+  );
+
+  router.delete(
+    "/:id",
+    authorization,
+    userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeDeleteUser())
+  );
+  // Delete by email
+  router.delete(
+    "/",
+    authorization,
+    adaptRoute(UserControllersFactory.makeDeleteUser())
+  );
+
+  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
+
+  router.patch(
+    "/complete-registration/:code",
+    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
+  );
+
+  router.post(
+    "/password/reset/:code",
+    adaptRoute(UserControllersFactory.makeResetUser())
+  );
+
+  router.post(
+    "/password/forgot",
+    adaptRoute(UserControllersFactory.makeForgotPassword())
+  );
+
+  // router.post(
+  //   "/sign-up",
   //   authorization,
-  //   userWriteAccessAuth,
-  //   adaptRoute(makeFetchUserByIdController())
+  //   adaptRoute(UserControllersFactory.makeSignUp())
   // );
 
   return router;

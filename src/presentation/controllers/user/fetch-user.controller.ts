@@ -6,7 +6,8 @@ import {
   IFetchUsersUseCase,
 } from "../../../domain/use-cases/user/fetch-users";
 import { ok, serverError } from "../helpers";
-import { parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
+import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
+import { UserTypes } from "../../../domain/entities/user/user";
 
 export class FetchUserController
   implements Controller<FetchUserControllerProtocol.Request, HttpResponse> {
@@ -21,9 +22,9 @@ export class FetchUserController
   ): Promise<HttpResponse> {
     try {
 
-      if (request.userId) {
+      if (request.id || request.accountId) {
         const result = await this.fetchUser.execute({
-          userId: request.userId
+          id: request.id || request.accountId
         });
 
         return ok(result.value);
@@ -46,5 +47,10 @@ export class FetchUserController
 }
 
 export namespace FetchUserControllerProtocol {
-  export type Request = FetchUsersDTO.Request;
+  export type Request = {
+    id?: number;
+    accountId?: number;
+    name?: string;
+    type?: Record<UserTypes, string>;
+  } & Partial<IPaginationInput>;
 }

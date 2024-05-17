@@ -11,17 +11,20 @@ import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 export class DbAccountRepository implements AccountRepositoryProtocol {
-  async add(data: {
+  async add(params: {
     email: string;
     type: UserType;
-    modules: SystemModulesProps;
+    modules: SystemModulesProps,
+    code: string,
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
       const id = await trx
         .insert({
-          Email: data.email,
-          Type: data.type,
+          Email: params.email,
+          Type: params.type,
+          Code: params.code,
+          Status: 'pending',
           CreatedAt: governmentDb.fn.now(),
         })
         .returning("Id")
@@ -29,39 +32,41 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
       const user_id = id.length && id[0].Id;
 
+      // Refactor: Bulk insert
+      // Refactor: add user permissions mapper
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.NEWS].id,
-          Read: data.modules[Modules.NEWS].read,
-          Write: data.modules[Modules.NEWS].write,
+          Fk_Module: params.modules[Modules.NEWS].id,
+          Read: params.modules[Modules.NEWS].read,
+          Write: params.modules[Modules.NEWS].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.REGISTER].id,
-          Read: data.modules[Modules.REGISTER].read,
-          Write: data.modules[Modules.REGISTER].write,
+          Fk_Module: params.modules[Modules.REGISTER].id,
+          Read: params.modules[Modules.REGISTER].read,
+          Write: params.modules[Modules.REGISTER].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.USER].id,
-          Read: data.modules[Modules.USER].read,
-          Write: data.modules[Modules.USER].write,
+          Fk_Module: params.modules[Modules.USER].id,
+          Read: params.modules[Modules.USER].read,
+          Write: params.modules[Modules.USER].write,
         })
         .into("User_Access");
 
       await trx
         .insert({
           Fk_User: user_id,
-          Fk_Module: data.modules[Modules.JOBS].id,
-          Read: data.modules[Modules.JOBS].read,
-          Write: data.modules[Modules.JOBS].write,
+          Fk_Module: params.modules[Modules.JOBS].id,
+          Read: params.modules[Modules.JOBS].read,
+          Write: params.modules[Modules.JOBS].write,
         })
         .into("User_Access");
 
@@ -87,18 +92,36 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       };
     });
   }
-  async getUserById(id_user: number): Promise<{
-    id: number;
-    name: string;
-    login: string;
-    email: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-    modules: SystemModulesProps | null;
-  } | null> {
+  async getUserByCode(code: string): Promise<User | null> {
     const result = await governmentDb
-      .select("Id", "Name", "Login", "Email", "Type", "CreatedAt", "UpdatedAt")
+      .select("Id", "Name", "Login", "Email", "Type", "Code", "Status", "CreatedAt", "UpdatedAt")
+      .where({ Code: code })
+      .from("User")
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } = result;
+
+    const user: User = {
+      id: Id,
+      name: Name,
+      login: Login,
+      email: Email,
+      type: Type,
+      createdAt: CreatedAt,
+      updatedAt: UpdatedAt,
+      code: Code,
+      status: Status,
+    };
+
+    return user;
+  }
+  async getUserById(id_user: number): Promise<User | null> {
+    const result = await governmentDb
+      .select("Id", "Name", "Login", "Code", "Status", "Email", "Type", "CreatedAt", "UpdatedAt")
       .where({ Id: id_user })
       .from("User")
       .first();
@@ -107,21 +130,14 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt } = result;
+    const { Id, Name, Login, Code, Status, Email, Type, CreatedAt, UpdatedAt } = result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: User = {
       id: Id,
       name: Name,
       login: Login,
+      code: Code,
+      status: Status,
       email: Email,
       type: Type,
       createdAt: CreatedAt,
@@ -162,6 +178,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
     return modules as SystemModulesProps;
   }
+
   async getUserModulesByName(
     id_user: number,
     name: string
@@ -279,7 +296,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
 
   async update(data: {
-    id: number;
+    id?: number;
+    code?: string;
     email?: string | null;
     name: string | null;
     login: string | null;
@@ -311,12 +329,28 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         });
       }
 
-      await trx("User").where({ Id: data.id }).update(userToUpdate);
+      const updateUserQueryBuilder = trx("User")
+
+      if (data.id) {
+        updateUserQueryBuilder.where({
+          Id: data.id
+        })
+      }
+      else {
+        updateUserQueryBuilder.where({
+          Code: data.code
+        })
+
+        Object.assign(userToUpdate, {
+          Status: 'registered'
+        })
+      }
+
+      const updatedUserRows = await updateUserQueryBuilder.update(userToUpdate);
 
       if (data.modules) {
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
           .update({
             Read: data.modules[Modules.NEWS].read,
             Write: data.modules[Modules.NEWS].write,
@@ -324,7 +358,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.JOBS].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.NEWS].id })
           .update({
             Read: data.modules[Modules.JOBS].read,
             Write: data.modules[Modules.JOBS].write,
@@ -335,7 +368,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
           })
-          // .andWhere({ Fk_Module: data.modules[Modules.REGISTER].id })
           .update({
             Read: data.modules[Modules.REGISTER].read,
             Write: data.modules[Modules.REGISTER].write,
@@ -344,7 +376,6 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
         await trx("User_Access")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
-          // .andWhere({ Fk_Module: data.modules[Modules.USER].id })
           .update({
             Read: data.modules[Modules.USER].read,
             Write: data.modules[Modules.USER].write,
@@ -352,7 +383,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           });
       }
 
-      result = true;
+      result = updatedUserRows > 0 ? true : false;
     });
 
     return result;
@@ -369,24 +400,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
       result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      password: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: User = {
       id: Id,
       name: Name,
       login: Login,
       email: Email,
+      code: Code,
+      status: Status,
       type: Type,
       password: Password,
       createdAt: CreatedAt,
@@ -462,7 +485,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return true;
   }
 
-  async getById(id_user: number): Promise<Required<UserAccount> | null> {
+  async getById(id_user: number): Promise<Required<User> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")
@@ -473,24 +496,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
+    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
       result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      password: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: Required<User> = {
       id: Id,
       name: Name,
       login: Login,
       email: Email,
+      code: Code,
+      status: Status,
       type: Type,
       password: Password,
       createdAt: CreatedAt,
@@ -507,6 +522,15 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     }
 
     return user;
+  }
+
+  async checkIfLoginAlreadyExists(login: string): Promise<boolean> {
+    const response = await governmentDb('User as u')
+      .select(governmentDb.raw('CASE WHEN u."Login" = ? THEN true ELSE false END AS result', [login]))
+      .where("Login", login)
+      .first()
+
+    return response ? response.result : false
   }
 
   async checkIfEmailAlreadyExists(email: string): Promise<boolean> {

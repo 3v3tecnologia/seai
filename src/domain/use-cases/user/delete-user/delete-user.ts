@@ -14,11 +14,12 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   async execute(
     request: DeleteUserProtocol.Request
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
+    console.log('request :: ', request);
     let account = null;
 
     if (request.email) {
       account = await this.accountRepository.getByEmail(request.email);
-    } else {
+    } else if (request.id) {
       account = await this.accountRepository.getById(request.id);
     }
 
@@ -37,7 +38,7 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
     this.addLog({
       action: "delete",
       table: "User",
-      description: `Usuário ${account.login} deletado com sucesso`,
+      description: `Usuário deletado com sucesso`,
     });
 
     return right("Usuário deletado com sucesso");
@@ -46,7 +47,7 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
 
 export namespace DeleteUserProtocol {
   export type Request = {
-    id: number;
+    id?: number;
     email?: string;
   };
 

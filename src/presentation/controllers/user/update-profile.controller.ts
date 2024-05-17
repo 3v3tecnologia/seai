@@ -23,10 +23,11 @@ export class UpdateUserProfileController extends CommandController<
     request: UpdateUserProfileController.Request
   ): Promise<HttpResponse> {
     try {
-      const { id, email, login, name } = request;
+      console.log(request);
+      const { accountId, email, login, name } = request;
 
       const dto = {
-        id: Number(id),
+        id: accountId,
         name: name as string,
         login: login as string,
       };
@@ -43,7 +44,7 @@ export class UpdateUserProfileController extends CommandController<
         return forbidden(updateOrError.value);
       }
 
-      await this.userLogs.log(request.id, this.updateUser);
+      await this.userLogs.log(request.accountId, this.updateUser);
 
       return created(updateOrError.value);
     } catch (error) {
@@ -55,7 +56,6 @@ export class UpdateUserProfileController extends CommandController<
 
 export namespace UpdateUserProfileController {
   export type Request = {
-    id: number;
     accountId: number;
     email?: string;
     login: string;

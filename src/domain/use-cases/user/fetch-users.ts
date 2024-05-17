@@ -14,8 +14,8 @@ export class FetchUsersUseCase implements IFetchUsersUseCase {
     request: FetchUsersDTO.Request
   ): Promise<Either<Error, FetchUsersDTO.Response | null>> {
     let data = null;
-    if (request?.userId) {
-      data = await this.accountRepository.getUserById(Number(request.userId));
+    if (request?.id) {
+      data = await this.accountRepository.getUserById(Number(request.id));
     } else {
       data = await this.accountRepository.list(request as {
         name?: string | undefined;
@@ -28,7 +28,7 @@ export class FetchUsersUseCase implements IFetchUsersUseCase {
 
 export namespace FetchUsersDTO {
   export type Request = {
-    userId?: number;
+    id?: number;
     name?: string;
     type?: Record<UserTypes, string>;
   } & Partial<IPaginationInput>;

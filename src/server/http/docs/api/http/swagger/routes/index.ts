@@ -1,7 +1,6 @@
 export * from "./census";
 export * from "./equipments";
 export * from "./faq";
-export * from "./login";
 export * from "./equipments-measurements";
 export * from "./meteorologicalOrgan";
 export * from "./user";

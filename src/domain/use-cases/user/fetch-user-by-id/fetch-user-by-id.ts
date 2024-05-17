@@ -1,6 +1,7 @@
 import { Either, right } from "../../../../shared/Either";
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
+import { User } from "../model/user";
 
 export class FetchUserById {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -20,14 +21,5 @@ namespace LoadUser {
     userId: number;
   };
 
-  export type Response = {
-    id: number;
-    name: string;
-    login: string;
-    email: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-    modules: SystemModulesProps | null;
-  } | null;
+  export type Response = User | null;
 }
