@@ -20,7 +20,6 @@ export const userRouter = (): Router => {
   router.delete(
     "/profile",
     authorization,
-    userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeDeleteUser())
   );
 
@@ -62,6 +61,12 @@ export const userRouter = (): Router => {
     "/:id",
     authorization,
     userWriteAccessAuth,
+    adaptRoute(UserControllersFactory.makeDeleteUser())
+  );
+  // Delete by email
+  router.delete(
+    "/",
+    authorization,
     adaptRoute(UserControllersFactory.makeDeleteUser())
   );
 

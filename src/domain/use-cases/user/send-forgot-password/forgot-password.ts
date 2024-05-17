@@ -35,7 +35,7 @@ export class ForgotPassword {
     });
 
     return right(
-      `Email de recuperação de senha enviado com sucesso`
+      `Um email para rescuperação de senha será enviado em breve.`
     );
   }
 }
