@@ -122,7 +122,7 @@ export class DbEquipmentsMeasurementsRepository {
                 FK_Organ: eqp.FK_Organ,
                 Time: eqp.Time,
                 Hour: eqp.Hour,
-                Value: eqp.Value,
+                Value: eqp.Pluviometry,
               };
             })
           );
