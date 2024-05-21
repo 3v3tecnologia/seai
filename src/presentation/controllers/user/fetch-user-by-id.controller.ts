@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { FetchUserById } from "../../../domain/use-cases/user/fetch-user-by-id/fetch-user-by-id";
+import { FetchUserById } from "../../../domain/use-cases/user/fetch-user-by-id";
 import { forbidden, ok, serverError } from "../helpers";
 
 export class FetchUserByIdController

@@ -1,10 +1,8 @@
-import { Either } from "../../../../shared/Either";
-import { CreateJobUseCaseProtocol } from "../../jobs";
+import { Either } from "../../../shared/Either";
+import { AvailablesEmailServices } from "../helpers/availables-notification-services";
+import { CreateJobUseCaseProtocol } from "../jobs";
 
-export enum AvailablesEmailServices {
-  CREATE_ACCOUNT = "createUserAccount",
-  FORGOT_PASSWORD = "forgotUserPassword",
-}
+
 export class ScheduleUserAccountNotification {
   private readonly backgroundJobs: CreateJobUseCaseProtocol.UseCase;
 

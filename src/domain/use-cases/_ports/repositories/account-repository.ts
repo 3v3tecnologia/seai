@@ -2,7 +2,7 @@ import { IPaginationInput, IOutputWithPagination } from './../../helpers/paginat
 import { UserType, UserTypes } from "../../../entities/user/user";
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 import { User } from "../../user/model/user";
-import { UserAccount } from "../../user/model/user-with-modules";
+import { BaseUserAccount } from "../../user/model/user-with-modules";
 
 
 export interface AccountRepositoryProtocol {
@@ -32,7 +32,7 @@ export interface AccountRepositoryProtocol {
   deleteById(id_user: number): Promise<boolean>;
   deleteByEmail(email: string): Promise<boolean>;
   getByEmail(email: string): Promise<User | null>;
-  getByLogin(login: string): Promise<Required<UserAccount> | null>;
+  getByLogin(login: string): Promise<Required<BaseUserAccount> | null>;
   getById(id_user: number): Promise<Required<User> | null>;
   getUserByCode(code: string): Promise<User | null>
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;

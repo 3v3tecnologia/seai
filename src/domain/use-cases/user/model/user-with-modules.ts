@@ -1,6 +1,6 @@
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 
-export type UserAccount = {
+export type BaseUserAccount = {
   id?: number;
   name?: string;
   login?: string;

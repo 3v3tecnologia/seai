@@ -1,10 +1,8 @@
 import { Either, left, right } from "../../../shared/Either";
 import { Command } from "../_ports/core/command";
-import { Encoder } from "../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
-import { AccountNotFoundError } from "./errors/user-account-not-found";
 import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import { AccountEmailNotFound } from "./errors/user-account-not-found";
+import { AccountNotFoundError } from "./errors/user-account-not-found";
 
 import { Email } from "../../entities/user/email";
 import { UserLogin } from "../../entities/user/login";
@@ -12,8 +10,7 @@ import { UserName } from "../../entities/user/name";
 
 export class UpdateUserProfile
   extends Command
-  implements IUpdateUserProfileUseCase
-{
+  implements IUpdateUserProfileUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
   // private readonly encoder: Encoder;
 
@@ -27,7 +24,7 @@ export class UpdateUserProfile
     request: UpdateUserProfileDTO.Params
   ): Promise<
     Either<
-      AccountEmailNotFound | AccountNotFoundError | LoginAlreadyExists,
+      AccountNotFoundError | LoginAlreadyExists,
       string
     >
   > {
@@ -112,7 +109,7 @@ export namespace UpdateUserProfileDTO {
     name: string;
   };
   export type Result = Either<
-    AccountEmailNotFound | AccountNotFoundError | LoginAlreadyExists,
+    AccountNotFoundError | LoginAlreadyExists,
     string
   >;
 }

@@ -1,11 +1,10 @@
-import { ForgotPassword } from "../../../domain/use-cases/user/send-forgot-password/forgot-password";
+import { ForgotPassword } from "../../../domain/use-cases/user/forgot-password";
 import { created, forbidden, serverError } from "../helpers";
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 export class ForgotPasswordController
-  implements Controller<ForgotPasswordController.Request, HttpResponse>
-{
+  implements Controller<ForgotPasswordController.Request, HttpResponse> {
   private forgotPassword: ForgotPassword;
 
   constructor(forgotPassword: ForgotPassword) {

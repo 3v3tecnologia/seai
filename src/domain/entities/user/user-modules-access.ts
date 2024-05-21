@@ -4,10 +4,8 @@ import {
   checkArgumentsTypesBulk,
   concatenateMessages,
 } from "../../../shared/Guard";
-import {
-  UserModuleIdNotFound,
-  UserModulesNotFound,
-} from "../../use-cases/user/errors/user-account-not-found";
+import { UserModuleIdNotFound, UserModulesNotFound } from "../../use-cases/user/errors/module-not-found";
+
 
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserType } from "./user";

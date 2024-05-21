@@ -7,15 +7,12 @@ import {
 import { Command } from "../_ports/core/command";
 import { Encoder } from "../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+import { LoginAlreadyExists } from "./errors/login-aready-exists";
+import { UserModulesNotFound } from "./errors/module-not-found";
 import {
   AccountNotFoundError,
-  WrongPasswordError,
-} from "./authentication/errors";
-import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import {
-  AccountEmailNotFound,
-  UserModulesNotFound,
 } from "./errors/user-account-not-found";
+import { WrongPasswordError } from "./errors/wrong-password";
 
 export class UpdateUser extends Command implements IUpdateUserUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -31,7 +28,6 @@ export class UpdateUser extends Command implements IUpdateUserUseCase {
     request: UpdateUserDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
       | AccountNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists
@@ -39,7 +35,6 @@ export class UpdateUser extends Command implements IUpdateUserUseCase {
       string
     >
   > {
-    console.log(request);
     const alreadyExistsAccount = await this.accountRepository.getById(
       request.id
     );
@@ -47,29 +42,10 @@ export class UpdateUser extends Command implements IUpdateUserUseCase {
     const userNotFound = alreadyExistsAccount === null;
 
     if (userNotFound) {
-      return left(new AccountNotFoundError(request.email));
+      return left(new AccountNotFoundError());
     }
 
     // Usuário admin pode editar usuário mesmo não havendo login ain
-
-    if (request.login !== null) {
-      const userWithLogin = await this.accountRepository.getByLogin(
-        request.login
-      );
-
-      /*if (userWithLogin) {
-        // Se login não for do mesmo usuário então é sinal que já existe um login
-        // cadastrado e o sistema deve bloquear a edição.
-        const hasOtherAccountWithSameLogin =
-          userWithLogin.id !== request.id && userWithLogin.login !== null;
-
-        if (hasOtherAccountWithSameLogin) {
-          return left(
-            new Error(`Usuário com login ${request.login} já existe.`)
-          );
-        }
-      }*/
-    }
 
     if (request.email !== null) {
       const userWithSameEmail = await this.accountRepository.getByEmail(
@@ -179,7 +155,6 @@ export interface IUpdateUserUseCase {
     user: UpdateUserDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
       | AccountNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists

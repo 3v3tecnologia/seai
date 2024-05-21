@@ -1,4 +1,4 @@
-import { AuthenticationService } from "../authentication/ports/authentication-service";
+import { AuthenticationService } from "./user-authentication";
 
 export class SignIn {
   private readonly authentication: AuthenticationService;

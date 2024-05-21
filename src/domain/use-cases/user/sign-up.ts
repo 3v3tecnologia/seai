@@ -1,21 +1,13 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { User, UserType } from "../../../entities/user/user";
-import { Command } from "../../_ports/core/command";
-import { Encoder } from "../../_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
-import {
-  AccountNotFoundError,
-  UnmatchedPasswordError,
-  WrongPasswordError,
-} from "../authentication/errors";
-import {
-  AuthenticationDTO,
-  AuthenticationService,
-} from "../authentication/ports/authentication-service";
-import { UserModulesNotFound } from "../errors/user-account-not-found";
-import { AccountEmailNotFound } from "./errors/user-email-not-found";
-import { LoginAlreadyExists } from "./errors/user-login";
-import { SignUpDTO } from "./ports/sign-up";
+import { Either, left, right } from "../../../shared/Either";
+import { User, UserType } from "../../entities/user/user";
+import { Command } from "../_ports/core/command";
+import { Encoder } from "../_ports/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+import { LoginAlreadyExists } from "./errors/login-aready-exists";
+import { UserModulesNotFound } from "./errors/module-not-found";
+import { AccountNotFoundError } from "./errors/user-account-not-found";
+import { UnmatchedPasswordError, WrongPasswordError } from "./errors/wrong-password";
+import { AuthenticationDTO, AuthenticationService } from "./user-authentication";
 
 export class SignUp extends Command {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -36,7 +28,6 @@ export class SignUp extends Command {
     user: SignUpDTO.params
   ): Promise<
     Either<
-      | AccountEmailNotFound
       | AccountNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists
@@ -49,7 +40,7 @@ export class SignUp extends Command {
     );
 
     if (!!loginAlreadyExists) {
-      return left(new LoginAlreadyExists(user.login));
+      return left(new LoginAlreadyExists());
     }
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.getUserById(user.accountId);
@@ -113,4 +104,19 @@ export class SignUp extends Command {
 
     return right(tokenOrError.value);
   }
+}
+
+export namespace SignUpDTO {
+  export type params = {
+    accountId: number;
+    name: string;
+    login: string;
+    password: string;
+    confirmPassword: string;
+  };
+  export type result = {};
+}
+
+export interface SignInUpUseCase {
+  create(user: any): Promise<Either<Error, string>>;
 }

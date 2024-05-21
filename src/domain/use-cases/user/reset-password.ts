@@ -1,12 +1,11 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { base64Decode } from "../../../../shared/utils/base64Encoder";
-import { UserPassword } from "../../../entities/user/userPassword";
-import { Command } from "../../_ports/core/command";
-import { Encoder } from "../../_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
+import { Either, left, right } from "../../../shared/Either";
+import { base64Decode } from "../../../shared/utils/base64Encoder";
+import { UserPassword } from "../../entities/user/userPassword";
+import { Command } from "../_ports/core/command";
+import { Encoder } from "../_ports/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
 
-import { AccountNotFoundError } from "../errors/user-account-not-found";
-import { ResetPasswordProtocol } from "./protocol";
+import { AccountNotFoundError } from "./errors/user-account-not-found";
 
 export class ResetPassword extends Command implements ResetPasswordProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -71,4 +70,14 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
     });
     return right(null);
   }
+}
+
+export interface ResetPasswordProtocol {
+  execute(
+    params: {
+      code: string,
+      password: string,
+      confirmPassword: string
+    }
+  ): Promise<Either<Error, null>>;
 }

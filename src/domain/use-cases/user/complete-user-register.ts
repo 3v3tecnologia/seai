@@ -6,19 +6,13 @@ import { UserPassword } from "../../entities/user/userPassword";
 import { Command } from "../_ports/core/command";
 import { Encoder } from "../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
-import { NotExistsError } from "../errors/notFound-error";
-import { UserAlreadyExistsError } from "../errors/user-already-exists";
 import { UserAlreadyRegisteredError } from "../errors/user-already-registered";
 import { UserNotFoundError } from "../errors/user-not-found";
-import {
-  AccountNotFoundError,
-  WrongPasswordError,
-} from "./authentication/errors";
 import { LoginAlreadyExists } from "./errors/login-aready-exists";
 import {
-  AccountEmailNotFound,
-  UserModulesNotFound,
+  AccountNotFoundError,
 } from "./errors/user-account-not-found";
+import { WrongPasswordError } from "./errors/wrong-password";
 
 
 
@@ -36,11 +30,9 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     request: CompleteUserRegisterDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
       | AccountNotFoundError
       | WrongPasswordError
-      | LoginAlreadyExists
-      | UserModulesNotFound,
+      | LoginAlreadyExists,
       string
     >
   > {
@@ -134,11 +126,9 @@ export interface ICompleteUserRegisterUseCase {
     user: CompleteUserRegisterDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
       | AccountNotFoundError
       | WrongPasswordError
-      | LoginAlreadyExists
-      | UserModulesNotFound,
+      | LoginAlreadyExists,
       string
     >
   >;

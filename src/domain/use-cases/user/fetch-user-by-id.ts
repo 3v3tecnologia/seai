@@ -1,7 +1,6 @@
-import { Either, right } from "../../../../shared/Either";
-import { SystemModulesProps } from "../../../entities/user/user-modules-access";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
-import { User } from "../model/user";
+import { Either, right } from "../../../shared/Either";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+import { User } from "./model/user";
 
 export class FetchUserById {
   private readonly accountRepository: AccountRepositoryProtocol;

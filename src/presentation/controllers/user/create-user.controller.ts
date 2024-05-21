@@ -1,4 +1,4 @@
-import { CreateUser } from "../../../domain/use-cases/user/create-user/create-user";
+import { CreateUser } from "../../../domain/use-cases/user/create-user";
 import { HttpResponse } from "../ports";
 
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";

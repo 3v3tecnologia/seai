@@ -1,13 +1,11 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
-import { UserNotFoundError } from "../delete-user/errors/user-not-found-error";
-import { AccountNotFoundError, WrongPasswordError } from "./errors";
-import {
-  AuthenticationDTO,
-  AuthenticationService,
-} from "./ports/authentication-service";
-import { TokenProvider } from "./ports/token-provider";
+import { Either, left, right } from "../../../shared/Either";
+import { Encoder } from "../_ports/cryptography/encoder";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+
+import { TokenProvider } from "../_ports/cryptography/token-provider";
+import { WrongPasswordError } from "./errors/wrong-password";
+import { AccountNotFoundError } from "./errors/user-account-not-found";
+import { UserNotFoundError } from "../errors/user-not-found";
 
 export class UserAuthentication implements AuthenticationService {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -58,4 +56,22 @@ export class UserAuthentication implements AuthenticationService {
       userName: account.name,
     });
   }
+}
+
+export namespace AuthenticationDTO {
+  export type params = { login: string; password: string };
+
+  export type result = {
+    accessToken: string;
+    // accountId: number;
+  };
+}
+
+export interface AuthenticationService {
+  auth(
+    params: AuthenticationDTO.params,
+    test?: string
+  ): Promise<
+    Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
+  >;
 }

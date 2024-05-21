@@ -1,45 +1,23 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { User } from "../../../entities/user/user";
+
+import { Either, left, right } from "../../../shared/Either";
+import { User, UserType } from "../../entities/user/user";
 import {
   SystemModules,
   SystemModulesProps,
-} from "../../../entities/user/user-modules-access";
-import { Command } from "../../_ports/core/command";
-import { IDateProvider } from "../../_ports/date-provider/date-provider";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
-import { TokenProvider } from "../authentication/ports/token-provider";
+} from "../../entities/user/user-modules-access";
+import { Command } from "../_ports/core/command";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
 import {
-  AvailablesEmailServices,
   ScheduleUserAccountNotification,
-} from "../send-notification-to-user/send-notification-to-user";
+} from "./send-notification-to-user";
 import { UserAlreadyExistsError } from "./errors/user-already-exists";
-import { CreateUserDTO, CreateUserProtocol } from "./ports";
-import crypto from 'crypto'
+import { MailServiceError } from '../errors/mail-service-error';
+import { AvailablesEmailServices } from '../helpers/availables-notification-services';
+import { hashInPbkdf2 } from "../../../infra/cryptography/bcrypt-adapter";
 
 
-function validateHash(inputData: string, storedHash: string, storedSalt: string, iterations: number, keylen: number, digest: string) {
-  // Generate the hash with the input data and the stored salt
-  const derivedKey = crypto.pbkdf2Sync(inputData, storedSalt, iterations, keylen, digest);
 
-  // Convert to hex format for comparison
-  const hash = derivedKey.toString('hex');
 
-  // Compare the newly generated hash with the stored hash
-  // Return true if they match, false otherwise
-  return hash === storedHash;
-}
-
-async function generateHash(userEmail: string, salt: string, iterations: number, keylen: number, digest: string): Promise<Error | string> {
-  // Asynchronously generate the hash
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(userEmail, salt, iterations, keylen, digest, (err, derivedKey) => {
-      if (err) reject(err);
-      // The derivedKey is the hash code generated from the user's email and the salt
-      const hash = derivedKey.toString('hex');
-      resolve(hash)
-    });
-  })
-}
 
 export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -98,7 +76,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
     const keylen = 10;
     const digest = 'sha512';
 
-    const userHash = await generateHash(user.email?.value as string, salt, iterations, keylen, digest)
+    const userHash = await hashInPbkdf2(user.email?.value as string, salt, iterations, keylen, digest)
 
     const userEmail = user.email?.value as string
 
@@ -135,4 +113,21 @@ export class CreateUser extends Command implements CreateUserProtocol {
       `Usuário criado com sucessso, aguardando confirmação do cadastro.`
     );
   }
+}
+
+export interface CreateUserProtocol {
+  create(
+    user: CreateUserDTO.Params
+  ): Promise<Either<UserAlreadyExistsError | MailServiceError, string>>;
+}
+export namespace CreateUserDTO {
+  type system_modules_permissions = SystemModulesProps;
+
+  export type Params = {
+    email: string;
+    type: UserType;
+    modules: system_modules_permissions;
+  };
+
+  export type Result = string;
 }

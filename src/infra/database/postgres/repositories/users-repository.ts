@@ -6,7 +6,7 @@ import {
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
 import { IOutputWithPagination, IPaginationInput, toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { User } from "../../../../domain/use-cases/user/model/user";
-import { UserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
+import { BaseUserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
 import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
@@ -428,7 +428,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return user;
   }
 
-  async getByLogin(login: string): Promise<Required<UserAccount> | null> {
+  async getByLogin(login: string): Promise<Required<BaseUserAccount> | null> {
     const result = await governmentDb
       .select("*")
       .from("User")

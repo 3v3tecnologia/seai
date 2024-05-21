@@ -1,8 +1,8 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { Command } from "../../_ports/core/command";
-import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
-import { FailToDeleteUserError } from "./errors/fail-to-delete-user-error";
-import { UserNotFoundError } from "./errors/user-not-found-error";
+import { Either, left, right } from "../../../shared/Either";
+import { Command } from "../_ports/core/command";
+import { AccountRepositoryProtocol } from "../_ports/repositories/account-repository";
+import { UserNotFoundError } from "../errors/user-not-found";
+import { FailToDeleteUserError } from "./errors/delete-user-error";
 
 export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   private readonly accountRepository: AccountRepositoryProtocol;

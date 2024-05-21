@@ -1,6 +1,6 @@
 export class AccountNotFoundError extends Error {
-  constructor(login: string) {
-    super("User " + login + " not found.");
+  constructor() {
+    super("User não encontrado");
     this.name = "AccountNotFound";
   }
 }
