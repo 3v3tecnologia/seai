@@ -5,10 +5,12 @@ import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/
 import { forbidden, ok, unauthenticated } from "../controllers/helpers";
 import { AccessKeyRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/acess-key.repository";
 import { READ_ONLY_URLs } from "../../server/http/config/readOnlyURLs";
+import { left } from "../../shared/Either";
 
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
   private readonly apiKeyRepository: AccessKeyRepositoryProtocol;
+  private static openURLs = new Set(['faq', 'equipments', 'news'])
 
   constructor(
     tokenManager: TokenProvider,
@@ -18,35 +20,46 @@ export class AuthMiddleware implements Middleware {
     this.apiKeyRepository = apiKeyRepository;
   }
 
-  public isReadOnlyURL(method: string, url: string): boolean {
-    return (
-      method == "GET" &&
-      READ_ONLY_URLs.some((readOnlyUrl) => {
-        return url.toLocaleLowerCase().includes(readOnlyUrl);
-      })
-    );
+
+  public allowedToOpenAccess(method: string, url: string): boolean {
+    let authorized = false
+
+    AuthMiddleware.openURLs.forEach((allowedURL) => {
+      if (url.includes(allowedURL) && method === 'GET') {
+        authorized = true
+        return
+      }
+    })
+
+    return authorized
+  }
+
+  async checkAPIKey(accessToken: string): Promise<boolean> {
+    const apiKey = await this.apiKeyRepository.getByKey({
+      Key: accessToken,
+    });
+
+    if (apiKey === null) {
+      return false
+    }
+
+    return true
   }
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
     try {
       const { authType, accessToken, url, method } = request;
 
-      if (this.isReadOnlyURL(method, url)) {
-        const apiKey = await this.apiKeyRepository.getByKey({
-          Key: accessToken,
-        });
+      if (this.allowedToOpenAccess(method, url)) {
+        const hasValidApiKey = await this.checkAPIKey(accessToken)
 
-        if (apiKey !== null && apiKey.Enabled) {
-          const sendedToken = `${authType} ${accessToken}`;
-          const apiKeyToken = `${apiKey.Type} ${apiKey.Key}`;
-
-          if (sendedToken === apiKeyToken) {
-            return ok({
-              accessToken,
-            });
-          }
+        if (hasValidApiKey) {
+          return ok({
+            accessToken,
+          });
         }
       }
+
 
       if (!accessToken) {
         return forbidden(new Error("Token não providenciado"));

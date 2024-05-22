@@ -50,15 +50,15 @@ export const newsRouter = (): Router => {
 
   router.get(
     "/:id",
-    authorization,
-    newsReadAccessAuth,
+    // authorization,
+    // newsReadAccessAuth,
     adaptRoute(NewsletterControllersFactory.makeFetchByIdNewsletter())
   );
 
   router.get(
     "/",
-    authorization,
-    newsReadAccessAuth,
+    // authorization,
+    // newsReadAccessAuth,
     adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
   );
 
