@@ -34,7 +34,8 @@ export class UserUseCasesFactory {
   static makeCreateUser(): CreateUser {
     return new CreateUser(
       this.repository,
-      this.makeSendNotificationToUser()
+      this.makeSendNotificationToUser(),
+      this.encoder
     );
   }
 
