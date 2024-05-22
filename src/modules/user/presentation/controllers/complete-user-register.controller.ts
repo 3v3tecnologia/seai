@@ -1,9 +1,8 @@
-import { HttpResponse } from "../ports";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { CompleteUserRegister } from "../../use-cases";
 
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { CompleteUserRegister } from "../../../modules/user/services";
-import { created, forbidden, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 
 export class CompleteUserRegisterController extends CommandController<
   CompleteUserRegisterDTO.Request,

@@ -1,8 +1,10 @@
-import { Either, right } from "../../../shared/Either";
+
 import { BaseUserModel } from "../core/model/base-user";
 import { UserTypes } from "../core/model/user";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
+
 import { IPaginationInput, IOutputWithPagination } from "../../../shared/core/pagination";
+import { Either, right } from "../../../shared/core/Either";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;

@@ -1,4 +1,4 @@
-import { Either, left, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/core/Either";
 import {
   againstNullOrUndefinedBulk,
   checkArgumentsTypesBulk,

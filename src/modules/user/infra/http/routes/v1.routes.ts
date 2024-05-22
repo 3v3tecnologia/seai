@@ -1,12 +1,8 @@
 import { Router } from "express";
-import { adaptRoute } from "../adapters/express-route.adapter";
+import { authorization, userReadAccessAuth, userWriteAccessAuth } from "../../../../../server/http/http-middlewares";
+import { UserControllersFactory } from "../../../factories/presentation/controllers/user.controller.factory";
+import { adaptRoute } from "../../../../../server/http/adapters/express-route.adapter";
 
-import {
-    userWriteAccessAuth,
-    userReadAccessAuth,
-    authorization,
-} from "../http-middlewares";
-import { UserControllersFactory } from "../factories/controllers";
 
 export const userRouter = (): Router => {
     const router = Router();

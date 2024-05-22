@@ -1,7 +1,6 @@
-import { ForgotPassword } from "../../../modules/user/services/forgot-password";
-import { created, forbidden, serverError } from "../helpers";
-import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
+import { Controller } from "../../../../shared/presentation/controllers";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { ForgotPassword } from "../../use-cases";
 
 export class ForgotPasswordController
   implements Controller<ForgotPasswordController.Request, HttpResponse> {

@@ -1,12 +1,12 @@
-import { Either, left, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/core/Either";
 import { Command } from "../../../shared/core/command";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import { AccountNotFoundError } from "../core/errors/user-account-not-found";
 
 import { Email } from "../core/model/email";
 import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
 
 export class UpdateUserProfile
   extends Command

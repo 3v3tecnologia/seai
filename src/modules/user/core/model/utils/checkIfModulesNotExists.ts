@@ -1,4 +1,5 @@
-import { Either, left, right } from "../../../../../shared/Either";
+
+import { Either, left, right } from "../../../../../shared/core/Either";
 import { UserModuleAccessErrors } from "../../errors/invalid-user-permissions";
 import { Modules, SystemModules } from "../user-modules-access";
 

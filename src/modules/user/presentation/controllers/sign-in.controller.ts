@@ -1,8 +1,6 @@
-import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
-
-import { SignIn } from "../../../modules/user/services/sign-in";
-import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { Controller } from "../../../../shared/presentation/controllers";
+import { HttpResponse, badRequest, forbidden, ok, serverError } from "../../../../shared/presentation/http-responses";
+import { SignIn } from "../../use-cases";
 
 export class SignInController
   implements Controller<SignInControllerProtocol.Request, HttpResponse> {

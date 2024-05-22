@@ -1,19 +1,19 @@
-
-import { Either, left, right } from "../../../shared/Either";
 import { User, UserType } from "../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
 } from "../core/model/user-modules-access";
 import { Command } from "../../../shared/core/command";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
+
 import {
   ScheduleUserAccountNotification,
 } from "./send-notification-to-user";
 import { UserAlreadyExistsError } from "../core/errors/user-already-exists";
-import { MailServiceError } from '../../../domain/use-cases/errors/mail-service-error';
+
 import { AvailablesEmailServices } from '../../../shared/core/availables-notification-services';
 import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
 
 export class CreateUser extends Command implements CreateUserProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -112,7 +112,7 @@ export class CreateUser extends Command implements CreateUserProtocol {
 export interface CreateUserProtocol {
   create(
     user: CreateUserDTO.Params
-  ): Promise<Either<UserAlreadyExistsError | MailServiceError, string>>;
+  ): Promise<Either<UserAlreadyExistsError | Error, string>>;
 }
 export namespace CreateUserDTO {
   type system_modules_permissions = SystemModulesProps;

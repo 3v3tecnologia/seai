@@ -1,3 +1,4 @@
+
 import {
   CreateUser,
   DeleteUser,
@@ -15,10 +16,12 @@ import {
 } from "../../../../modules/user/use-cases";
 import { CryptoAdapter } from "../../../../shared/external/cryptography/bcrypt-adapter";
 import { JwtAdapter } from "../../../../shared/external/cryptography/jwt-adapter";
-import { DbAccountRepository } from "../../../../shared/external/db/database/postgres/repositories/users-repository";
+import { DbAccountRepository } from "../../infra/repositories/user-repository";
 import { DateProvider } from "../../../../shared/external/dateprovider/date";
-import env from "../../env";
-import { JobsUseCasesFactory } from "./jobs.useCase.factory";
+import env from "../../../../server/http/env";
+import { JobsUseCasesFactory } from "../../../async-jobs/factories/jobs.useCase.factory";
+
+
 
 export class UserUseCasesFactory {
   private static repository = new DbAccountRepository();

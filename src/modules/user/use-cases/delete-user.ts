@@ -1,8 +1,8 @@
-import { Either, left, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/core/Either";
 import { Command } from "../../../shared/core/command";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
-import { UserNotFoundError } from "../../../domain/use-cases/errors/user-not-found";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
 import { FailToDeleteUserError } from "../core/errors/delete-user-error";
+import { AccountNotFoundError } from "../core/errors/user-account-not-found";
 
 export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -13,7 +13,7 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
   }
   async execute(
     request: DeleteUserProtocol.Request
-  ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
+  ): Promise<Either<AccountNotFoundError | FailToDeleteUserError, string>> {
     console.log('request :: ', request);
     let account = null;
 
@@ -24,7 +24,7 @@ export class DeleteUser extends Command implements DeleteUserProtocol.UseCase {
     }
 
     if (account === null) {
-      return left(new UserNotFoundError());
+      return left(new AccountNotFoundError());
     }
 
     const result = await this.accountRepository.deleteById(
@@ -54,6 +54,6 @@ export namespace DeleteUserProtocol {
   export interface UseCase {
     execute(
       request: Request
-    ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>>;
+    ): Promise<Either<AccountNotFoundError | FailToDeleteUserError, string>>;
   }
 }

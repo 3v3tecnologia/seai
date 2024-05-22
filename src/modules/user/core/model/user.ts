@@ -1,4 +1,4 @@
-import { Either, left, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/core/Either";
 import { Notification } from "../../../../shared/core/notification/notification";
 import { Email } from "./email";
 import { UserLogin } from "./login";

@@ -1,11 +1,7 @@
-import { HttpResponse } from "../ports";
-
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { DeleteUser } from "../../../modules/user/services/delete-user";
-import { forbidden, ok } from "../helpers";
-import { CommandController } from "../ports/command-controller";
-import { left } from "../../../shared/Either";
-
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, forbidden, ok } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { DeleteUser } from "../../use-cases";
 export class DeleteUserController extends CommandController<
   DeleteUserController.Request,
   HttpResponse

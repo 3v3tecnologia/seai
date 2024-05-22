@@ -1,14 +1,9 @@
-import { CreateUser } from "../../../modules/user/services/create-user";
-import { HttpResponse } from "../ports";
-
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { created, forbidden, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
-import {
-  Modules,
-  SystemModulesPermissions,
-} from "../../../modules/user/core/model/user-modules-access";
-import { UserType } from "../../../modules/user/core/model/user";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { UserType } from "../../core/model/user";
+import { Modules, SystemModulesPermissions } from "../../core/model/user-modules-access";
+import { CreateUser } from "../../use-cases";
 
 export class CreateUserController extends CommandController<
   CreateUserController.Request,

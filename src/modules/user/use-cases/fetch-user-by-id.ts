@@ -1,6 +1,8 @@
-import { Either, right } from "../../../shared/Either";
+
+import { Either, right } from "../../../shared/core/Either";
 import { BaseUserModel } from "../core/model/base-user";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+
 
 export class FetchUserById {
   private readonly accountRepository: AccountRepositoryProtocol;

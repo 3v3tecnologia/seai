@@ -1,10 +1,8 @@
-import { HttpResponse } from "../controllers/ports";
+import { READ_ONLY_URLs } from "../../../../server/http/config/readOnlyURLs";
+import { TokenProvider } from "../../../../shared/external/cryptography/protocols/token-provider";
+import { HttpResponse, forbidden, ok, unauthenticated } from "../../../../shared/presentation/http-responses";
 import { Middleware } from "../../../../shared/presentation/middleware";
-
-import { TokenProvider } from "../../domain/use-cases/_ports/cryptography/token-provider";
-import { forbidden, ok, unauthenticated } from "../controllers/helpers";
-import { AccessKeyRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/acess-key.repository";
-import { READ_ONLY_URLs } from "../../server/http/config/readOnlyURLs";
+import { AccessKeyRepositoryProtocol } from "../../../api-token/infra/repositories/protocols/acess-key.repository";
 
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;

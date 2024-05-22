@@ -1,4 +1,5 @@
-import { Either } from "../../../shared/Either";
+
+import { Either } from "../../../shared/core/Either";
 import { AvailablesEmailServices } from "../../../shared/core/availables-notification-services";
 import { CreateJobUseCaseProtocol } from "../../async-jobs/services";
 

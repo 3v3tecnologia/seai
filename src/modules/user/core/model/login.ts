@@ -1,4 +1,4 @@
-import { Either, left, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/core/Either";
 import { InvalidLoginError } from "../errors/invalid-login";
 
 export class UserLogin {

@@ -1,11 +1,11 @@
-import { Either, left, right } from "../../../shared/Either";
 import { base64Decode } from "../../../shared/core/base64Encoder";
 import { UserPassword } from "../core/model/userPassword";
 import { Command } from "../../../shared/core/command";
 import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
 
 import { AccountNotFoundError } from "../core/errors/user-account-not-found";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
 
 export class ResetPassword extends Command implements ResetPasswordProtocol {
   private readonly accountRepository: AccountRepositoryProtocol;

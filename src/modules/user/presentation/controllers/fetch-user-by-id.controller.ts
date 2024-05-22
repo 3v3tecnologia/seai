@@ -1,8 +1,6 @@
-import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
-
-import { FetchUserById } from "../../../modules/user/services/fetch-user-by-id";
-import { forbidden, ok, serverError } from "../helpers";
+import { Controller } from "../../../../shared/presentation/controllers";
+import { HttpResponse, forbidden, serverError, ok } from "../../../../shared/presentation/http-responses";
+import { FetchUserById } from "../../use-cases";
 
 export class FetchUserByIdController
   implements Controller<FetchUserByIdControllerProtocol.Request, HttpResponse> {

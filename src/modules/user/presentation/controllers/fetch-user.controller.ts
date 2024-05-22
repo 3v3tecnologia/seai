@@ -1,13 +1,9 @@
-import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
+import { IPaginationInput, parsePaginationInput } from "../../../../shared/core/pagination";
+import { Controller } from "../../../../shared/presentation/controllers";
+import { HttpResponse, ok, serverError } from "../../../../shared/presentation/http-responses";
+import { UserTypes } from "../../core/model/user";
+import { IFetchUsersUseCase } from "../../use-cases";
 
-import {
-  FetchUsersDTO,
-  IFetchUsersUseCase,
-} from "../../../modules/user/services/fetch-users";
-import { ok, serverError } from "../helpers";
-import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
-import { UserTypes } from "../../../modules/user/core/model/user";
 
 export class FetchUserController
   implements Controller<FetchUserControllerProtocol.Request, HttpResponse> {

@@ -1,13 +1,8 @@
-import { HttpResponse } from "../controllers/ports";
-import { Middleware } from "../../../../shared/presentation/middleware";
 
-import { AccountRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/account-repository";
-import {
-  forbidden,
-  ok,
-  serverError,
-  unauthorized,
-} from "../controllers/helpers";
+import { HttpResponse, forbidden, ok, serverError, unauthorized } from "../../../../shared/presentation/http-responses";
+import { Middleware } from "../../../../shared/presentation/middleware";
+import { AccountRepositoryProtocol } from "../../infra/repositories/protocol/user-repository";
+
 
 function hasAnyKey(obj: any, matcher: any): boolean {
   const ob1 = Object.entries(obj);

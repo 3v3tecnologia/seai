@@ -1,6 +1,6 @@
-import { DbAccountRepository } from "../../../../shared/db/database/postgres/repositories/users-repository";
-import { AdminMiddleware } from "../../../../presentation/middlewares/admin-middleware";
-import { Middleware } from "../../../../presentation/middlewares/ports";
+import { Middleware } from "../../../../../shared/presentation/middleware";
+import { DbAccountRepository } from "../../../infra/repositories/user-repository";
+import { AdminMiddleware } from "../../../presentation/middlewares/admin-middleware";
 
 export const makeAdminMiddleware = (
   module: string,

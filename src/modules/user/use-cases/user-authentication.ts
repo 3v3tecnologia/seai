@@ -1,11 +1,11 @@
-import { Either, left, right } from "../../../shared/Either";
-import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
 
+import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
 import { TokenProvider } from "../../../shared/external/cryptography/protocols/token-provider";
 import { WrongPasswordError } from "../core/errors/wrong-password";
 import { AccountNotFoundError } from "../core/errors/user-account-not-found";
-import { UserNotFoundError } from "../../../domain/use-cases/errors/user-not-found";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
+
 
 export class UserAuthentication implements AuthenticationService {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -31,7 +31,7 @@ export class UserAuthentication implements AuthenticationService {
     const account = await this.accountRepository.getByLogin(login);
 
     if (!account) {
-      return left(new UserNotFoundError());
+      return left(new AccountNotFoundError());
     }
     const isMatch = await this.encoder.compare(
       password,

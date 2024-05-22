@@ -1,13 +1,14 @@
+import { IOutputWithPagination, IPaginationInput, toPaginatedOutput } from "../../../../shared/core/pagination";
+import { governmentDb } from "../../../../shared/external/db/postgres/connection/knexfile";
+import { countTotalRows } from "../../../../shared/external/db/postgres/repositories/utils/paginate";
+import { BaseUserModel } from "../../core/model/base-user";
 import { UserType, UserTypes } from "../../core/model/user";
 import {
   Modules,
   SystemModulesProps,
 } from "../../core/model/user-modules-access";
-import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
-import { IOutputWithPagination, IPaginationInput, toPaginatedOutput } from "../../../../shared/core/pagination";
-import { BaseUserModel } from "../../core/model/base-user";
-import { governmentDb } from "../connection/knexfile";
-import { countTotalRows } from "./utils/paginate";
+import { AccountRepositoryProtocol } from "./protocol/user-repository";
+
 
 export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(params: {

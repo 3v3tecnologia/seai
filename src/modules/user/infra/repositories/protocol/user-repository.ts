@@ -1,7 +1,8 @@
-import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+
 import { UserType, UserTypes } from "../../../core/model/user";
 import { SystemModulesProps } from "../../../core/model/user-modules-access";
 import { BaseUserModel } from "../../../core/model/base-user";
+import { IOutputWithPagination, IPaginationInput } from "../../../../../shared/core/pagination";
 
 
 export interface AccountRepositoryProtocol {

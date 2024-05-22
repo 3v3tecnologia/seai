@@ -1,8 +1,8 @@
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { ResetPassword } from "../../../modules/user/services/reset-password";
-import { created, forbidden, serverError } from "../helpers";
-import { HttpResponse } from "../ports";
-import { CommandController } from "../ports/command-controller";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { ResetPassword } from "../../use-cases";
+
 
 export class ResetPasswordController extends CommandController<
   ResetPasswordController.Request,

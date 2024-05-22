@@ -1,18 +1,19 @@
-import { Either, left, right } from "../../../shared/Either";
+
+
 import { base64Decode } from "../../../shared/core/base64Encoder";
 import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 import { Command } from "../../../shared/core/command";
 import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
-import { UserAlreadyRegisteredError } from "../../../domain/use-cases/errors/user-already-registered";
-import { UserNotFoundError } from "../../../domain/use-cases/errors/user-not-found";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import {
   AccountNotFoundError,
 } from "../core/errors/user-account-not-found";
 import { WrongPasswordError } from "../core/errors/wrong-password";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
+import { UserAlreadyExistsError } from '../core/errors/user-already-exists';
 
 
 
@@ -45,11 +46,11 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
     );
 
     if (account === null) {
-      return left(new UserNotFoundError());
+      return left(new AccountNotFoundError());
     }
 
     if (account.status === 'registered') {
-      return left(new UserAlreadyRegisteredError())
+      return left(new UserAlreadyExistsError())
     }
 
     const userLoginOrError = UserLogin.create(request.login);

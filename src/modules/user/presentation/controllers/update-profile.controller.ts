@@ -1,12 +1,7 @@
-import { HttpResponse } from "../ports";
-
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import {
-  IUpdateUserProfileUseCase,
-  UpdateUserProfile,
-} from "../../../modules/user/services";
-import { created, forbidden, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { UpdateUserProfile } from "../../use-cases";
 
 export class UpdateUserProfileController extends CommandController<
   UpdateUserProfileController.Request,

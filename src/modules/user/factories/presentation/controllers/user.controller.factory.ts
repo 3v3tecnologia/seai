@@ -1,7 +1,7 @@
+import { makeLogControllerDecorator } from "../../../../../server/http/decorator/log-controller-decorator-factory";
 import { Controller } from "../../../../../shared/presentation/controllers";
+import { SystemLogsUseCaseFactory } from "../../../../logs/factories/services";
 
-import { makeLogControllerDecorator } from "../decorators";
-import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 import {
   CompleteUserRegisterController,
   CreateUserController,
@@ -15,7 +15,8 @@ import {
   SignUpController,
   UpdateUserController,
   UpdateUserProfileController,
-} from "../../../../presentation/controllers/user";
+} from "../../../presentation/controllers";
+import { UserUseCasesFactory } from "../../use-cases/user.useCase.factory";
 
 export class UserControllersFactory {
   static makeCreateUser(): Controller {

@@ -1,9 +1,7 @@
-import { HttpResponse } from "../ports";
-
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { SignUp } from "../../../modules/user/services/sign-up";
-import { forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, forbidden, ok, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { SignUp } from "../../use-cases";
 
 export class SignUpController extends CommandController<
   SignUpController.Request,

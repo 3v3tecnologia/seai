@@ -1,4 +1,4 @@
-import { Either, left, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/core/Either";
 import { UnmatchedPasswordError } from "../errors/wrong-password";
 import { PasswordErrors } from "../errors/invalid-password";
 

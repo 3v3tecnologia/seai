@@ -1,11 +1,10 @@
-import { Either, left, right } from "../../../shared/Either";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
 import {
   ScheduleUserAccountNotification,
 } from "./send-notification-to-user";
-import { UserNotFoundError } from '../../../domain/use-cases/errors/user-not-found';
 import { AccountNotFoundError } from "../core/errors/user-account-not-found";
 import { AvailablesEmailServices } from "../../../shared/core/availables-notification-services";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
 
 export class ForgotPassword {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -23,7 +22,7 @@ export class ForgotPassword {
     const account = await this.accountRepository.getByEmail(email);
 
     if (!account) {
-      return left(new UserNotFoundError());
+      return left(new AccountNotFoundError());
     }
 
     await this.scheduleUserAccountNotification.schedule({

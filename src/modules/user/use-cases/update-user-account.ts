@@ -1,4 +1,3 @@
-import { Either, left, right } from "../../../shared/Either";
 import { User, UserType } from "../core/model/user";
 import {
   SystemModules,
@@ -6,13 +5,14 @@ import {
 } from "../core/model/user-modules-access";
 import { Command } from "../../../shared/core/command";
 import { Encoder } from "../../../shared/external/cryptography/protocols/encoder";
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import { UserModulesNotFound } from "../core/errors/module-not-found";
 import {
   AccountNotFoundError,
 } from "../core/errors/user-account-not-found";
 import { WrongPasswordError } from "../core/errors/wrong-password";
+import { AccountRepositoryProtocol } from "../infra/repositories/protocol/user-repository";
+import { Either, left, right } from "../../../shared/core/Either";
 
 export class UpdateUser extends Command implements IUpdateUserUseCase {
   private readonly accountRepository: AccountRepositoryProtocol;

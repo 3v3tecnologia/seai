@@ -1,14 +1,9 @@
-import { HttpResponse } from "../ports";
-
-import { UserType } from "../../../modules/user/core/model/user";
-import {
-  Modules,
-  SystemModulesPermissions,
-} from "../../../modules/user/core/model/user-modules-access";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { UpdateUser } from "../../../modules/user/services";
-import { CommandController } from "../ports/command-controller";
-import { created, forbidden, serverError } from "../helpers";
+import { CommandController } from "../../../../shared/presentation/command-controller";
+import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
+import { RegisterUserLogs } from "../../../logs/services";
+import { UserType } from "../../core/model/user";
+import { Modules, SystemModulesPermissions } from "../../core/model/user-modules-access";
+import { UpdateUser } from "../../use-cases";
 
 export class UpdateUserController extends CommandController<
   UpdateUserController.Request,
