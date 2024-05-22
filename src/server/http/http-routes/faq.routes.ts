@@ -8,11 +8,10 @@ import {
 import { FaqControllersFactory } from "../factories/controllers";
 
 
-
 const setupFaqRoutes = (router: Router): void => {
   router.get(
     "/categories",
-    authorization,
+    // authorization,
     adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
   );
 
@@ -40,13 +39,13 @@ const setupFaqRoutes = (router: Router): void => {
 
   router.get(
     "/",
-    authorization,
+    // authorization,
     adaptRoute(FaqControllersFactory.makeFetchFaqsWithCategory())
   );
 
   router.get(
     "/:id",
-    authorization,
+    // authorization,
     adaptRoute(FaqControllersFactory.makeFetchFaqById())
   );
 
