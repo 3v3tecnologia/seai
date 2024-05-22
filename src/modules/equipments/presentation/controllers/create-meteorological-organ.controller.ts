@@ -1,0 +1,61 @@
+import { HttpResponse } from "../../../../shared/presentation/ports";
+import { Controller } from "../../../../shared/presentation/controllers";
+
+import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
+import { CreateMeteorologicalOrgan } from "../../services/create-meteorological-organ";
+import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { badRequest, ok, serverError } from "../../../../presentation/controllers/helpers";
+
+export class CreateMeteorologicalOrganController
+  implements
+  Controller<
+    CreateMeteorologicalOrganControllerProtocol.Request,
+    HttpResponse
+  > {
+  private createMeteorologicalOrgan: CreateMeteorologicalOrgan;
+  private userLogs: RegisterUserLogs;
+
+  constructor(
+    createMeteorologicalOrgan: CreateMeteorologicalOrgan,
+    userLogs: RegisterUserLogs
+  ) {
+    this.createMeteorologicalOrgan = createMeteorologicalOrgan;
+    this.userLogs = userLogs;
+  }
+
+  async handle(
+    request: CreateMeteorologicalOrganControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    try {
+      if (Reflect.has(request, "Host") && typeof request.Host !== "string") {
+        return badRequest(new Error("'Host' deve ser do tipo string."));
+      }
+      const resultOrError = await this.createMeteorologicalOrgan.execute({
+        Host: request.Host,
+        Name: request.Name,
+        Password: request.Password,
+        User: request.User,
+      });
+
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
+
+      await this.userLogs.log(
+        request.accountId,
+        this.createMeteorologicalOrgan
+      );
+
+      return ok(resultOrError.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+}
+
+export namespace CreateMeteorologicalOrganControllerProtocol {
+  export type Request = {
+    accountId: number;
+  } & Required<Omit<MeteorologicalOrganEntity, "Id">>;
+}

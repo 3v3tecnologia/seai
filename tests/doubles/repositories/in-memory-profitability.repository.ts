@@ -1,8 +1,8 @@
-import { ProducerRepositoryProtocol } from "../../../src/domain/use-cases/_ports/repositories/producer.repository";
+import { ProducerRepositoryProtocol } from "../../../src/modules/census/infra/repositories/protocols/producer.repository";
 import {
   ProfitabilitySecurityRepositoryDTO,
   ProfitabilitySecurityRepositoryProtocol,
-} from "../../../src/domain/use-cases/_ports/repositories/profitability-security.repository";
+} from "../../../src/modules/census/infra/repositories/protocols/profitability-security.repository";
 
 export class InMemoryProfitabilitySecurityRepository
   implements ProfitabilitySecurityRepositoryProtocol

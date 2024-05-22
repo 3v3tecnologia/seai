@@ -1,7 +1,7 @@
 import {
   WaterSecurityRepositoryDTO,
   WaterSecurityRepositoryProtocol,
-} from "../../../src/domain/use-cases/_ports/repositories/water-security.repository";
+} from "../../../src/modules/census/infra/repositories/protocols/water-security.repository";
 
 type RawProducerProfitability = {
   IdProducer: number;
@@ -15,8 +15,7 @@ type RawProducerProfitability = {
 };
 
 export class InMemoryWaterSecurityRepository
-  implements WaterSecurityRepositoryProtocol
-{
+  implements WaterSecurityRepositoryProtocol {
   private _consumers: Array<any>;
 
   constructor(consumes: Array<any>) {

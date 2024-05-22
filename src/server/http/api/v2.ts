@@ -1,6 +1,6 @@
 import express from 'express';
-import { managementRoutes } from '../../../v2/management/routes/routes';
-import { equipmentsRoutes } from '../../../v2/equipments/routes';
+import { managementRoutes } from '../../../modules/management/v2/routes/routes';
+import { equipmentsRoutes } from '../../../modules/equipments/v2/routes';
 
 const v2Router = express.Router();
 

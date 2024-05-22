@@ -1,6 +1,6 @@
-import { DbLogOperationsRepository } from "../../../infra/database/postgres/repositories/log-operations-repository";
-import { HttpResponse } from "../../../presentation/controllers/ports";
-import { Controller } from "../../../presentation/controllers/ports/controllers";
+import { DbLogOperationsRepository } from "../../../shared/external/db/database/postgres/repositories/log-operations-repository";
+import { HttpResponse } from "../../../shared/presentation/ports";
+import { Controller } from "../../../shared/presentation/controllers";
 
 export class LogControllerDecorator implements Controller {
   private readonly controller: Controller;

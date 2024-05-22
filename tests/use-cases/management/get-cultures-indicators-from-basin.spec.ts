@@ -1,4 +1,4 @@
-import { BasinIndicatorsByCulture } from "../../../src/domain/entities/management/basin-indicators-by-culture";
+import { BasinIndicatorsByCulture } from "../../../src/modules/management/core/models/basin-indicators-by-culture";
 import { GetCropsIndicatorsFromBasin } from "../../../src/domain/use-cases/census";
 import { InMemoryStudiesRepository } from "../../doubles/repositories/in-memory-management-studies.repository";
 import { InMemoryProfitabilitySecurityRepository } from "../../doubles/repositories/in-memory-profitability.repository";

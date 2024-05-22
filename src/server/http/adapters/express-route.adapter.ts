@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 
-import { Controller } from "../../../presentation/controllers/ports/controllers";
+import { Controller } from "../../../shared/presentation/controllers";
 
 export function adaptRouteV2(callback: any) {
   return async (request: Request, response: Response) => {

@@ -1,11 +1,10 @@
 import {
   WorkersSecurityRepositoryDTO,
   WorkersSecurityRepositoryProtocol,
-} from "../../../src/domain/use-cases/_ports/repositories/workers-security.repository";
+} from "../../../src/modules/census/infra/workers-security.repository";
 
 export class InMemoryWorkersSecurityRepository
-  implements WorkersSecurityRepositoryProtocol
-{
+  implements WorkersSecurityRepositoryProtocol {
   private _workers: Array<any> = [];
 
   constructor(workers: Array<any>) {

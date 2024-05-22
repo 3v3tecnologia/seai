@@ -1,0 +1,61 @@
+import { Either, right } from "../../../shared/Either";
+import { DATABASES } from "../../../shared/external/db/tableNames";
+import { Command } from "../../../shared/core/command";
+import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
+import { DeleteJobUseCaseProtocol } from "../../async-jobs/services";
+
+export class DeleteNews
+  extends Command
+  implements DeleteNewsUseCaseProtocol.UseCase {
+  private repository: NewsRepositoryProtocol;
+  private readonly deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase;
+  constructor(
+    repository: NewsRepositoryProtocol,
+    deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase
+  ) {
+    super();
+    this.repository = repository;
+    this.deleteJobUseCase = deleteJobUseCase;
+  }
+  async create(
+    request: DeleteNewsUseCaseProtocol.Request
+  ): DeleteNewsUseCaseProtocol.Response {
+    await this.repository.delete(request);
+
+    const successLog = `Notícia deletada com sucessso.`;
+
+    const jobId = await this.repository.getIdJobFromNews(request.Id);
+
+    if (jobId !== null) {
+      await this.repository.deleteJobFromNews(request.Id);
+
+      console.log("[DeleteNews] Delete job from News");
+
+      const deleteJobOrError = await this.deleteJobUseCase.execute({
+        id: jobId,
+      });
+
+      console.log(deleteJobOrError.value);
+    }
+
+    this.addLog({
+      action: "delete",
+      table: DATABASES.NEWSLETTER.NEWS,
+      description: successLog,
+    });
+
+    return right(successLog);
+  }
+}
+
+export namespace DeleteNewsUseCaseProtocol {
+  export type Request = {
+    Id: number;
+  };
+
+  export type Response = Promise<Either<Error, string>>;
+
+  export interface UseCase {
+    create(request: Request): Response;
+  }
+}

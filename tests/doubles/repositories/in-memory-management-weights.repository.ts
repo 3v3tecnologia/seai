@@ -1,16 +1,15 @@
-import { DatabaseOperationOutputLogFactory } from "../../../src/domain/use-cases/_ports/repositories/dto/output";
-import { withPagination } from "../../../src/infra/database/postgres/repositories/mapper/WithPagination";
-import { DATABASES } from "../../../src/shared/db/tableNames";
+import { DatabaseOperationOutputLogFactory } from "../../../src/modules/logs/core/output";
+import { withPagination } from "../../../src/shared/external/db/database/postgres/repositories/mapper/WithPagination";
+import { DATABASES } from "../../../src/shared/external/db/tableNames";
 import { CultureWeightsMapper } from "../../../src/v2/management/entities/mappers/weights";
 import {
   CultureWeightsToPersistency,
   ManagementWeightsRepositoryDTO,
   ManagementWeightsRepositoryProtocol,
-} from "../../../src/v2/management/ports/weights/repository";
+} from "../../../src/modules/management/v2/ports/weights/repository";
 
 export class InMemoryManagementWeightsRepository
-  implements ManagementWeightsRepositoryProtocol
-{
+  implements ManagementWeightsRepositoryProtocol {
   private data: Array<CultureWeightsToPersistency> = [];
 
   async create(

@@ -1,0 +1,20 @@
+import { Either, right } from "../../../shared/Either";
+import {
+  IndicatorsRepositoryProtocol,
+  WaterSecurityByCountyData,
+} from "../infra/repositories/protocols/census-security-indicators.repository";
+
+export class FetchWaterSecurityCensusByCounty {
+  private readonly indicatorsCensusRepository: IndicatorsRepositoryProtocol;
+
+  constructor(indicatorsCensusRepository: IndicatorsRepositoryProtocol) {
+    this.indicatorsCensusRepository = indicatorsCensusRepository;
+  }
+  async execute(): Promise<
+    Either<Error, Array<WaterSecurityByCountyData> | null>
+  > {
+    const data =
+      await this.indicatorsCensusRepository.getWaterSecurityByCounty();
+    return right(data);
+  }
+}
