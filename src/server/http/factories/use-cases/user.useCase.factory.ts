@@ -23,7 +23,7 @@ import { JobsUseCasesFactory } from "./jobs.useCase.factory";
 export class UserUseCasesFactory {
   private static repository = new DbAccountRepository();
   private static tokenProvider = new JwtAdapter(env.jwtSecret);
-  private static encoder = new BcryptAdapter();
+  private static encoder = new BcryptAdapter(env.hashSalt);
   private static dateProvider = new DateProvider();
 
   static makeUserAuthentication(): UserAuthentication {
