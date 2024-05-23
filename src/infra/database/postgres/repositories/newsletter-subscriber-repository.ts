@@ -67,10 +67,65 @@ export class DbNewsLetterSubscriberRepository
     return NewsSubscriberMapper.toDomain(result);
   }
 
+  async getReceiversEmails(): Promise<null | Array<{ Email: string }>> {
+    const result = await newsletterDb.select('Email').from(DATABASES.NEWSLETTER.SUBSCRIBER)
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result.map((row: any) => {
+      return {
+        Email: row.Email,
+      };
+    });
+  }
+
+  async getNewsById(id: number) {
+    const result = await newsletterDb.raw(
+      `
+      SELECT 
+          n."Id" ,
+          n."Fk_Sender" ,
+          n."Title" ,
+          n."Description" ,
+          n."Content" ,
+          n."CreatedAt" ,
+          n."UpdatedAt",
+          s."Email" ,
+          s."Organ" 
+      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
+      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
+      ON s."Id" = n."Fk_Sender" 
+      WHERE n."Id" = ?
+    `,
+      [id]
+    );
+
+    if (!result.rows.length) {
+      return null;
+    }
+
+    const newsRow = result.rows[0];
+
+    return {
+      Id: newsRow.Id,
+      Author: {
+        Id: newsRow.Fk_Sender,
+        Email: newsRow.Email,
+        Organ: newsRow.Organ,
+      },
+      Title: newsRow.Title,
+      Description: newsRow.Description,
+      Data: newsRow.Content,
+      CreatedAt: newsRow.CreatedAt,
+      UpdatedAt: newsRow.UpdatedAt,
+    };
+  }
+
   async getAll(
     params: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response {
-    console.log(params);
     const { pageNumber, limit, offset, name, email } = params;
 
     const binding = [];
