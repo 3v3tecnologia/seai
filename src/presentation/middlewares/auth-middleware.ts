@@ -2,22 +2,16 @@ import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
 import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
+import ENV from '../../server/http/env';
 import { forbidden, ok, unauthenticated } from "../controllers/helpers";
-import { AccessKeyRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/acess-key.repository";
-import { READ_ONLY_URLs } from "../../server/http/config/readOnlyURLs";
-import { left } from "../../shared/Either";
-
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
-  private readonly apiKeyRepository: AccessKeyRepositoryProtocol;
   private static openURLs = new Set(['faq', 'equipments', 'news'])
 
   constructor(
-    tokenManager: TokenProvider,
-    apiKeyRepository: AccessKeyRepositoryProtocol
+    tokenManager: TokenProvider
   ) {
     this.tokenManager = tokenManager;
-    this.apiKeyRepository = apiKeyRepository;
   }
 
 
@@ -34,32 +28,33 @@ export class AuthMiddleware implements Middleware {
     return authorized
   }
 
-  async checkAPIKey(accessToken: string): Promise<boolean> {
-    const apiKey = await this.apiKeyRepository.getByKey({
-      Key: accessToken,
-    });
-
-    if (apiKey === null) {
+  checkAccesKey(requestKey: string, method: string, url: string): boolean {
+    if (!ENV.apiKey) {
       return false
     }
 
-    return true
+    if (requestKey === ENV.apiKey && this.allowedToOpenAccess(method, url)) {
+      return true
+    }
+
+    return false
   }
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
     try {
-      const { authType, accessToken, url, method } = request;
+      const { authType, accessToken, accessKey, url, method } = request;
 
-      if (this.allowedToOpenAccess(method, url)) {
-        const hasValidApiKey = await this.checkAPIKey(accessToken)
+      if (accessKey) {
+        const hasValidApiKey = this.checkAccesKey(accessKey, method, url)
 
         if (hasValidApiKey) {
           return ok({
             accessToken,
           });
         }
-      }
 
+        return unauthenticated();
+      }
 
       if (!accessToken) {
         return forbidden(new Error("Token não providenciado"));
@@ -87,6 +82,7 @@ export namespace AuthMiddleware {
     url: string;
     method: string;
     accessToken: string;
+    accessKey?: string;
     authType: string;
     id?: number;
   };

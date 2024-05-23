@@ -11,6 +11,7 @@ export function adaptRouteV2(callback: any) {
       url: request.originalUrl,
       accountId: request.accountId,
       accessToken: request.accessToken || null,
+      accessKey: request.accessKey || null,
     };
 
     const res = await callback(req);
@@ -37,6 +38,7 @@ export const adaptRoute = (controller: Controller) => {
       url: request.originalUrl,
       accountId: request.accountId,
       accessToken: request.accessToken || null,
+      accessKey: request.accessToken || null,
     };
 
     const res = await controller.handle(req);

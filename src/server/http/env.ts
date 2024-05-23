@@ -1,6 +1,7 @@
 export default {
   port: process.env.PORT || 8080,
   jwtSecret: process.env.JWT_SECRET || "tj67O==5H",
+  apiKey: process.env.API_KEY,
   hashSalt: process.env.HASH_SALT,
   environment: process.env.NODE_ENV || "development",
   mailer: {

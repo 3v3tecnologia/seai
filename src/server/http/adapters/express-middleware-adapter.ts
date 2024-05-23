@@ -4,6 +4,7 @@ import { Middleware } from "../../../presentation/middlewares/ports";
 export const adaptMiddleware = (middleware: Middleware) => {
   return async (request: Request, response: Response, next: NextFunction) => {
     const headerToken = request.headers?.authorization;
+    const accessKey = request.headers["access-key"];
 
     const splittedHeader = headerToken?.split(" ");
 
@@ -13,6 +14,7 @@ export const adaptMiddleware = (middleware: Middleware) => {
     const req = {
       accountId: request.accountId,
       accessToken: token,
+      accessKey,
       authType,
       url: request.originalUrl,
       method: request.method,
@@ -20,6 +22,7 @@ export const adaptMiddleware = (middleware: Middleware) => {
       ...(request.query || {}),
       ...(request.params || {}),
     };
+
 
     const result = await middleware.handle(req);
 
