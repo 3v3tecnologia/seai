@@ -1,13 +1,11 @@
 import { NewsSubscriberMapper } from "../../../../domain/entities/newsletter/mapper/subscriber";
-import { Subscriber } from "../../../../domain/entities/newsletter/subscriber";
 import {
   SubscriberRepositoryDTO,
   SubscriberRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
-import { parsePaginationInput, toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
+import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
-import { withPagination } from "./mapper/WithPagination";
 import { countTotalRows } from "./utils/paginate";
 export class DbNewsLetterSubscriberRepository
   implements SubscriberRepositoryProtocol {
@@ -67,60 +65,14 @@ export class DbNewsLetterSubscriberRepository
     return NewsSubscriberMapper.toDomain(result);
   }
 
-  async getReceiversEmails(): Promise<null | Array<{ Email: string }>> {
+  async getReceiversEmails(): Promise<null | Array<string>> {
     const result = await newsletterDb.select('Email').from(DATABASES.NEWSLETTER.SUBSCRIBER)
 
     if (!result.length) {
       return null;
     }
 
-    return result.map((row: any) => {
-      return {
-        Email: row.Email,
-      };
-    });
-  }
-
-  async getNewsById(id: number) {
-    const result = await newsletterDb.raw(
-      `
-      SELECT 
-          n."Id" ,
-          n."Fk_Sender" ,
-          n."Title" ,
-          n."Description" ,
-          n."Content" ,
-          n."CreatedAt" ,
-          n."UpdatedAt",
-          s."Email" ,
-          s."Organ" 
-      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
-      ON s."Id" = n."Fk_Sender" 
-      WHERE n."Id" = ?
-    `,
-      [id]
-    );
-
-    if (!result.rows.length) {
-      return null;
-    }
-
-    const newsRow = result.rows[0];
-
-    return {
-      Id: newsRow.Id,
-      Author: {
-        Id: newsRow.Fk_Sender,
-        Email: newsRow.Email,
-        Organ: newsRow.Organ,
-      },
-      Title: newsRow.Title,
-      Description: newsRow.Description,
-      Data: newsRow.Content,
-      CreatedAt: newsRow.CreatedAt,
-      UpdatedAt: newsRow.UpdatedAt,
-    };
+    return result.map((row: any) => row.Email);
   }
 
   async getAll(

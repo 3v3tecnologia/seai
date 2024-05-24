@@ -5,8 +5,10 @@ import {
   FetchNewsByIdController,
   FetchNewsController,
   FetchNewsletterSubscribersController,
+  FetchNewsletterSubscribersEmailsController,
   SubscribeToNewsController,
   UpdateController,
+  UpdateSendAtController,
 } from "../../../../presentation/controllers/newsletter";
 import {
   NewsletterSubscriberUseCasesFactory,
@@ -48,6 +50,11 @@ export class NewsletterControllersFactory {
       NewsletterSubscriberUseCasesFactory.makeFetchNewsletterSubscribers()
     );
   }
+  static makeFetchNewsletterSubscribersEmails(): FetchNewsletterSubscribersEmailsController {
+    return new FetchNewsletterSubscribersEmailsController(
+      NewsletterSubscriberUseCasesFactory.makeFetchNewsletterSubscribersEmails()
+    );
+  }
 
   static makeFetchAllNewsletter(): FetchNewsController {
     return new FetchNewsController(
@@ -64,6 +71,12 @@ export class NewsletterControllersFactory {
   static makeUpdateNewsletter(): UpdateController {
     return new UpdateController(
       NewsletterUseCasesFactory.makeUpdateNewsletter()
+    );
+  }
+
+  static makeUpdateSendAt(): UpdateSendAtController {
+    return new UpdateSendAtController(
+      NewsletterUseCasesFactory.makeUpdateSendAt()
     );
   }
 }

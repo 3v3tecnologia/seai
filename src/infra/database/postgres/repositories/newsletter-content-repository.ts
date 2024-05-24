@@ -28,16 +28,59 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
     return id;
   }
 
-  async associateJobToNews(id_job: string, id_news: number): Promise<void> {
-    await newsletterDb
-      .insert({
-        Fk_Job: id_job,
-        Fk_News: id_news,
-      })
-      .returning("*")
-      .into(DATABASES.NEWSLETTER.NEWS_JOBS);
+  async getNewsById(id: number) {
+    const result = await newsletterDb.raw(
+      `
+      SELECT 
+          n."Id" ,
+          n."Fk_Sender" ,
+          n."Title" ,
+          n."Description" ,
+          n."Content" ,
+          n."CreatedAt" ,
+          n."UpdatedAt",
+          s."Email" ,
+          s."Organ" ,
+          s."SendAt",
+      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
+      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
+      ON s."Id" = n."Fk_Sender" 
+      WHERE n."Id" = ?
+    `,
+      [id]
+    );
+
+    if (!result.rows.length) {
+      return null;
+    }
+
+    const newsRow = result.rows[0];
+
+    return {
+      Id: newsRow.Id,
+      Author: {
+        Id: newsRow.Fk_Sender,
+        Email: newsRow.Email,
+        Organ: newsRow.Organ,
+      },
+      Title: newsRow.Title,
+      Description: newsRow.Description,
+      Data: newsRow.Content,
+      CreatedAt: newsRow.CreatedAt,
+      UpdatedAt: newsRow.UpdatedAt,
+    };
   }
 
+  async updateSendAt(id: number, date: string): Promise<void> {
+    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
+      .where({
+        Id: id
+      })
+      .update({
+        SentAt: date
+      })
+
+  }
   async deleteJobFromNews(id_news: number): Promise<void> {
     await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
       .where({
@@ -72,7 +115,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Fk_Sender: request.FK_Author,
         Title: request.Title,
         Description: request.Description,
-        Content: request.Data,
+        Content: request.Data
       });
   }
 

@@ -164,6 +164,7 @@ export interface SubscriberRepositoryProtocol {
   getByEmail(
     request: SubscriberRepositoryDTO.GetByEmail.Request
   ): SubscriberRepositoryDTO.GetByEmail.Response;
+  getReceiversEmails(): Promise<Array<string> | null>;
   getAll(
     request: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response;
@@ -185,7 +186,20 @@ export interface NewsRepositoryProtocol {
   getAll(
     request: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response;
-  associateJobToNews(id_job: string, id_news: number): Promise<void>;
   deleteJobFromNews(id_news: number): Promise<void>;
   getIdJobFromNews(id_news: number): Promise<string | null>;
+  getNewsById(id: number): Promise<{
+    Id: any;
+    Author: {
+      Id: any;
+      Email: any;
+      Organ: any;
+    };
+    Title: any;
+    Description: any;
+    Data: any;
+    CreatedAt: any;
+    UpdatedAt: any;
+  } | null>
+  updateSendAt(id: number, date: string): Promise<void>
 }

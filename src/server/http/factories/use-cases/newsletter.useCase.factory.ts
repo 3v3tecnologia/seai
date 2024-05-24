@@ -5,8 +5,10 @@ import {
   FetchAllNews,
   FetchByIdNews,
   FetchSubscribers,
+  FetchSubscribersEmails,
   SubscribeToNews,
   UpdateNews,
+  UpdateSendAtNews,
 } from "../../../../domain/use-cases/newsletter";
 import { DbBackgroundJobsRepository } from "../../../../infra/database/postgres/repositories/background-jobs-repository";
 import { DbNewsLetterContentRepository } from "../../../../infra/database/postgres/repositories/newsletter-content-repository";
@@ -29,7 +31,7 @@ export class NewsletterUseCasesFactory {
   }
 
   static makeFetchByIdNewsletter(): FetchByIdNews {
-    return new FetchByIdNews(this.repository, new DbBackgroundJobsRepository());
+    return new FetchByIdNews(this.repository);
   }
 
   static makeUpdateNewsletter(): UpdateNews {
@@ -38,6 +40,11 @@ export class NewsletterUseCasesFactory {
       JobsUseCasesFactory.makeCreateJob(),
       JobsUseCasesFactory.makeFetchJob(),
       JobsUseCasesFactory.makeUpdateJob()
+    );
+  }
+  static makeUpdateSendAt(): UpdateSendAtNews {
+    return new UpdateSendAtNews(
+      this.repository,
     );
   }
 }
@@ -55,5 +62,9 @@ export class NewsletterSubscriberUseCasesFactory {
 
   static makeFetchNewsletterSubscribers(): FetchSubscribers {
     return new FetchSubscribers(this.repository);
+  }
+
+  static makeFetchNewsletterSubscribersEmails(): FetchSubscribersEmails {
+    return new FetchSubscribersEmails(this.repository);
   }
 }

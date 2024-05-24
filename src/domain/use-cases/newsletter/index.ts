@@ -8,3 +8,5 @@ export * from "./add-subscriber";
 export * from "./fetch-subscribers";
 export * from "./delete-subscriber";
 export * from "./fetch-subscriber-by-email";
+export * from "./update-send-at";
+export * from "./fetch-subscribers-emails";

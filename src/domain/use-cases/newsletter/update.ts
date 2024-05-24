@@ -49,7 +49,6 @@ export class UpdateNews
 
     const job = jobOrError.value;
 
-    await this.repository.associateJobToNews(job.id, request.Id);
 
     return right("Job de notícia agendado com sucesso!");
   }

@@ -27,11 +27,23 @@ export const newsRouter = (): Router => {
     adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribers())
   );
 
+  router.get(
+    "/subscribers/email",
+    authorization,
+    adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribersEmails())
+  );
+
   router.post(
     "/",
     authorization,
     newsWriteAccessAuth,
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletter())
+  );
+
+  router.patch(
+    "/:id",
+    authorization,
+    adaptRoute(NewsletterControllersFactory.makeUpdateSendAt())
   );
 
   router.put(

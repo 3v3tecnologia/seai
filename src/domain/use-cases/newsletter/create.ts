@@ -40,7 +40,7 @@ export class CreateNews
       const job = jobOrError.value;
 
 
-      await this.repository.associateJobToNews(job.id, newsId);
+      // await this.repository.associateJobToNews(job.id, newsId);
 
       return right("Sucesso ao agentar job de notícias")
     } catch (error) {
