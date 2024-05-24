@@ -4,7 +4,7 @@ import { Controller } from "../../../../shared/presentation/controllers";
 import { CreateEquipments } from "../../services/create-equipment";
 
 import { ok, badRequest, serverError } from "../../../../presentation/controllers/helpers";
-import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../../system-logs/services/register-user-logs";
 
 export class CreateEquipmentsController
   implements

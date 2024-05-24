@@ -3,7 +3,7 @@ import { Controller } from "../../../../shared/presentation/controllers";
 
 import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
 import { CreateMeteorologicalOrgan } from "../../services/create-meteorological-organ";
-import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../../system-logs/services/register-user-logs";
 import { badRequest, ok, serverError } from "../../../../presentation/controllers/helpers";
 
 export class CreateMeteorologicalOrganController

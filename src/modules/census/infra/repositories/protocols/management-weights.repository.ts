@@ -1,6 +1,6 @@
 import { CultureWeights } from "../../../../management/core/models/weights";
 import { IPaginationInput } from '../../../../../shared/core/pagination';
-import { DatabaseOperationOutputLog } from "../../../../logs/core/output";
+import { DatabaseOperationOutputLog } from "../../../../system-logs/core/output";
 
 export type CultureWeightsToPersistency = {
   Id_Basin: number;

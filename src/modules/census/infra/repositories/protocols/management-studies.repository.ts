@@ -1,6 +1,6 @@
 import { ManagementCensusStudy } from "../../../../management/core/models/study";
 import { IPaginationInput, IOutputWithPagination, OldOutputWithPagination } from '../../../../../shared/core/pagination';
-import { DatabaseOperationOutputLog } from "../../../../logs/core/output";
+import { DatabaseOperationOutputLog } from "../../../../system-logs/core/output";
 
 export type ManagementStudyToPersistency = {
   Id_Basin: number;

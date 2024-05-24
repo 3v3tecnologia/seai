@@ -2,7 +2,7 @@ import { HttpResponse } from "../../../../shared/presentation/ports";
 import { Controller } from "../../../../shared/presentation/controllers";
 
 import { ok, badRequest, serverError } from "../../../../presentation/controllers/helpers";
-import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../../system-logs/services/register-user-logs";
 import { UpdateEquipment } from "../../services/update-equipment";
 
 export class UpdateEquipmentsController

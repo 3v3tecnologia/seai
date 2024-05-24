@@ -2,7 +2,7 @@ import { HttpResponse } from "../../../../shared/presentation/ports";
 import { Controller } from "../../../../shared/presentation/controllers";
 
 import { UpdatePluviometerMeasures } from "../../services/update-pluviometer-measures";
-import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../../system-logs/services/register-user-logs";
 import { badRequest, ok, serverError } from "../../../../presentation/controllers/helpers";
 
 export class UpdatePluviometerController
