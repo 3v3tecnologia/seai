@@ -1,4 +1,4 @@
-import { DatabaseOperationOutputLogFactory } from "../../../src/modules/logs/core/output";
+import { DatabaseOperationOutputLogFactory } from "../../../src/modules/system-logs/core/output";
 import { withPagination } from "../../../src/shared/external/db/database/postgres/repositories/mapper/WithPagination";
 import { DATABASES } from "../../../src/shared/external/db/tableNames";
 import { CultureWeightsMapper } from "../../../src/v2/management/entities/mappers/weights";

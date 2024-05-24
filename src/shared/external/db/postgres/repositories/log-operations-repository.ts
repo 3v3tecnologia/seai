@@ -1,7 +1,7 @@
 import {
   Actions,
   LogRepositoryProtocol,
-} from "../../../../../modules/logs/repository/log-repository";
+} from "../../../../../modules/system-logs/repository/log-repository";
 import { logsDb } from "../connection/knexfile";
 
 export class DbLogOperationsRepository implements LogRepositoryProtocol {

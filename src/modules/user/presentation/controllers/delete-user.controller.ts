@@ -1,6 +1,6 @@
 import { CommandController } from "../../../../shared/presentation/command-controller";
 import { HttpResponse, forbidden, ok } from "../../../../shared/presentation/http-responses";
-import { RegisterUserLogs } from "../../../logs/services";
+import { RegisterUserLogs } from "../../../system-logs/services";
 import { DeleteUser } from "../../use-cases";
 export class DeleteUserController extends CommandController<
   DeleteUserController.Request,

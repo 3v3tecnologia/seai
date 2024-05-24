@@ -1,4 +1,4 @@
-import { RegisterUserLogs } from "../../modules/logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../modules/system-logs/services/register-user-logs";
 import { Controller } from "./controllers";
 
 export abstract class CommandController<Request = any, Response = any>

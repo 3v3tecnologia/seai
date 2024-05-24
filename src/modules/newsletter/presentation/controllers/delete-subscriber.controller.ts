@@ -1,7 +1,7 @@
 import { HttpResponse } from "../../../../shared/presentation/ports";
 
 import { DeleteNewsletterSubscriber } from "../../services";
-import { RegisterUserLogs } from "../../../logs/services/register-user-logs";
+import { RegisterUserLogs } from "../../../system-logs/services/register-user-logs";
 import { created, forbidden, serverError } from "../../../../presentation/controllers/helpers";
 import { CommandController } from "../../../../shared/presentation/command-controller";
 

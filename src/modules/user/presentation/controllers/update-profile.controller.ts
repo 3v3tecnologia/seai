@@ -1,6 +1,6 @@
 import { CommandController } from "../../../../shared/presentation/command-controller";
 import { HttpResponse, created, forbidden, serverError } from "../../../../shared/presentation/http-responses";
-import { RegisterUserLogs } from "../../../logs/services";
+import { RegisterUserLogs } from "../../../system-logs/services";
 import { UpdateUserProfile } from "../../use-cases";
 
 export class UpdateUserProfileController extends CommandController<

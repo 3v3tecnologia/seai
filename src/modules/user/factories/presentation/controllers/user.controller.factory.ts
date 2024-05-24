@@ -1,6 +1,6 @@
 import { makeLogControllerDecorator } from "../../../../../server/http/decorator/log-controller-decorator-factory";
 import { Controller } from "../../../../../shared/presentation/controllers";
-import { SystemLogsUseCaseFactory } from "../../../../logs/factories/services";
+import { SystemLogsUseCaseFactory } from "../../../../system-logs/factories/services";
 
 import {
   CompleteUserRegisterController,
