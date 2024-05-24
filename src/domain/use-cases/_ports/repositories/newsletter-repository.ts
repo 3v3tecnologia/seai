@@ -201,5 +201,5 @@ export interface NewsRepositoryProtocol {
     CreatedAt: any;
     UpdatedAt: any;
   } | null>
-  updateSendAt(id: number, date: string): Promise<void>
+  updateSendAt(id: number): Promise<void>
 }

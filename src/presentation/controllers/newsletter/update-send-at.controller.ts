@@ -13,8 +13,7 @@ export class UpdateSendAtController {
     async handle(request: UpdateSendAtController.Request): Promise<HttpResponse> {
         try {
             const createdOrError = await this.useCase.execute({
-                Id: request.id,
-                SendAt: request.SendAt,
+                Id: request.id
             });
 
             if (createdOrError.isLeft()) {
@@ -32,7 +31,6 @@ export class UpdateSendAtController {
 export namespace UpdateSendAtController {
     export type Request = {
         accountId: number;
-        id: number;
-        SendAt: string;
+        id: number
     };
 }

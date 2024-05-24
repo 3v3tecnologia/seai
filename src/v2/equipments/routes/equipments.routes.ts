@@ -16,7 +16,7 @@ export const setupEquipmentsRoutes = (router: Router): void => {
     );
     router.post(
         "/",
-        authorization,
+        // authorization,
         adaptRouteV2(EquipmentsControllers.bulkInsert)
     );
 

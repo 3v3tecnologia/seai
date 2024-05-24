@@ -71,13 +71,13 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
     };
   }
 
-  async updateSendAt(id: number, date: string): Promise<void> {
+  async updateSendAt(id: number): Promise<void> {
     await newsletterDb(DATABASES.NEWSLETTER.NEWS)
       .where({
         Id: id
       })
       .update({
-        SentAt: date
+        SentAt: newsletterDb.fn.now()
       })
 
   }
@@ -141,7 +141,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           n."CreatedAt" ,
           n."UpdatedAt",
           s."Email" ,
-          s."Organ" 
+          s."Organ",
+          n."SentAt"
       FROM "${DATABASES.NEWSLETTER.NEWS}" n 
       INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
       ON s."Id" = n."Fk_Sender" 
@@ -160,7 +161,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async getAll(
     params: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response {
-    console.log(params);
     const { pageNumber, limit, offset, title } = params;
 
     const binding = [];
@@ -193,6 +193,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           news."Description" ,
           news."CreatedAt" ,
           news."UpdatedAt",
+          news."SentAt",
           sender."Email" ,
           sender."Organ" 
       FROM "${DATABASES.NEWSLETTER.NEWS}" as news 

@@ -27,7 +27,7 @@ export class UpdateSendAtNews
             return left(new Error(`Notícia não encontrada.`));
         }
 
-        await this.repository.updateSendAt(request.Id, request.SendAt);
+        await this.repository.updateSendAt(request.Id);
 
         const successLog = `Notícia atualizada com sucessso.`;
 
@@ -45,7 +45,6 @@ export class UpdateSendAtNews
 export namespace UpdateNewsletterSendAtUseCaseProtocol {
     export type Request = {
         Id: number;
-        SendAt: string;
     };
 
     export type Response = Promise<Either<Error, string>>;

@@ -10,6 +10,7 @@ export class NewsMapper {
         Organ: row.Organ,
       },
       Title: row.Title,
+      SendAt: row.SendAt,
       Description: row.Description,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,

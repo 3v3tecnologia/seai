@@ -13,7 +13,7 @@ export const setupEquipmentsMeasurementsRoutes = (router: Router): void => {
 
     router.post(
         "/measurements/",
-        authorization,
+        // authorization,
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkInsert)
     );
 

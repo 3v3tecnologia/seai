@@ -42,7 +42,7 @@ export const newsRouter = (): Router => {
 
   router.patch(
     "/:id",
-    authorization,
+    // authorization,
     adaptRoute(NewsletterControllersFactory.makeUpdateSendAt())
   );
 
