@@ -1,4 +1,4 @@
-import { DatabaseOperationOutputLogFactory } from "../../../src/domain/use-cases/_ports/repositories/dto/output";
+/*import { DatabaseOperationOutputLogFactory } from "../../../src/domain/use-cases/_ports/repositories/dto/output";
 import { withPagination } from "../../../src/infra/database/postgres/repositories/mapper/WithPagination";
 import { DATABASES } from "../../../src/shared/db/tableNames";
 import { CultureWeightsMapper } from "../../../src/v2/management/entities/mappers/weights";
@@ -44,3 +44,4 @@ export class InMemoryManagementWeightsRepository
     return weights;
   }
 }
+*/

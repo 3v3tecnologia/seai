@@ -1,19 +1,18 @@
+import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { makeLogControllerDecorator } from "../decorators";
 import { SecurityIndicatorsUseCaseFactory } from "../use-cases";
-import { Controller } from "../../../../presentation/controllers/ports/controllers";
 
+import { FetchCensusLocationsController } from "../../../../presentation/controllers/census";
 import {
   FetchEconomicSecurityCensusByBasinController,
   FetchEconomicSecurityCensusByCountyController,
   FetchProductivitySecurityCensusByBasinController,
+  FetchProductivitySecurityCensusByCountyController,
   FetchSoilSecurityCensusByBasinController,
   FetchSoilSecurityCensusByCountyController,
   FetchWaterSecurityCensusByBasinController,
   FetchWaterSecurityCensusByCountyController,
-  FetchProductivitySecurityCensusByCountyController,
 } from "../../../../presentation/controllers/indicators-census";
-import { FetchCensusLocationsController } from "../../../../presentation/controllers/census";
-import { GetCulturesIndicatorsFromBasinController } from "../../../../presentation/controllers/census/fetch-crop-indicators-from-basin.controller";
 
 export class SecurityIndicatorsControllersFactory {
   static makeFetchCensusLocations(): Controller {
@@ -80,9 +79,4 @@ export class SecurityIndicatorsControllersFactory {
     );
   }
 
-  static makeGetCulturesIndicatorsFromBasin(): Controller {
-    return new GetCulturesIndicatorsFromBasinController(
-      SecurityIndicatorsUseCaseFactory.makeGetCropsIndicatorsFromBasin()
-    );
-  }
 }

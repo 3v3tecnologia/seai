@@ -1,20 +1,30 @@
 import { Router } from "express";
 
-import { adaptRoute } from "../adapters/express-route.adapter";
+import { adaptRoute, adaptRouteV2 } from "../adapters/express-route.adapter";
 
 import { authorization } from "../http-middlewares";
 
 import { SecurityIndicatorsControllersFactory } from "../factories/controllers";
 import { CensusControllersFactory } from "../factories/controllers";
+import { makeIndicatorWeightsController } from "../../../modules/census/weights/controllers/indicators-weights.controller";
+import { makeCensusStudiesControllers } from "../../../modules/census/studies/controllers/crop-studies.controller";
+import { makeGetCulturesIndicatorsFromBasin } from "../../../modules/census/crops/controllers/factories/fetch-crop-indicators";
 
 export const censusRouter = (): Router => {
   const router = Router();
+
+
+  router.post("/census/studies/basin/:id", authorization, adaptRouteV2(makeCensusStudiesControllers().create));
+  router.get("/census/studies/basin/:id", authorization, adaptRouteV2(makeCensusStudiesControllers().getByBasin));
+
+  router.post("/weights/basin/:id", authorization, adaptRouteV2(makeIndicatorWeightsController().create));
+  router.get("/weights/basin/:id", authorization, adaptRouteV2(makeIndicatorWeightsController().getByBasin));
 
   router.get(
     "/cultures/:id",
     authorization,
     adaptRoute(
-      SecurityIndicatorsControllersFactory.makeGetCulturesIndicatorsFromBasin()
+      makeGetCulturesIndicatorsFromBasin()
     )
   );
 
@@ -167,6 +177,8 @@ export const censusRouter = (): Router => {
     authorization,
     adaptRoute(SecurityIndicatorsControllersFactory.makeFetchCensusLocations())
   );
+
+
 
   return router;
 };

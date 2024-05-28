@@ -11,4 +11,4 @@ export * from "./fetch-census-takers-by-basin";
 export * from "./fetch-census-takers-by-county";
 export * from "./fetch-workers-by-basin";
 export * from "./fetch-workers-by-county";
-export * from "./fetch-crops-indicators-by-basin";
+export * from "../../../modules/census/crops/services/fetch-crops-indicators-by-basin";
