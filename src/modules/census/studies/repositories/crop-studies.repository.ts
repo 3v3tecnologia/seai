@@ -14,7 +14,7 @@ export class CensusStudiesRepository implements ICensusStudiesRepository {
       .batchInsert('estudos', params.data.map((data) =>
         CropStudiesMapper.toPersistency(data, params.id)
       ))
-      .returning("bacia_id");
+    // .returning("bacia_id");
 
   }
 
@@ -24,6 +24,16 @@ export class CensusStudiesRepository implements ICensusStudiesRepository {
       .del();
 
   }
+
+  async checkIfBasinExists(id: number): Promise<boolean> {
+    const response = await censusDb('bacia')
+      .select("id")
+      .where("id", id)
+      .first()
+
+    return response ? true : false
+  }
+
 
   async getByBasin(
     id: number

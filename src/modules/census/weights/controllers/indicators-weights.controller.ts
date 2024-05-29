@@ -6,34 +6,27 @@ import {
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
-import { IIndicatorsWeightsServices, makeIndicatorsWeightsServices } from "../services/indicators-weights";
+import { ICreateIndicatorsWeightsService, IGetIndicatorsWeightsByBasinService } from "../services/indicators-weights";
 
 
-export interface IIndicatorsWeightsController {
-  create(request: {
+export interface ICreateIndicatorsWeightsController {
+  handle(request: {
     accountId: number;
     id: number;
     data: Array<any>;
   }): Promise<HttpResponse>
-  getByBasin(
-    request: {
-      accountId: number;
-      id: number;
-    } & IPaginationInput
-  ): Promise<HttpResponse>
+
 }
 
-export class IndicatorWeightsController implements IIndicatorsWeightsController {
-  constructor(private readonly indicatorsWeightsServices: IIndicatorsWeightsServices) {
-
-  }
-  async create(request: {
+export class CreateIndicatorsWeightsController implements ICreateIndicatorsWeightsController {
+  constructor(private readonly indicatorsWeightsService: ICreateIndicatorsWeightsService) { }
+  async handle(request: {
     accountId: number;
     id: number;
     data: Array<any>;
   }): Promise<HttpResponse> {
     try {
-      const deletedOrError = await this.indicatorsWeightsServices.create({
+      const deletedOrError = await this.indicatorsWeightsService.create({
         id_basin: Number(request.id),
         weights: request.data,
       });
@@ -51,14 +44,28 @@ export class IndicatorWeightsController implements IIndicatorsWeightsController 
     }
   }
 
-  async getByBasin(
+}
+
+export interface IGetIndicatorsWeightsByBasinController {
+  handle(
+    request: {
+      accountId: number;
+      id: number;
+    } & IPaginationInput
+  ): Promise<HttpResponse>
+}
+
+export class GetIndicatorWeightsByBasinController implements IGetIndicatorsWeightsByBasinController {
+  constructor(private readonly indicatorsWeightsService: IGetIndicatorsWeightsByBasinService) { }
+
+  async handle(
     request: {
       accountId: number;
       id: number;
     } & IPaginationInput
   ): Promise<HttpResponse> {
     try {
-      const deletedOrError = await this.indicatorsWeightsServices.getByBasin({
+      const deletedOrError = await this.indicatorsWeightsService.getByBasin({
         id_basin: Number(request.id),
         ...formatPaginationInput(request.pageNumber, request.limit),
       });
@@ -74,5 +81,3 @@ export class IndicatorWeightsController implements IIndicatorsWeightsController 
     }
   }
 }
-
-export const makeIndicatorWeightsController = () => new IndicatorWeightsController(makeIndicatorsWeightsServices())

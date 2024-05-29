@@ -7,20 +7,27 @@ import {
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
 import { CropStudies } from "../core/model/crop-studies";
-import { ICropStudiesServices, makeCropStudiesServices } from "../services/crop-studies";
+import { ICreateCropStudiesService, IGetCropStudiesByBasinService } from "../services/crop-studies";
 
+export interface ICreateCropStudiesController {
+  handle(request: {
+    accountId: number;
+    id: number;
+    data: Array<Omit<CropStudies, "id_basin">>;
+  }): Promise<HttpResponse>
+}
 
-export class CropStudiesControllers implements ICropStudiesControllers {
+export class CreateCropStudiesControllers implements ICreateCropStudiesController {
 
-  constructor(private readonly cropStudiesServices: ICropStudiesServices) { }
+  constructor(private readonly cropStudiesService: ICreateCropStudiesService) { }
 
-  async create(request: {
+  async handle(request: {
     accountId: number;
     id: number;
     data: Array<Omit<CropStudies, "id_basin">>;
   }): Promise<HttpResponse> {
     try {
-      const successOrError = await this.cropStudiesServices.create({
+      const successOrError = await this.cropStudiesService.create({
         id_basin: request.id,
         data: request.data,
       });
@@ -38,14 +45,28 @@ export class CropStudiesControllers implements ICropStudiesControllers {
     }
   }
 
-  async getByBasin(
+}
+
+export interface IGetCropStudiesByBasinController {
+  handle(
+    request: {
+      accountId: number;
+      id: number;
+    } & IPaginationInput
+  ): Promise<HttpResponse>
+}
+export class GetCropStudiesByBasinController implements IGetCropStudiesByBasinController {
+
+  constructor(private readonly cropStudiesService: IGetCropStudiesByBasinService) { }
+
+  async handle(
     request: {
       accountId: number;
       id: number;
     } & IPaginationInput
   ): Promise<HttpResponse> {
     try {
-      const deletedOrError = await this.cropStudiesServices.getByBasin(
+      const deletedOrError = await this.cropStudiesService.getByBasin(
         request.id
       );
 
@@ -60,19 +81,3 @@ export class CropStudiesControllers implements ICropStudiesControllers {
     }
   }
 }
-
-export interface ICropStudiesControllers {
-  create(request: {
-    accountId: number;
-    id: number;
-    data: Array<Omit<CropStudies, "id_basin">>;
-  }): Promise<HttpResponse>
-  getByBasin(
-    request: {
-      accountId: number;
-      id: number;
-    } & IPaginationInput
-  ): Promise<HttpResponse>
-}
-
-export const makeCensusStudiesControllers = () => new CropStudiesControllers(makeCropStudiesServices())

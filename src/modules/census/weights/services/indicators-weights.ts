@@ -1,40 +1,48 @@
-import { makeGetCropsIndicatorsFromBasin } from './../../crops/services/factories/fetch-by-basin';
-import { SecurityIndicatorsUseCaseFactory } from "../../../../server/http/factories";
-import { Either, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/Either";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import { makeIndicatorsWeightsRepository } from "../repository/indicators-weights.repository";
 import { IIndicatorsWeightsRepository } from "../repository/protocol/repository";
+import { makeGetCropsIndicatorsFromBasin } from './../../crops/services/factories/fetch-by-basin';
 
-
-export interface IIndicatorsWeightsServices {
+export interface ICreateIndicatorsWeightsService {
   create(params: {
     id_basin: number;
     weights: Array<CensusCultureWeights>;
   }): Promise<Either<Error, string>>
-  getByBasin(params: {
-    id_basin: number;
-  }): Promise<Either<Error, any | null>>
 }
 
-class IndicatorsWeightsServices implements IIndicatorsWeightsServices {
+export class CreateIndicatorsWeightsService implements ICreateIndicatorsWeightsService {
   constructor(private readonly indicatorsWeightsRepository: IIndicatorsWeightsRepository) { }
 
   async create(params: {
     id_basin: number;
     weights: Array<CensusCultureWeights>;
   }): Promise<Either<Error, string>> {
+    const basinExists = await this.indicatorsWeightsRepository.checkIfBasinExists(params.id_basin)
 
-    await this.indicatorsWeightsRepository.delete(params.id_basin);
+    if (basinExists) {
+      await this.indicatorsWeightsRepository.delete(params.id_basin);
 
-    await this.indicatorsWeightsRepository.create(
-      {
-        id: params.id_basin,
-        weights: params.weights
-      }
-    );
+      await this.indicatorsWeightsRepository.create(
+        {
+          id: params.id_basin,
+          weights: params.weights
+        }
+      );
 
-    return right(`Sucesso ao adicionar pesos dos indicatores da bacia ${params.id_basin}`);
+      return right(`Sucesso ao adicionar pesos dos indicatores da bacia ${params.id_basin}`);
+    }
+
+    return left(new Error("Bacia não encontrada"))
   }
+
+}
+export interface IGetIndicatorsWeightsByBasinService {
+  getByBasin(params: {
+    id_basin: number;
+  }): Promise<Either<Error, any | null>>
+}
+export class GetIndicatorsWeightsByBasinService implements IGetIndicatorsWeightsByBasinService {
+  constructor(private readonly indicatorsWeightsRepository: IIndicatorsWeightsRepository) { }
 
   private findMaximumAmongCropIndicators(
     cropIndicators: Map<
@@ -86,8 +94,8 @@ class IndicatorsWeightsServices implements IIndicatorsWeightsServices {
       id_basin: params.id_basin,
     });
 
-    if (weights == null) {
-      return right(null);
+    return right(weights);
+    /*if (weights == null) {
     }
 
     const cropsWeights = new Map<string, any>();
@@ -234,10 +242,6 @@ class IndicatorsWeightsServices implements IIndicatorsWeightsServices {
       });
     });
 
-    return right(response);
+    return right(response);*/
   }
 }
-
-
-
-export const makeIndicatorsWeightsServices = () => new IndicatorsWeightsServices(makeIndicatorsWeightsRepository())

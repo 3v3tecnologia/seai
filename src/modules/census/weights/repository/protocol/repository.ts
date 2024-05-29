@@ -6,6 +6,7 @@ export interface IIndicatorsWeightsRepository {
   delete(
     id_basin: number
   ): Promise<void>;
+  checkIfBasinExists(id: number): Promise<boolean>
   getByBasin(
     params: { id_basin: number } & Partial<IPaginationInput>
   ): Promise<Array<CensusCultureWeights> | null>;

@@ -6,9 +6,10 @@ import { IIndicatorsWeightsRepository } from "./protocol/repository";
 
 class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
   async create(params: { id: number; weights: Array<CensusCultureWeights> }): Promise<void> {
+    console.log(params.weights.map((w) => CultureWeightsMapper.toPersistence(w, params.id)));
     await censusDb
       .batchInsert("pesos", params.weights.map((w) => CultureWeightsMapper.toPersistence(w, params.id)))
-      .returning("bacia_id");
+    // .returning("bacia_id");
 
   }
 
@@ -20,6 +21,15 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
         bacia_id: id_basin,
       })
       .del();
+  }
+
+  async checkIfBasinExists(id: number): Promise<boolean> {
+    const response = await censusDb('bacia')
+      .select("id")
+      .where("id", id)
+      .first()
+
+    return response ? true : false
   }
 
   async getByBasin(

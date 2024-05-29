@@ -8,6 +8,7 @@ export interface ICensusStudiesRepository {
     }
   ): Promise<void>;
   delete(id: number): Promise<void>;
+  checkIfBasinExists(id: number): Promise<boolean>
   getByBasin(
     id: number
   ): Promise<{

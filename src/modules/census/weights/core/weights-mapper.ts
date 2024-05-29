@@ -5,7 +5,7 @@ export class CultureWeightsMapper {
   static toDomain(row: any): CensusCultureWeights {
     return {
       id_basin: Number(row.bacia_id),
-      culture: row.cultura,
+      crop: row.cultura,
       productivity_ha: Number(row.peso_produtividade_ha),
       productivity_m3: Number(row.peso_produtividade_m3),
       profitability_ha: Number(row.peso_rentabilidade_ha),
@@ -23,7 +23,7 @@ export class CultureWeightsMapper {
   ): DbCultureWeightsData {
     return {
       bacia_id: id || weights.id_basin,
-      cultura: weights.culture,
+      cultura: weights.crop,
       peso_produtividade_ha: weights.productivity_ha || null,
       peso_produtividade_m3: weights.productivity_m3 || null,
       peso_rentabilidade_ha: weights.profitability_ha || null,

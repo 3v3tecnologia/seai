@@ -17,11 +17,11 @@ export class CropStudiesMapper {
     return {
       bacia_id: idBasin || study.id_basin,
       cultura: study.crop,
-      safra_meses: study.harvest_duration_in_months,
-      cultivo_dias: study.cultivation_period_in_days,
-      consumohidrico: study.consumption,
-      produtividade: study.productivity,
-      year: study.year,
+      safra_meses: Number(study.harvest_duration_in_months),
+      cultivo_dias: Number(study.cultivation_period_in_days),
+      consumohidrico: Number(study.consumption),
+      produtividade: Number(study.productivity),
+      year: Number(study.year),
     };
   }
 }

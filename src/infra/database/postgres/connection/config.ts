@@ -10,7 +10,7 @@ export const db_config: { [index: string]: any } = {
         port: env.database.port,
         user: env.database.user,
         password: env.database.password,
-        database: "census",
+        database: "censo",
         charset: "utf8",
         timezone: "Brazil/East",
       },
@@ -24,7 +24,7 @@ export const db_config: { [index: string]: any } = {
       connection: {
         host: env.database.host,
         port: env.database.port,
-        database: "census",
+        database: "censo",
         user: env.database.user,
         password: env.database.password,
         charset: "utf8",

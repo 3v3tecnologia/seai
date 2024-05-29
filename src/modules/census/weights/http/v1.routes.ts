@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { adaptRouteV2 } from "../../../../server/http/adapters/express-route.adapter";
+import { adaptRoute } from "../../../../server/http/adapters/express-route.adapter";
 import { authorization } from "../../../../server/http/http-middlewares";
-import { makeIndicatorWeightsController } from "../controllers/indicators-weights.controller";
+import { MakeIndicatorsWeightsControllers } from './../controllers/indicators-weights-controller-factory';
 
 export const setupIndicatorsWeightsRoutes = (): Router => {
   const router = Router();
@@ -9,13 +9,13 @@ export const setupIndicatorsWeightsRoutes = (): Router => {
   router.post(
     "/basin/:id",
     authorization,
-    adaptRouteV2(makeIndicatorWeightsController().create)
+    adaptRoute(MakeIndicatorsWeightsControllers.createIndicatorsWeights())
   );
 
   router.get(
     "/basin/:id",
     authorization,
-    adaptRouteV2(makeIndicatorWeightsController().getByBasin)
+    adaptRoute(MakeIndicatorsWeightsControllers.getIndicatorWeightsByBasin())
   );
 
   return router
