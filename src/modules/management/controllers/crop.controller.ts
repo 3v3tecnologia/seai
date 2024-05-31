@@ -1,24 +1,32 @@
 import {
+  badRequest,
   created,
   forbidden,
   ok,
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { HTTPIncomingAdapters } from "../../../shared/ports/incoming-adapters";
 import { ManagementCropUseCases } from "../services/crop";
+import { createCropCycleValidator, createCropValidator, deleteCropValidator, getAllCropsValidator, getCropByIdValidator, updateCropValidator } from "./schema/validator";
 
 export class ManagementCropControllers {
   static async createCrop(params: {
     Name: string;
     LocationName: string | null;
-    CreatedAt?: string;
-    UpdatedAt?: string;
   }): Promise<HttpResponse> {
     try {
+      const { LocationName, Name } = params
+
+      const { error } = await createCropValidator.validate({ LocationName, Name });
+
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const createdOrError = await ManagementCropUseCases.createCrop({
-        Name: params.Name,
-        LocationName: params.LocationName,
+        Name,
+        LocationName,
       });
 
       if (createdOrError.isLeft()) {
@@ -35,10 +43,22 @@ export class ManagementCropControllers {
   }
 
   static async deleteCrop(
-    params: HTTPIncomingAdapters.ItemIdInput & HTTPIncomingAdapters.UserIdInput
+    params: { id: number }
   ): Promise<HttpResponse> {
     try {
-      const deletedOrError = await ManagementCropUseCases.deleteCrop(params.id);
+      const {
+        id
+      } = params
+
+      const { error } = await deleteCropValidator.validate({
+        id
+      })
+
+      if (error) {
+        return badRequest(error)
+      }
+
+      const deletedOrError = await ManagementCropUseCases.deleteCrop(id);
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
@@ -54,10 +74,19 @@ export class ManagementCropControllers {
   }
 
   static async getCropById(
-    params: HTTPIncomingAdapters.ItemIdInput
+    params: { id: number }
   ): Promise<HttpResponse> {
     try {
-      const result = await ManagementCropUseCases.getCropById(params.id);
+      const { id } = params
+      const { error } = await getCropByIdValidator.validate({
+        id
+      });
+
+      if (error) {
+        return badRequest(error)
+      }
+
+      const result = await ManagementCropUseCases.getCropById(id);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -71,9 +100,25 @@ export class ManagementCropControllers {
   }
 
   static async getAllCrops(
-    params: { name: string } | void
+    params: { name?: string }
   ): Promise<HttpResponse> {
     try {
+      const input = {}
+
+      if (params.name) {
+        Object.assign(input, {
+          name: params.name
+        })
+
+
+      }
+
+      const { error } = await getAllCropsValidator.validate(input);
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const dto: { Name?: string } = {};
 
       if (params && params.name) {
@@ -96,15 +141,32 @@ export class ManagementCropControllers {
 
   static async updateCrop(
     params: {
+      id: number;
       Name: string;
       LocationName: string | null;
-    } & HTTPIncomingAdapters.ItemIdInput
+    }
   ): Promise<HttpResponse> {
     try {
+      const {
+        LocationName,
+        Name,
+        id
+      } = params
+
+      const { error } = await updateCropValidator.validate({
+        LocationName,
+        Name,
+        id
+      })
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const updatedOrError = await ManagementCropUseCases.updateCrop({
-        Id: Number(params.id),
-        Name: params.Name,
-        LocationName: params.LocationName,
+        Id: Number(id),
+        Name: Name,
+        LocationName: LocationName,
       });
 
       if (updatedOrError.isLeft()) {
@@ -122,6 +184,7 @@ export class ManagementCropControllers {
 
   static async createCropCycles(
     params: {
+      id: number;
       data: Array<{
         Title: string;
         DurationInDays: number;
@@ -130,13 +193,26 @@ export class ManagementCropControllers {
         KC: number;
         Increment: number;
       }>;
-    } & HTTPIncomingAdapters.ItemIdInput &
-      HTTPIncomingAdapters.ItemIdInput
+    }
   ): Promise<HttpResponse> {
     try {
+      const {
+        id,
+        data
+      } = params
+
+      const { error } = await createCropCycleValidator.validate({
+        id,
+        data
+      });
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const createdOrError = await ManagementCropUseCases.insertCropCycles(
-        params.id,
-        params.data
+        id,
+        data
       );
 
       if (createdOrError.isLeft()) {
@@ -153,11 +229,23 @@ export class ManagementCropControllers {
   }
 
   static async getAllCropCycles(
-    params: HTTPIncomingAdapters.ItemIdInput
+    params: { id: number }
   ): Promise<HttpResponse> {
     try {
+      const {
+        id
+      } = params
+
+      const { error } = await getAllCropsValidator.validate({
+        id
+      });
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const result = await ManagementCropUseCases.findCropCyclesByCropId(
-        params.id
+        id
       );
 
       if (result.isLeft()) {

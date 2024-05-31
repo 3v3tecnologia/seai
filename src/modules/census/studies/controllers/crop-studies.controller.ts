@@ -6,6 +6,7 @@ import {
   serverError
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { CropStudies } from "../core/model/crop-studies";
 import { ICreateCropStudiesService, IGetCropStudiesByBasinService } from "../services/crop-studies";
 
@@ -19,7 +20,7 @@ export interface ICreateCropStudiesController {
 
 export class CreateCropStudiesControllers implements ICreateCropStudiesController {
 
-  constructor(private readonly cropStudiesService: ICreateCropStudiesService) { }
+  constructor(private readonly cropStudiesService: ICreateCropStudiesService, private readonly validator: ISchemaValidator) { }
 
   async handle(request: {
     accountId: number;
@@ -27,6 +28,15 @@ export class CreateCropStudiesControllers implements ICreateCropStudiesControlle
     data: Array<Omit<CropStudies, "id_basin">>;
   }): Promise<HttpResponse> {
     try {
+      const { data, id } = request
+
+      const { error } = await this.validator.validate({ id, data });
+
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const successOrError = await this.cropStudiesService.create({
         id_basin: request.id,
         data: request.data,
@@ -57,7 +67,7 @@ export interface IGetCropStudiesByBasinController {
 }
 export class GetCropStudiesByBasinController implements IGetCropStudiesByBasinController {
 
-  constructor(private readonly cropStudiesService: IGetCropStudiesByBasinService) { }
+  constructor(private readonly cropStudiesService: IGetCropStudiesByBasinService, private readonly validator: ISchemaValidator) { }
 
   async handle(
     request: {
@@ -66,6 +76,14 @@ export class GetCropStudiesByBasinController implements IGetCropStudiesByBasinCo
     } & IPaginationInput
   ): Promise<HttpResponse> {
     try {
+      const { id } = request
+
+      const { error } = await this.validator.validate({ id });
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const deletedOrError = await this.cropStudiesService.getByBasin(
         request.id
       );

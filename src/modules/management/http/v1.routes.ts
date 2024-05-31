@@ -6,6 +6,8 @@ import { ManagementCropControllers } from "../controllers/crop.controller";
 export const setupManagementRoutes = (): Router => {
   const router = Router();
 
+  router.get("/crop/:id", adaptRouteV2(ManagementCropControllers.getCropById));
+
   router.post(
     "/crop",
     authorization,
@@ -24,9 +26,7 @@ export const setupManagementRoutes = (): Router => {
     adaptRouteV2(ManagementCropControllers.deleteCrop)
   );
 
-  router.get("/crop/:id", adaptRouteV2(ManagementCropControllers.getCropById));
-
-  router.get("/crop", adaptRouteV2(ManagementCropControllers.getAllCrops));
+  router.get("/crops", adaptRouteV2(ManagementCropControllers.getAllCrops));
 
   router.get(
     "/crop/cycles/:id",

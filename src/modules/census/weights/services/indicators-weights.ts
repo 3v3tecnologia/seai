@@ -1,7 +1,6 @@
 import { Either, left, right } from "../../../../shared/Either";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
 import { IIndicatorsWeightsRepository } from "../repository/protocol/repository";
-import { makeGetCropsIndicatorsFromBasin } from './../../crops/services/factories/fetch-by-basin';
 
 export interface ICreateIndicatorsWeightsService {
   create(params: {
