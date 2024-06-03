@@ -1,5 +1,5 @@
 export type CensusCultureWeights = {
-  id_basin: number,
+  basin_mask: number,
   crop: string,
   productivity_ha: number,
   productivity_m3: number,

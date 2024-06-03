@@ -104,9 +104,12 @@ export class IrrigationRecommendationServices {
       case irrigationsTypesNames.Pivot:
         systemOrError = Pivot.create(command.System.Measurements as PivotProps);
         break;
+      case irrigationsTypesNames.Sulcos:
+        systemOrError = Pivot.create(command.System.Measurements as PivotProps);
+        break;
       default:
-        systemOrError = Sulcos.create(
-          command.System.Measurements as SulcosProps
+        return left(
+          new Error("Tipo de sistema não reconhecido.")
         );
     }
 
@@ -162,7 +165,6 @@ export class IrrigationRecommendationServices {
   }
 }
 
-// [DÚVIDA] plantingDate tem que ser no passado?
 function getCropDate(plantingDate: string) {
   const currentDate = new Date();
   const diff = dateDiffInDays(

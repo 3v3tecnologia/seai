@@ -1,5 +1,5 @@
 export type DbCultureWeightsData = {
-    bacia_id: number;
+    bacia_mascara: number;
     cultura: string;
     peso_produtividade_ha: number | null;
     peso_produtividade_m3: number | null;

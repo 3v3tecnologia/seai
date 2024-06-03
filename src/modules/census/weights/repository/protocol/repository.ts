@@ -1,4 +1,3 @@
-import { IPaginationInput } from "../../../../../domain/use-cases/helpers/pagination";
 import { CensusCultureWeights } from "../../core/model/indicators-weights";
 
 export interface IIndicatorsWeightsRepository {
@@ -6,8 +5,8 @@ export interface IIndicatorsWeightsRepository {
   delete(
     id_basin: number
   ): Promise<void>;
-  checkIfBasinExists(id: number): Promise<boolean>
+  checkIfBasinMaskExists(id: number): Promise<boolean>
   getByBasin(
-    params: { id_basin: number } & Partial<IPaginationInput>
+    basin: Array<number>
   ): Promise<Array<CensusCultureWeights> | null>;
 }

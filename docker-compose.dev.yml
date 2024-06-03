@@ -3,16 +3,7 @@ services:
     image: postgis/postgis:15-3.3-alpine
     container_name: "seai-database-dev"
     volumes:
-      - ./db/ddl/censo_schema.sql:/docker-entrypoint-initdb.d/ddl-censo_schema.sql
-      # - ./db/seeds/censo_data.sql:/docker-entrypoint-initdb.d/censo_data.sql
-      - ./db/ddl/equipments_schema.sql:/docker-entrypoint-initdb.d/ddl-equipments_schema.sql
-      - ./db/ddl/government_schema.sql:/docker-entrypoint-initdb.d/ddl-government_schema.sql
-      - ./db/ddl/management_schema.sql:/docker-entrypoint-initdb.d/ddl-management_schema.sql
-      - ./db/ddl/newsletter_schema.sql:/docker-entrypoint-initdb.d/ddl-newsletter_schema.sql
-      - ./db/ddl/logs_schema.sql:/docker-entrypoint-initdb.d/ddl-logs.sql
-      - ./db/seeds/equipments_data.sql:/docker-entrypoint-initdb.d/seeds-equipments.sql
-      - ./db/seeds/government_data.sql:/docker-entrypoint-initdb.d/seeds-government.sql
-      - ./db/seeds/logs_data.sql:/docker-entrypoint-initdb.d/seeds-logs.sql
+      - ./database/scripts:/docker-entrypoint-initdb.d 
       - ./db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
@@ -46,6 +37,7 @@ services:
     networks:
       - custom
       - private
+
 volumes:
   db-data: {}
   backend_node_modules: {}

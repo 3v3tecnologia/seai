@@ -4,7 +4,7 @@ import { CensusCultureWeights } from "./model/indicators-weights";
 export class CultureWeightsMapper {
   static toDomain(row: any): CensusCultureWeights {
     return {
-      id_basin: Number(row.bacia_id),
+      basin_mask: Number(row.bacia_mascara),
       crop: row.cultura,
       productivity_ha: Number(row.peso_produtividade_ha),
       productivity_m3: Number(row.peso_produtividade_m3),
@@ -22,7 +22,7 @@ export class CultureWeightsMapper {
     weights: CensusCultureWeights, id?: number
   ): DbCultureWeightsData {
     return {
-      bacia_id: id || weights.id_basin,
+      bacia_mascara: id || weights.basin_mask,
       cultura: weights.crop,
       peso_produtividade_ha: weights.productivity_ha || null,
       peso_produtividade_m3: weights.productivity_m3 || null,

@@ -66,7 +66,7 @@ export interface IGetIndicatorsWeightsByBasinController {
   handle(
     request: {
       accountId: number;
-      id: number;
+      items: Array<number>;
     } & IPaginationInput
   ): Promise<HttpResponse>
 }
@@ -77,22 +77,22 @@ export class GetIndicatorWeightsByBasinController implements IGetIndicatorsWeigh
   async handle(
     request: {
       accountId: number;
-      id: number;
+      items: Array<number>;
     }
   ): Promise<HttpResponse> {
     try {
       const {
-        id
+        items
       } = request
 
-      const { error } = await this.validator.validate({ id });
+      const { error } = await this.validator.validate({ items });
 
       if (error) {
         return badRequest(error)
       }
 
       const resultOrError = await this.indicatorsWeightsService.getByBasin({
-        id_basin: Number(request.id),
+        id_basin: Number(request.items),
       });
 
 
