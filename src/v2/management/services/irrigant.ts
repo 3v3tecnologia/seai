@@ -1,4 +1,4 @@
-import { left, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import {
   dateDiffInDays,
   getYesterDayDate,
@@ -142,14 +142,16 @@ export class IrrigationRecommendationServices {
 
     // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
     // varia de acordo com o ciclo de crescimento da cultura
-    const cycle = findKc(cropDate, cropCycles);
+    const cycleOrError = findKc(cropDate, cropCycles);
 
-    if (!cycle) {
-      return left(new ManagementIrrigantErrors.CropDateNotFound());
+    if (cycleOrError.isLeft()) {
+      return left(cycleOrError.value);
     }
 
+    const cropCycle = cycleOrError.value
+
     const bladeSuggestion = BladeSuggestion.create({
-      cropCycle: cycle,
+      cropCycle: cropCycle as ManagementCropCycle,
       precipitation: Precipitation,
       Et0,
       irrigationSystem: irrigationSystem,
@@ -172,19 +174,37 @@ export class IrrigationRecommendationServices {
   }
 }
 
-// [DÚVIDA] plantingDate tem que ser no passado?
 function getCropDate(plantingDate: string) {
   const currentDate = new Date();
   const diff = dateDiffInDays(
     currentDate,
     new Date(parseBrazilianDateTime(plantingDate))
   );
-  return diff < 0 ? 0 : diff;
+  return diff;
 }
 
 // Entity?
-function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>) {
-  return cropCycles.find(
+function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Either<Error, ManagementCropCycle> {
+  console.log(cropDate, cropCycles)
+  const startCropCycle = cropCycles[0]
+
+  if (cropDate < startCropCycle.Start) {
+    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se ${startCropCycle.Start - cropDate} dia(s) anterior a data de início do ciclo da cultura. `))
+  }
+
+  const endCropCycle = cropCycles[cropCycles.length - 1]
+
+  if (cropDate > endCropCycle.End) {
+    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se após a data do último dia do ciclo da cultura`))
+  }
+
+  const data = cropCycles.find(
     (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
-  );
+  )
+
+  if (data) {
+    return right(data)
+  }
+
+  return left(new Error("Não foi possível encontrar valores de KC"))
 }

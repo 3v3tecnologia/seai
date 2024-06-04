@@ -66,7 +66,8 @@ export class DbManagementCropRepository {
     const data = await managementDb
       .select("*")
       .from(DATABASES.MANAGEMENT.TABLES.CROP_CYCLE)
-      .where({ FK_Crop: idCrop });
+      .where({ FK_Crop: idCrop })
+      .orderBy("Start");
 
     if (data.length === 0) {
       return null;
