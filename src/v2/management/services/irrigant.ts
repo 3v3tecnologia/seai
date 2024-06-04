@@ -37,7 +37,6 @@ export class IrrigationRecommendationServices {
   ): ICalcBaldeIrrigationRecommendationService.Output {
     const yesterDay = getYesterDayDate("-");
 
-    console.log("Buscando ETO pela a data de ontem ", yesterDay);
 
     let Et0: number | null = null;
 
@@ -185,7 +184,6 @@ function getCropDate(plantingDate: string) {
 
 // Entity?
 function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Either<Error, ManagementCropCycle> {
-  console.log(cropDate, cropCycles)
   const startCropCycle = cropCycles[0]
 
   if (cropDate < startCropCycle.Start) {
