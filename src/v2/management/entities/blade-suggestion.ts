@@ -75,12 +75,12 @@ export class BladeSuggestion {
     precipitation: number,
     efficiency: number
   ) {
-    console.log({
-      Etc,
-      precipitation,
-      efficiency,
-    });
-    return (Etc - precipitation) / efficiency;
+    const EtcMinusPrecipitation = Etc - precipitation
+
+    if (EtcMinusPrecipitation < 0) {
+      return 0
+    }
+    return EtcMinusPrecipitation / efficiency;
   }
 
   static create(props: {
