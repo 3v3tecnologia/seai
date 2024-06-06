@@ -46,9 +46,9 @@ volumes:
   db-data: {}
   backend_node_modules: {}
 
-secrets:
-  db-password:
-    file: db/password.txt
+# secrets:
+#   db-password:
+#     file: db/password.txt
 
 networks:
   private:
