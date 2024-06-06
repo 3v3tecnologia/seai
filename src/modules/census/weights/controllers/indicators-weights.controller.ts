@@ -1,5 +1,3 @@
-import { formatPaginationInput } from "../../../../domain/use-cases/helpers/formatPaginationInput";
-import { IPaginationInput } from "../../../../domain/use-cases/helpers/pagination";
 import {
   badRequest,
   created,
@@ -10,40 +8,46 @@ import {
 import { HttpResponse } from "../../../../presentation/controllers/ports";
 import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import { ICreateIndicatorsWeightsService, IGetIndicatorsWeightsByBasinService } from "../services/indicators-weights";
+import { ICalculateIndicatorsWeightsService, IGetIndicatorsWeightsByBasinService, InsertIndicatorsWeightsService } from "../services/indicators-weights";
 
 
-export interface ICreateIndicatorsWeightsController {
+export interface IInsertIndicatorsWeightsController {
   handle(request: {
-    accountId: number;
-    id: number;
+    basin_ids: Array<number>;
+    year: number;
     data: Array<CensusCultureWeights>;
   }): Promise<HttpResponse>
 
 }
 
-export class CreateIndicatorsWeightsController implements ICreateIndicatorsWeightsController {
-  constructor(private readonly indicatorsWeightsService: ICreateIndicatorsWeightsService, private readonly validator: ISchemaValidator) { }
+export class InsertIndicatorsWeightsController implements IInsertIndicatorsWeightsController {
+  constructor(private readonly indicatorsWeightsService: InsertIndicatorsWeightsService, private readonly validator: ISchemaValidator) { }
   async handle(request: {
-    accountId: number;
-    id: number;
+    basin_ids: Array<number>;
+    year: number;
     data: Array<CensusCultureWeights>;
   }): Promise<HttpResponse> {
     try {
 
       const {
-        id,
+        basin_ids,
+        year,
         data
       } = request
 
-      const { error } = await this.validator.validate({ id, data });
+      const { error } = await this.validator.validate({
+        basin_ids,
+        year,
+        data
+      });
 
       if (error) {
         return badRequest(error)
       }
 
-      const deletedOrError = await this.indicatorsWeightsService.create({
-        id_basin: Number(id),
+      const deletedOrError = await this.indicatorsWeightsService.save({
+        basin_ids,
+        year,
         weights: data,
       });
 
@@ -62,37 +66,42 @@ export class CreateIndicatorsWeightsController implements ICreateIndicatorsWeigh
 
 }
 
-export interface IGetIndicatorsWeightsByBasinController {
+export interface IGetIndicatorWeightsByBasinsIdsController {
   handle(
     request: {
-      accountId: number;
-      items: Array<number>;
-    } & IPaginationInput
+      basin_ids: Array<number>;
+      year: number;
+    }
   ): Promise<HttpResponse>
 }
 
-export class GetIndicatorWeightsByBasinController implements IGetIndicatorsWeightsByBasinController {
+export class GetIndicatorWeightsByBasinsIdsController implements IGetIndicatorWeightsByBasinsIdsController {
   constructor(private readonly indicatorsWeightsService: IGetIndicatorsWeightsByBasinService, private readonly validator: ISchemaValidator) { }
 
   async handle(
     request: {
-      accountId: number;
-      items: Array<number>;
+      basin_ids: Array<number>;
+      year: number;
     }
   ): Promise<HttpResponse> {
     try {
       const {
-        items
+        basin_ids,
+        year
       } = request
 
-      const { error } = await this.validator.validate({ items });
+      const { error } = await this.validator.validate({
+        basin_ids,
+        year
+      });
 
       if (error) {
         return badRequest(error)
       }
 
-      const resultOrError = await this.indicatorsWeightsService.getByBasin({
-        id_basin: Number(request.items),
+      const resultOrError = await this.indicatorsWeightsService.getByBasinsIds({
+        basin_ids,
+        year
       });
 
 
@@ -107,3 +116,65 @@ export class GetIndicatorWeightsByBasinController implements IGetIndicatorsWeigh
     }
   }
 }
+
+export interface ICalculateIndicatorWeightsController {
+  handle(
+    request: {
+      basin_ids: Array<number>;
+      area?: number;
+      users_registered_count?: number;
+      crops_names?: Array<string>
+    }
+  ): Promise<HttpResponse>
+}
+
+export class CalculateIndicatorWeightsController implements ICalculateIndicatorWeightsController {
+  constructor(private readonly indicatorsWeightsService: ICalculateIndicatorsWeightsService, private readonly validator: ISchemaValidator) { }
+
+  async handle(
+    request: {
+      basin_ids: Array<number>;
+      area?: number;
+      users_registered_count?: number;
+      crops_names?: Array<string>
+    }
+  ): Promise<HttpResponse> {
+    try {
+      const {
+        basin_ids,
+        area,
+        crops_names,
+        users_registered_count
+      } = request
+
+      const { error } = await this.validator.validate({
+        basin_ids,
+        area,
+        crops_names,
+        users_registered_count
+      });
+
+      if (error) {
+        return badRequest(error)
+      }
+
+      const resultOrError = await this.indicatorsWeightsService.calculate({
+        basin_ids,
+        area,
+        crops_names,
+        users_registered_count
+      });
+
+
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
+
+      return ok(resultOrError.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+}
+

@@ -3,20 +3,23 @@ import { adaptRoute } from "../../../../server/http/adapters/express-route.adapt
 import { authorization } from "../../../../server/http/http-middlewares";
 import { MakeIndicatorsWeightsControllers } from './../controllers/indicators-weights-controller-factory';
 
-export const setupIndicatorsWeightsRoutes = (): Router => {
-  const router = Router();
+export const setupIndicatorsWeightsRoutes = (router: Router): void => {
+  router.get(
+    "/weights/basin/calculated",
+    authorization,
+    adaptRoute(MakeIndicatorsWeightsControllers.calcIndicatorWeights())
+  );
 
   router.post(
-    "/basin/:id",
+    "/weights/basin",
     authorization,
     adaptRoute(MakeIndicatorsWeightsControllers.createIndicatorsWeights())
   );
 
   router.get(
-    "/basin/:id",
+    "/weights/basin",
     authorization,
     adaptRoute(MakeIndicatorsWeightsControllers.getIndicatorWeightsByBasin())
   );
 
-  return router
 };

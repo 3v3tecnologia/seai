@@ -19,10 +19,10 @@ export class CultureWeightsMapper {
   }
 
   static toPersistence(
-    weights: CensusCultureWeights, id?: number
+    weights: CensusCultureWeights, mask?: number
   ): DbCultureWeightsData {
     return {
-      bacia_mascara: id || weights.basin_mask,
+      bacia_mascara: (mask || weights.basin_mask) as number,
       cultura: weights.crop,
       peso_produtividade_ha: weights.productivity_ha || null,
       peso_produtividade_m3: weights.productivity_m3 || null,

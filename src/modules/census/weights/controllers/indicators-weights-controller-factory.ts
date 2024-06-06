@@ -1,13 +1,16 @@
 import { makeIndicatorsWeightsRepository } from "../repository/indicators-weights.repository";
-import { CreateIndicatorsWeightsService, GetIndicatorsWeightsByBasinService } from "../services/indicators-weights";
-import { CreateIndicatorsWeightsController, GetIndicatorWeightsByBasinController } from "./indicators-weights.controller";
-import { createIndicatorsWeightsValidator, getIndicatorsWeightsValidator } from "./schema/validators";
+import { CalculateIndicatorsWeightsService, InsertIndicatorsWeightsService, GetIndicatorsWeightsByBasinService } from "../services/indicators-weights";
+import { GetIndicatorWeightsByBasinsIdsController, CalculateIndicatorWeightsController, InsertIndicatorsWeightsController } from "./indicators-weights.controller";
+import { createIndicatorsWeightsValidator, getIndicatorsWeightsValidator, calculateIndicatorsWeightsValidator } from "./schema/validators";
 
 export class MakeIndicatorsWeightsControllers {
     static createIndicatorsWeights() {
-        return new CreateIndicatorsWeightsController(new CreateIndicatorsWeightsService(makeIndicatorsWeightsRepository()), createIndicatorsWeightsValidator)
+        return new InsertIndicatorsWeightsController(new InsertIndicatorsWeightsService(makeIndicatorsWeightsRepository()), createIndicatorsWeightsValidator)
     }
     static getIndicatorWeightsByBasin() {
-        return new GetIndicatorWeightsByBasinController(new GetIndicatorsWeightsByBasinService(makeIndicatorsWeightsRepository()), getIndicatorsWeightsValidator)
+        return new GetIndicatorWeightsByBasinsIdsController(new GetIndicatorsWeightsByBasinService(makeIndicatorsWeightsRepository()), getIndicatorsWeightsValidator)
+    }
+    static calcIndicatorWeights() {
+        return new CalculateIndicatorWeightsController(new CalculateIndicatorsWeightsService(makeIndicatorsWeightsRepository()), calculateIndicatorsWeightsValidator)
     }
 }

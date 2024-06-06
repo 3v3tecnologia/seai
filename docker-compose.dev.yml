@@ -2,8 +2,13 @@ services:
   database:
     image: postgis/postgis:15-3.3-alpine
     container_name: "seai-database-dev"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - ./database/scripts:/docker-entrypoint-initdb.d 
+      - ./database/schemas:/docker-entrypoint-initdb.d
+      - ./database/seeds:/usr/src/seeds
+      - ./database/seed.sh:/usr/src/seed.sh
       - ./db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
@@ -13,12 +18,11 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
-    env_file:
-      - env_file
     restart: always
     networks:
       - custom
       - private
+
   backend:
     build:
       context: .
@@ -26,7 +30,7 @@ services:
     container_name: "seai-server"
     restart: always
     ports:
-      - "8080:8080"
+      - "${PORT}:8080"
       - "127.0.0.1:9222:9222"
     volumes:
       - .:/usr/src/app
