@@ -21,7 +21,6 @@ export class CompleteUserRegisterController extends CommandController<
   ): Promise<HttpResponse> {
     try {
 
-      console.log(request);
 
       const updateOrError = await this.updateUser.execute({
         code: request.code,

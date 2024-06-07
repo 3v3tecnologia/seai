@@ -2,11 +2,10 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { FetchCaptationCensusByBasin } from "../../../domain/use-cases/census/fetch-captation-by-basin";
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchCaptationByBasinController
-  implements Controller<void, HttpResponse>
-{
+  implements Controller<void, HttpResponse> {
   private fetchCaptationCensusByBasin: FetchCaptationCensusByBasin;
 
   constructor(fetchCaptationCensusByBasin: FetchCaptationCensusByBasin) {
@@ -14,8 +13,12 @@ export class FetchCaptationByBasinController
   }
 
   async handle(): Promise<HttpResponse> {
-    const result = await this.fetchCaptationCensusByBasin.execute();
+    try {
+      const result = await this.fetchCaptationCensusByBasin.execute();
 
-    return ok(result.value);
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
   }
 }

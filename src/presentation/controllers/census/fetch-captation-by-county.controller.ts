@@ -2,11 +2,10 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { FetchCaptationCensusByCounty } from "../../../domain/use-cases/census/fetch-captation-by-county";
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchCaptationByCountyController
-  implements Controller<void, HttpResponse>
-{
+  implements Controller<void, HttpResponse> {
   private fetchCaptationCensusByCounty: FetchCaptationCensusByCounty;
 
   constructor(fetchCaptationCensusByCounty: FetchCaptationCensusByCounty) {
@@ -14,8 +13,12 @@ export class FetchCaptationByCountyController
   }
 
   async handle(): Promise<HttpResponse> {
-    const result = await this.fetchCaptationCensusByCounty.execute();
+    try {
+      const result = await this.fetchCaptationCensusByCounty.execute();
 
-    return ok(result.value);
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
   }
 }

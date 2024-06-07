@@ -2,11 +2,10 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { FetchAnimalsCensusByConsumption } from "../../../domain/use-cases/census/fetch-animals-by-consumption";
-import { ok } from "../helpers";
+import { ok, serverError } from "../helpers";
 
 export class FetchAnimalsConsumptionCensusController
-  implements Controller<void, HttpResponse>
-{
+  implements Controller<void, HttpResponse> {
   private fetchAnimalsCensusByConsumption: FetchAnimalsCensusByConsumption;
 
   constructor(
@@ -16,8 +15,12 @@ export class FetchAnimalsConsumptionCensusController
   }
 
   async handle(): Promise<HttpResponse> {
-    const result = await this.fetchAnimalsCensusByConsumption.execute();
+    try {
+      const result = await this.fetchAnimalsCensusByConsumption.execute();
 
-    return ok(result.value);
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
   }
 }
