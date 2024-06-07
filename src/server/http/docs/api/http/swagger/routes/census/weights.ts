@@ -5,7 +5,7 @@ import { DEFAULT_RESPONSES } from "../../commons/status";
 
 const TAGS = ["Weights"];
 
-export const MANAGEMENT = {
+export const WEIGHTS = {
     [`${BASE_URL.V1}/census/weights/basin`]: {
         get: {
             tags: TAGS,
