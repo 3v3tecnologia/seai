@@ -71,7 +71,7 @@ export class AuthMiddleware implements Middleware {
 
       return unauthenticated();
     } catch (error) {
-      console.error("[auth-middleware] ", error);
+
       return forbidden(new Error(`Erro ao realizar autenticação`));
     }
   }

@@ -5,7 +5,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 const TAGS = ["Management"];
 
 export const MANAGEMENT = {
-  [`${BASE_URL.V2}/management/crop`]: {
+  [`${BASE_URL.V1}/management/crop`]: {
     get: {
       tags: ["Irrigant"],
       parameters: [
@@ -88,7 +88,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V2}/management/crop/cycles/{id}`]: {
+  [`${BASE_URL.V1}/management/crop/cycles/{id}`]: {
     get: {
       tags: TAGS,
       parameters: [
@@ -191,7 +191,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V2}/management/crop/{id}`]: {
+  [`${BASE_URL.V1}/management/crop/{id}`]: {
     get: {
       tags: TAGS,
       summary: "Get crop by id",
@@ -316,7 +316,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V2}/management/studies/{id}`]: {
+  [`${BASE_URL.V1}/management/studies/{id}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -689,7 +689,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V2}/management/weights/{id}`]: {
+  [`${BASE_URL.V1}/management/weights/{id}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -795,7 +795,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V2}/management/blade_suggestion`]: {
+  [`${BASE_URL.V1}/management/blade_suggestion`]: {
     post: {
       tags: ["Irrigant"],
       requestBody: {

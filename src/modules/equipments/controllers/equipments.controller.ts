@@ -1,9 +1,8 @@
 import {
   badRequest,
   created,
-  forbidden,
   ok,
-  serverError,
+  serverError
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { EquipmentsServices } from "../services/equipments";
@@ -15,7 +14,6 @@ export class EquipmentsControllers {
 
       return ok(lastMeasurementsTaken.value)
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -30,7 +28,6 @@ export class EquipmentsControllers {
       return ok(equipmentsOrError.value);
 
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -58,7 +55,6 @@ export class EquipmentsControllers {
 
       return created(successOrError.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -73,7 +69,6 @@ export class EquipmentsControllers {
 
       return ok(typesOrError.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -88,7 +83,6 @@ export class EquipmentsControllers {
 
       return ok(credentialsOrError.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }

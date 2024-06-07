@@ -4,19 +4,11 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 
 import { authorization } from "../http-middlewares";
 
-import { makeGetCulturesIndicatorsFromBasin } from "../../../modules/census/crops/controllers/factories/fetch-crop-indicators";
-import { setupIndicatorsWeightsRoutes } from "../../../modules/census/weights/http/v1.routes";
+import { makeGetCulturesIndicatorsFromBasin } from "../../../modules/census/controllers/factories/fetch-crop-indicators";
 import { CensusControllersFactory, SecurityIndicatorsControllersFactory } from "../factories/controllers";
-import { MakeCropStudiesControllers } from './../../../modules/census/studies/controllers/crop-studies-controllers.factory';
 
 export const censusRouter = (): Router => {
   const router = Router();
-
-
-  router.post("/studies/basin/:id", authorization, adaptRoute(MakeCropStudiesControllers.createCropStudies()))
-  router.get("/studies/basin/:id", authorization, adaptRoute(MakeCropStudiesControllers.getCropStudiesByBasin()))
-
-  setupIndicatorsWeightsRoutes(router)
 
   router.get(
     "/cultures/:id",

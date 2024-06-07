@@ -7,7 +7,7 @@ import {
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { ManagementCropUseCases } from "../services/crop";
-import { createCropCycleValidator, createCropValidator, deleteCropValidator, getAllCropsValidator, getCropByIdValidator, updateCropValidator } from "./schema/validator";
+import { createCropCycleValidator, createCropValidator, deleteCropValidator, getAllCropCropCyclesValidator, getAllCropsValidator, getCropByIdValidator, updateCropValidator } from "./schema/crop";
 
 export class ManagementCropControllers {
   static async createCrop(params: {
@@ -105,7 +105,7 @@ export class ManagementCropControllers {
     try {
       const input = {}
 
-      if (params.name) {
+      if (Reflect.has(params, 'name')) {
         Object.assign(input, {
           name: params.name
         })
@@ -187,7 +187,7 @@ export class ManagementCropControllers {
       id: number;
       data: Array<{
         Title: string;
-        DurationInDays: number;
+        // DurationInDays: number;
         Start: number;
         End: number;
         KC: number;
@@ -236,7 +236,7 @@ export class ManagementCropControllers {
         id
       } = params
 
-      const { error } = await getAllCropsValidator.validate({
+      const { error } = await getAllCropCropCyclesValidator.validate({
         id
       });
 

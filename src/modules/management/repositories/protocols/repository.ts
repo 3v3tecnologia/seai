@@ -1,4 +1,4 @@
-import { ManagementCrop, ManagementCropParams } from "../../core/crop";
+import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 
 export interface ICropRepository {
   create(culture: ManagementCrop): Promise<number | null>;

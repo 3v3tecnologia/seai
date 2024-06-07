@@ -4,6 +4,7 @@ export default {
   apiKey: process.env.API_KEY,
   hashSalt: process.env.HASH_SALT,
   environment: process.env.NODE_ENV || "development",
+
   mailer: {
     port: Number(process.env.EMAIL_PORT),
     host: process.env.EMAIL_HOST,

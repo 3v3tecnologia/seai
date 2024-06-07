@@ -1,6 +1,6 @@
 import { DATABASES } from "../../../shared/db/tableNames";
-import { ManagementCrop, ManagementCropParams } from "../core/crop";
-import { ManagementCropCycle } from "../../irrigant/blade_suggestion/core/model/crop-cycles";
+import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
 import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 import { managementDb } from "./connection";
 

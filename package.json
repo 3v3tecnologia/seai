@@ -18,8 +18,8 @@
     "start:prod": "cross-env NODE_ENV=production node dist/src/index.js",
     "compose:up:dev": "docker compose -f docker-compose.dev.yml up -d ",
     "compose:down:dev": "docker compose -f docker-compose.dev.yml down",
-    "container:logs": "docker container logs --tail 200 seai-server",
-    "container:logs:watch": "docker container logs -f --tail 100 seai-server"
+    "container:logs": "docker container logs --tail 200 --timestamps seai-server",
+    "container:logs:watch": "docker container logs -f --tail 100 --timestamps seai-server"
   },
   "keywords": [],
   "license": "ISC",
@@ -61,6 +61,8 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.3",
     "pg": "^8.11.1",
+    "pino": "^9.1.0",
+    "pino-pretty": "^11.1.0",
     "swagger-ui-express": "^4.6.3",
     "uuid": "^9.0.0"
   }

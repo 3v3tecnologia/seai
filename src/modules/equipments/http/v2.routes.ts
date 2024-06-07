@@ -3,49 +3,45 @@ import { adaptRouteV2 } from "../../../server/http/adapters/express-route.adapte
 import { EquipmentsControllers, EquipmentsMeasurementsControllers } from "../controllers";
 import { authorization } from "../../../server/http/http-middlewares";
 
-export const setupEquipmentsRoutes = (): Router => {
-    const router = Router();
-
+export const setupEquipmentsV2Routes = (router: Router): void => {
     router.get(
-        "/",
+        "/equipments",
         authorization,
         adaptRouteV2(EquipmentsControllers.getAll)
     );
     router.get(
-        "/types",
+        "/equipments/types",
         authorization,
         adaptRouteV2(EquipmentsControllers.getAllEquipmentsTypes)
     );
     router.post(
-        "/",
+        "/equipments",
         // authorization,
         adaptRouteV2(EquipmentsControllers.bulkInsert)
     );
 
     router.get(
-        "/last-updated-at",
+        "/equipments/last-updated-at",
         authorization,
         adaptRouteV2(EquipmentsControllers.getDateOfLastMeasurementTaken)
     );
 
     router.get(
-        "/meteorological_organ/access_credentials",
+        "/equipments/meteorological_organ/access_credentials",
         authorization,
         adaptRouteV2(EquipmentsControllers.getMeteorologicalOrganAccessCredentials)
     );
 
     router.get(
-        "/measurements",
+        "/equipments/measurements",
         authorization,
         adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
     );
 
     router.post(
-        "/measurements/",
+        "/equipments/measurements",
         // authorization,
         adaptRouteV2(EquipmentsMeasurementsControllers.bulkInsert)
     );
-
-    return router
 
 };

@@ -1,4 +1,4 @@
-import { ManagementCropCycle } from "../../../irrigant/blade_suggestion/core/model/crop-cycles";
+import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
 export namespace ManagementCropDTO {
   export namespace CreateCropCycles {

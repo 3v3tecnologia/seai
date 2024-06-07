@@ -1,6 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCrop } from "../core/crop";
-import { ManagementCropCycle } from "../../irrigant/blade_suggestion/core/model/crop-cycles";
+import { ManagementCrop } from "../core/model/crop";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 import { DbManagementCropRepository } from "../repositories/crop.repository";
 import { ManagementCropDTO } from "../repositories/protocols/dto";
