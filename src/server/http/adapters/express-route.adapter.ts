@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 
 import { Controller } from "../../../presentation/controllers/ports/controllers";
 
-export function adaptRouteV2(callback: any) {
+export const adaptRouteV2 = (callback: any) => {
   return async (request: Request, response: Response) => {
     const req = {
       ...(request.body || {}),

@@ -1,3 +1,5 @@
+# Database scripts
+*.sql
 ### Node ###
 # Logs
 logs

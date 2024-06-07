@@ -9,3 +9,5 @@ export * from "./security-social";
 export * from "./security-water";
 export * from "./workers";
 export * from "./cultures";
+export * from "./studies";
+export * from "./weights";

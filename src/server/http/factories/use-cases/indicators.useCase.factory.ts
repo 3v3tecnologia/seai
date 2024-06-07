@@ -1,7 +1,3 @@
-import {
-  GetCropsIndicatorsFromBasin,
-  GetCropsIndicatorsFromBasinUseCaseProtocol,
-} from "../../../../domain/use-cases/census";
 import { FetchCensusLocations } from "../../../../domain/use-cases/indicators-census/fetch-census-locations";
 import { FetchEconomicSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-economic-security-by-basin";
 import { FetchEconomicSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-economic-security-by-county";
@@ -11,11 +7,7 @@ import { FetchSocialSecurityCensusByBasin } from "../../../../domain/use-cases/i
 import { FetchSocialSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-social-security-by-county";
 import { FetchWaterSecurityCensusByBasin } from "../../../../domain/use-cases/indicators-census/fetch-water-security-by-basin";
 import { FetchWaterSecurityCensusByCounty } from "../../../../domain/use-cases/indicators-census/fetch-water-security-by-county";
-import { DbProfitabilitySecurityCensusRepository } from "../../../../infra/database/postgres/repositories/profitability-security.repository";
 import { DbIndicatorsRepository } from "../../../../infra/database/postgres/repositories/security-indicators.repository";
-import { DbWaterSecurityCensusRepository } from "../../../../infra/database/postgres/repositories/water-security.repository";
-import { DbWorkesrSecurityCensusRepository } from "../../../../infra/database/postgres/repositories/workers-security.repository";
-import { DbManagementStudiesRepository } from "../../../../v2/management/infra/database/repositories/management-studies.repository";
 
 export class SecurityIndicatorsUseCaseFactory {
   private static repository = new DbIndicatorsRepository();
@@ -56,12 +48,4 @@ export class SecurityIndicatorsUseCaseFactory {
     return new FetchWaterSecurityCensusByCounty(this.repository);
   }
 
-  static makeGetCropsIndicatorsFromBasin(): GetCropsIndicatorsFromBasinUseCaseProtocol.UseCase {
-    return new GetCropsIndicatorsFromBasin(
-      new DbProfitabilitySecurityCensusRepository(),
-      new DbWorkesrSecurityCensusRepository(),
-      new DbWaterSecurityCensusRepository(),
-      DbManagementStudiesRepository
-    );
-  }
 }

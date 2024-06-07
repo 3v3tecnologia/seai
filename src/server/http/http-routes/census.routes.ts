@@ -4,8 +4,8 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 
 import { authorization } from "../http-middlewares";
 
-import { SecurityIndicatorsControllersFactory } from "../factories/controllers";
-import { CensusControllersFactory } from "../factories/controllers";
+import { makeGetCulturesIndicatorsFromBasin } from "../../../modules/census/controllers/factories/fetch-crop-indicators";
+import { CensusControllersFactory, SecurityIndicatorsControllersFactory } from "../factories/controllers";
 
 export const censusRouter = (): Router => {
   const router = Router();
@@ -14,7 +14,7 @@ export const censusRouter = (): Router => {
     "/cultures/:id",
     authorization,
     adaptRoute(
-      SecurityIndicatorsControllersFactory.makeGetCulturesIndicatorsFromBasin()
+      makeGetCulturesIndicatorsFromBasin()
     )
   );
 
@@ -167,6 +167,8 @@ export const censusRouter = (): Router => {
     authorization,
     adaptRoute(SecurityIndicatorsControllersFactory.makeFetchCensusLocations())
   );
+
+
 
   return router;
 };

@@ -1,10 +1,12 @@
 import express from 'express';
-import { managementRoutes } from '../../../v2/management/routes/routes';
-import { equipmentsRoutes } from '../../../v2/equipments/routes';
+import { setupEquipmentsV2Routes } from '../../../modules/equipments/http/v2.routes';
+import { setupCensusV2Routes } from '../../../modules/census/http/v2.routes';
+import { setupManagementV2Routes } from '../../../modules/management/http/v2.routes';
 
 const v2Router = express.Router();
 
-v2Router.use("/management", managementRoutes());
-v2Router.use("/equipments", equipmentsRoutes());
+setupEquipmentsV2Routes(v2Router)
+setupCensusV2Routes(v2Router)
+setupManagementV2Routes(v2Router)
 
 export { v2Router }
