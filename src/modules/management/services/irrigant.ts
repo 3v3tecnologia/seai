@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import {
   dateDiffInDays,
   getYesterDayDate,
@@ -26,6 +27,7 @@ export class IrrigationRecommendationServices {
     command: ICalcBaldeIrrigationRecommendationService.Input
   ): ICalcBaldeIrrigationRecommendationService.Output {
     const yesterDay = getYesterDayDate("-");
+
 
     let Et0: number | null = null;
 
@@ -134,36 +136,42 @@ export class IrrigationRecommendationServices {
     // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
     // varia de acordo com o ciclo de crescimento da cultura
     const cycleOrError = findKc(cropDate, cropCycles);
+    const cycleOrError = findKc(cropDate, cropCycles);
 
     if (cycleOrError.isLeft()) {
       return left(cycleOrError.value);
+      if (cycleOrError.isLeft()) {
+        return left(cycleOrError.value);
+      }
+
+      const cropCycle = cycleOrError.value
+
+      const cropCycle = cycleOrError.value
+
+      const bladeSuggestion = BladeSuggestion.create({
+        cropCycle: cropCycle as ManagementCropCycle,
+        cropCycle: cropCycle as ManagementCropCycle,
+        precipitation: Precipitation,
+        Et0,
+        irrigationSystem: irrigationSystem,
+        plantingDate: command.PlantingDate,
+        cropDay: cropDate,
+      });
+
+      return right({
+        Etc: DecimalFormatter.truncate(bladeSuggestion.Etc, 2),
+        RepositionBlade: DecimalFormatter.truncate(
+          bladeSuggestion.repositionBlade,
+          2
+        ),
+        IrrigationTime: bladeSuggestion.irrigationTime,
+        CropDays: cropDate,
+        Et0: DecimalFormatter.truncate(Et0, 2),
+        Precipitation,
+        Kc: bladeSuggestion.Kc,
+      });
     }
-
-    const cropCycle = cycleOrError.value
-
-    const bladeSuggestion = BladeSuggestion.create({
-      cropCycle: cropCycle as ManagementCropCycle,
-      precipitation: Precipitation,
-      Et0,
-      irrigationSystem: irrigationSystem,
-      plantingDate: command.PlantingDate,
-      cropDay: cropDate,
-    });
-
-    return right({
-      Etc: DecimalFormatter.truncate(bladeSuggestion.Etc, 2),
-      RepositionBlade: DecimalFormatter.truncate(
-        bladeSuggestion.repositionBlade,
-        2
-      ),
-      IrrigationTime: bladeSuggestion.irrigationTime,
-      CropDays: cropDate,
-      Et0: DecimalFormatter.truncate(Et0, 2),
-      Precipitation,
-      Kc: bladeSuggestion.Kc,
-    });
   }
-}
 
 function getCropDate(plantingDate: string) {
   const currentDate = new Date();
@@ -171,7 +179,7 @@ function getCropDate(plantingDate: string) {
     currentDate,
     new Date(parseBrazilianDateTime(plantingDate))
   );
-  return diff < 0 ? 0 : diff;
+  return diff;
 }
 
 // Entity?
@@ -189,34 +197,48 @@ function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Eithe
   }
 
   const data = cropCycles.find(
-    (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
-  )
+    function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Either<Error, ManagementCropCycle> {
+      const startCropCycle = cropCycles[0]
 
-  if (data) {
-    return right(data)
-  }
+      if (cropDate < startCropCycle.Start) {
+        return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se ${startCropCycle.Start - cropDate} dia(s) anterior a data de início do ciclo da cultura. `))
+      }
 
-  return left(new Error("Não foi possível encontrar valores de KC"))
-}
+      const endCropCycle = cropCycles[cropCycles.length - 1]
+
+      if (cropDate > endCropCycle.End) {
+        return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se após a data do último dia do ciclo da cultura`))
+      }
+
+      const data = cropCycles.find(
+        (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
+      )
+
+      if (data) {
+        return right(data)
+      }
+
+      return left(new Error("Não foi possível encontrar valores de KC"))
+    }
 
 export namespace ICalcBaldeIrrigationRecommendationService {
-  export type Input = {
-    Station: {
-      Id?: number;
-      Et0?: number;
+    export type Input = {
+      Station: {
+        Id?: number;
+        Et0?: number;
+      };
+      Pluviometer: {
+        Id?: number;
+        Precipitation?: number;
+      };
+      CropId: number;
+      PlantingDate: string;
+      IrrigationEfficiency: number;
+      System: {
+        Type: IrrigationSystemTypes;
+        Measurements: IrrigationSystemMeasurementsTypes;
+      };
     };
-    Pluviometer: {
-      Id?: number;
-      Precipitation?: number;
-    };
-    CropId: number;
-    PlantingDate: string;
-    IrrigationEfficiency: number;
-    System: {
-      Type: IrrigationSystemTypes;
-      Measurements: IrrigationSystemMeasurementsTypes;
-    };
-  };
 
-  export type Output = Promise<Either<Error, any | null>>;
-}
+    export type Output = Promise<Either<Error, any | null>>;
+  }
