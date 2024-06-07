@@ -6,9 +6,10 @@ import { DEFAULT_RESPONSES } from "../../commons/status";
 const TAGS = ["Weights"];
 
 export const WEIGHTS = {
-    [`${BASE_URL.V1}/census/weights/basin`]: {
+    [`${BASE_URL.V2}/census/weights/basin`]: {
         get: {
             tags: TAGS,
+            security: [BEARER_AUTH],
             responses: {
                 200: {
                     description: "Get recorded weights from basin or calculate if not exists",
@@ -28,13 +29,12 @@ export const WEIGHTS = {
         },
 
     },
-    [`${BASE_URL.V1}/census/weights/basin/calculated`]: {
-        get: {
+    [`${BASE_URL.V2}/census/weights/basin/calculated`]: {
+        post: {
             tags: TAGS,
             security: [BEARER_AUTH],
             summary: "Get only calculated data",
             requestBody: {
-                required: true,
                 content: {
                     "application/json": {
                         schema: {
@@ -69,7 +69,6 @@ export const WEIGHTS = {
                             example: {
                                 basin_ids: [1, 2],
                                 users_registered_count: 90,
-                                area: 10.10,
                                 crops_names: ["MILHO", "BANANA"]
                             }
                         },
@@ -106,7 +105,7 @@ export const WEIGHTS = {
             },
         },
     },
-    [`${BASE_URL.V1}/census/weights/basin`]: {
+    [`${BASE_URL.V2}/census/weights/basin`]: {
         post: {
             tags: TAGS,
             security: [BEARER_AUTH],

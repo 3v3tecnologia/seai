@@ -5,7 +5,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 const TAGS = ["Management"];
 
 export const MANAGEMENT = {
-  [`${BASE_URL.V1}/management/crop`]: {
+  [`${BASE_URL.V2}/management/crop`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -48,7 +48,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V1}/management/crop/cycles/{id}`]: {
+  [`${BASE_URL.V2}/management/crop/cycles/{id}`]: {
     get: {
       tags: TAGS,
       parameters: [
@@ -56,7 +56,7 @@ export const MANAGEMENT = {
           name: "id",
           in: "path",
           description: "Crop id",
-          required: false,
+          required: true,
           schema: {
             type: "number",
           },
@@ -97,6 +97,17 @@ export const MANAGEMENT = {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Create crop",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Crop id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       requestBody: {
         content: {
           "application/json": {
@@ -151,7 +162,7 @@ export const MANAGEMENT = {
       },
     },
   },
-  [`${BASE_URL.V1}/management/crop/{id}`]: {
+  [`${BASE_URL.V2}/management/crop/{id}`]: {
     get: {
       tags: TAGS,
       summary: "Get crop by id",

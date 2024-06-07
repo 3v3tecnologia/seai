@@ -17,7 +17,7 @@ export const setupCensusV2Routes = (router: Router): void => {
     adaptRoute(MakeCropStudiesControllers.getCropStudiesByBasin())
   );
 
-  router.get(
+  router.post(
     "/census/weights/basin/calculated",
     authorization,
     adaptRoute(MakeIndicatorsWeightsControllers.calcIndicatorWeights())

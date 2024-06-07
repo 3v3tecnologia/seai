@@ -6,12 +6,13 @@ import { DEFAULT_RESPONSES } from "../../commons/status";
 const TAGS = ["Studies"];
 
 export const STUDIES = {
-    [`${BASE_URL.V1}/census/studies/basin/{id}`]: {
+    [`${BASE_URL.V2}/census/studies/basin/{id}`]: {
         get: {
             tags: TAGS,
+            security: [BEARER_AUTH],
             parameters: [
                 {
-                    name: "basin_id",
+                    name: "id",
                     in: "path",
                     description: "basin id",
                     required: true,
@@ -57,6 +58,17 @@ export const STUDIES = {
             tags: TAGS,
             security: [BEARER_AUTH],
             summary: "Create crop",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "basin id",
+                    required: true,
+                    schema: {
+                        type: "number",
+                    },
+                },
+            ],
             requestBody: {
                 content: {
                     "application/json": {

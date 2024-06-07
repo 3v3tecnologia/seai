@@ -481,6 +481,8 @@ export class DbEquipmentsRepository
 
     const data = await equipments.raw(query);
 
+    console.log(data);
+
 
     const rows = data.rows;
 
