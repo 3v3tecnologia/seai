@@ -7,7 +7,7 @@ const irrigationTypesNames = [
 ];
 
 const systemEfficiencySchema = Joi.object({
-    Efficiency: Joi.number().optional()
+    Efficiency: Joi.number().default(null)
 });
 
 const sprinklingPropsSchema = systemEfficiencySchema.append({
