@@ -36,6 +36,11 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeCreateUser())
   );
 
+  router.post(
+    "/irrigant",
+    adaptRoute(UserControllersFactory.makeCreateUser())
+  );
+
   router.patch(
     "/:id",
     authorization,

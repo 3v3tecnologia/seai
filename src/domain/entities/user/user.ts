@@ -10,6 +10,7 @@ import { UserPassword } from "./userPassword";
 export enum UserTypes {
   ADMIN = "admin",
   STANDARD = "standard",
+  IRRIGANT = "irrigant",
 }
 export type UserType = UserTypes.ADMIN | UserTypes.STANDARD;
 interface UserProps {
@@ -28,7 +29,7 @@ export class User {
   private _email: Email;
   private _password: UserPassword | null;
   public type: UserType;
-  private readonly _modulesAccess: SystemModules | null;
+  private readonly _modulesAccess?: SystemModules | null;
 
   private constructor(props: UserProps, id?: number) {
     this._id = id || null;
@@ -59,7 +60,7 @@ export class User {
     return this._password;
   }
 
-  get access(): SystemModules | null {
+  get access(): SystemModules | null | undefined {
     return this._modulesAccess;
   }
 
@@ -76,7 +77,7 @@ export class User {
     this._password = password;
   }
 
-  public setUserPermission() {}
+  public setUserPermission() { }
 
   static create(
     props: {
@@ -86,7 +87,7 @@ export class User {
       login?: string | null;
       password?: string;
       confirmPassword?: string;
-      modulesAccess: SystemModulesProps | null;
+      modulesAccess: SystemModulesProps | null | undefined;
     },
     id?: number
   ): Either<Error, User> {
@@ -132,11 +133,11 @@ export class User {
     const passwordOrError =
       Reflect.has(props, "password") && props.password !== null
         ? UserPassword.create({
-            value: props.password as string,
-            confirm: Reflect.has(props, "confirmPassword")
-              ? props.confirmPassword
-              : null,
-          })
+          value: props.password as string,
+          confirm: Reflect.has(props, "confirmPassword")
+            ? props.confirmPassword
+            : null,
+        })
         : null;
 
     if (passwordOrError !== null && passwordOrError.isLeft()) {
