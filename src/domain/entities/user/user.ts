@@ -10,14 +10,15 @@ import { UserPassword } from "./userPassword";
 export enum UserTypes {
   ADMIN = "admin",
   STANDARD = "standard",
+  IRRIGANT = "irrigant",
 }
-export type UserType = UserTypes.ADMIN | UserTypes.STANDARD;
+export type UserType = UserTypes.ADMIN | UserTypes.STANDARD | UserTypes.IRRIGANT;
 interface UserProps {
   name?: UserName | null;
   login?: UserLogin | null;
   email: Email;
   password?: UserPassword | null;
-  modulesAccess: SystemModules | null;
+  modulesAccess?: SystemModules | null;
   type: UserType;
 }
 
@@ -76,7 +77,7 @@ export class User {
     this._password = password;
   }
 
-  public setUserPermission() {}
+  public setUserPermission() { }
 
   static create(
     props: {
@@ -86,7 +87,7 @@ export class User {
       login?: string | null;
       password?: string;
       confirmPassword?: string;
-      modulesAccess: SystemModulesProps | null;
+      modulesAccess?: SystemModulesProps | null;
     },
     id?: number
   ): Either<Error, User> {
@@ -98,13 +99,15 @@ export class User {
       errors.addError(emailOrError.value);
     }
 
-    if (!props.type || (props.type !== "admin" && props.type !== "standard")) {
+
+    if (!props.type || (!["admin", "standard", "irrigant"].includes(props.type))) {
       errors.addError(
         new Error(
           'Tipo do usuário não pode ser nulo e tem que ser "admin" ou "standard"'
         )
       );
     }
+
     let userAccess: SystemModules | null = null;
 
     if (props.modulesAccess) {
@@ -132,11 +135,11 @@ export class User {
     const passwordOrError =
       Reflect.has(props, "password") && props.password !== null
         ? UserPassword.create({
-            value: props.password as string,
-            confirm: Reflect.has(props, "confirmPassword")
-              ? props.confirmPassword
-              : null,
-          })
+          value: props.password as string,
+          confirm: Reflect.has(props, "confirmPassword")
+            ? props.confirmPassword
+            : null,
+        })
         : null;
 
     if (passwordOrError !== null && passwordOrError.isLeft()) {

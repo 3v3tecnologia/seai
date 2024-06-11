@@ -87,11 +87,10 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeForgotPassword())
   );
 
-  // router.post(
-  //   "/sign-up",
-  //   authorization,
-  //   adaptRoute(UserControllersFactory.makeSignUp())
-  // );
+  router.post(
+    "/irrigant/register",
+    adaptRoute(UserControllersFactory.makeIrrigantSignUp())
+  );
 
   return router;
 };

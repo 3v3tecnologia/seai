@@ -6,7 +6,7 @@ export class SignIn {
   constructor(authentication: AuthenticationService) {
     this.authentication = authentication;
   }
-  async execute(user: { login: string; password: string }) {
+  async execute(user: { login?: string; email?: string; password: string }) {
     return await this.authentication.auth(user);
   }
 }

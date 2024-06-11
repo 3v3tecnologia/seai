@@ -27,10 +27,12 @@ export class UserAuthentication implements AuthenticationService {
   async auth({
     login,
     password,
+    email
   }: AuthenticationDTO.params): Promise<
     Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
   > {
-    const account = await this.accountRepository.getByLogin(login);
+
+    const account = login ? await this.accountRepository.getByLogin(login) : await this.accountRepository.getByEmail(email as string);
 
     if (!account) {
       return left(new UserNotFoundError());

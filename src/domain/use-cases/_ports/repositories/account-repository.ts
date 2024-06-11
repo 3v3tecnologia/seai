@@ -8,8 +8,12 @@ import { UserAccount } from "../../user/model/user-with-modules";
 export interface AccountRepositoryProtocol {
   add(data: {
     email: string;
+    login?: string;
+    name?: string;
     type: UserType;
-    modules: SystemModulesProps;
+    password?: string;
+    modules?: SystemModulesProps;
+    status?: string;
     code: string;
   }): Promise<number | null>;
   list(

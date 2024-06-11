@@ -5,8 +5,7 @@ import { SignIn } from "../../../domain/use-cases/user/sign-in";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 export class SignInController
-  implements Controller<SignInControllerProtocol.Request, HttpResponse>
-{
+  implements Controller<SignInControllerProtocol.Request, HttpResponse> {
   private signIn: SignIn;
 
   constructor(signIn: SignIn) {
@@ -17,15 +16,16 @@ export class SignInController
     request: SignInControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      if (!request.login) {
-        return badRequest(new Error("É necessário informar o login"));
-      }
+      // if (!request.login ) {
+      //   return badRequest(new Error("É necessário informar o login"));
+      // }
       if (!request.password) {
         return badRequest(new Error("É necessário informar a senha"));
       }
       if (typeof request.password !== "string") {
         return badRequest(new Error("Senha deve ser do formato textual"));
       }
+
       const result = await this.signIn.execute(request);
 
       if (result.isLeft()) {
@@ -40,7 +40,8 @@ export class SignInController
 
 export namespace SignInControllerProtocol {
   export type Request = {
-    login: string;
+    email?: string;
+    login?: string;
     password: string;
   };
 }

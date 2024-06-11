@@ -13,62 +13,89 @@ import { countTotalRows } from "./utils/paginate";
 export class DbAccountRepository implements AccountRepositoryProtocol {
   async add(params: {
     email: string;
+    login?: string;
+    name?: string;
+    password?: string;
+    status?: string;
     type: UserType;
-    modules: SystemModulesProps,
+    modules?: SystemModulesProps,
     code: string,
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
-      const id = await trx
-        .insert({
-          Email: params.email,
-          Type: params.type,
-          Code: params.code,
-          Status: 'pending',
-          CreatedAt: governmentDb.fn.now(),
+      const toInsert = {
+        Email: params.email,
+        Name: params.name,
+        Type: params.type,
+        Code: params.code,
+        Status: params.status || 'pending',
+        CreatedAt: governmentDb.fn.now(),
+      }
+
+      if (params.login) {
+        Object.assign(toInsert, {
+          Login: params.login,
         })
+      }
+
+      if (params.name) {
+        Object.assign(toInsert, {
+          Name: params.name,
+        })
+      }
+
+      if (params.password) {
+        Object.assign(toInsert, {
+          Password: params.password,
+        })
+      }
+
+      const id = await trx
+        .insert(toInsert)
         .returning("Id")
         .into("User");
 
       const user_id = id.length && id[0].Id;
 
-      // Refactor: Bulk insert
-      // Refactor: add user permissions mapper
-      await trx
-        .insert({
-          Fk_User: user_id,
-          Fk_Module: params.modules[Modules.NEWS].id,
-          Read: params.modules[Modules.NEWS].read,
-          Write: params.modules[Modules.NEWS].write,
-        })
-        .into("User_Access");
+      if (params.modules) {
+        // Refactor: Bulk insert
+        // Refactor: add user permissions mapper
+        await trx
+          .insert({
+            Fk_User: user_id,
+            Fk_Module: params.modules[Modules.NEWS].id,
+            Read: params.modules[Modules.NEWS].read,
+            Write: params.modules[Modules.NEWS].write,
+          })
+          .into("User_Access");
 
-      await trx
-        .insert({
-          Fk_User: user_id,
-          Fk_Module: params.modules[Modules.REGISTER].id,
-          Read: params.modules[Modules.REGISTER].read,
-          Write: params.modules[Modules.REGISTER].write,
-        })
-        .into("User_Access");
+        await trx
+          .insert({
+            Fk_User: user_id,
+            Fk_Module: params.modules[Modules.REGISTER].id,
+            Read: params.modules[Modules.REGISTER].read,
+            Write: params.modules[Modules.REGISTER].write,
+          })
+          .into("User_Access");
 
-      await trx
-        .insert({
-          Fk_User: user_id,
-          Fk_Module: params.modules[Modules.USER].id,
-          Read: params.modules[Modules.USER].read,
-          Write: params.modules[Modules.USER].write,
-        })
-        .into("User_Access");
+        await trx
+          .insert({
+            Fk_User: user_id,
+            Fk_Module: params.modules[Modules.USER].id,
+            Read: params.modules[Modules.USER].read,
+            Write: params.modules[Modules.USER].write,
+          })
+          .into("User_Access");
 
-      await trx
-        .insert({
-          Fk_User: user_id,
-          Fk_Module: params.modules[Modules.JOBS].id,
-          Read: params.modules[Modules.JOBS].read,
-          Write: params.modules[Modules.JOBS].write,
-        })
-        .into("User_Access");
+        await trx
+          .insert({
+            Fk_User: user_id,
+            Fk_Module: params.modules[Modules.JOBS].id,
+            Read: params.modules[Modules.JOBS].read,
+            Write: params.modules[Modules.JOBS].write,
+          })
+          .into("User_Access");
+      }
 
       id_user = user_id;
     });
