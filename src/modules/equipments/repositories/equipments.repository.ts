@@ -1,12 +1,12 @@
-import { equipmentsDb } from "./utils/connection";
 import { geoLocationExtension } from "./utils/geolocation";
+import { governmentDb } from '../../../infra/database/postgres/connection/knexfile'
 
 export class DbEquipmentsRepository {
   static async insertLastUpdatedAtByOrgan(organId: number) {
-    await equipmentsDb.raw(`
+    await governmentDb.raw(`
         INSERT
             INTO
-            public."LastUpdatedAt" (
+            equipments."LastUpdatedAt" (
                 fk_organ,
                 completedon
             )
@@ -26,13 +26,16 @@ export class DbEquipmentsRepository {
   }
 
   static async getDateOfLastMeasurementTaken(): Promise<null | Array<{ Time: string, Id_Organ: number }>> {
-    const meteorologicalOrganIds = await equipmentsDb.select("IdOrgan")
+    const meteorologicalOrganIds = await governmentDb
+      .withSchema("equipments")
+      .select("IdOrgan")
       .from("MetereologicalOrgan")
 
     if (meteorologicalOrganIds.length) {
       const organsIds = meteorologicalOrganIds.map(item => item.IdOrgan)
 
-      const response = await equipmentsDb
+      const response = await governmentDb
+        .withSchema("equipments")
         .select("*")
         .from("LastUpdatedAt")
         .whereIn("fk_organ", organsIds)
@@ -57,7 +60,8 @@ export class DbEquipmentsRepository {
       Name: number
     }> = []
 
-    const response = await equipmentsDb
+    const response = await governmentDb
+      .withSchema("equipments")
       .select("IdType", "Name")
       .from("EquipmentType");
 
@@ -75,7 +79,8 @@ export class DbEquipmentsRepository {
     User: string | null,
     Password: string | null
   } | null> {
-    const response = await equipmentsDb
+    const response = await governmentDb
+      .withSchema("equipments")
       .select("IdOrgan", "Host", "User", "Password")
       .from("MetereologicalOrgan")
       .where({ Name: organName })
@@ -105,7 +110,7 @@ export class DbEquipmentsRepository {
     FK_Type: number,
     Enabled: number
   }>> {
-    const response = await equipmentsDb.raw(
+    const response = await governmentDb.raw(
       `
         SELECT
           equipment."IdEquipment" AS "Id",
@@ -119,9 +124,9 @@ export class DbEquipmentsRepository {
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
         FROM
-          "MetereologicalEquipment" equipment
-        INNER JOIN "EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
-        INNER JOIN "MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
+          equipments."MetereologicalEquipment" equipment
+        INNER JOIN equipments."EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
+        INNER JOIN equipments."MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
         WHERE
           eqp_type."Name" = ?
         `,
@@ -155,9 +160,9 @@ export class DbEquipmentsRepository {
   static async bulkInsert(equipments: Array<any>): Promise<Array<{ Code: string, Id: number }>> {
     const insertedEquipments: Array<{ Code: string, Id: number }> = [];
 
-    const st = geoLocationExtension(equipmentsDb);
+    const st = geoLocationExtension(governmentDb);
 
-    await equipmentsDb.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       // TO-DO: how insert coordinates?
       // TO-DO: how measurements?
       const toPersistency = equipments.map((equipment: any) => {
@@ -172,13 +177,13 @@ export class DbEquipmentsRepository {
           FK_Organ: equipment.FK_Organ,
           FK_Type: equipment.FK_Type,
           Enable: equipment.Enabled,
-          CreatedAt: equipmentsDb.fn.now(),
+          CreatedAt: governmentDb.fn.now(),
         };
       })
 
       const eqps = await trx
         .batchInsert<any>(
-          "MetereologicalEquipment",
+          "equipments.MetereologicalEquipment",
           toPersistency
         )
         .returning(["IdEquipment", "IdEquipmentExternal"]);
@@ -199,7 +204,8 @@ export class DbEquipmentsRepository {
 
   static async getStationCodesWithMeasurements(equipmentsCodes = [], time: string) {
 
-    const result = await equipmentsDb
+    const result = await governmentDb
+      .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
       .from("ReadStations")
       .innerJoin(
@@ -227,7 +233,8 @@ export class DbEquipmentsRepository {
   }
 
   static async getPluviometersCodesWithMeasurements(equipmentsCodes = [], time: string) {
-    const result = await equipmentsDb
+    const result = await governmentDb
+      .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
       .from("ReadPluviometers")
       .innerJoin(
@@ -256,7 +263,7 @@ export class DbEquipmentsRepository {
     let equipments = [];
 
     if (organName) {
-      equipments = await equipmentsDb.raw(
+      equipments = await governmentDb.raw(
         `
         SELECT
           equipment."IdEquipment" AS "Id",
@@ -270,16 +277,16 @@ export class DbEquipmentsRepository {
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
         FROM
-          "MetereologicalEquipment" equipment
-        INNER JOIN "EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
-        INNER JOIN "MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
+          equipments."MetereologicalEquipment" equipment
+        INNER JOIN equipments."EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
+        INNER JOIN equipments."MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
         WHERE
           organ."Name" = ? AND eqp_type."Name" = ?
         `,
         [organName, eqpType]
       );
     } else {
-      equipments = await equipmentsDb.raw(
+      equipments = await governmentDb.raw(
         `
         SELECT
           equipment."IdEquipment" AS "Id",
@@ -293,9 +300,9 @@ export class DbEquipmentsRepository {
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
         FROM
-          "MetereologicalEquipment" equipment
-        INNER JOIN "EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
-        INNER JOIN "MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
+          equipments."MetereologicalEquipment" equipment
+        INNER JOIN equipments."EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
+        INNER JOIN equipments."MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
         WHERE
           eqp_type."Name" = ?
         `,

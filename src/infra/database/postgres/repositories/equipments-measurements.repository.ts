@@ -3,7 +3,7 @@ import {
   IEquipmentsMeasuresRepository,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-measurements.repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
-import { equipments } from "../connection/knexfile";
+import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 export class EquipmentsMeasurementsRepository
@@ -20,7 +20,7 @@ export class EquipmentsMeasurementsRepository
           SELECT
               rs.*
           FROM
-              "ReadStations" AS rs
+              equipments."ReadStations" AS rs
           ${whereSQL}
       )
       SELECT
@@ -32,13 +32,13 @@ export class EquipmentsMeasurementsRepository
           rs.*
       FROM
           StationMeasurements AS rs
-      INNER JOIN equipments.public."MetereologicalEquipment" me 
+      INNER JOIN equipments."MetereologicalEquipment" me 
       ON
           me."IdEquipment" = rs."FK_Equipment"
     `;
 
 
-    const response = await equipments.raw(querySQL, id);
+    const response = await governmentDb.raw(querySQL, id);
 
     const rawMeasure = response.rows[0]
 
@@ -76,7 +76,7 @@ export class EquipmentsMeasurementsRepository
           SELECT
               rs.*
           FROM
-              "ReadStations" AS rs
+              equipments."ReadStations" AS rs
           ${whereSQL}
       )
       SELECT
@@ -88,12 +88,12 @@ export class EquipmentsMeasurementsRepository
           rs.*
       FROM
           StationMeasurements AS rs
-      INNER JOIN equipments.public."MetereologicalEquipment" me 
+      INNER JOIN equipments."MetereologicalEquipment" me 
       ON
           me."IdEquipment" = rs."FK_Equipment"
     `;
 
-    const response = await equipments.raw(querySQL, ids);
+    const response = await governmentDb.raw(querySQL, ids);
 
     if (response.rows.length) {
       return response.rows.map((row: any) => {
@@ -151,15 +151,15 @@ export class EquipmentsMeasurementsRepository
     const countSQL = `
       SELECT
                      count(equipment."IdEquipment")
-                 FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
+                 FROM equipments."MetereologicalEquipment" AS equipment
+            LEFT JOIN equipments."ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
+            INNER JOIN equipments."MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
                      ${queries.join(" ")}
     `;
 
-    const countRows = await countTotalRows(equipments)(countSQL, binding);
+    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
     queries.push('ORDER BY stations."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
@@ -186,15 +186,15 @@ export class EquipmentsMeasurementsRepository
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
                 TRUNC(stations."Et0"::numeric,2) AS "Et0"
-            FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
+            FROM equipments."MetereologicalEquipment" AS equipment
+            LEFT JOIN equipments."ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
+            INNER JOIN equipments."MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
             ${queries.join(" ")}
     `;
 
-    const data = await equipments.raw(sqlQuery, binding);
+    const data = await governmentDb.raw(sqlQuery, binding);
 
     const rows = data.rows;
 
@@ -286,15 +286,15 @@ export class EquipmentsMeasurementsRepository
       SELECT
           count("IdEquipment")
       FROM
-        "MetereologicalEquipment" AS equipment 
-      INNER JOIN "ReadPluviometers" AS pluviometer
+        equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."ReadPluviometers" AS pluviometer
         ON equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
+      INNER JOIN equipments."MetereologicalOrgan" AS organ
           ON organ."IdOrgan" = equipment."FK_Organ"
                      ${queries.join(" ")}
     `;
 
-    const countRows = await countTotalRows(equipments)(countSQL, binding);
+    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
     console.log("[COUNT] ", countRows);
 
@@ -312,15 +312,15 @@ export class EquipmentsMeasurementsRepository
           organ."IdOrgan",
           TRUNC(pluviometer."Value"::numeric,2) AS "Value"
       FROM
-        "MetereologicalEquipment" AS equipment 
-      INNER JOIN "ReadPluviometers" AS pluviometer
+        equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."ReadPluviometers" AS pluviometer
         ON equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
+      INNER JOIN equipments."MetereologicalOrgan" AS organ
           ON organ."IdOrgan" = equipment."FK_Organ"
       ${queries.join(" ")};
   `;
 
-    const data = await equipments.raw(sql, binding);
+    const data = await governmentDb.raw(sql, binding);
 
     const rows = data.rows;
 
@@ -366,17 +366,17 @@ export class EquipmentsMeasurementsRepository
                 stations."AtmosphericPressure" ,
                 stations."WindVelocity",
                 TRUNC(stations."Et0"::numeric,2) AS "Et0"
-            FROM "MetereologicalEquipment" AS equipment  
-            LEFT JOIN "ReadStations" AS stations
+            FROM equipments."MetereologicalEquipment" AS equipment
+            LEFT JOIN equipments."ReadStations" AS stations
             ON equipment."IdEquipment"  = stations."FK_Equipment"
-            INNER JOIN "MetereologicalOrgan" AS organ
+            INNER JOIN equipments."MetereologicalOrgan" AS organ
             ON organ."IdOrgan" = stations."FK_Organ"
             WHERE equipment."IdEquipment" = ?
             ORDER BY stations."IdRead" DESC
             LIMIT 1;
     `;
 
-    const data = await equipments.raw(sqlQuery, [id]);
+    const data = await governmentDb.raw(sqlQuery, [id]);
 
     if (!data.rows.length) {
       return null;
@@ -450,11 +450,11 @@ export class EquipmentsMeasurementsRepository
           TRUNC(pluviometer."Value"::numeric,2) AS "Value",
           pluviometer."FK_Equipment"
       FROM
-                    "MetereologicalEquipment" AS equipment
-      INNER JOIN "ReadPluviometers" AS pluviometer
+                    equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."ReadPluviometers" AS pluviometer
                     ON
                 equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
+      INNER JOIN equipments."MetereologicalOrgan" AS organ
                       ON
                 organ."IdOrgan" = equipment."FK_Organ"
       WHERE
@@ -464,7 +464,7 @@ export class EquipmentsMeasurementsRepository
       LIMIT 1;
     `;
 
-    const data = await equipments.raw(sqlQuery, [id]);
+    const data = await governmentDb.raw(sqlQuery, [id]);
 
     if (!data.rows.length) {
       return null;
@@ -498,11 +498,11 @@ export class EquipmentsMeasurementsRepository
           pluviometer."Value",
           pluviometer."FK_Equipment"
       FROM
-                    "MetereologicalEquipment" AS equipment
-      INNER JOIN "ReadPluviometers" AS pluviometer
+                    equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."ReadPluviometers" AS pluviometer
                     ON
                 equipment."IdEquipment" = pluviometer."FK_Equipment"
-      INNER JOIN "MetereologicalOrgan" AS organ
+      INNER JOIN equipments."MetereologicalOrgan" AS organ
                       ON
                 organ."IdOrgan" = equipment."FK_Organ"
       WHERE
@@ -512,7 +512,7 @@ export class EquipmentsMeasurementsRepository
       LIMIT 1;
     `;
 
-    const response = await equipments.raw(sqlQuery, [id]);
+    const response = await governmentDb.raw(sqlQuery, [id]);
 
     if (!response.rows.length) {
       return false;
@@ -525,7 +525,8 @@ export class EquipmentsMeasurementsRepository
   async checkIfPluviometerMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
-    const measure = await equipments
+    const measure = await governmentDb
+      .withSchema('equipments')
       .select("IdRead")
       .from("ReadPluviometers")
       .where({ Time: params.time })
@@ -541,7 +542,8 @@ export class EquipmentsMeasurementsRepository
   async checkIfStationMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Result {
-    const measure = await equipments
+    const measure = await governmentDb
+      .withSchema('equipments')
       .select("IdRead")
       .from("ReadStations")
       .where({ Time: params.time })
@@ -557,7 +559,8 @@ export class EquipmentsMeasurementsRepository
   async checkIfStationMeasurementsAlreadyExists(
     idRead: number
   ): Promise<boolean> {
-    const measure = await equipments
+    const measure = await governmentDb
+      .withSchema('equipments')
       .select("IdRead")
       .from("ReadStations")
       .where({ IdRead: idRead })
@@ -572,8 +575,9 @@ export class EquipmentsMeasurementsRepository
   async updateStationMeasures(
     request: IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Params
   ): IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Result {
-    await equipments.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       await trx("ReadStations")
+        .withSchema('equipments')
         .update({
           TotalRadiation: request.TotalRadiation,
           AverageRelativeHumidity: request.AverageRelativeHumidity,
@@ -592,7 +596,8 @@ export class EquipmentsMeasurementsRepository
   async updatePluviometerMeasures(
     request: IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Params
   ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
-    await equipments("ReadPluviometers")
+    await governmentDb("ReadPluviometers")
+      .withSchema('equipments')
       .update({
         Value: request.Precipitation
       })
@@ -601,11 +606,12 @@ export class EquipmentsMeasurementsRepository
   async bulkUpdateEt0(
     measurements: IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Params
   ): IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Result {
-    const trx = await equipments.transaction();
+    const trx = await governmentDb.transaction();
     try {
       await Promise.all(
         measurements.map((read) => {
-          return equipments("ReadStations")
+          return governmentDb("ReadStations")
+            .withSchema('equipments')
             .where("IdRead", read.IdRead)
             .update({
               Et0: read.Et0,

@@ -2,7 +2,6 @@ export const DATABASES = {
   GOVERNMENT: "government",
   LOGS: "logs",
   CENSUS: "census",
-  EQUIPMENTS: "equipments",
   API_KEY: "API_Key",
   NEWSLETTER: {
     DATABASE: "newsletter",
@@ -17,17 +16,6 @@ export const DATABASES = {
     TABLES: {
       SCHEDULE: "pgboss.schedule",
       JOB: "pgboss.job",
-    },
-  },
-  MANAGEMENT: {
-    DATABASE: "management",
-    SCHEMA: "public",
-    TABLES: {
-      PHYSICS_CHARACTERISTICS: "Physics_Characteristics",
-      CHEMICAL_CHARACTERISTICS: "Chemical_Characteristics",
-      CROP_CYCLE: "Crop_Cycle",
-      SOIL: "Soil",
-      CROP: "Crop",
     },
   },
 };
