@@ -8,3 +8,4 @@ export * from "./delete-subscriber.controller";
 export * from "./fetch-subscribers.controller";
 export * from "./update-send-at.controller";
 export * from "./fetch-subscribers-emails.controller";
+export * from "./fetch-only-sent.controller";
