@@ -50,7 +50,7 @@ export class DbManagementCropRepository {
         .del();
 
       await trx.batchInsert(
-        'Crop_Cycle',
+        'management.Crop_Cycle',
         cycles.map((cycle) => {
           return {
             FK_Crop: idCrop,

@@ -94,6 +94,7 @@ export const IRRIGANT = {
                                     data: {
                                         Etc: 6.4800234,
                                         RepositionBlade: 5.430331393939395,
+                                        IrrigationEfficiency: 0.825,
                                         IrrigationTime: "05:25",
                                         CropDays: 1,
                                         Et0: 3.2400117,
