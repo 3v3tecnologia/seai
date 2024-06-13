@@ -61,6 +61,7 @@ export class IrrigantSignUp extends Command {
             }
         );
 
+
         if (userOrError.isLeft()) {
             return left(userOrError.value);
         }
