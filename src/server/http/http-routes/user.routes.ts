@@ -88,7 +88,7 @@ export const userRouter = (): Router => {
   );
 
   router.post(
-    "/irrigant/register",
+    "/irrigant",
     adaptRoute(UserControllersFactory.makeIrrigantSignUp())
   );
 

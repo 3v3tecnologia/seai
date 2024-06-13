@@ -166,8 +166,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     const queries: Array<string> = [];
 
-    console.log(params);
-
     if (params.only_sent) {
       queries.push(`WHERE news."SentAt"  IS NOT NULL`)
     }

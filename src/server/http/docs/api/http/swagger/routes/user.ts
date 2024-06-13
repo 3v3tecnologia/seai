@@ -838,6 +838,71 @@ export const USER = {
       },
     },
   },
+  [`${URL}/irrigant`]: {
+    post: {
+      tags: TAGS,
+      summary: "Create a new user irrigant",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                login: {
+                  type: "string",
+                },
+                name: {
+                  type: "string",
+                },
+                email: {
+                  type: "string",
+                },
+                password: {
+                  type: "string",
+                },
+                confirmPassword: {
+                  type: "string",
+                }
+              },
+              example: {
+                name: "tester",
+                login: "tester",
+                email: "tester",
+                password: "1234567",
+                confirmPassword: "1234567",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    accessToken: "token",
+                    userName: "irrigant"
+                  }
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${URL}/profile`]: {
     patch: {
       tags: TAGS,
