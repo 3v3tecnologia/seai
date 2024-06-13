@@ -1,3 +1,5 @@
+import { PluviometerReadEntity } from "../../../../domain/entities/equipments/PluviometerRead";
+import { StationReadEntity } from "../../../../domain/entities/equipments/StationRead";
 import {
   IEquipsMeasurementsRepoDTO,
   IEquipmentsMeasuresRepository,
@@ -5,6 +7,79 @@ import {
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
+
+function mapStationMeasurementsWithUnitsToDomain(row: any): StationReadEntity {
+  return {
+    IdRead: Number(row.IdRead) || null,
+    IdEquipment: Number(row.IdEquipment),
+    Time: row.Date,
+    Hour: row.Hour,
+    Altitude: {
+      Unit: "m",
+      Value: Number(row.Altitude) || null,
+    },
+    TotalRadiation: {
+      Unit: "W/m",
+      Value: Number(row.TotalRadiation) || null,
+    },
+    AverageRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.AverageRelativeHumidity) || null,
+    },
+    MinRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.MinRelativeHumidity) || null,
+    },
+    MaxRelativeHumidity: {
+      Unit: "%",
+      Value: Number(row.MaxRelativeHumidity) || null,
+    },
+    AverageAtmosphericTemperature: {
+      Unit: "hPa",
+      Value: Number(row.AverageAtmosphericTemperature) || null,
+    },
+    MaxAtmosphericTemperature: {
+      Unit: "hPa",
+      Value: Number(row.MaxAtmosphericTemperature) || null,
+    },
+    MinAtmosphericTemperature: {
+      Unit: "hPa",
+      Value: Number(row.MinAtmosphericTemperature) || null,
+    },
+    AtmosphericPressure: {
+      Unit: "hPa",
+      Value: Number(row.AtmosphericPressure) || null,
+    },
+    WindVelocity: {
+      Unit: "m/s",
+      Value: Number(row.WindVelocity) || null,
+    },
+    Et0: {
+      Unit: "mm",
+      Value: Number(row.Et0) || null,
+    },
+  }
+}
+
+function mapPluviometerMeasurementsWithUnitsToDomain(row: any): PluviometerReadEntity {
+  const data = {
+    IdRead: Number(row.IdRead) || null,
+    Time: row.Time,
+    Hour: row.Hour,
+    Precipitation: {
+      Unit: "mm",
+      Value: Number(row.Value) || null,
+    },
+  }
+
+  if (Reflect.has(row, 'IdEquipment')) {
+    Object.assign(data, {
+      IdEquipment: row.IdEquipment
+    })
+  }
+
+  return data
+}
 
 export class EquipmentsMeasurementsRepository
   implements IEquipmentsMeasuresRepository {
@@ -202,55 +277,7 @@ export class EquipmentsMeasurementsRepository
       return null;
     }
 
-    const measuresToDomain = rows.map((row: any) => ({
-      IdRead: Number(row.IdRead) || null,
-      Time: row.Date,
-      Hour: row.Hour,
-      Altitude: {
-        Unit: "m",
-        Value: Number(row.Altitude) || null,
-      },
-      TotalRadiation: {
-        Unit: "W/m",
-        Value: Number(row.TotalRadiation) || null,
-      },
-      AverageRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.AverageRelativeHumidity) || null,
-      },
-      MinRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MinRelativeHumidity) || null,
-      },
-      MaxRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MaxRelativeHumidity) || null,
-      },
-      AverageAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.AverageAtmosphericTemperature) || null,
-      },
-      MaxAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MaxAtmosphericTemperature) || null,
-      },
-      MinAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MinAtmosphericTemperature) || null,
-      },
-      AtmosphericPressure: {
-        Unit: "°C",
-        Value: Number(row.AtmosphericPressure) || null,
-      },
-      WindVelocity: {
-        Unit: "m/s",
-        Value: Number(row.WindVelocity) || null,
-      },
-      Et0: {
-        Unit: "mm",
-        Value: Number(row.Et0) || null,
-      },
-    }));
+    const measuresToDomain = rows.map((row: any) => mapStationMeasurementsWithUnitsToDomain(row));
 
     return toPaginatedOutput({
       data: measuresToDomain,
@@ -296,7 +323,6 @@ export class EquipmentsMeasurementsRepository
 
     const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
-    console.log("[COUNT] ", countRows);
 
     queries.push('ORDER BY pluviometer."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
@@ -328,15 +354,7 @@ export class EquipmentsMeasurementsRepository
       return null;
     }
 
-    const toDomain = rows.map((row: any) => ({
-      IdRead: Number(row.IdRead) || null,
-      Time: row.Time,
-      Hour: row.Hour,
-      Precipitation: {
-        Unit: "mm",
-        Value: Number(row.Value) || null,
-      },
-    }));
+    const toDomain = rows.map((row: any) => mapPluviometerMeasurementsWithUnitsToDomain(row));
 
     return toPaginatedOutput({
       data: toDomain,
@@ -384,56 +402,7 @@ export class EquipmentsMeasurementsRepository
 
     const row = data.rows[0];
 
-    return {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.IdEquipment),
-      Time: row.Date,
-      Hour: row.Hour,
-      Altitude: {
-        Unit: "m",
-        Value: Number(row.Altitude) || null,
-      },
-      TotalRadiation: {
-        Unit: "W/m",
-        Value: Number(row.TotalRadiation) || null,
-      },
-      AverageRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.AverageRelativeHumidity) || null,
-      },
-      MinRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MinRelativeHumidity) || null,
-      },
-      MaxRelativeHumidity: {
-        Unit: "%",
-        Value: Number(row.MaxRelativeHumidity) || null,
-      },
-      AverageAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.AverageAtmosphericTemperature) || null,
-      },
-      MaxAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MaxAtmosphericTemperature) || null,
-      },
-      MinAtmosphericTemperature: {
-        Unit: "°C",
-        Value: Number(row.MinAtmosphericTemperature) || null,
-      },
-      AtmosphericPressure: {
-        Unit: "°C",
-        Value: Number(row.AtmosphericPressure) || null,
-      },
-      WindVelocity: {
-        Unit: "m/s",
-        Value: Number(row.WindVelocity) || null,
-      },
-      Et0: {
-        Unit: "mm",
-        Value: Number(row.Et0) || null,
-      },
-    };
+    return mapStationMeasurementsWithUnitsToDomain(row);
   }
   async getLatestPluviometerMeasurements(
     params: IEquipsMeasurementsRepoDTO.GetLatestPluviometerMeasurements.Params
@@ -472,16 +441,7 @@ export class EquipmentsMeasurementsRepository
 
     const row = data.rows[0];
 
-    return {
-      IdRead: Number(row.IdRead),
-      IdEquipment: Number(row.FK_Equipment),
-      Time: row.Time,
-      Hour: row.Hour,
-      Precipitation: {
-        Unit: "mm",
-        Value: Number(row.Value),
-      },
-    };
+    return mapPluviometerMeasurementsWithUnitsToDomain(row);
   }
   async checkIfPluviometerMeasurementsExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Params

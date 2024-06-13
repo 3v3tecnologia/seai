@@ -7,6 +7,7 @@ import { governmentDb } from '../../../infra/database/postgres/connection/knexfi
 export class DbManagementCropRepository {
   static async createCrop(culture: ManagementCrop): Promise<number | null> {
     const insertedCrop = await governmentDb
+      .withSchema('management')
       .insert({
         Name: culture.Name,
         Location_Name: culture?.Location || null,
@@ -20,6 +21,7 @@ export class DbManagementCropRepository {
 
   static async updateCrop(culture: ManagementCrop): Promise<void> {
     await governmentDb('Crop')
+      .withSchema('management')
       .update({
         Name: culture.Name,
         Location_Name: culture.Location,
@@ -32,6 +34,7 @@ export class DbManagementCropRepository {
 
   static async deleteCrop(idCrop: number): Promise<void> {
     await governmentDb('Crop')
+      .withSchema('management')
       .where({ Id: idCrop })
       .del();
   }
@@ -42,6 +45,7 @@ export class DbManagementCropRepository {
   ): Promise<void> {
     await governmentDb.transaction(async (trx) => {
       await trx('Crop_Cycle')
+        .withSchema('management')
         .where({ FK_Crop: idCrop })
         .del();
 
@@ -65,6 +69,7 @@ export class DbManagementCropRepository {
     idCrop: number
   ): Promise<Array<ManagementCropCycle> | null> {
     const data = await governmentDb
+      .withSchema('management')
       .select("*")
       .from('Crop_Cycle')
       .where({ FK_Crop: idCrop })
@@ -90,12 +95,14 @@ export class DbManagementCropRepository {
 
   static async deleteCropCycles(idCrop: number): Promise<void> {
     await governmentDb('Crop_Cycle')
+      .withSchema('management')
       .where({ FK_Crop: idCrop })
       .del();
   }
 
   static async nameExists(crop: string): Promise<boolean> {
     const result = await governmentDb
+      .withSchema('management')
       .select("*")
       .from('Crop')
       .where({ Name: crop })
@@ -106,6 +113,7 @@ export class DbManagementCropRepository {
 
   static async idExists(crop: number): Promise<boolean> {
     const result = await governmentDb
+      .withSchema('management')
       .select("*")
       .from('Crop')
       .where({ Id: crop })
@@ -119,7 +127,7 @@ export class DbManagementCropRepository {
   ): Promise<{ Id: number; Name: string; LocationName: string | null } | null> {
     const result = await governmentDb.raw(
       `
-      SELECT * FROM "Crop" c 
+      SELECT * FROM management."Crop" c 
       WHERE c."Id" = ?
     `,
       [id]
@@ -159,6 +167,7 @@ export class DbManagementCropRepository {
     LocationName: string | null;
   }> | null> {
     const data = await governmentDb
+      .withSchema('management')
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .from('Crop');
 
@@ -190,7 +199,7 @@ export class DbManagementCropRepository {
           "CreatedAt",
           "UpdatedAt"
       FROM
-          "Crop" c
+          management."Crop" c
       WHERE
           (
                 to_tsvector(
@@ -265,6 +274,7 @@ export class DbManagementCropRepository {
     name: string
   ): Promise<ManagementCropParams | null> {
     const dbCrops = await governmentDb
+      .withSchema('management')
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .where({ Name: name })
       .from('Crop')

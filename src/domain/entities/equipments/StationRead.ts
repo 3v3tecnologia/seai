@@ -1,5 +1,5 @@
 export interface StationReadEntity {
-  IdRead: number;
+  IdRead?: number | null;
   IdEquipment: number;
   Time: string;
   Hour: string;
