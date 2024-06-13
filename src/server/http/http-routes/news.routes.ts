@@ -69,9 +69,16 @@ export const newsRouter = (): Router => {
 
   router.get(
     "/",
+    authorization,
+    newsReadAccessAuth,
+    adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
+  );
+
+  router.get(
+    "/sent",
     // authorization,
     // newsReadAccessAuth,
-    adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
+    adaptRoute(NewsletterControllersFactory.makeFetchOnlySentNewsletter())
   );
 
   return router;

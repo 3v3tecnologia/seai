@@ -10,3 +10,4 @@ export * from "./delete-subscriber";
 export * from "./fetch-subscriber-by-email";
 export * from "./update-send-at";
 export * from "./fetch-subscribers-emails";
+export * from "./fetch-only-sent";

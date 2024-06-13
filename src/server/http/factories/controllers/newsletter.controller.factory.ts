@@ -62,6 +62,12 @@ export class NewsletterControllersFactory {
     );
   }
 
+  static makeFetchOnlySentNewsletter(): FetchNewsController {
+    return new FetchNewsController(
+      NewsletterUseCasesFactory.makeFetchOnlySentNewsletter()
+    );
+  }
+
   static makeFetchByIdNewsletter(): FetchNewsByIdController {
     return new FetchNewsByIdController(
       NewsletterUseCasesFactory.makeFetchByIdNewsletter()

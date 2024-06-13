@@ -5,7 +5,6 @@ import {
   NewsRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
-import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { countTotalRows, } from "./utils/paginate";
 
@@ -21,7 +20,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Content: request.Data,
       })
       .returning("Id")
-      .into(DATABASES.NEWSLETTER.NEWS);
+      .into("News");
 
     const id = result.length && result[0].Id;
 
@@ -42,8 +41,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           s."Email" ,
           s."Organ" ,
           s."SendAt",
-      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
+      FROM "News" n
+      INNER JOIN "Sender" s
       ON s."Id" = n."Fk_Sender" 
       WHERE n."Id" = ?
     `,
@@ -72,7 +71,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async updateSendAt(id: number): Promise<void> {
-    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
+    await newsletterDb("News")
       .where({
         Id: id
       })
@@ -82,32 +81,32 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
   }
   async deleteJobFromNews(id_news: number): Promise<void> {
-    await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
-      .where({
-        Fk_News: id_news,
-      })
-      .delete();
+    // await newsletterDb("NewsJob")
+    //   .where({
+    //     Fk_News: id_news,
+    //   })
+    //   .delete();
   }
 
   async getIdJobFromNews(id_news: number): Promise<string | null> {
-    const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
-      .select("*")
-      .where({
-        Fk_News: id_news,
-      })
-      .first();
+    // const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
+    //   .select("*")
+    //   .where({
+    //     Fk_News: id_news,
+    //   })
+    //   .first();
 
-    if (!result) {
-      return null;
-    }
+    // if (!result) {
+    //   return null;
+    // }
 
-    return result.Fk_Job;
+    return null;
   }
 
   async update(
     request: ContentRepositoryDTO.Update.Request
   ): ContentRepositoryDTO.Update.Response {
-    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
+    await newsletterDb("News")
       .where({
         Id: request.Id,
       })
@@ -122,7 +121,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async delete(
     request: ContentRepositoryDTO.Delete.Request
   ): ContentRepositoryDTO.Delete.Response {
-    await newsletterDb(DATABASES.NEWSLETTER.NEWS)
+    await newsletterDb("News")
       .where({ Id: request.Id })
       .delete();
   }
@@ -143,8 +142,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           s."Email" ,
           s."Organ",
           n."SentAt"
-      FROM "${DATABASES.NEWSLETTER.NEWS}" n 
-      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" s 
+      FROM "News" n
+      INNER JOIN "Sender" s
       ON s."Id" = n."Fk_Sender" 
       WHERE n."Id" = ?
     `,
@@ -167,14 +166,18 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     const queries: Array<string> = [];
 
+    if (params.only_sent) {
+      queries.push(`WHERE news."SentAt"  IS NOT NULL`)
+    }
+
     if (title) {
-      queries.push(`WHERE (
+      queries.push(`${queries.length ? 'AND' : 'WHERE'} (
           to_tsvector('simple', coalesce(news."Title", '')) 
           ) @@ to_tsquery('simple', '${title}:*')`);
     }
 
     const countSQL = `
-      SELECT count(news."Id") FROM "${DATABASES.NEWSLETTER.NEWS}" as news
+      SELECT count(news."Id") FROM "News" as news
       ${queries.join(" ")}
     `;
 
@@ -196,8 +199,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           news."SentAt",
           sender."Email" ,
           sender."Organ" 
-      FROM "${DATABASES.NEWSLETTER.NEWS}" as news 
-      INNER JOIN "${DATABASES.NEWSLETTER.SENDER}" as sender
+      FROM "News" as news 
+      INNER JOIN "Sender" as sender
       ON sender."Id" = news."Fk_Sender" 
       ${queries.join(" ")}
     `, binding);
@@ -210,7 +213,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     const news = rows.map((row: any) => NewsMapper.toDomain(row));
 
-    console.log(news);
 
     return toPaginatedOutput<Required<Content>>({
       data: news,

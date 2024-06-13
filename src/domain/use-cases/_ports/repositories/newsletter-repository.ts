@@ -45,7 +45,7 @@ export namespace NewsletterSenderRepositoryDTO {
 
 export namespace ContentRepositoryDTO {
   export namespace GetAll {
-    export type Request = { title?: string } & IPaginationInput;
+    export type Request = { only_sent: boolean; title?: string } & IPaginationInput;
 
     export type Response = Promise<IOutputWithPagination<
       Required<Content>

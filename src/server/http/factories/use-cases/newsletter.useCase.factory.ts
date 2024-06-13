@@ -30,9 +30,15 @@ export class NewsletterUseCasesFactory {
     return new FetchAllNews(this.repository);
   }
 
+  static makeFetchOnlySentNewsletter(): FetchAllNews {
+    return new FetchAllNews(this.repository);
+  }
+
   static makeFetchByIdNewsletter(): FetchByIdNews {
     return new FetchByIdNews(this.repository);
   }
+
+
 
   static makeUpdateNewsletter(): UpdateNews {
     return new UpdateNews(
