@@ -10,7 +10,7 @@ import {
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { getYesterDayDate } from "../../../../shared/utils/date";
-import { equipments } from "../connection/knexfile";
+import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 /*
@@ -42,7 +42,8 @@ export class DbEquipmentsRepository
   EquipmentsRepositoryProtocol,
   MeteorologicalOrganRepositoryProtocol {
   async getMeteorologicalOrgans(): MeteorologicalOrganRepositoryDTOProtocol.Get.Result {
-    const data = await equipments
+    const data = await governmentDb
+      .withSchema('equipments')
       .select("IdOrgan", "Name", "Host", "User")
       .from("MetereologicalOrgan");
 
@@ -65,7 +66,8 @@ export class DbEquipmentsRepository
   async createMeteorologicalOrgan(
     params: MeteorologicalOrganRepositoryDTOProtocol.Create.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.Create.Result {
-    const rawResult = await equipments
+    const rawResult = await governmentDb
+      .withSchema('equipments')
       .insert({
         Name: params.Name,
         Host: params.Host,
@@ -83,7 +85,8 @@ export class DbEquipmentsRepository
   async updateMeteorologicalOrgan(
     organ: MeteorologicalOrganRepositoryDTOProtocol.Update.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.Update.Result {
-    return await equipments("MetereologicalOrgan")
+    return await governmentDb("MetereologicalOrgan")
+      .withSchema('equipments')
       .update({
         Name: organ.Name,
         Host: organ.Host,
@@ -96,7 +99,8 @@ export class DbEquipmentsRepository
   async deleteMeteorologicalOrgan(
     idOrgan: MeteorologicalOrganRepositoryDTOProtocol.Delete.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.Delete.Result {
-    return await equipments("MetereologicalOrgan")
+    return await governmentDb("MetereologicalOrgan")
+      .withSchema('equipments')
       .where({ IdOrgan: idOrgan })
       .del();
   }
@@ -104,7 +108,8 @@ export class DbEquipmentsRepository
   async deleteEquipment(
     idEquipment: EquipmentRepositoryDTOProtocol.Delete.Params
   ): EquipmentRepositoryDTOProtocol.Delete.Result {
-    return await equipments("MetereologicalEquipment")
+    return await governmentDb("MetereologicalEquipment")
+      .withSchema('equipments')
       .where({ IdEquipment: idEquipment })
       .del();
   }
@@ -153,7 +158,8 @@ export class DbEquipmentsRepository
   async getEquipmentsTypes() {
     const type = new Map<string, number>();
 
-    const result = await equipments
+    const result = await governmentDb
+      .withSchema('equipments')
       .select("IdType", "Name")
       .from("EquipmentType");
 
@@ -168,11 +174,12 @@ export class DbEquipmentsRepository
     IdEquipment: number;
     Enable: boolean;
   }): Promise<void> {
-    await equipments.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       await trx("MetereologicalEquipment")
+        .withSchema('equipments')
         .update({
           Enable: equipment.Enable,
-          UpdatedAt: equipments.fn.now(),
+          UpdatedAt: governmentDb.fn.now(),
         })
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
@@ -182,7 +189,8 @@ export class DbEquipmentsRepository
   async checkIfOrganExists(
     idOrgan: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganExists.Result {
-    const exists = await equipments
+    const exists = await governmentDb
+      .withSchema('equipments')
       .select("IdOrgan")
       .from("MetereologicalOrgan")
       .where({ IdOrgan: idOrgan })
@@ -194,7 +202,8 @@ export class DbEquipmentsRepository
   async checkIfOrganNameAlreadyExists(
     organName: MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Params
   ): MeteorologicalOrganRepositoryDTOProtocol.CheckIfOrganNameAlreadyExists.Result {
-    const exists = await equipments
+    const exists = await governmentDb
+      .withSchema('equipments')
       .select("IdOrgan")
       .from("MetereologicalOrgan")
       .where({ Name: organName })
@@ -206,7 +215,8 @@ export class DbEquipmentsRepository
   async checkIfEquipmentCodeAlreadyExists(
     idEquipmentExternal: string
   ): Promise<boolean> {
-    const exists = await equipments
+    const exists = await governmentDb
+      .withSchema('equipments')
       .select("IdEquipment")
       .from("MetereologicalEquipment")
       .where({ IdEquipmentExternal: idEquipmentExternal })
@@ -215,7 +225,8 @@ export class DbEquipmentsRepository
     return exists ? true : false;
   }
   async checkIfEquipmentIdExists(id: number): Promise<boolean> {
-    const exists = await equipments
+    const exists = await governmentDb
+      .withSchema('equipments')
       .select("IdEquipment")
       .from("MetereologicalEquipment")
       .where({ IdEquipment: id })
@@ -227,7 +238,8 @@ export class DbEquipmentsRepository
   async getEquipmentIdByExternalCode(
     idEquipmentExternal: string
   ): Promise<number | null> {
-    const rawResult = await equipments
+    const rawResult = await governmentDb
+      .withSchema('equipments')
       .select("IdEquipment")
       .from("MetereologicalEquipment")
       .where({ IdEquipmentExternal: idEquipmentExternal })
@@ -238,7 +250,7 @@ export class DbEquipmentsRepository
   async getEquipmentId(
     id: number
   ): EquipmentRepositoryDTOProtocol.GetIdBy.Result {
-    const result = await equipments.raw(
+    const result = await governmentDb.raw(
       `
     SELECT
           equipment."IdEquipment" AS "Id",
@@ -256,10 +268,10 @@ export class DbEquipmentsRepository
               equipment."Location"::geometry
           )::json AS "GeoLocation"
       FROM
-          "MetereologicalEquipment" AS equipment
-      INNER JOIN "MetereologicalOrgan" AS organ ON
+          equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
           organ."IdOrgan" = equipment."FK_Organ"
-      INNER JOIN "EquipmentType" eqpType ON
+      INNER JOIN equipments."EquipmentType" eqpType ON
           eqpType."IdType" = equipment."FK_Type"
       WHERE "IdEquipment" = ?
     `,
@@ -295,7 +307,8 @@ export class DbEquipmentsRepository
   }
 
   async checkIfEquipmentTypeExists(idType: number): Promise<boolean> {
-    const exists = await equipments
+    const exists = await governmentDb
+      .withSchema('equipments')
       .select("IdType")
       .from("EquipmentType")
       .where({ IdType: idType })
@@ -349,15 +362,16 @@ export class DbEquipmentsRepository
       SELECT
                      count(equipment."IdEquipment")
                  FROM
-                     "MetereologicalEquipment" AS equipment
-                 INNER JOIN "MetereologicalOrgan" AS organ ON
+                     equipments."MetereologicalEquipment" AS equipment
+                 INNER JOIN equipments."MetereologicalOrgan" AS organ ON
                      organ."IdOrgan" = equipment."FK_Organ"
-                 INNER JOIN "EquipmentType" eqpType ON
+                 INNER JOIN equipments."EquipmentType" eqpType ON
                      eqpType."IdType" = equipment."FK_Type"
                      ${queries.join(" ")}
     `;
 
-    const countRows = await countTotalRows(equipments)(countSQL, binding);
+
+    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
     queries.push(`order by equipment."IdEquipment" LIMIT ? OFFSET ?`);
     binding.push(pageLimit);
@@ -386,16 +400,17 @@ export class DbEquipmentsRepository
                         equipment."Location"::geometry
                     )::json AS "GeoLocation"
                 FROM
-                    "MetereologicalEquipment" AS equipment
-                INNER JOIN "MetereologicalOrgan" AS organ ON
+                    equipments."MetereologicalEquipment" AS equipment
+                INNER JOIN equipments."MetereologicalOrgan" AS organ ON
                     organ."IdOrgan" = equipment."FK_Organ"
-                INNER JOIN "LastUpdatedAt" AS lastSync
+                INNER JOIN equipments."LastUpdatedAt" AS lastSync
                   ON lastSync."fk_organ" = equipment."FK_Organ"
-                INNER JOIN "EquipmentType" eqpType ON
+                INNER JOIN equipments."EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
 
-    const data = await equipments.raw(sql, binding);
+
+    const data = await governmentDb.raw(sql, binding);
 
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
     const rows = data.rows[0];
@@ -454,12 +469,12 @@ export class DbEquipmentsRepository
                               equipment."Location"::geometry
           )::json AS "GeoLocation"
       FROM
-                          "MetereologicalEquipment" AS equipment
-      INNER JOIN "MetereologicalOrgan" AS organ ON
+                          equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
-      INNER JOIN "LastUpdatedAt" AS lastSync
+      INNER JOIN equipments."LastUpdatedAt" AS lastSync
       ON lastSync."fk_organ" = equipment."FK_Organ"
-      INNER JOIN "EquipmentType" eqpType ON
+      INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
       WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${coordinateFilter})
       SELECT Stations.*, Measurements.* FROM Stations,
@@ -470,7 +485,7 @@ export class DbEquipmentsRepository
                   rs."Hour",
                   TRUNC(rs."Et0"::numeric,2) AS "Et0"
               FROM
-                  "ReadStations" rs
+                  equipments."ReadStations" rs
               WHERE
                   rs."FK_Equipment" = Stations."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Et0" >= 0
               ORDER BY
@@ -479,7 +494,7 @@ export class DbEquipmentsRepository
           ) AS Measurements
     `;
 
-    const data = await equipments.raw(query);
+    const data = await governmentDb.raw(query);
 
     console.log(data);
 
@@ -526,12 +541,12 @@ export class DbEquipmentsRepository
                               equipment."Location"::geometry
           )::json AS "GeoLocation"
       FROM
-                          "MetereologicalEquipment" AS equipment
-      INNER JOIN "MetereologicalOrgan" AS organ ON
+                          equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
                           organ."IdOrgan" = equipment."FK_Organ"
-      INNER JOIN "LastUpdatedAt" AS lastSync
+      INNER JOIN equipments."LastUpdatedAt" AS lastSync
       ON lastSync."fk_organ" = equipment."FK_Organ"
-      INNER JOIN "EquipmentType" eqpType ON
+      INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
       WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${[params?.latitude, params?.longitude].every((e) => e)
         ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
@@ -545,7 +560,7 @@ export class DbEquipmentsRepository
                   rs."Hour",
                   TRUNC(rs."Value"::numeric,2) AS "Value"
               FROM
-                  "ReadPluviometers" rs
+                  equipments."ReadPluviometers" rs
               WHERE
                   rs."FK_Equipment" = Pluviometers."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Value" >= 0
               ORDER BY
@@ -554,7 +569,7 @@ export class DbEquipmentsRepository
           ) AS Measurements
     `;
 
-    const data = await equipments.raw(query);
+    const data = await governmentDb.raw(query);
 
     if (!data.rows.length) {
       return null;
@@ -572,7 +587,7 @@ export class DbEquipmentsRepository
     return pluviometers.length ? pluviometers : null;
   }
   async getEquipmentsByType(type: string) {
-    const response = await equipments.raw(
+    const response = await governmentDb.raw(
       `
         SELECT
           equipment."IdEquipment" AS "Id",
@@ -586,9 +601,9 @@ export class DbEquipmentsRepository
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
         FROM
-          "MetereologicalEquipment" equipment
-        INNER JOIN "EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
-        INNER JOIN "MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
+          equipments."MetereologicalEquipment" equipment
+        INNER JOIN equipments."EquipmentType" eqp_type ON eqp_type."IdType" = equipment."FK_Type"
+        INNER JOIN equipments."MetereologicalOrgan" organ ON organ."IdOrgan" = equipment."FK_Organ"
         WHERE
           eqp_type."Name" = ?
         `,
@@ -618,7 +633,8 @@ export class DbEquipmentsRepository
     return data
   }
   async getOrganByName(organName: string) {
-    const result = await equipments
+    const result = await governmentDb
+      .withSchema('equipments')
       .select("IdOrgan", "Host", "User", "Password")
       .from("MetereologicalOrgan")
       .where({ Name: organName })

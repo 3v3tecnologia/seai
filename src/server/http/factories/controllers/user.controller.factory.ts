@@ -10,6 +10,7 @@ import {
   FetchUserByIdController,
   FetchUserController,
   ForgotPasswordController,
+  IrrigantSignUpController,
   ResetPasswordController,
   SignInController,
   SignUpController,
@@ -75,6 +76,15 @@ export class UserControllersFactory {
     return makeLogControllerDecorator(
       new SignUpController(
         UserUseCasesFactory.makeUserSignUp(),
+        SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      )
+    );
+  }
+
+  static makeIrrigantSignUp(): Controller {
+    return makeLogControllerDecorator(
+      new IrrigantSignUpController(
+        UserUseCasesFactory.makeIrrigantSignUp(),
         SystemLogsUseCaseFactory.makeRegisterUserLogs()
       )
     );

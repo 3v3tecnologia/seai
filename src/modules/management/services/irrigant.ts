@@ -120,6 +120,8 @@ export class IrrigationRecommendationServices {
       measurements: systemOrError.value as IIrrigationSystemMeasurementsEntity,
     });
 
+
+
     //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
     const cropCycles = await DbManagementCropRepository.findCropsCycles(
       command.CropId
@@ -156,6 +158,7 @@ export class IrrigationRecommendationServices {
         bladeSuggestion.repositionBlade,
         2
       ),
+      IrrigationEfficiency: irrigationSystem.efficiency,
       IrrigationTime: bladeSuggestion.irrigationTime,
       CropDays: cropDate,
       Et0: DecimalFormatter.truncate(Et0, 2),

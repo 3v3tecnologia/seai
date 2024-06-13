@@ -4,6 +4,7 @@ import {
   FetchStationsReadsController,
   UpdateEt0Controller,
 } from "../../../../presentation/controllers/equipments";
+import { updatePluviometerMeasurements, updateStationMeasurements } from "../../../../presentation/controllers/equipments/schemas/measurements";
 import { UpdatePluviometerController } from "../../../../presentation/controllers/equipments/update-pluviometer-measures.controller";
 import { UpdateStationMeasuresController } from "../../../../presentation/controllers/equipments/update-station-measures.controller";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
@@ -16,13 +17,15 @@ export class EquipmentsMeasurementsControllerFactory {
   static makeUpdateStationMeasurements(): Controller {
     return new UpdateStationMeasuresController(
       EquipmentsMeasurementsUseCasesFactory.makeUpdateStationMeasurements(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      updateStationMeasurements
     );
   }
   static makeUpdatePluviometerMeasures(): Controller {
     return new UpdatePluviometerController(
       EquipmentsMeasurementsUseCasesFactory.makeUpdatePluviometerMeasures(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      updatePluviometerMeasurements
     );
   }
   static makeFetchStationsReads(): Controller {

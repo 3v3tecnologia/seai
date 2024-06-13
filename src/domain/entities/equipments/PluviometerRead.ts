@@ -1,6 +1,6 @@
 export interface PluviometerReadEntity {
-  IdRead: number;
-  IdEquipment: number;
+  IdRead?: number | null;
+  IdEquipment?: number;
   Time: string;
   Hour: string;
   Precipitation: {

@@ -4,13 +4,13 @@ import {
   DeleteNewsletterSubscriber,
   FetchAllNews,
   FetchByIdNews,
+  FetchOnlySentNews,
   FetchSubscribers,
   FetchSubscribersEmails,
   SubscribeToNews,
   UpdateNews,
   UpdateSendAtNews,
 } from "../../../../domain/use-cases/newsletter";
-import { DbBackgroundJobsRepository } from "../../../../infra/database/postgres/repositories/background-jobs-repository";
 import { DbNewsLetterContentRepository } from "../../../../infra/database/postgres/repositories/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../../../infra/database/postgres/repositories/newsletter-subscriber-repository";
 import { JobsUseCasesFactory } from "./jobs.useCase.factory";
@@ -30,9 +30,15 @@ export class NewsletterUseCasesFactory {
     return new FetchAllNews(this.repository);
   }
 
+  static makeFetchOnlySentNewsletter(): FetchOnlySentNews {
+    return new FetchOnlySentNews(this.repository);
+  }
+
   static makeFetchByIdNewsletter(): FetchByIdNews {
     return new FetchByIdNews(this.repository);
   }
+
+
 
   static makeUpdateNewsletter(): UpdateNews {
     return new UpdateNews(

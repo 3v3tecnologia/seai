@@ -1,12 +1,13 @@
 import { PluviometerMeasurementsToPersist, StationMeasurementsToPersist } from "../services/measurements";
-import { equipmentsDb } from "./utils/connection";
+import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
 
 export class DbEquipmentsMeasurementsRepository {
   static async getLastMeasurementsFromStation(
     idStation: number,
     date: string
   ): Promise<null | { Time: Date; Et0: number }> {
-    const data = await equipmentsDb
+    const data = await governmentDb
+      .withSchema("equipments")
       .select("*")
       .from("ReadStations")
       .where({ FK_Equipment: idStation })
@@ -28,7 +29,8 @@ export class DbEquipmentsMeasurementsRepository {
   static async getLastMeasurementsFromPluviometer(
     idPluviometer: number
   ): Promise<null | { Time: Date; Precipitation: number }> {
-    const data = await equipmentsDb
+    const data = await governmentDb
+      .withSchema("equipments")
       .select("FK_Equipment", "Time", "Value")
       .from("ReadPluviometers")
       .where({ FK_Equipment: idPluviometer })
@@ -49,9 +51,9 @@ export class DbEquipmentsMeasurementsRepository {
   static async insertStations(measurements: Array<any>): Promise<Array<number>> {
     let ids: Array<number> = [];
 
-    await equipmentsDb.transaction(async (trx) => {
+    await governmentDb.transaction(async (trx) => {
       ids = await trx.batchInsert<any>(
-        "ReadStations",
+        "equipments.ReadStations",
         measurements.map((item: any) => {
           return {
             FK_Equipment: item.FK_Equipment,
@@ -84,9 +86,9 @@ export class DbEquipmentsMeasurementsRepository {
     switch (type) {
       case "station":
 
-        await equipmentsDb.transaction(async (trx) => {
+        await governmentDb.transaction(async (trx) => {
           ids = await trx.batchInsert<any>(
-            "ReadStations",
+            "equipments.ReadStations",
             measurements.map((item: any) => {
               return {
                 FK_Equipment: item.FK_Equipment,
@@ -112,9 +114,9 @@ export class DbEquipmentsMeasurementsRepository {
         return ids
 
       case "pluviometer":
-        await equipmentsDb.transaction(async (trx) => {
+        await governmentDb.transaction(async (trx) => {
           await trx.batchInsert(
-            "ReadPluviometers",
+            "equipments.ReadPluviometers",
             measurements.map((eqp: any) => {
               return {
                 FK_Equipment: eqp.FK_Equipment,
@@ -153,7 +155,8 @@ export class DbEquipmentsMeasurementsRepository {
   }
 
   static async getStationCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
-    const result = await equipmentsDb
+    const result = await governmentDb
+      .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
       .from("ReadStations")
       .innerJoin(
@@ -177,7 +180,8 @@ export class DbEquipmentsMeasurementsRepository {
     return equipmentsWithMeasures;
   }
   static async getPluviometersCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
-    const result = await equipmentsDb
+    const result = await governmentDb
+      .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
       .from("ReadPluviometers")
       .innerJoin(
@@ -202,7 +206,8 @@ export class DbEquipmentsMeasurementsRepository {
   }
 
   static async getMeasurementsIdsByTime(time: string, type: 'station' | 'pluviometer', id_organ: number): Promise<Map<number, number>> {
-    const sqlQuery = equipmentsDb
+    const sqlQuery = governmentDb
+      .withSchema("equipments")
       .select("IdRead", "FK_Equipment")
       .where({ Time: time })
       .andWhere({ FK_Organ: id_organ })
@@ -237,12 +242,12 @@ export class DbEquipmentsMeasurementsRepository {
 async function updateStationsMeasurements(measurements: Array<StationMeasurementsToPersist>): Promise<Array<number>> {
   let updatedIds: number[] = []
 
-  await equipmentsDb.transaction(async (trx) => {
+  await governmentDb.transaction(async (trx) => {
     const tempTableName = "Temp_ReadStations";
 
     // Create a temporary table
     await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
+        CREATE TABLE equipments."${tempTableName}" (
         "IdRead" INT GENERATED ALWAYS AS IDENTITY,
         "Time" DATE NOT NULL,
         "Hour" SMALLINT DEFAULT NULL,
@@ -289,7 +294,7 @@ async function updateStationsMeasurements(measurements: Array<StationMeasurement
 
     // Perform the batch update
     await trx.raw(`
-        UPDATE "ReadStations" AS rs
+        UPDATE equipments."ReadStations" AS rs
         SET
           "FK_Equipment" =  t."FK_Equipment",
           "FK_Organ" = t."FK_Organ",
@@ -305,12 +310,12 @@ async function updateStationsMeasurements(measurements: Array<StationMeasurement
           "AtmosphericPressure" = t."AtmosphericPressure",
           "WindVelocity" = t."WindVelocity",
           "Et0" = t."Et0"
-        FROM "${tempTableName}" AS t
+        FROM equipments."${tempTableName}" AS t
         WHERE rs."FK_Equipment" = t."FK_Equipment" and rs."Time" = t."Time";
     `);
 
     // Clean up the temporary table
-    await trx.raw(`DROP TABLE "${tempTableName}"`)
+    await trx.raw(`DROP TABLE equipments."${tempTableName}"`)
 
   });
 
@@ -318,12 +323,12 @@ async function updateStationsMeasurements(measurements: Array<StationMeasurement
 
 }
 async function updatePluviometerMeasurements(measurements: Array<PluviometerMeasurementsToPersist>) {
-  await equipmentsDb.transaction(async (trx) => {
+  await governmentDb.transaction(async (trx) => {
     const tempTableName = "Temp_ReadPluviometers";
 
     // Create a temporary table
     await trx.raw(`
-        CREATE TABLE "${tempTableName}" (
+        CREATE TABLE equipments."${tempTableName}" (
           "IdRead" INT GENERATED ALWAYS AS IDENTITY,
           "Value" REAL,
           "Time" DATE NOT NULL,
@@ -349,19 +354,19 @@ async function updatePluviometerMeasurements(measurements: Array<PluviometerMeas
 
     // Perform the batch update
     await trx.raw(`
-        UPDATE "ReadPluviometers" AS rp
+        UPDATE equipments."ReadPluviometers" AS rp
         SET
           "FK_Equipment" = t."FK_Equipment",
           "FK_Organ" = t."FK_Organ",
           "Time" = t."Time",
           "Hour" = t."Hour",
           "Value" = t."Value"
-        FROM "${tempTableName}" AS t
+        FROM equipments."${tempTableName}" AS t
         WHERE rp."FK_Equipment" = t."FK_Equipment" AND rp."Time" = t."Time";
     `);
 
     // Clean up the temporary table
     // await trx.dropTable(tempTableName);
-    await trx.raw(`DROP TABLE "${tempTableName}"`)
+    await trx.raw(`DROP TABLE equipments."${tempTableName}"`)
   });
 }

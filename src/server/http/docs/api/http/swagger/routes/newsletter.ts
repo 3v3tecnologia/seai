@@ -166,6 +166,113 @@ export const NEWSLETTER = {
       },
     },
   },
+  [`${URL}/sent`]: {
+    get: {
+      tags: TAGS,
+      summary: "Get only sent news",
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "title",
+          in: "query",
+          required: false,
+          description: "News title",
+          schema: {
+            type: "string"
+          },
+        },
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Pagination number. Default 1",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "limit",
+          in: "query",
+          description: "Data limit",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      Data: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            Id: "number",
+                            Author: {
+                              type: "object",
+                              properties: {
+                                Id: "number",
+                                Email: "string",
+                                Organ: "string",
+                              },
+                            },
+                            Title: "string",
+                            Description: "string",
+                            CreatedAt: "string",
+                            UpdatedAt: "string",
+                          },
+                        },
+                      },
+                      Pagination: {
+                        type: "object",
+                        properties: {
+                          PageLimitRows: "number",
+                          PageNumber: "number",
+                          QtdRows: "number",
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    Items: [
+                      {
+                        Id: 2,
+                        Author: {
+                          Id: 1,
+                          Email: "test@gmail.com",
+                          Organ: "Funceme"
+                        },
+                        Title: "Test",
+                        Description: "Test",
+                        CreatedAt: "2024-04-30T14:37:34.297Z",
+                        UpdatedAt: "2024-04-30T14:37:34.297Z"
+                      }
+                    ],
+                    TotalItems: 1,
+                    Page: 1,
+                    PageSize: 40,
+                    TotalPages: 1
+                  }
+                }
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${URL}/{id}`]: {
     get: {
       tags: TAGS,

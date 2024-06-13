@@ -6,6 +6,7 @@ import {
   FetchNewsController,
   FetchNewsletterSubscribersController,
   FetchNewsletterSubscribersEmailsController,
+  FetchOnlySentNewsController,
   SubscribeToNewsController,
   UpdateController,
   UpdateSendAtController,
@@ -59,6 +60,12 @@ export class NewsletterControllersFactory {
   static makeFetchAllNewsletter(): FetchNewsController {
     return new FetchNewsController(
       NewsletterUseCasesFactory.makeFetchAllNewsletter()
+    );
+  }
+
+  static makeFetchOnlySentNewsletter(): FetchOnlySentNewsController {
+    return new FetchOnlySentNewsController(
+      NewsletterUseCasesFactory.makeFetchOnlySentNewsletter()
     );
   }
 

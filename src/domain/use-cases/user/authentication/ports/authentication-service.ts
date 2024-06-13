@@ -2,7 +2,7 @@ import { Either } from "../../../../../shared/Either";
 import { AccountNotFoundError, WrongPasswordError } from "../errors";
 
 export namespace AuthenticationDTO {
-  export type params = { login: string; password: string };
+  export type params = { login?: string; email?: string; password: string };
 
   export type result = {
     accessToken: string;

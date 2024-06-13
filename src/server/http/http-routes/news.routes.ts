@@ -60,6 +60,14 @@ export const newsRouter = (): Router => {
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletter())
   );
 
+
+  router.get(
+    "/sent",
+    // authorization,
+    // newsReadAccessAuth,
+    adaptRoute(NewsletterControllersFactory.makeFetchOnlySentNewsletter())
+  );
+
   router.get(
     "/:id",
     // authorization,
@@ -69,10 +77,12 @@ export const newsRouter = (): Router => {
 
   router.get(
     "/",
-    // authorization,
-    // newsReadAccessAuth,
+    authorization,
+    newsReadAccessAuth,
     adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
   );
+
+
 
   return router;
 };

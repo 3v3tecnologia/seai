@@ -16,6 +16,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
     await governmentDb.transaction(async function (trx) {
       const response = await trx
+        .withSchema('faq')
         .insert({
           Question: question,
           Answer: answer,
@@ -41,9 +42,10 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
     const table = "FAQ AS faq"
 
-    const countQuery = governmentDb(table).innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
+    const countQuery = governmentDb(table).withSchema('faq').innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
 
     const fetchFaqsColumnsQuery = governmentDb(table)
+      .withSchema('faq')
       .select("faq.*", "cat.Id as IdCategory", "cat.Title", "cat.Description")
       .innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
 
@@ -100,6 +102,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     const { id, question, answer, order, category_id } = data;
 
     await governmentDb("FAQ")
+      .withSchema('faq')
       .update(
         {
           Question: question,
@@ -115,7 +118,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
   }
 
   async deleteFaqById(id_faq: number): Promise<number | null> {
-    const response = await governmentDb("FAQ").where("Id", id_faq).del().returning("Id");
+    const response = await governmentDb("FAQ").withSchema('faq').where("Id", id_faq).del().returning("Id");
 
     if (response.length > 0) {
       const deleteFaqId = response[0]
@@ -132,6 +135,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     id_faq: number
   ): Promise<FaqWithCategoriesData | null> {
     const faqDbResult = await governmentDb
+      .withSchema('faq')
       .select(
         "faq.Id as Id_Faq",
         "faq.Question",
@@ -166,6 +170,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
   async checkIfQuestionAlreadyExists(question: string): Promise<boolean> {
     const exists = await governmentDb
+      .withSchema('faq')
       .select("*")
       .from("FAQ")
       .where({ Question: question })
@@ -176,6 +181,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
   async checkIfFaqAlreadyExists(id: number): Promise<boolean> {
     const exists = await governmentDb
+      .withSchema('faq')
       .select("*")
       .from("FAQ")
       .where({ Id: id })
@@ -197,6 +203,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     //   .where({ Fk_Category: id_category })
 
     const totalCountReponse = await governmentDb
+      .withSchema('faq')
       .innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
       .from("FAQ as faq")
       .where({ Fk_Category: id_category })
@@ -205,6 +212,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     const totalCount = Number(totalCountReponse[0].count)
 
     const faqsRows = await governmentDb
+      .withSchema('faq')
       .select("faq.*", "cat.Id as IdCategory", "cat.Title", "cat.Description")
       .innerJoin("Category as cat", "cat.Id", "faq.Fk_Category")
       .from("FAQ as faq")
@@ -238,7 +246,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
   }
 
   async deleteCategoryById(id_category: number): Promise<number | null> {
-    const response = await governmentDb("Category").where("Id", id_category).del().returning('Id');
+    const response = await governmentDb("faq.Category").where("Id", id_category).del().returning('Id');
 
     if (response.length > 0) {
       const deleteFaqId = response[0]
@@ -256,7 +264,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     title: string,
     description: string
   ): Promise<void> {
-    await governmentDb("Category")
+    await governmentDb("faq.Category")
       .update({
         Title: title,
         Description: description,
@@ -267,6 +275,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
   async addCategory(title: string, description: string): Promise<number> {
     const response = await governmentDb
+      .withSchema('faq')
       .insert({
         Title: title,
         Description: description,
@@ -278,7 +287,10 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     return response[0].Id
   }
   async getCategories(): Promise<Array<FaqCategoriesData> | null> {
-    const categories = await governmentDb.select("*").from("Category");
+    const categories = await governmentDb
+      .withSchema('faq')
+      .select("*")
+      .from("Category");
 
     if (categories.length) {
       return categories.map((category) => ({
@@ -295,6 +307,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
 
   async checkIfCategoryIsAlreadyAssociated(category_id: number): Promise<boolean> {
     const response = await governmentDb('FAQ as f')
+      .withSchema('faq')
       .select(governmentDb.raw('CASE WHEN f."Fk_Category" = ? THEN true ELSE false END AS result', [category_id]))
       .first()
 
@@ -304,6 +317,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     id_category: number
   ): Promise<FaqCategoriesData | null> {
     const category = await governmentDb
+      .withSchema('faq')
       .select("*")
       .where({ Id: id_category })
       .from("Category")
@@ -325,6 +339,7 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     title: string
   ): Promise<FaqCategoriesData | null> {
     const category = await governmentDb
+      .withSchema('faq')
       .select("*")
       .where({ Title: title })
       .from("Category")

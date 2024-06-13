@@ -12,13 +12,13 @@ export enum UserTypes {
   STANDARD = "standard",
   IRRIGANT = "irrigant",
 }
-export type UserType = UserTypes.ADMIN | UserTypes.STANDARD;
+export type UserType = UserTypes.ADMIN | UserTypes.STANDARD | UserTypes.IRRIGANT;
 interface UserProps {
   name?: UserName | null;
   login?: UserLogin | null;
   email: Email;
   password?: UserPassword | null;
-  modulesAccess: SystemModules | null;
+  modulesAccess?: SystemModules | null;
   type: UserType;
 }
 
@@ -29,7 +29,7 @@ export class User {
   private _email: Email;
   private _password: UserPassword | null;
   public type: UserType;
-  private readonly _modulesAccess?: SystemModules | null;
+  private readonly _modulesAccess: SystemModules | null;
 
   private constructor(props: UserProps, id?: number) {
     this._id = id || null;
@@ -60,7 +60,7 @@ export class User {
     return this._password;
   }
 
-  get access(): SystemModules | null | undefined {
+  get access(): SystemModules | null {
     return this._modulesAccess;
   }
 
@@ -87,7 +87,7 @@ export class User {
       login?: string | null;
       password?: string;
       confirmPassword?: string;
-      modulesAccess: SystemModulesProps | null | undefined;
+      modulesAccess?: SystemModulesProps | null;
     },
     id?: number
   ): Either<Error, User> {
@@ -99,13 +99,15 @@ export class User {
       errors.addError(emailOrError.value);
     }
 
-    if (!props.type || (props.type !== "admin" && props.type !== "standard")) {
+
+    if (!props.type || (!["admin", "standard", "irrigant"].includes(props.type))) {
       errors.addError(
         new Error(
           'Tipo do usuário não pode ser nulo e tem que ser "admin" ou "standard"'
         )
       );
     }
+
     let userAccess: SystemModules | null = null;
 
     if (props.modulesAccess) {

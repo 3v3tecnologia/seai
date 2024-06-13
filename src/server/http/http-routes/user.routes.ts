@@ -38,7 +38,7 @@ export const userRouter = (): Router => {
 
   router.post(
     "/irrigant",
-    adaptRoute(UserControllersFactory.makeCreateUser())
+    adaptRoute(UserControllersFactory.makeIrrigantSignUp())
   );
 
   router.patch(
@@ -92,11 +92,7 @@ export const userRouter = (): Router => {
     adaptRoute(UserControllersFactory.makeForgotPassword())
   );
 
-  // router.post(
-  //   "/sign-up",
-  //   authorization,
-  //   adaptRoute(UserControllersFactory.makeSignUp())
-  // );
+
 
   return router;
 };
