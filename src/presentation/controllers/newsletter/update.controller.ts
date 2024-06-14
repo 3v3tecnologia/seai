@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 
 import { UpdateNewsUseCaseProtocol } from "../../../domain/use-cases/newsletter";
-import { forbidden, ok, serverError } from "../helpers";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 export class UpdateController {
   private useCase: UpdateNewsUseCaseProtocol.UseCase;
@@ -22,7 +22,7 @@ export class UpdateController {
       });
 
       if (createdOrError.isLeft()) {
-        return forbidden(createdOrError.value);
+        return badRequest(createdOrError.value);
       }
 
       return ok(createdOrError.value);
