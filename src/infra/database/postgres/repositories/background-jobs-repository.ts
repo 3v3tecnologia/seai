@@ -5,13 +5,11 @@ import {
   ScheduleRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/background-jobs-repository";
 
-import { DATABASES } from "../../../../shared/db/tableNames";
 import { backgroundJobsDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
 export class DbBackgroundJobsRepository
-  implements ScheduleRepositoryProtocol, JobsRepositoryProtocol
-{
+  implements ScheduleRepositoryProtocol, JobsRepositoryProtocol {
   async createSchedule(
     request: ScheduleRepositoryDTO.Create.Request
   ): ScheduleRepositoryDTO.Create.Response {
@@ -24,13 +22,13 @@ export class DbBackgroundJobsRepository
         options: request.options,
         updated_on: backgroundJobsDb.fn.now(),
       })
-      .into(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE);
+      .into("pgboss.schedule");
   }
 
   async updateSchedule(
     request: ScheduleRepositoryDTO.Update.Request
   ): ScheduleRepositoryDTO.Update.Response {
-    await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE)
+    await backgroundJobsDb("pgboss.schedule")
       .where({
         name: request.name,
       })
@@ -46,7 +44,7 @@ export class DbBackgroundJobsRepository
   async deleteSchedule(
     request: ScheduleRepositoryDTO.Delete.Request
   ): ScheduleRepositoryDTO.Delete.Response {
-    await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE)
+    await backgroundJobsDb("pgboss.schedule")
       .where({ name: request.name })
       .delete();
   }
@@ -64,7 +62,7 @@ export class DbBackgroundJobsRepository
           n."options" ,
           n."created_on" ,
           n."updated_on"
-      FROM ${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE} n 
+      FROM "pgboss.schedule" n
       WHERE n."name"= ?;
     `,
       [request.queue]
@@ -90,7 +88,7 @@ export class DbBackgroundJobsRepository
     const whereClause: Array<any> = [];
 
     let baseQuery = `SELECT "name", cron, timezone, "data", "options", created_on, updated_on
-      FROM ${DATABASES.BACKGROUND_JOBS.TABLES.SCHEDULE} \n`;
+      FROM "pgboss.schedule" \n`;
 
     if (request.queue) {
       whereQueries.push({ query: `"name" = ?`, params: request.queue });
@@ -148,7 +146,7 @@ export class DbBackgroundJobsRepository
         "output"
       )
       .where("name", "not like", "__pgboss%") // remove pg_boss default jobs
-      .from(DATABASES.BACKGROUND_JOBS.TABLES.JOB);
+      .from("pgboss.job");
 
     if (request.queue) {
       whereQueries.push({ column: "name", params: request.queue });
@@ -207,10 +205,16 @@ export class DbBackgroundJobsRepository
       });
     }
 
+    if (Reflect.has(request, "singletonkey")) {
+      Object.assign(data, {
+        singletonkey: request.singletonkey,
+      });
+    }
+
     const result = await backgroundJobsDb
       .insert(data)
       .returning("*")
-      .into(DATABASES.BACKGROUND_JOBS.TABLES.JOB);
+      .into("pgboss.job");
 
     const job = result[0];
 
@@ -264,7 +268,7 @@ export class DbBackgroundJobsRepository
       });
     }
 
-    await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
+    await backgroundJobsDb("pgboss.job")
       .update(data)
       .where({
         id: request.id,
@@ -274,7 +278,7 @@ export class DbBackgroundJobsRepository
   async deleteJob(
     request: JobsRepositoryDTO.Delete.Request
   ): JobsRepositoryDTO.Delete.Response {
-    await backgroundJobsDb(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
+    await backgroundJobsDb("pgboss.job")
       .delete()
       .where({
         id: request.id,
@@ -304,7 +308,7 @@ export class DbBackgroundJobsRepository
         "on_complete",
         "output"
       )
-      .from(DATABASES.BACKGROUND_JOBS.TABLES.JOB)
+      .from("pgboss.job")
       .where({
         id,
       });
@@ -356,5 +360,13 @@ export class DbBackgroundJobsRepository
     return rows.map((row: any) => {
       return row.state;
     });
+  }
+
+  async deleteJobByKey(key: string): Promise<void> {
+    await backgroundJobsDb("pgboss.job")
+      .delete()
+      .where({
+        singletonkey: key,
+      });
   }
 }

@@ -31,6 +31,7 @@ export namespace CreateJobUseCaseProtocol {
     retryDelay: number;
     startAfter?: string;
     state?: string;
+    singletonkey?: string;
     data: any;
   };
 

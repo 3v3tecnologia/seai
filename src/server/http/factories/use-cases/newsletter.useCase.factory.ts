@@ -23,7 +23,7 @@ export class NewsletterUseCasesFactory {
   }
 
   static makeDeleteNewsletter(): DeleteNews {
-    return new DeleteNews(this.repository, JobsUseCasesFactory.makeDeleteJob());
+    return new DeleteNews(this.repository, JobsUseCasesFactory.makeDeleteJobByKey());
   }
 
   static makeFetchAllNewsletter(): FetchAllNews {
@@ -44,8 +44,7 @@ export class NewsletterUseCasesFactory {
     return new UpdateNews(
       this.repository,
       JobsUseCasesFactory.makeCreateJob(),
-      JobsUseCasesFactory.makeFetchJob(),
-      JobsUseCasesFactory.makeUpdateJob()
+      JobsUseCasesFactory.makeDeleteJobByKey()
     );
   }
   static makeUpdateSendAt(): UpdateSendAtNews {
