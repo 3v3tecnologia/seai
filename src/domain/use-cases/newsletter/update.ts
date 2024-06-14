@@ -73,7 +73,7 @@ export class UpdateNews
       return left(new Error(`Notícia não encontrada.`));
     }
 
-    if (alreadyExistsNews.SendAt) {
+    if (alreadyExistsNews.SentAt) {
       return left(new Error(`Notícia é possível editar uma notícia já enviada.`));
     }
 

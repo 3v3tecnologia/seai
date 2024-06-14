@@ -7,7 +7,7 @@ export type Content = {
     Organ: string;
   };
   SendDate?: string;
-  SendAt?: string | null;
+  SentAt?: string | null;
   Description: string | null;
   // LocationName: string;
   Data?: any;
