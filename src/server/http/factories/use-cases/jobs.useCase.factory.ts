@@ -17,6 +17,8 @@ import {
   UpdateCronUseCaseProtocol,
   UpdateJob,
   UpdateJobUseCaseProtocol,
+  DeleteJobByKeyUseCaseProtocol,
+  DeleteJobByKey
 } from "../../../../domain/use-cases/jobs";
 
 import { DbBackgroundJobsRepository } from "../../../../infra/database/postgres/repositories/background-jobs-repository";
@@ -38,6 +40,9 @@ export class JobsUseCasesFactory {
 
   static makeDeleteJob(): DeleteJobUseCaseProtocol.UseCase {
     return new DeleteJob(this.repository);
+  }
+  static makeDeleteJobByKey(): DeleteJobByKeyUseCaseProtocol.UseCase {
+    return new DeleteJobByKey(this.repository);
   }
 
   static makeFetchCron(): FetchCronUseCaseProtocol.UseCase {

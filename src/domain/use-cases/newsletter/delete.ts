@@ -2,21 +2,22 @@ import { Either, right } from "../../../shared/Either";
 import { DATABASES } from "../../../shared/db/tableNames";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
-import { DeleteJobUseCaseProtocol } from "../jobs";
+import { DeleteJobByKeyUseCaseProtocol } from "../jobs";
 
 export class DeleteNews
   extends Command
-  implements DeleteNewsUseCaseProtocol.UseCase
-{
+  implements DeleteNewsUseCaseProtocol.UseCase {
+
   private repository: NewsRepositoryProtocol;
-  private readonly deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase;
+  private readonly deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase;
+
   constructor(
     repository: NewsRepositoryProtocol,
-    deleteJobUseCase: DeleteJobUseCaseProtocol.UseCase
+    deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase
   ) {
     super();
     this.repository = repository;
-    this.deleteJobUseCase = deleteJobUseCase;
+    this.deleteJobByKey = deleteJobByKey;
   }
   async create(
     request: DeleteNewsUseCaseProtocol.Request
@@ -25,19 +26,10 @@ export class DeleteNews
 
     const successLog = `Notícia deletada com sucessso.`;
 
-    const jobId = await this.repository.getIdJobFromNews(request.Id);
-
-    if (jobId !== null) {
-      await this.repository.deleteJobFromNews(request.Id);
-
-      console.log("[DeleteNews] Delete job from News");
-
-      const deleteJobOrError = await this.deleteJobUseCase.execute({
-        id: jobId,
-      });
-
-      console.log(deleteJobOrError.value);
-    }
+    // delete all jobs related to the news (purge by news id)
+    await this.deleteJobByKey.execute({
+      key: String(request.Id)
+    });
 
     this.addLog({
       action: "delete",

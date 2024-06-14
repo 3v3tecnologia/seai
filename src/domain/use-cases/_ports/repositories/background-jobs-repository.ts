@@ -79,6 +79,7 @@ export namespace JobsRepositoryDTO {
       retryLimit: number;
       retryDelay: number;
       startAfter?: string;
+      singletonkey?: string;
       data: any;
     };
 
@@ -164,4 +165,5 @@ export interface JobsRepositoryProtocol {
   getJobById(
     request: JobsRepositoryDTO.FetchById.Request
   ): JobsRepositoryDTO.FetchById.Response;
+  deleteJobByKey(key: string): Promise<void>
 }
