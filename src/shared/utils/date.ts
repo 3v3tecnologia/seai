@@ -4,9 +4,9 @@ export function getYesterDayDate(separator: string) {
   return `${date.getFullYear()}${separator}${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}${separator}${date
-    .getDate()
-    .toString()
-    .padStart(2, "0")}`;
+      .getDate()
+      .toString()
+      .padStart(2, "0")}`;
 }
 
 export function dateDiffInDays(start: Date, end: Date) {
@@ -20,6 +20,10 @@ export function dateDiffInDays(start: Date, end: Date) {
   const utcEnd = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
 
   return Math.floor((utcStart - utcEnd) / _MS_PER_DAY);
+}
+
+export function isDateInThePast(date: Date): Boolean {
+  return date.getTime() < new Date().getTime()
 }
 
 export function parseBrazilianDateTime(dateTimeString: string) {

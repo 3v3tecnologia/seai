@@ -17,6 +17,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Fk_Sender: request.FK_Author,
         Title: request.Title,
         Description: request.Description,
+        SendDate: request.SendDate,
         Content: request.Data,
       })
       .returning("Id")
@@ -41,6 +42,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           s."Email" ,
           s."Organ" ,
           s."SendAt",
+          n."SendDate",
       FROM "News" n
       INNER JOIN "Sender" s
       ON s."Id" = n."Fk_Sender" 
@@ -66,6 +68,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       Description: newsRow.Description,
       Data: newsRow.Content,
       CreatedAt: newsRow.CreatedAt,
+      SendDate: newsRow.SendDate,
       UpdatedAt: newsRow.UpdatedAt,
     };
   }
@@ -114,6 +117,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Fk_Sender: request.FK_Author,
         Title: request.Title,
         Description: request.Description,
+        SendDate: request.SendDate,
         Content: request.Data
       });
   }
@@ -141,7 +145,8 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           n."UpdatedAt",
           s."Email" ,
           s."Organ",
-          n."SentAt"
+          n."SentAt",
+          n."SendDate"
       FROM "News" n
       INNER JOIN "Sender" s
       ON s."Id" = n."Fk_Sender" 
@@ -197,6 +202,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           news."CreatedAt" ,
           news."UpdatedAt",
           news."SentAt",
+          news."SendDate",
           sender."Email" ,
           sender."Organ" 
       FROM "News" as news 

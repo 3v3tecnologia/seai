@@ -1,5 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
 import { DATABASES } from "../../../shared/db/tableNames";
+import { isDateInThePast } from "../../../shared/utils/date";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 import {
@@ -35,10 +36,6 @@ export class UpdateNews
         key: String(request.Id)
       })
 
-      const data = new Date(request.SendDate);
-      data.setHours(data.getHours() + 3);
-      const isoStringWithAddedHours = data.toISOString();
-
       const jobOrError = await this.createJob.execute({
         name: "send-newsletter",
         data: {
@@ -47,7 +44,7 @@ export class UpdateNews
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: isoStringWithAddedHours,
+        startAfter: new Date(request.SendDate).toISOString(),
         singletonkey: String(request.Id)
       });
 
@@ -69,6 +66,12 @@ export class UpdateNews
   async execute(
     request: UpdateNewsUseCaseProtocol.Request
   ): UpdateNewsUseCaseProtocol.Response {
+    const sendDate = new Date(request.SendDate)
+
+    if (isDateInThePast(sendDate)) {
+      return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
+    }
+
     const alreadyExistsNews = await this.repository.getById({
       Id: request.Id,
     });

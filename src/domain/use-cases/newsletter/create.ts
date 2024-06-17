@@ -1,6 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { DATABASES } from "../../../shared/db/tableNames";
 import { Logger } from "../../../shared/logger/logger";
+import { isDateInThePast } from "../../../shared/utils/date";
 import { Command } from "../_ports/core/command";
 import { NewsRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 import { CreateJobUseCaseProtocol } from "../jobs";
@@ -19,11 +20,8 @@ export class CreateNews
     this.createJobQueue = createJobQueue;
   }
 
-  private async createJob(newsId: number, sendDate: string): Promise<Either<Error, string>> {
+  private async createJob(newsId: number, sendDate: Date): Promise<Either<Error, string>> {
     try {
-      const data = new Date(sendDate);
-      data.setHours(data.getHours() + 3);
-      const isoStringWithAddedHours = data.toISOString();
 
       const jobOrError = await this.createJobQueue.execute({
         name: "send-newsletter",
@@ -33,7 +31,7 @@ export class CreateNews
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: isoStringWithAddedHours,
+        startAfter: sendDate.toISOString(),
         singletonkey: String(newsId)
       });
 
@@ -43,8 +41,6 @@ export class CreateNews
 
       const job = jobOrError.value;
 
-
-
       return right("Sucesso ao agentar job de notícias")
     } catch (error) {
       console.error(error)
@@ -52,12 +48,20 @@ export class CreateNews
     }
   }
 
+
   async create(
     request: CreateNewsUseCaseProtocol.Request
   ): CreateNewsUseCaseProtocol.Response {
+
+    const sendDate = new Date(request.SendDate)
+
+    if (isDateInThePast(sendDate)) {
+      return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
+    }
+
     const newsId = await this.repository.create(request);
 
-    const scheduleJobOrError = await this.createJob(newsId, request.SendDate)
+    const scheduleJobOrError = await this.createJob(newsId, sendDate)
 
     // E se o sistema de jobs estiver indisponível? Como o sistema deve se comportar?
     if (scheduleJobOrError.isLeft()) {
