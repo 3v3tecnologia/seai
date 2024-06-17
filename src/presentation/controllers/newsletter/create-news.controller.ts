@@ -18,7 +18,6 @@ export class CreateNewsController extends CommandController<
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
-      console.log(request);
       const createdOrError = await this.useCase.create({
         Data: request.Data,
         Description: request.Description,

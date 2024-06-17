@@ -21,6 +21,10 @@ export class CreateNews
 
   private async createJob(newsId: number, sendDate: string): Promise<Either<Error, string>> {
     try {
+      const data = new Date(sendDate);
+      data.setHours(data.getHours() + 3);
+      const isoStringWithAddedHours = data.toISOString();
+
       const jobOrError = await this.createJobQueue.execute({
         name: "send-newsletter",
         data: {
@@ -29,7 +33,7 @@ export class CreateNews
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: sendDate,
+        startAfter: isoStringWithAddedHours,
         singletonkey: String(newsId)
       });
 
