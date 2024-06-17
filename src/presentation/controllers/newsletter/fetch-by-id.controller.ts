@@ -1,19 +1,32 @@
 import { HttpResponse } from "../ports";
 
 import { FetchNewsByIdUseCaseProtocol } from "../../../domain/use-cases/newsletter/fetch-by-id";
-import { forbidden, ok, serverError } from "../helpers";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class FetchNewsByIdController {
   private useCase: FetchNewsByIdUseCaseProtocol.UseCase;
+  private validator: ISchemaValidator;
 
-  constructor(useCase: FetchNewsByIdUseCaseProtocol.UseCase) {
+  constructor(useCase: FetchNewsByIdUseCaseProtocol.UseCase, validator: ISchemaValidator) {
     this.useCase = useCase;
+    this.validator = validator
   }
 
   async handle(
     request: FetchNewsByIdController.Request
   ): Promise<HttpResponse> {
     try {
+      const { id } = request
+
+      const { error } = await this.validator.validate({
+        id,
+      })
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const createdOrError = await this.useCase.execute({
         Id: request.id,
       });

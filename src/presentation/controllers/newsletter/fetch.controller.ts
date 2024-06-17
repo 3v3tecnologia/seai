@@ -2,17 +2,38 @@ import { HttpResponse } from "../ports";
 
 import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import { FetchAllNews } from "../../../domain/use-cases/newsletter/fetch";
-import { forbidden, ok, serverError } from "../helpers";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class FetchNewsController {
   private useCase: FetchAllNews.UseCase;
+  private validator: ISchemaValidator;
 
-  constructor(useCase: FetchAllNews.UseCase) {
+  constructor(useCase: FetchAllNews.UseCase, validator: ISchemaValidator) {
     this.useCase = useCase;
+    this.validator = validator;
   }
 
   async handle(request: FetchNewsController.Request): Promise<HttpResponse> {
     try {
+      const { limit, offset, pageNumber } = request
+
+      const toValidate = {
+        limit, offset, pageNumber
+      }
+
+      if (Reflect.has(request, 'title')) {
+        Object.assign(toValidate, {
+          title: request.title
+        })
+      }
+
+      const { error } = await this.validator.validate(toValidate)
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const dto = {
         ...parsePaginationInput({
           page: request.pageNumber,

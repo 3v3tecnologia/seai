@@ -2,22 +2,36 @@ import { HttpResponse } from "../ports";
 
 import { CreateNews } from "../../../domain/use-cases/newsletter/create";
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { created, forbidden, serverError } from "../helpers";
+import { badRequest, created, forbidden, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class CreateNewsController extends CommandController<
   CreateNewsController.Request,
   HttpResponse
 > {
   private useCase: CreateNews;
+  private validator: ISchemaValidator;
 
-  constructor(useCase: CreateNews, userLogs: RegisterUserLogs) {
+  constructor(useCase: CreateNews, userLogs: RegisterUserLogs, validator: ISchemaValidator) {
     super(userLogs);
     this.useCase = useCase;
+    this.validator = validator
   }
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
+      const { Data, Description, FK_Author, SendDate, Title, LocationName } = request
+
+      const { error } = await this.validator.validate({
+        Data, Description, FK_Author, SendDate, Title, LocationName
+      })
+
+      if (error) {
+        return badRequest(error)
+      }
+
+
       const createdOrError = await this.useCase.create({
         Data: request.Data,
         Description: request.Description,
