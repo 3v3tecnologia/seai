@@ -23,6 +23,7 @@ export class CreateNewsController extends CommandController<
         Description: request.Description,
         FK_Author: request.FK_Author,
         Title: request.Title,
+        SendDate: request.SendDate
       });
 
       if (createdOrError.isLeft()) {
@@ -46,7 +47,7 @@ export namespace CreateNewsController {
     Title: string;
     Description: string | null;
     Data: any;
-    SendDate?: string;
+    SendDate: string;
     LocationName?: string;
   };
 }

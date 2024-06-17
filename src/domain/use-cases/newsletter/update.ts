@@ -35,6 +35,10 @@ export class UpdateNews
         key: String(request.Id)
       })
 
+      const data = new Date(request.SendDate);
+      data.setHours(data.getHours() + 3);
+      const isoStringWithAddedHours = data.toISOString();
+
       const jobOrError = await this.createJob.execute({
         name: "send-newsletter",
         data: {
@@ -43,7 +47,7 @@ export class UpdateNews
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: request.SendDate,
+        startAfter: isoStringWithAddedHours,
         singletonkey: String(request.Id)
       });
 

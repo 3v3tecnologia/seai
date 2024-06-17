@@ -7,8 +7,7 @@ import { UpdateEquipment } from "../../../domain/use-cases/equipments/update-equ
 
 export class UpdateEquipmentsController
   implements
-    Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse>
-{
+  Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse> {
   private updateEquipment: UpdateEquipment;
   private userLogs: RegisterUserLogs;
 
@@ -23,12 +22,6 @@ export class UpdateEquipmentsController
     try {
       const dto = {
         IdEquipment: request.id,
-        /*IdEquipmentExternal: request.IdEquipmentExternal,
-        Name: request.Name,
-        Fk_Organ: request.Fk_Organ,
-        Fk_Type: request.Fk_Type,
-        Altitude: request.Altitude,
-        Location: request.Location,*/
         Enable: request.Enable,
       };
 
@@ -52,15 +45,6 @@ export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
     accountId: number;
     id: number;
-    /*IdEquipmentExternal: string;
-    Name: string;
-    Fk_Organ: number;
-    Fk_Type: number;
-    Altitude: number;
-    Location: {
-      Name: string;
-      Coordinates: Array<number>;
-    };*/
     Enable: boolean;
   };
 }

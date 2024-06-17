@@ -45,7 +45,7 @@ const irrigationParamsSchema = Joi.object({
     }).optional(),
     Pluviometer: Joi.object({
         Id: Joi.number().integer().optional(),
-        Precipitation: Joi.number().greater(0).optional()
+        Precipitation: Joi.number().optional()
     }).optional(),
     CropId: Joi.number().integer().required(),
     PlantingDate: Joi.string().pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/, 'DD/MM/YYYY').required(),
