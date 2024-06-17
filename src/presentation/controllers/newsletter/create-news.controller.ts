@@ -18,11 +18,13 @@ export class CreateNewsController extends CommandController<
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
+      console.log(request);
       const createdOrError = await this.useCase.create({
         Data: request.Data,
         Description: request.Description,
         FK_Author: request.FK_Author,
         Title: request.Title,
+        SendDate: request.SendDate
       });
 
       if (createdOrError.isLeft()) {
@@ -46,7 +48,7 @@ export namespace CreateNewsController {
     Title: string;
     Description: string | null;
     Data: any;
-    SendDate?: string;
+    SendDate: string;
     LocationName?: string;
   };
 }

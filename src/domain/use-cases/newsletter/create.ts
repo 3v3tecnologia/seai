@@ -19,7 +19,7 @@ export class CreateNews
     this.createJobQueue = createJobQueue;
   }
 
-  private async createJob(newsId: number, sendDate?: string): Promise<Either<Error, string>> {
+  private async createJob(newsId: number, sendDate: string): Promise<Either<Error, string>> {
     try {
       const jobOrError = await this.createJobQueue.execute({
         name: "send-newsletter",
@@ -80,7 +80,7 @@ export namespace CreateNewsUseCaseProtocol {
     Title: string;
     Description: string | null;
     Data: any;
-    SendDate?: string;
+    SendDate: string;
     LocationName?: string;
   };
 
