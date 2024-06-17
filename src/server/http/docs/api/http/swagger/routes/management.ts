@@ -75,15 +75,15 @@ export const MANAGEMENT = {
                       Start: 1,
                       End: 3,
                       KC: 54,
-                      Increment: 1,
+                      Increment: 0
                     },
                     {
                       Title: "test2",
                       Start: 1,
                       End: 3,
                       KC: 54,
-                      Increment: 3,
-                    },
+                      Increment: 0
+                    }
                   ],
                 },
               },
@@ -116,21 +116,19 @@ export const MANAGEMENT = {
               example: {
                 data: [
                   {
-                    Stage: 1,
                     Title: "test2",
                     Start: 1,
                     End: 3,
                     KC: 54,
-                    Increment: 1,
+                    Increment: 0
                   },
                   {
-                    Stage: 2,
                     Title: "test2",
                     Start: 1,
                     End: 3,
                     KC: 54,
-                    Increment: 3,
-                  },
+                    Increment: 0
+                  }
                 ],
               },
             },

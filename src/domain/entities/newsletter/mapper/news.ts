@@ -11,6 +11,7 @@ export class NewsMapper {
       },
       Title: row.Title,
       SentAt: row.SentAt,
+      SendDate: row.SendDate,
       Description: row.Description,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
