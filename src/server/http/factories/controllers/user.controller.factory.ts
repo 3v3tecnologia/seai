@@ -1,22 +1,21 @@
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 
-import { makeLogControllerDecorator } from "../decorators";
-import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 import {
   CompleteUserRegisterController,
   CreateUserController,
   DeleteUserController,
   FetchAllUsersController,
   FetchUserByIdController,
-  FetchUserController,
   ForgotPasswordController,
   IrrigantSignUpController,
   ResetPasswordController,
   SignInController,
   SignUpController,
   UpdateUserController,
-  UpdateUserProfileController,
+  UpdateUserProfileController
 } from "../../../../presentation/controllers/user";
+import { makeLogControllerDecorator } from "../decorators";
+import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 
 export class UserControllersFactory {
   static makeCreateUser(): Controller {

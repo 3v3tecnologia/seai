@@ -19,6 +19,7 @@ export class FetchEquipmentsController
     request: FetchEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
+      console.log(request);
       const dto = {
         ...parsePaginationInput({
           page: request.pageNumber, limit: request.limit
@@ -42,6 +43,11 @@ export class FetchEquipmentsController
           idType: request.idType,
         });
       }
+      if (request.only_with_measurements && request.idType) {
+        Object.assign(dto, {
+          only_with_measurements: request.only_with_measurements === 'true'
+        });
+      }
       const result = await this.fetchEquipments.execute(dto);
 
       return ok(result.value);
@@ -58,5 +64,6 @@ export namespace FetchEquipmentsControllerProtocol {
     idOrgan?: number;
     idType?: number;
     name?: string;
+    only_with_measurements?: string;
   } & IPaginationInput;
 }

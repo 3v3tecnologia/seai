@@ -86,6 +86,16 @@ export const EQUIPMENTS = {
             type: "string",
           },
         },
+        {
+          name: "only_with_measurements",
+          in: "query",
+          description:
+            "Filter equipment that has measurements. It is necessary to pass the equipment type ID before",
+          required: false,
+          schema: {
+            type: "boolean",
+          },
+        },
       ],
       responses: {
         200: {

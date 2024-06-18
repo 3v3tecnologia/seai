@@ -317,22 +317,65 @@ export class DbEquipmentsRepository
     return exists ? true : false;
   }
 
+  private typeIsPluviometer(id_type: number) {
+    return id_type === 2
+  }
+
+  private typeIsStation(id_type: number) {
+    return id_type == 1
+  }
+
   async getEquipments(
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
-    const { idOrgan, idType, pageNumber, limit, offset, name } = params;
+    const { idOrgan, idType, pageNumber, limit, offset, name, only_with_measurements } = params;
     const pageLimit = limit;
 
     const binding = [];
     const queries: Array<any> = [];
 
     if (idOrgan) {
-      queries.push(`WHERE
+      if (queries.length) {
+        queries.push(`AND 
         organ."IdOrgan" = ?`);
+      } else {
+        queries.push(`WHERE
+        organ."IdOrgan" = ?`);
+      }
+
+
       binding.push(idOrgan);
     }
 
     if (idType) {
+      if (only_with_measurements === true) {
+        // Station
+        if (this.typeIsStation(idType)) {
+          queries.push(`WHERE
+    equipment."IdEquipment" IN (
+        SELECT
+            rs."FK_Equipment"
+        FROM
+            "ReadStations" rs
+        WHERE
+            rs."Et0" IS NOT NULL
+            AND rs."Time" = CURRENT_DATE - INTERVAL '1 DAY'
+    )`);
+        }
+        else {
+          queries.push(`WHERE
+        equipment."IdEquipment" IN (
+            SELECT
+                rp."FK_Equipment"
+            FROM
+                "ReadPluviometers" rp
+            WHERE
+                rp."Value" IS NOT NULL
+                AND rp."Time" = CURRENT_DATE - INTERVAL '1 DAY'
+          )`)
+        }
+      }
+
       if (queries.length) {
         queries.push(`
         AND eqptype."IdType" = ?`);
@@ -342,6 +385,7 @@ export class DbEquipmentsRepository
       }
       binding.push(idType);
     }
+
 
     if (name) {
       if (queries.length) {
@@ -408,7 +452,6 @@ export class DbEquipmentsRepository
                 INNER JOIN equipments."EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
-
 
     const data = await governmentDb.raw(sql, binding);
 

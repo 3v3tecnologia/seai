@@ -11,44 +11,52 @@ import {
   UpdateController,
   UpdateSendAtController,
 } from "../../../../presentation/controllers/newsletter";
+import newsletterValidator from "../../../../presentation/controllers/newsletter/schema/newsletter-validator";
+import subscriberValidator from "../../../../presentation/controllers/newsletter/schema/subscriber-validator";
 import {
   NewsletterSubscriberUseCasesFactory,
   NewsletterUseCasesFactory,
   SystemLogsUseCaseFactory,
 } from "../use-cases";
 
+
 export class NewsletterControllersFactory {
   static makeCreateNewsletterSubscriber(): SubscribeToNewsController {
     return new SubscribeToNewsController(
       NewsletterSubscriberUseCasesFactory.makeSubscribeToNewsletter(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      subscriberValidator.subscribe
     );
   }
 
   static makeCreateNewsletter(): CreateNewsController {
     return new CreateNewsController(
       NewsletterUseCasesFactory.makeCreateNewsletterController(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      newsletterValidator.createNews
     );
   }
 
   static makeDeleteNewsletterSubscriber(): DeleteNewsletterSubscriberController {
     return new DeleteNewsletterSubscriberController(
       NewsletterSubscriberUseCasesFactory.makeDeleteNewsletterSubscriber(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      subscriberValidator.unsubscribe
     );
   }
 
   static makeDeleteNewsletter(): DeleteNewsController {
     return new DeleteNewsController(
       NewsletterUseCasesFactory.makeDeleteNewsletter(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      newsletterValidator.deleteNews
     );
   }
 
   static makeFetchNewsletterSubscribers(): FetchNewsletterSubscribersController {
     return new FetchNewsletterSubscribersController(
-      NewsletterSubscriberUseCasesFactory.makeFetchNewsletterSubscribers()
+      NewsletterSubscriberUseCasesFactory.makeFetchNewsletterSubscribers(),
+      subscriberValidator.fetchNews
     );
   }
   static makeFetchNewsletterSubscribersEmails(): FetchNewsletterSubscribersEmailsController {
@@ -59,31 +67,36 @@ export class NewsletterControllersFactory {
 
   static makeFetchAllNewsletter(): FetchNewsController {
     return new FetchNewsController(
-      NewsletterUseCasesFactory.makeFetchAllNewsletter()
+      NewsletterUseCasesFactory.makeFetchAllNewsletter(),
+      newsletterValidator.fetchNews
     );
   }
 
   static makeFetchOnlySentNewsletter(): FetchOnlySentNewsController {
     return new FetchOnlySentNewsController(
-      NewsletterUseCasesFactory.makeFetchOnlySentNewsletter()
+      NewsletterUseCasesFactory.makeFetchOnlySentNewsletter(),
+      newsletterValidator.fetchOnlySent
     );
   }
 
   static makeFetchByIdNewsletter(): FetchNewsByIdController {
     return new FetchNewsByIdController(
-      NewsletterUseCasesFactory.makeFetchByIdNewsletter()
+      NewsletterUseCasesFactory.makeFetchByIdNewsletter(),
+      newsletterValidator.fetchNewsById
     );
   }
 
   static makeUpdateNewsletter(): UpdateController {
     return new UpdateController(
-      NewsletterUseCasesFactory.makeUpdateNewsletter()
+      NewsletterUseCasesFactory.makeUpdateNewsletter(),
+      newsletterValidator.updateNews
     );
   }
 
   static makeUpdateSendAt(): UpdateSendAtController {
     return new UpdateSendAtController(
-      NewsletterUseCasesFactory.makeUpdateSendAt()
+      NewsletterUseCasesFactory.makeUpdateSendAt(),
+      newsletterValidator.updateSendAt
     );
   }
 }

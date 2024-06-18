@@ -89,6 +89,7 @@ export namespace EquipmentRepositoryDTOProtocol {
       idOrgan?: number;
       idType?: number;
       name?: string;
+      only_with_measurements?: boolean;
     } & IPaginationInput;
     export type Result = Promise<IOutputWithPagination<EquipmentEntity>>;
   }

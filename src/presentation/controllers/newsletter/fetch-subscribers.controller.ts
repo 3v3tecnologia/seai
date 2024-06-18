@@ -2,21 +2,47 @@ import { HttpResponse } from "../ports";
 
 import { IPaginationInput, parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import { FetchSubscribersUseCaseProtocol } from "../../../domain/use-cases/newsletter";
-import { created, forbidden, serverError } from "../helpers";
+import { badRequest, created, forbidden, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class FetchNewsletterSubscribersController {
   private useCase: FetchSubscribersUseCaseProtocol.UseCase;
+  private validator: ISchemaValidator;
 
   constructor(
-    useCase: FetchSubscribersUseCaseProtocol.UseCase,
+    useCase: FetchSubscribersUseCaseProtocol.UseCase, validator: ISchemaValidator
   ) {
     this.useCase = useCase;
+    this.validator = validator;
   }
 
   async handle(
     request: FetchNewsletterSubscribersControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
+      const { limit, offset, pageNumber } = request
+
+      const toValidate = {
+        limit, offset, pageNumber
+      }
+
+      if (Reflect.has(request, 'email')) {
+        Object.assign(toValidate, {
+          email: request.email
+        })
+      }
+      if (Reflect.has(request, 'name')) {
+        Object.assign(toValidate, {
+          name: request.name
+        })
+      }
+
+      const { error } = await this.validator.validate(toValidate)
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const dto = {
         ...parsePaginationInput({
           page: request.pageNumber,

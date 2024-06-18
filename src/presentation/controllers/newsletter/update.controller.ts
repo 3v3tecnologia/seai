@@ -2,16 +2,29 @@ import { HttpResponse } from "../ports";
 
 import { UpdateNewsUseCaseProtocol } from "../../../domain/use-cases/newsletter";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class UpdateController {
   private useCase: UpdateNewsUseCaseProtocol.UseCase;
+  private validator: ISchemaValidator;
 
-  constructor(useCase: UpdateNewsUseCaseProtocol.UseCase) {
+  constructor(useCase: UpdateNewsUseCaseProtocol.UseCase, validator: ISchemaValidator) {
     this.useCase = useCase;
+    this.validator = validator
   }
 
   async handle(request: UpdateController.Request): Promise<HttpResponse> {
     try {
+      const { id, Data, Description, FK_Author, SendDate, Title, LocationName } = request
+
+      const { error } = await this.validator.validate({
+        id, Data, Description, FK_Author, SendDate, Title, LocationName
+      })
+
+      if (error) {
+        return badRequest(error)
+      }
+
       const createdOrError = await this.useCase.execute({
         Id: request.id,
         Data: request.Data,
