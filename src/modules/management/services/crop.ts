@@ -1,6 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
 import { ManagementCrop } from "../core/model/crop";
-import { ManagementCropCycle } from "../core/model/crop-cycles";
+import { ManagementCropCycle, checkCropCycleSequence } from "../core/model/crop-cycles";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 import { DbManagementCropRepository } from "../repositories/crop.repository";
 import { ManagementCropDTO } from "../repositories/protocols/dto";
@@ -137,6 +137,12 @@ export class ManagementCropUseCases {
     idCrop: number,
     cycles: Array<ManagementCropCycle>
   ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>> {
+    const validCyclesOrError = checkCropCycleSequence(cycles)
+
+    if (validCyclesOrError.isLeft()) {
+      return left(validCyclesOrError.value)
+    }
+
     const notFound =
       (await DbManagementCropRepository.idExists(idCrop)) === false;
 
