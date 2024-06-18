@@ -496,9 +496,6 @@ export class DbEquipmentsRepository
 
     const data = await governmentDb.raw(query);
 
-    console.log(data);
-
-
     const rows = data.rows;
 
     if (!rows) {
