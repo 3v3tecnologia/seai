@@ -42,6 +42,11 @@ export class FetchEquipmentsController
           idType: request.idType,
         });
       }
+      if (request.only_with_measurements) {
+        Object.assign(dto, {
+          only_with_measurements: Boolean(request.only_with_measurements,)
+        });
+      }
       const result = await this.fetchEquipments.execute(dto);
 
       return ok(result.value);
@@ -58,5 +63,6 @@ export namespace FetchEquipmentsControllerProtocol {
     idOrgan?: number;
     idType?: number;
     name?: string;
+    only_with_measurements?: boolean;
   } & IPaginationInput;
 }

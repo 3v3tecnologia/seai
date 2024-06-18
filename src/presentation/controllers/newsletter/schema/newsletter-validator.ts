@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { SchemaValidator } from "../../../../shared/validation/validator";
-import { idSchema, paginationSchema } from "../../../validator/schemas";
+import { idSchema, paginationSchema } from "../../../utils/schemas";
 
 const newsletterSchema = Joi.object({
     FK_Author: Joi.number().required(),

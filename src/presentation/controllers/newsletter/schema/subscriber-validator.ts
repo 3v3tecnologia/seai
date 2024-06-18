@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { SchemaValidator } from "../../../../shared/validation/validator";
-import { paginationSchema } from "../../../validator/schemas";
+import { paginationSchema } from "../../../utils/schemas";
 
 const subscribe = new SchemaValidator(Joi.object({
     Email: Joi.string().required(),

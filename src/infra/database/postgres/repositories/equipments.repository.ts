@@ -320,15 +320,34 @@ export class DbEquipmentsRepository
   async getEquipments(
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
-    const { idOrgan, idType, pageNumber, limit, offset, name } = params;
+    const { idOrgan, idType, pageNumber, limit, offset, name, only_with_measurements } = params;
     const pageLimit = limit;
 
     const binding = [];
     const queries: Array<any> = [];
 
+    if (only_with_measurements) {
+      if (idType == 1) {
+        queries.push(`INNER JOIN "ReadStations" rs
+        ON rs."FK_Equipment" = equipment."IdEquipment"
+        WHERE rs."Et0" IS NOT NULL`);
+      } else {
+        queries.push(`INNER JOIN "ReadPluviometers" rp
+        ON rp."FK_Equipment" = equipment."IdEquipment"
+        WHERE rp."Value" IS NOT NULL`)
+      }
+    }
+
     if (idOrgan) {
-      queries.push(`WHERE
+      if (queries.length) {
+        queries.push(`AND 
         organ."IdOrgan" = ?`);
+      } else {
+        queries.push(`WHERE
+        organ."IdOrgan" = ?`);
+      }
+
+
       binding.push(idOrgan);
     }
 
@@ -342,6 +361,8 @@ export class DbEquipmentsRepository
       }
       binding.push(idType);
     }
+
+
 
     if (name) {
       if (queries.length) {
@@ -409,6 +430,7 @@ export class DbEquipmentsRepository
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
 
+    console.log(sql)
 
     const data = await governmentDb.raw(sql, binding);
 
