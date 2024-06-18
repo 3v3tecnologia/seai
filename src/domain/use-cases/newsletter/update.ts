@@ -68,9 +68,9 @@ export class UpdateNews
   ): UpdateNewsUseCaseProtocol.Response {
     const sendDate = new Date(request.SendDate)
 
-    if (isDateInThePast(sendDate)) {
-      return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
-    }
+    // if (isDateInThePast(sendDate)) {
+    //   return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
+    // }
 
     const alreadyExistsNews = await this.repository.getById({
       Id: request.Id,

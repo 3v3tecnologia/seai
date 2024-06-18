@@ -55,9 +55,9 @@ export class CreateNews
 
     const sendDate = new Date(request.SendDate)
 
-    if (isDateInThePast(sendDate)) {
-      return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
-    }
+    // if (isDateInThePast(sendDate)) {
+    //   return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
+    // }
 
     const newsId = await this.repository.create(request);
 
