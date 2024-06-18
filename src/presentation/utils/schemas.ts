@@ -1,9 +1,9 @@
 import Joi from "joi";
 
 export const paginationSchema = {
-    pageNumber: Joi.number().required(),
-    limit: Joi.number().required(),
-    offset: Joi.number().required(),
+    pageNumber: Joi.number().optional(),
+    limit: Joi.number().optional(),
+    offset: Joi.number().optional(),
 }
 
 export const idSchema = {

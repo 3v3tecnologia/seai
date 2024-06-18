@@ -21,14 +21,14 @@ const fetchNewsById = new SchemaValidator(Joi.object(idSchema))
 
 const fetchNews = new SchemaValidator(Joi.object({
     ...paginationSchema,
-    Title: Joi.string().optional()
+    title: Joi.string().optional()
 }))
 
 const updateSendAt = new SchemaValidator(Joi.object(idSchema))
 
 const fetchOnlySent = new SchemaValidator(Joi.object({
     ...paginationSchema,
-    Title: Joi.string().optional()
+    title: Joi.string().optional()
 }))
 
 
