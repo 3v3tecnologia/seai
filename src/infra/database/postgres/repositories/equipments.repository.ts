@@ -317,6 +317,14 @@ export class DbEquipmentsRepository
     return exists ? true : false;
   }
 
+  private typeIsPluviometer(id_type: number) {
+    return id_type === 2
+  }
+
+  private typeIsStation(id_type: number) {
+    return id_type == 1
+  }
+
   async getEquipments(
     params: EquipmentRepositoryDTOProtocol.GetByPageNumber.Params
   ): EquipmentRepositoryDTOProtocol.GetByPageNumber.Result {
@@ -325,18 +333,6 @@ export class DbEquipmentsRepository
 
     const binding = [];
     const queries: Array<any> = [];
-
-    if (only_with_measurements) {
-      if (idType == 1) {
-        queries.push(`INNER JOIN "ReadStations" rs
-        ON rs."FK_Equipment" = equipment."IdEquipment"
-        WHERE rs."Et0" IS NOT NULL`);
-      } else {
-        queries.push(`INNER JOIN "ReadPluviometers" rp
-        ON rp."FK_Equipment" = equipment."IdEquipment"
-        WHERE rp."Value" IS NOT NULL`)
-      }
-    }
 
     if (idOrgan) {
       if (queries.length) {
@@ -352,6 +348,34 @@ export class DbEquipmentsRepository
     }
 
     if (idType) {
+      if (only_with_measurements === true) {
+        // Station
+        if (this.typeIsStation(idType)) {
+          queries.push(`WHERE
+    equipment."IdEquipment" IN (
+        SELECT
+            rs."FK_Equipment"
+        FROM
+            "ReadStations" rs
+        WHERE
+            rs."Et0" IS NOT NULL
+            AND rs."Time" = CURRENT_DATE - INTERVAL '1 DAY'
+    )`);
+        }
+        else {
+          queries.push(`WHERE
+        equipment."IdEquipment" IN (
+            SELECT
+                rp."FK_Equipment"
+            FROM
+                "ReadPluviometers" rp
+            WHERE
+                rp."Value" IS NOT NULL
+                AND rp."Time" = CURRENT_DATE - INTERVAL '1 DAY'
+          )`)
+        }
+      }
+
       if (queries.length) {
         queries.push(`
         AND eqptype."IdType" = ?`);
@@ -361,7 +385,6 @@ export class DbEquipmentsRepository
       }
       binding.push(idType);
     }
-
 
 
     if (name) {
@@ -429,8 +452,6 @@ export class DbEquipmentsRepository
                 INNER JOIN equipments."EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
-
-    console.log(sql)
 
     const data = await governmentDb.raw(sql, binding);
 
