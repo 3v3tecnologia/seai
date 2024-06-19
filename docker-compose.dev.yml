@@ -27,10 +27,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      target: development
     container_name: "seai-server"
     restart: always
     ports:
-      - "${PORT}:8080"
+      - "127.0.0.1:${PORT}:80"
       - "127.0.0.1:9222:9222"
     volumes:
       - .:/usr/src/app
