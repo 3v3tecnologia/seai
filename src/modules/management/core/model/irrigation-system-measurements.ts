@@ -3,6 +3,7 @@ import { Either, left, right } from "../../../../shared/Either";
 export interface IIrrigationSystemMeasurementsEntity {
   efficiency(): number;
   applicationRate(): number;
+  getAllMeasurement(): any
 }
 
 type SistemEfficiency = {
@@ -49,6 +50,15 @@ export abstract class IrrigationSystemMeasurementsEntity<
   public efficiency(): number {
     return this._efficiency / 100;
   }
+
+  public getAllMeasurement(): any {
+    const props = this._props
+    return {
+      ...props,
+      Efficiency: this.efficiency(),
+      ApplicationRate: this.applicationRate()
+    }
+  }
   public abstract applicationRate(): number;
 }
 
@@ -61,6 +71,7 @@ export class Sulcos extends IrrigationSystemMeasurementsEntity<
       ...props,
       Efficiency: props.Efficiency || Sulcos.DEFAULT_EFFICIENCY,
     });
+
   }
   public applicationRate(): number {
     return this._props.Flow / (this._props.Length * this._props.Spacing);

@@ -39,3 +39,27 @@ export function checkCropCycleSequence(cycles: Array<ManagementCropCycle>): Eith
 
   return right();
 }
+
+export function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Either<Error, ManagementCropCycle> {
+  const startCropCycle = cropCycles[0]
+
+  if (cropDate < startCropCycle.Start) {
+    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se ${startCropCycle.Start - cropDate} dia(s) anterior a data de início do ciclo da cultura. `))
+  }
+
+  const endCropCycle = cropCycles[cropCycles.length - 1]
+
+  if (cropDate > endCropCycle.End) {
+    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se após a data do último dia do ciclo da cultura`))
+  }
+
+  const data = cropCycles.find(
+    (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
+  )
+
+  if (data) {
+    return right(data)
+  }
+
+  return left(new Error("Não foi possível encontrar valores de KC"))
+}

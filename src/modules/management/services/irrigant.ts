@@ -1,8 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
 import {
-  dateDiffInDays,
-  getYesterDayDate,
-  parseBrazilianDateTime,
+  getYesterDayDate
 } from "../../../shared/utils/date";
 import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
 import { BladeSuggestion } from "../core/model/blade-suggestion";
@@ -10,21 +8,26 @@ import {
   IrrigationSystemEntity,
   IrrigationSystemMeasurementsTypes,
   IrrigationSystemTypes,
-  irrigationsTypesNames,
+  irrigationsTypesNames
 } from "../core/model/irrigation-system";
 
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 
+import { Logger } from "../../../shared/logger/logger";
 import { DbEquipmentsMeasurementsRepository } from "../../equipments/repositories/equipments-measurements.repository";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
+import { getCropDate } from "../core/model/crop";
+import { ManagementCropCycle, findKc } from "../core/model/crop-cycles";
 import { Dripping, DrippingProps, IIrrigationSystemMeasurementsEntity, MicroSprinkling, MicroSprinklingProps, Pivot, PivotProps, Sprinkling, SprinklingProps } from "../core/model/irrigation-system-measurements";
 import { DbManagementCropRepository } from "../repositories/crop.repository";
-import { ManagementCropCycle } from "../core/model/crop-cycles";
+import { IrrigationCropsRepository } from "../repositories/irrigation.repository";
+import { UserIrrigantRepository } from "../repositories/user.repository";
+import { CalcIrrigationRecommendationDTO, SaveIrrigationCropsDTO, SaveUserEquipmentsDTO, UpdateUserEquipmentsDTO } from "./dto/irrigant";
 
 export class IrrigationRecommendationServices {
   static async calcBladeIrrigationRecommendation(
-    command: ICalcBaldeIrrigationRecommendationService.Input
-  ): ICalcBaldeIrrigationRecommendationService.Output {
+    command: CalcIrrigationRecommendationDTO.Input
+  ): CalcIrrigationRecommendationDTO.Output {
     const yesterDay = getYesterDayDate("-");
 
     let Et0: number | null = null;
@@ -166,60 +169,214 @@ export class IrrigationRecommendationServices {
       Kc: bladeSuggestion.Kc,
     });
   }
-}
 
-function getCropDate(plantingDate: string) {
-  const currentDate = new Date();
-  const diff = dateDiffInDays(
-    currentDate,
-    new Date(parseBrazilianDateTime(plantingDate))
-  );
-  return diff < 0 ? 0 : diff;
-}
+  //Associate equipments to User
+  // The user is allowed to have only 2 equipments
+  static async saveUserEquipments(dto: SaveUserEquipmentsDTO.Input): Promise<Either<Error, string>> {
+    // Save user equipments
+    // Shouldn't allow the user to save duplicate equipments 
+    // Should get all activated equipments 
+    await UserIrrigantRepository.associateEquipmentsToUser({
+      user_id: dto.UserId,
+      pluviometer_id: dto.PluviometerId,
+      station_id: dto.StationId
+    })
 
-// Entity?
-function findKc(cropDate: number, cropCycles: Array<ManagementCropCycle>): Either<Error, ManagementCropCycle> {
-  const startCropCycle = cropCycles[0]
-
-  if (cropDate < startCropCycle.Start) {
-    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se ${startCropCycle.Start - cropDate} dia(s) anterior a data de início do ciclo da cultura. `))
+    return right("Sucesso ao salvar equipamentos")
   }
 
-  const endCropCycle = cropCycles[cropCycles.length - 1]
+  static async deleteUserEquipments(user_id: number): Promise<Either<Error, void>> {
+    // Save user equipments
+    // Shouldn't allow the user to save duplicate equipments 
+    await UserIrrigantRepository.removeEquipments(user_id)
 
-  if (cropDate > endCropCycle.End) {
-    return left(new Error(`Necessário ajustar a data plantio pois o valor encontra-se após a data do último dia do ciclo da cultura`))
+    return right()
   }
 
-  const data = cropCycles.find(
-    (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
-  )
+  static async updateUserEquipments(dto: UpdateUserEquipmentsDTO.Input): Promise<Either<Error, void>> {
+    // Save user equipments
+    // Shouldn't allow the user to save duplicate equipments 
+    await UserIrrigantRepository.updateEquipments({
+      user_id: dto.UserId,
+      station_id: dto.StationId,
+      pluviometer_id: dto.PluviometerId
+    })
 
-  if (data) {
-    return right(data)
+    return right()
   }
 
-  return left(new Error("Não foi possível encontrar valores de KC"))
+  // Get user's equipments
+  static async getUserEquipments(user_id: number): Promise<Either<Error, Array<any>>> {
+    // Save user equipments
+    // Shouldn't allow the user to save duplicate equipments 
+    return right(await UserIrrigantRepository.getUsersEquipments(user_id))
+  }
+
+  static async saveIrrigationCrops(dto: SaveIrrigationCropsDTO.Input): Promise<Either<Error, number>> {
+    // Save Irrigation Crops
+    let systemOrError;
+
+    switch (dto.System.Type) {
+      case irrigationsTypesNames.MicroSprinkling:
+        systemOrError = MicroSprinkling.create(
+          dto.System.Measurements as MicroSprinklingProps
+        );
+        break;
+      case irrigationsTypesNames.Dripping:
+        systemOrError = Dripping.create(
+          dto.System.Measurements as DrippingProps
+        );
+        break;
+      case irrigationsTypesNames.Sprinkling:
+        systemOrError = Sprinkling.create(
+          dto.System.Measurements as SprinklingProps
+        );
+        break;
+      case irrigationsTypesNames.Pivot:
+        systemOrError = Pivot.create(dto.System.Measurements as PivotProps);
+        break;
+      case irrigationsTypesNames.Sulcos:
+        systemOrError = Pivot.create(dto.System.Measurements as PivotProps);
+        break;
+      default:
+        return left(
+          new Error("Tipo de sistema não reconhecido.")
+        );
+    }
+
+    if (systemOrError.isLeft()) {
+      return left(systemOrError.value);
+    }
+
+    const systemMeasurements = (systemOrError.value as IIrrigationSystemMeasurementsEntity).getAllMeasurement()
+
+    const id = await IrrigationCropsRepository.save({
+      user_id: dto.UserId,
+      crop_id: dto.CropId,
+      planting_date: dto.PlantingDate,
+      system_type: dto.System.Type as IrrigationSystemTypes,
+      area: systemMeasurements?.Area,
+      effective_area: systemMeasurements?.EfectiveArea,
+      flow: systemMeasurements?.Flow,
+      length: systemMeasurements?.Length,
+      plants_qtd: systemMeasurements?.PlantsQtd,
+      spacing: systemMeasurements?.Spacing,
+      sprinkler_precipitation: systemMeasurements?.Precipitation,
+    })
+
+    if (id) {
+      return right(id)
+    }
+
+    return left(new Error("Não foi possível cadastrar sistema de irrigação."))
+  }
+
+  static async deleteIrrigationCrops(id: number): Promise<Either<Error, void>> {
+    return right(await IrrigationCropsRepository.deleteById(id))
+  }
+
+  static async deleteAllUserIrrigationCrops(user_id: number): Promise<Either<Error, void>> {
+    return right(await IrrigationCropsRepository.deleteByUserId(user_id))
+  }
+
+  static async getIrrigationCropsById(id: number, user_id: number): Promise<Either<Error, any>> {
+    return right(await IrrigationCropsRepository.getById(id, user_id))
+  }
+
+  // Get all irrigation crops calculated by user
+  static async getAllIrrigationCropsByUserId(user_id: number): Promise<Either<Error, Array<any>>> {
+    const irrigations = await IrrigationCropsRepository.getByUserId(user_id)
+
+    if (irrigations == null) {
+      return left(new Error("Não há recomendação de lâminas cadastradas"))
+    }
+
+    const userRecommendations: Array<any> = []
+    //Calculate for each item 
+    irrigations.forEach(async (irrigation) => {
+      let systemProps: IrrigationSystemMeasurementsTypes | null = null
+
+      switch (irrigation.system_type) {
+        case irrigationsTypesNames.MicroSprinkling:
+          systemProps = {
+            Area: irrigation.area as number,
+            EfectiveArea: irrigation.effective_area as number,
+            Flow: irrigation.flow as number,
+            PlantsQtd: irrigation.plants_qtd as number,
+          };
+          break;
+        case irrigationsTypesNames.Dripping:
+          systemProps = {
+            Area: irrigation.area as number,
+            EfectiveArea: irrigation.effective_area as number,
+            Flow: irrigation.flow as number,
+            PlantsQtd: irrigation.plants_qtd as number,
+          };
+          break;
+        case irrigationsTypesNames.Sprinkling:
+          systemProps = {
+            Precipitation: irrigation.sprinkler_precipitation as number
+          };
+          break;
+        case irrigationsTypesNames.Pivot:
+          systemProps = {
+            Precipitation: irrigation.sprinkler_precipitation as number
+          };
+          break;
+        case irrigationsTypesNames.Sulcos:
+          systemProps = {
+            Precipitation: irrigation.sprinkler_precipitation as number
+          };
+          break;
+        default:
+          Logger.error("Tipo de sistema não reconhecido.")
+      }
+
+      // Se o tipo de sistema estiver inválido
+      if (!systemProps) {
+        return
+      }
+
+      // Verificar para trazer o KC da cultura na própria query de listar irrigação
+      const resultOrError = await this.calcBladeIrrigationRecommendation({
+        CropId: irrigation.crop_id,
+        PlantingDate: irrigation.planting_date,
+        Pluviometer: {
+          Id: irrigation.pluviometer_id
+        },
+        Station: {
+          Id: irrigation.station_id
+        },
+        System: {
+          Type: irrigation.system_type as IrrigationSystemTypes,
+          Measurements: systemProps
+        }
+      })
+
+      // O que fazer se der erro no cálculo da recomendação?
+      if (resultOrError.isLeft()) {
+        Logger.fatal(resultOrError.value.message)
+        return
+      }
+
+      const suggestion = resultOrError.value
+
+      userRecommendations.push({
+        Etc: suggestion.Etc,
+        RepositionBlade: suggestion.RepositionBlade,
+        IrrigationEfficiency: suggestion.IrrigationEfficiency,
+        IrrigationTime: suggestion.IrrigationTime,
+        CropDays: suggestion.CropDays,
+        Et0: suggestion.Et0,
+        Precipitation: suggestion.Precipitation,
+        Kc: suggestion.Kc,
+      })
+
+    })
+
+    return right(userRecommendations)
+  }
 }
 
-export namespace ICalcBaldeIrrigationRecommendationService {
-  export type Input = {
-    Station: {
-      Id?: number;
-      Et0?: number;
-    };
-    Pluviometer: {
-      Id?: number;
-      Precipitation?: number;
-    };
-    CropId: number;
-    PlantingDate: string;
-    IrrigationEfficiency: number;
-    System: {
-      Type: IrrigationSystemTypes;
-      Measurements: IrrigationSystemMeasurementsTypes;
-    };
-  };
 
-  export type Output = Promise<Either<Error, any | null>>;
-}
+

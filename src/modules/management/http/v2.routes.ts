@@ -39,9 +39,51 @@ export const setupManagementV2Routes = (router: Router): void => {
   //Irrigant
   router.get("/management/crops", adaptRouteV2(ManagementCropControllers.getAllCrops));
 
-  //Irrigant
   router.post(
     "/management/blade_suggestion",
     adaptRouteV2(IrrigantControllers.getBladeIrrigation)
   );
+
+  router.post(
+    "/management/user/irrigation_recommendation",
+    authorization,
+    adaptRouteV2(IrrigantControllers.saveRecommendation)
+  );
+
+  router.get(
+    "/management/user/irrigation_recommendation",
+    authorization,
+    adaptRouteV2(IrrigantControllers.getAllRecommendationByUserId)
+  );
+
+  router.get(
+    "/management/user/irrigation_recommendation/:id",
+    authorization,
+    adaptRouteV2(IrrigantControllers.getRecommendationById)
+  );
+
+  router.delete(
+    "/management/user/irrigation_recommendation/:id",
+    authorization,
+    adaptRouteV2(IrrigantControllers.deleteRecommendation)
+  );
+
+  router.post(
+    "/management/user/equipments",
+    authorization,
+    adaptRouteV2(IrrigantControllers.saveUserEquipments)
+  );
+
+  router.delete(
+    "/management/user/equipments/:id",
+    authorization,
+    adaptRouteV2(IrrigantControllers.deleteUserEquipments)
+  );
+
+  router.patch(
+    "/management/user/equipments",
+    authorization,
+    adaptRouteV2(IrrigantControllers.updateUserEquipments)
+  );
+
 };

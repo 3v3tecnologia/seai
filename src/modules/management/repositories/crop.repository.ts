@@ -1,10 +1,10 @@
-import { DATABASES } from "../../../shared/db/tableNames";
+import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
-import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 
-import { governmentDb } from '../../../infra/database/postgres/connection/knexfile'
+import { governmentDb } from '../../../infra/database/postgres/connection/knexfile';
 export class DbManagementCropRepository {
+
   static async createCrop(culture: ManagementCrop): Promise<number | null> {
     const insertedCrop = await governmentDb
       .withSchema('management')
