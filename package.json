@@ -14,14 +14,14 @@
     "build:watch": "tsc -w",
     "build:start": "npm run build:clean && npm start",
     "dev:watch": "concurrently -s all \"tsc -w\" nodemon dist/src/index.js",
-    "debug:dev": "tsx --env-file=.env.local --inspect=0.0.0.0:9222 --watch ./src/index.ts",
-    "start:dev": "cross-env NODE_ENV=development nodemon",
     "start:prod": "cross-env NODE_ENV=production node dist/src/index.js",
-    "start:debug:local": "tsx --env-file=.env.local --watch --inspect=0.0.0.0:9222 src/index.ts",
+    "start:dev:local": "tsx --env-file=.env.development.local --watch src/index.ts",
+    "start:debug:container": "node --env-file=.env.development.local --import tsx --inspect=0.0.0.0:9229 --watch ./src/index.ts",
+    "start:debug:local": "node --env-file=.env.development.local --import tsx --inspect=0.0.0.0:9229 --watch ./src/index.ts",
     "compose:up:dev": "docker compose -f docker-compose.dev.yml up -d ",
     "compose:down:dev": "docker compose -f docker-compose.dev.yml down",
     "container:logs": "docker container logs --tail 200 --timestamps seai-server",
-    "container:logs:watch": "docker container logs -f --tail 100 --timestamps seai-server"
+    "container:logs:watch": "docker container logs -f --tail 100  seai-server"
   },
   "keywords": [],
   "license": "ISC",
