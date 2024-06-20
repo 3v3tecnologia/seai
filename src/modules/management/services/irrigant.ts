@@ -293,7 +293,7 @@ export class IrrigationRecommendationServices {
 
     const userRecommendations: Array<any> = []
     //Calculate for each item 
-    irrigations.forEach(async (irrigation) => {
+    for (const irrigation of irrigations) {
       let systemProps: IrrigationSystemMeasurementsTypes | null = null
 
       switch (irrigation.system_type) {
@@ -334,13 +334,17 @@ export class IrrigationRecommendationServices {
 
       // Se o tipo de sistema estiver inválido
       if (!systemProps) {
-        return
+        continue
       }
+
+      const planingDate = new Date(irrigation.planting_date)
+
+      const formattedDate = `${planingDate.getDate()}/${planingDate.getMonth() + 1}/${planingDate.getFullYear()}`;
 
       // Verificar para trazer o KC da cultura na própria query de listar irrigação
       const resultOrError = await this.calcBladeIrrigationRecommendation({
         CropId: irrigation.crop_id,
-        PlantingDate: irrigation.planting_date,
+        PlantingDate: formattedDate,
         Pluviometer: {
           Id: irrigation.pluviometer_id
         },
@@ -356,7 +360,7 @@ export class IrrigationRecommendationServices {
       // O que fazer se der erro no cálculo da recomendação?
       if (resultOrError.isLeft()) {
         Logger.fatal(resultOrError.value.message)
-        return
+        continue
       }
 
       const suggestion = resultOrError.value
@@ -372,7 +376,10 @@ export class IrrigationRecommendationServices {
         Kc: suggestion.Kc,
       })
 
-    })
+    }
+
+
+    console.log(userRecommendations);
 
     return right(userRecommendations)
   }
