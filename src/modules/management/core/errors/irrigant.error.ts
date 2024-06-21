@@ -17,4 +17,10 @@ export namespace IrrigantErrors {
       this.name = "PluviometerMeasurementsNotFound";
     }
   }
+  export class IrrigationSystemNotRecognized extends Error {
+    constructor() {
+      super("Tipo de sistema não reconhecido.");
+      this.name = "IrrigationSystemNotRecognized";
+    }
+  }
 }
