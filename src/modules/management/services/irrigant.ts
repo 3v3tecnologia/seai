@@ -391,39 +391,36 @@ export class IrrigationRecommendationServices {
 
     let systemProps: IrrigationSystemMeasurementsTypes | null = null;
 
-    switch (recordedRecommendation.system_type) {
+    switch (recordedRecommendation.SystemType) {
       case irrigationsTypesNames.MicroSprinkling:
         systemProps = {
-          Area: recordedRecommendation.area as number,
-          EfectiveArea: recordedRecommendation.effective_area as number,
-          Flow: recordedRecommendation.flow as number,
-          PlantsQtd: recordedRecommendation.plants_qtd as number,
+          Area: recordedRecommendation.Area as number,
+          EfectiveArea: recordedRecommendation.EffectiveArea as number,
+          Flow: recordedRecommendation.Flow as number,
+          PlantsQtd: recordedRecommendation.PlantsQtd as number,
         };
         break;
       case irrigationsTypesNames.Dripping:
         systemProps = {
-          Area: recordedRecommendation.area as number,
-          EfectiveArea: recordedRecommendation.effective_area as number,
-          Flow: recordedRecommendation.flow as number,
-          PlantsQtd: recordedRecommendation.plants_qtd as number,
+          Area: recordedRecommendation.Area as number,
+          EfectiveArea: recordedRecommendation.EffectiveArea as number,
+          Flow: recordedRecommendation.Flow as number,
+          PlantsQtd: recordedRecommendation.PlantsQtd as number,
         };
         break;
       case irrigationsTypesNames.Sprinkling:
         systemProps = {
-          Precipitation:
-            recordedRecommendation.sprinkler_precipitation as number,
+          Precipitation: recordedRecommendation.System_Precipitation as number,
         };
         break;
       case irrigationsTypesNames.Pivot:
         systemProps = {
-          Precipitation:
-            recordedRecommendation.sprinkler_precipitation as number,
+          Precipitation: recordedRecommendation.System_Precipitation as number,
         };
         break;
       case irrigationsTypesNames.Sulcos:
         systemProps = {
-          Precipitation:
-            recordedRecommendation.sprinkler_precipitation as number,
+          Precipitation: recordedRecommendation.System_Precipitation as number,
         };
         break;
       default:
@@ -431,7 +428,7 @@ export class IrrigationRecommendationServices {
         return left(new Error("Tipo de sistema não reconhecido."));
     }
 
-    const planingDate = new Date(recordedRecommendation.planting_date);
+    const planingDate = new Date(recordedRecommendation.PlantingDate);
 
     // DD/MM/YYYY
     const formattedDate = `${planingDate.getDate()}/${
@@ -440,16 +437,16 @@ export class IrrigationRecommendationServices {
 
     // Verificar para trazer o KC da cultura na própria query de listar irrigação
     const resultOrError = await this.calcBladeIrrigationRecommendation({
-      CropId: recordedRecommendation.crop_id,
+      CropId: recordedRecommendation.CropId,
       PlantingDate: formattedDate,
       Pluviometer: {
-        Id: recordedRecommendation.pluviometer_id,
+        Id: recordedRecommendation.PluviometerId,
       },
       Station: {
-        Id: recordedRecommendation.station_id,
+        Id: recordedRecommendation.StationId,
       },
       System: {
-        Type: recordedRecommendation.system_type as IrrigationSystemTypes,
+        Type: recordedRecommendation.SystemType as IrrigationSystemTypes,
         Measurements: systemProps,
       },
     });
@@ -463,9 +460,9 @@ export class IrrigationRecommendationServices {
     const suggestion = resultOrError.value;
 
     return right({
-      Id: recordedRecommendation.id,
-      CropId: recordedRecommendation.crop_id,
-      Crop: recordedRecommendation.crop_name,
+      Id: recordedRecommendation.Id,
+      CropId: recordedRecommendation.CropId,
+      Crop: recordedRecommendation.Crop,
       Etc: suggestion.Etc,
       RepositionBlade: suggestion.RepositionBlade,
       IrrigationEfficiency: suggestion.IrrigationEfficiency,
@@ -474,8 +471,8 @@ export class IrrigationRecommendationServices {
       Et0: suggestion.Et0,
       Precipitation: suggestion.Precipitation,
       Kc: suggestion.Kc,
-      Created_at: recordedRecommendation.created_at,
-      Updated_at: recordedRecommendation.updated_at,
+      Created_at: recordedRecommendation.CreatedAt,
+      Updated_at: recordedRecommendation.UpdatedAt,
     });
   }
 
@@ -494,36 +491,36 @@ export class IrrigationRecommendationServices {
     for (const irrigation of irrigations) {
       let systemProps: IrrigationSystemMeasurementsTypes | null = null;
 
-      switch (irrigation.system_type) {
+      switch (irrigation.SystemType) {
         case irrigationsTypesNames.MicroSprinkling:
           systemProps = {
-            Area: irrigation.area as number,
-            EfectiveArea: irrigation.effective_area as number,
-            Flow: irrigation.flow as number,
-            PlantsQtd: irrigation.plants_qtd as number,
+            Area: irrigation.Area as number,
+            EfectiveArea: irrigation.EffectiveArea as number,
+            Flow: irrigation.Flow as number,
+            PlantsQtd: irrigation.PlantsQtd as number,
           };
           break;
         case irrigationsTypesNames.Dripping:
           systemProps = {
-            Area: irrigation.area as number,
-            EfectiveArea: irrigation.effective_area as number,
-            Flow: irrigation.flow as number,
-            PlantsQtd: irrigation.plants_qtd as number,
+            Area: irrigation.Area as number,
+            EfectiveArea: irrigation.EffectiveArea as number,
+            Flow: irrigation.Flow as number,
+            PlantsQtd: irrigation.PlantsQtd as number,
           };
           break;
         case irrigationsTypesNames.Sprinkling:
           systemProps = {
-            Precipitation: irrigation.sprinkler_precipitation as number,
+            Precipitation: irrigation.System_Precipitation as number,
           };
           break;
         case irrigationsTypesNames.Pivot:
           systemProps = {
-            Precipitation: irrigation.sprinkler_precipitation as number,
+            Precipitation: irrigation.System_Precipitation as number,
           };
           break;
         case irrigationsTypesNames.Sulcos:
           systemProps = {
-            Precipitation: irrigation.sprinkler_precipitation as number,
+            Precipitation: irrigation.System_Precipitation as number,
           };
           break;
         default:
@@ -535,7 +532,7 @@ export class IrrigationRecommendationServices {
         continue;
       }
 
-      const planingDate = new Date(irrigation.planting_date);
+      const planingDate = new Date(irrigation.PlantingDate);
 
       // DD/MM/YYYY
       const formattedDate = `${planingDate.getDate()}/${
@@ -544,16 +541,16 @@ export class IrrigationRecommendationServices {
 
       // Verificar para trazer o KC da cultura na própria query de listar irrigação
       const resultOrError = await this.calcBladeIrrigationRecommendation({
-        CropId: irrigation.crop_id,
+        CropId: irrigation.CropId,
         PlantingDate: formattedDate,
         Pluviometer: {
-          Id: irrigation.pluviometer_id,
+          Id: irrigation.PluviometerId,
         },
         Station: {
-          Id: irrigation.station_id,
+          Id: irrigation.StationId,
         },
         System: {
-          Type: irrigation.system_type as IrrigationSystemTypes,
+          Type: irrigation.SystemType as IrrigationSystemTypes,
           Measurements: systemProps,
         },
       });
@@ -562,9 +559,9 @@ export class IrrigationRecommendationServices {
       if (resultOrError.isLeft()) {
         Logger.error(resultOrError.value.message);
         userRecommendations.push({
-          Id: irrigation.id,
-          CropId: irrigation.crop_id,
-          Crop: irrigation.crop_name,
+          Id: irrigation.Id,
+          CropId: irrigation.CropId,
+          Crop: irrigation.Crop,
           Etc: null,
           RepositionBlade: null,
           IrrigationEfficiency: null,
@@ -573,8 +570,8 @@ export class IrrigationRecommendationServices {
           Et0: null,
           Precipitation: null,
           Kc: null,
-          Created_at: irrigation.created_at,
-          Updated_at: irrigation.updated_at,
+          Created_at: irrigation.CreatedAt,
+          Updated_at: irrigation.UpdatedAt,
         });
         continue;
       }
@@ -582,9 +579,9 @@ export class IrrigationRecommendationServices {
       const suggestion = resultOrError.value;
 
       userRecommendations.push({
-        Id: irrigation.id,
-        CropId: irrigation.crop_id,
-        Crop: irrigation.crop_name,
+        Id: irrigation.Id,
+        CropId: irrigation.CropId,
+        Crop: irrigation.Crop,
         Etc: suggestion.Etc,
         RepositionBlade: suggestion.RepositionBlade,
         IrrigationEfficiency: suggestion.IrrigationEfficiency,
@@ -593,8 +590,8 @@ export class IrrigationRecommendationServices {
         Et0: suggestion.Et0,
         Precipitation: suggestion.Precipitation,
         Kc: suggestion.Kc,
-        Created_at: irrigation.created_at,
-        Updated_at: irrigation.updated_at,
+        Created_at: irrigation.CreatedAt,
+        Updated_at: irrigation.UpdatedAt,
       });
     }
 

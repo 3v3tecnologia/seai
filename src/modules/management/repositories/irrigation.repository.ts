@@ -25,27 +25,28 @@ export type IrrigationCropsData = {
   flow?: number;
 };
 
-function mapIrrigationCropsToDomain(row: any): {
-  id: number;
-  // user_id: number,
-  station_id: number;
-  system_type: IrrigationSystemTypes;
-  crop_id: number;
-  crop_name: string;
-  planting_date: string;
+export type IUserRecordedRecommendationData = {
+  Id: number;
+  StationId: number;
+  PluviometerId: number;
+  SystemType: IrrigationSystemTypes;
+  CropId: number;
+  Crop: string;
+  PlantingDate: string;
   ETo: number | null;
-  pluviometer_id: number;
-  pluviometry: number | null;
-  area?: number | null;
-  effective_area?: number | null;
-  plants_qtd?: number | null;
-  sprinkler_precipitation?: number | null;
-  length?: number | null;
-  spacing?: number | null;
-  flow?: number | null;
-  created_at: string;
-  updated_at?: string | null;
-} {
+  Pluviometry: number | null;
+  Area?: number | null;
+  EffectiveArea?: number | null;
+  PlantsQtd?: number | null;
+  System_Precipitation?: number | null;
+  Length?: number | null;
+  Spacing?: number | null;
+  Flow?: number | null;
+  CreatedAt: string;
+  UpdatedAt?: string | null;
+};
+
+function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
   const {
     id,
     planting_date,
@@ -68,26 +69,26 @@ function mapIrrigationCropsToDomain(row: any): {
   } = row;
 
   return {
-    id: Number(id),
-    crop_id: Number(crop_id),
-    system_type: system_type as IrrigationSystemTypes,
-    planting_date,
-    crop_name,
-    station_id: Number(station_id),
+    Id: Number(id),
+    CropId: Number(crop_id),
+    Crop: crop_name,
+    SystemType: system_type as IrrigationSystemTypes,
+    PlantingDate: planting_date,
+    StationId: Number(station_id),
     ETo: ETo ? Number(ETo) : null,
-    pluviometer_id: Number(pluviometer_id),
-    pluviometry: pluviometry ? Number(pluviometry) : null,
-    flow: flow ? Number(flow) : null,
-    area: area ? Number(area) : null,
-    effective_area: effective_area ? Number(effective_area) : null,
-    plants_qtd: plants_qtd ? Number(plants_qtd) : null,
-    sprinkler_precipitation: sprinkler_precipitation
+    PluviometerId: Number(pluviometer_id),
+    Pluviometry: pluviometry ? Number(pluviometry) : null,
+    Flow: flow ? Number(flow) : null,
+    Area: area ? Number(area) : null,
+    EffectiveArea: effective_area ? Number(effective_area) : null,
+    PlantsQtd: plants_qtd ? Number(plants_qtd) : null,
+    System_Precipitation: sprinkler_precipitation
       ? Number(sprinkler_precipitation)
       : null,
-    length: length ? Number(length) : null,
-    spacing: spacing ? Number(spacing) : null,
-    created_at,
-    updated_at,
+    Length: length ? Number(length) : null,
+    Spacing: spacing ? Number(spacing) : null,
+    CreatedAt: created_at,
+    UpdatedAt: updated_at,
   };
 }
 
@@ -191,27 +192,9 @@ export class IrrigationCropsRepository {
       .from("Irrigation_Crops");
   }
 
-  static async getByUserId(user_id: number): Promise<Array<{
-    id: number;
-    // user_id: number,
-    station_id: number;
-    system_type: string;
-    crop_id: number;
-    crop_name: string;
-    planting_date: string;
-    ETo: number | null;
-    pluviometer_id: number;
-    pluviometry: number | null;
-    area?: number | null;
-    effective_area?: number | null;
-    plants_qtd?: number | null;
-    sprinkler_precipitation?: number | null;
-    length?: number | null;
-    spacing?: number | null;
-    flow?: number | null;
-    created_at: string;
-    updated_at?: string | null;
-  }> | null> {
+  static async getByUserId(
+    user_id: number
+  ): Promise<Array<IUserRecordedRecommendationData> | null> {
     // Join with MeteorologicalEquipments
     // Join with Crops
     const dbResponse = await governmentDb.raw(
@@ -264,27 +247,7 @@ export class IrrigationCropsRepository {
   static async getById(
     id: number,
     user_id: number
-  ): Promise<{
-    id: number;
-    // user_id: number,
-    station_id: number;
-    system_type: string;
-    crop_id: number;
-    crop_name: string;
-    planting_date: string;
-    ETo: number | null;
-    pluviometer_id: number;
-    pluviometry: number | null;
-    area?: number | null;
-    effective_area?: number | null;
-    plants_qtd?: number | null;
-    sprinkler_precipitation?: number | null;
-    length?: number | null;
-    spacing?: number | null;
-    flow?: number | null;
-    created_at: string;
-    updated_at?: string | null;
-  } | null> {
+  ): Promise<IUserRecordedRecommendationData | null> {
     // Join with MeteorologicalEquipments
     // Join with Crops
     const dbResponse = await governmentDb.raw(
