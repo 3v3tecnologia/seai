@@ -7,9 +7,12 @@ import {
   authorization,
 } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
+import { setupUserIrrigantAccountRoutes } from "../../../modules/irrigant/user/http/account";
 
 export const userRouter = (): Router => {
   const router = Router();
+
+  setupUserIrrigantAccountRoutes(router);
 
   router.get(
     "/profile",
@@ -34,11 +37,6 @@ export const userRouter = (): Router => {
     authorization,
     userWriteAccessAuth,
     adaptRoute(UserControllersFactory.makeCreateUser())
-  );
-
-  router.post(
-    "/irrigant",
-    adaptRoute(UserControllersFactory.makeIrrigantSignUp())
   );
 
   router.patch(
@@ -91,8 +89,6 @@ export const userRouter = (): Router => {
     "/password/forgot",
     adaptRoute(UserControllersFactory.makeForgotPassword())
   );
-
-
 
   return router;
 };

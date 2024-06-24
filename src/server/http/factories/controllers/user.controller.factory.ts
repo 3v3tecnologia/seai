@@ -7,12 +7,11 @@ import {
   FetchAllUsersController,
   FetchUserByIdController,
   ForgotPasswordController,
-  IrrigantSignUpController,
   ResetPasswordController,
   SignInController,
   SignUpController,
   UpdateUserController,
-  UpdateUserProfileController
+  UpdateUserProfileController,
 } from "../../../../presentation/controllers/user";
 import { makeLogControllerDecorator } from "../decorators";
 import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
@@ -75,15 +74,6 @@ export class UserControllersFactory {
     return makeLogControllerDecorator(
       new SignUpController(
         UserUseCasesFactory.makeUserSignUp(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
-  }
-
-  static makeIrrigantSignUp(): Controller {
-    return makeLogControllerDecorator(
-      new IrrigantSignUpController(
-        UserUseCasesFactory.makeIrrigantSignUp(),
         SystemLogsUseCaseFactory.makeRegisterUserLogs()
       )
     );

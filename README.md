@@ -33,7 +33,7 @@ Após criar as variáveis, será necessário adicionar no diretório `.docker/po
 Para subir o servidor e o banco, será necessário rodar o comando abaixo:
 
 ```sh
-docker compose -f docker-compose.dev.yml up -d
+docker compose --env-file .env.development.local -f docker-compose.dev.yml up -d
 ```
 
 > ⚠️ Caso já tiver iniciado o servidor mas for necessário apagar tudo incluindo os dados salvos no banco no host para iniciar uma nova instância será necessário rodar o comando abaixo:
