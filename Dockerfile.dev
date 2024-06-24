@@ -23,10 +23,10 @@ RUN npm ci
 
 ENV NODE_ENV development
 # expecting to receive API_PORT as argument
-# ARG API_PORT
+ARG API_PORT
 
-EXPOSE 80
-# EXPOSE ${API_PORT}
+# EXPOSE 80
+EXPOSE ${API_PORT}
 EXPOSE 9229
 
 RUN chown -R node /usr/src/app
