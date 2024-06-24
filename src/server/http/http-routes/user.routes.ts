@@ -7,9 +7,12 @@ import {
   authorization,
 } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
+import { setupUserIrrigantAccountRoutes } from "../../../modules/irrigant/user/http/account";
 
 export const userRouter = (): Router => {
   const router = Router();
+
+  setupUserIrrigantAccountRoutes(router);
 
   router.get(
     "/profile",

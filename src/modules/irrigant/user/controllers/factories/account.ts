@@ -6,7 +6,7 @@ import { IrrigantPreferencesRepository } from "../../repositories/user-preferenc
 import { UserIrrigantServices } from "../../services/account";
 import { IrrigantAccountControllers } from "../account.controller";
 
-export const makeAccountController = (): IrrigantAccountControllers => {
+export const makeIrrigantAccountController = (): IrrigantAccountControllers => {
   return new IrrigantAccountControllers(
     new UserIrrigantServices(
       new DbAccountRepository(),
