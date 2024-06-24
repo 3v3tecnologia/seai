@@ -606,6 +606,17 @@ export const IRRIGANT = {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Irrigation id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       requestBody: {
         content: {
           "application/json": {
