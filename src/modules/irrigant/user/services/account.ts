@@ -107,6 +107,22 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       return left(tokenOrError.value);
     }
 
+    const notificationSystems =
+      await this.preferencesRepository.getAvailableNotificationsServices();
+
+    if (notificationSystems) {
+      Logger.info("Inserindo preferências de notificações dos usuários...");
+      await this.preferencesRepository.createUserNotificationsPreferences(
+        notificationSystems.map((service: any) => {
+          return {
+            enabled: false,
+            service_id: service.id,
+            user_id: user_id as number,
+          };
+        })
+      );
+    }
+
     return right(tokenOrError.value);
   }
 }

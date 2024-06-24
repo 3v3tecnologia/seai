@@ -112,19 +112,14 @@ export class IrrigantPreferencesRepository
   }
 
   // When create a user
-  async createUserNotificationsPreferences(input: {
-    user_id: number;
-    service_id: number;
-    enabled: boolean;
-  }): Promise<void> {
-    await governmentDb
-      .withSchema("management")
-      .insert({
-        user_id: input.user_id,
-        service_id: input.service_id,
-        enabled: input.enabled,
-      })
-      .into("User_Notifications");
+  async createUserNotificationsPreferences(
+    input: Array<{
+      user_id: number;
+      service_id: number;
+      enabled: boolean;
+    }>
+  ): Promise<void> {
+    await governmentDb.batchInsert<any>("management.User_Notifications", input);
   }
 
   async updateUserNotificationPreference(input: {

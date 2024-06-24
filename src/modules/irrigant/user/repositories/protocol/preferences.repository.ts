@@ -13,11 +13,13 @@ export interface IUserPreferencesRepository {
   getUsersEquipments(user_id: number): Promise<Array<any>>;
   getAvailableNotificationsServices(): Promise<Array<any> | null>;
   getUserNotificationsPreferences(user_id: number): Promise<Array<any> | null>;
-  createUserNotificationsPreferences(input: {
-    user_id: number;
-    service_id: number;
-    enabled: boolean;
-  }): Promise<void>;
+  createUserNotificationsPreferences(
+    input: Array<{
+      user_id: number;
+      service_id: number;
+      enabled: boolean;
+    }>
+  ): Promise<void>;
   updateUserNotificationPreference(input: {
     user_id: number;
     service_id: number;
