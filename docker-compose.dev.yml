@@ -28,6 +28,8 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: development
+      # args:
+      #   - API_PORT=${PORT}
     container_name: "seai-server"
     env_file: ".env.development.local"
     restart: always

@@ -7,20 +7,36 @@ COPY . .
 RUN npm run build
 RUN rm -rf node_modules
 
+
 FROM node:20-bullseye-slim as development
+
 WORKDIR /usr/src/app
+
 LABEL mode="development"
+
 COPY --from=base /usr/bin/dumb-init /usr/bin/dumb-init
 COPY --from=base package*.json ./
+
 ADD . .
+
 RUN npm ci
+
 ENV NODE_ENV development
+# expecting to receive API_PORT as argument
+# ARG API_PORT
+
 EXPOSE 80
+# EXPOSE ${API_PORT}
 EXPOSE 9229
+
 RUN chown -R node /usr/src/app
+
 USER node
+
 HEALTHCHECK --interval=30s --timeout=12s --start-period=30s \
   CMD node healthcheck.js
+
 ENTRYPOINT ["dumb-init", "--"]
+
 CMD [ "npm","run","start:dev:local" ]
 
