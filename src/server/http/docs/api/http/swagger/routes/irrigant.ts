@@ -571,4 +571,59 @@ export const IRRIGANT = {
       },
     },
   },
+  [`${BASE_URL.V2}/management/user/settings/notifications`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                example: {
+                  data: [
+                    {
+                      ServiceId: 1,
+                      Service: "newsletter",
+                      Enabled: false,
+                    },
+                    {
+                      ServiceId: 2,
+                      Service: "irrigation",
+                      Enabled: true,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${BASE_URL.V2}/management/user/settings/notifications/{id}`]: {
+    patch: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                Enabled: true,
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        204: {
+          description: "Updated successfully",
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
 };
