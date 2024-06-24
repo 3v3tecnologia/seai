@@ -75,15 +75,15 @@ export const MANAGEMENT = {
                       Start: 1,
                       End: 3,
                       KC: 54,
-                      Increment: 0
+                      Increment: 0,
                     },
                     {
                       Title: "test2",
                       Start: 1,
                       End: 3,
                       KC: 54,
-                      Increment: 0
-                    }
+                      Increment: 0,
+                    },
                   ],
                 },
               },
@@ -120,15 +120,15 @@ export const MANAGEMENT = {
                     Start: 1,
                     End: 3,
                     KC: 54,
-                    Increment: 0
+                    Increment: 0,
                   },
                   {
                     Title: "test2",
                     Start: 1,
                     End: 3,
                     KC: 54,
-                    Increment: 0
-                  }
+                    Increment: 0,
+                  },
                 ],
               },
             },

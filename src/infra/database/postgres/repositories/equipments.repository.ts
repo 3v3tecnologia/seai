@@ -487,8 +487,10 @@ export class DbEquipmentsRepository
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-    const yesterdayDate = getYesterDayDate("-");
+    const timeZone = 3
+    const withoutLocalTimezone = `(DATE_TRUNC('day', NOW()::date) - INTERVAL '${timeZone} hours')::date`
 
+    // TODO: Need to refactor to bind params
     const coordinateFilter = [params?.latitude, params?.longitude].every(
       (e) => e
     )
@@ -530,7 +532,7 @@ export class DbEquipmentsRepository
               FROM
                   equipments."ReadStations" rs
               WHERE
-                  rs."FK_Equipment" = Stations."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Et0" >= 0
+                  rs."FK_Equipment" = Stations."Id" AND rs."Time" = ${withoutLocalTimezone} AND rs."Et0" >= 0
               ORDER BY
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
@@ -562,8 +564,10 @@ export class DbEquipmentsRepository
     } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
-    const yesterdayDate = getYesterDayDate("-");
+    const timeZone = 3
+    const withoutLocalTimezone = `(DATE_TRUNC('day', NOW()::date) - INTERVAL '${timeZone} hours')::date`
 
+    // TODO: Need to refactor to bind params
     const query = `
           WITH Pluviometers AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -602,7 +606,7 @@ export class DbEquipmentsRepository
               FROM
                   equipments."ReadPluviometers" rs
               WHERE
-                  rs."FK_Equipment" = Pluviometers."Id" AND rs."Time" = '${yesterdayDate}' AND rs."Value" >= 0
+                  rs."FK_Equipment" = Pluviometers."Id" AND rs."Time" = ${withoutLocalTimezone} AND rs."Value" >= 0
               ORDER BY
                   rs."Time" DESC
               LIMIT 1

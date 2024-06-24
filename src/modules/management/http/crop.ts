@@ -2,11 +2,12 @@ import { Router } from "express";
 import { adaptRouteV2 } from "../../../server/http/adapters/express-route.adapter";
 import { authorization } from "../../../server/http/http-middlewares";
 import { ManagementCropControllers } from "../controllers/crop.controller";
-import { IrrigantControllers } from "../controllers/irrigant.controller";
 
-export const setupManagementV2Routes = (router: Router): void => {
-
-  router.get("/management/crop/:id", adaptRouteV2(ManagementCropControllers.getCropById));
+export const setupManagementCropV2Routes = (router: Router): void => {
+  router.get(
+    "/management/crop/:id",
+    adaptRouteV2(ManagementCropControllers.getCropById)
+  );
 
   router.post(
     "/management/crop",
@@ -37,11 +38,8 @@ export const setupManagementV2Routes = (router: Router): void => {
   );
 
   //Irrigant
-  router.get("/management/crops", adaptRouteV2(ManagementCropControllers.getAllCrops));
-
-  //Irrigant
-  router.post(
-    "/management/blade_suggestion",
-    adaptRouteV2(IrrigantControllers.getBladeIrrigation)
+  router.get(
+    "/management/crops",
+    adaptRouteV2(ManagementCropControllers.getAllCrops)
   );
 };

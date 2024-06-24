@@ -1,4 +1,5 @@
 import { Either, right } from "../../../../shared/Either";
+import { dateDiffInDays, parseBrazilianDateTime } from "../../../../shared/utils/date";
 import { ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {
@@ -49,4 +50,13 @@ export class ManagementCrop {
 
     return right(culture);
   }
+}
+
+export function getCropDate(plantingDate: string) {
+  const currentDate = new Date();
+  const diff = dateDiffInDays(
+    currentDate,
+    new Date(parseBrazilianDateTime(plantingDate))
+  );
+  return diff < 0 ? 0 : diff;
 }

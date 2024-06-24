@@ -20,7 +20,32 @@
         },
         {
             "type": "node",
-            "name": "Debug Node.js Server",
+            "request": "attach",
+            "name": "Docker: Attach to Node",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "remoteRoot": "/usr/src/app/",
+            "localRoot": "${workspaceFolder}",
+            "address": "127.0.0.1",
+            "port": 9229,
+            "trace": true,
+            "restart": true,
+            "sourceMaps": false,
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach server running locally by Process ID",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "processId": "${command:PickProcess}",
+            "restart": true
+        },
+        {
+            "type": "node",
+            "name": "Debug Node.js Server Locally",
             "request": "launch",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
@@ -30,26 +55,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "restart": true,
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
             "console": "integratedTerminal",
         },
-        {
-            "name": "Attach to remote Node.js HTTP Server",
-            "type": "node",
-            "request": "attach",
-            "restart": true,
-            "port": 9229, // Replace with the port your server is running on
-            "address": "localhost", // Replace if your server is on a different machine
-            "localRoot": "${workspaceFolder}/dist", // Set your project's root folder
-            "remoteRoot": "/usr/src/app/dist", // Remote root folder within the server (usually "/")
-            "sourceMaps": true // Enable source map support for debugging
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach by Process ID",
-            "processId": "${command:PickProcess}",
-            "restart": true
-        }
     ],
     "compounds": [ // Allows you to define and run multiple debug configurations simultaneously
         // {
