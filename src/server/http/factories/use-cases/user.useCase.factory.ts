@@ -12,7 +12,6 @@ import {
   UserAuthentication,
   UpdateUserProfile,
   CompleteUserRegister,
-  IrrigantSignUp,
 } from "../../../../domain/use-cases/user";
 import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
 import { JwtAdapter } from "../../../../infra/cryptography/jwt-adapter";
@@ -47,7 +46,7 @@ export class UserUseCasesFactory {
   static makeForgotPasswordUser(): ForgotPassword {
     return new ForgotPassword(
       this.repository,
-      this.makeSendNotificationToUser(),
+      this.makeSendNotificationToUser()
     );
   }
 
@@ -75,14 +74,6 @@ export class UserUseCasesFactory {
 
   static makeUserSignUp(): SignUp {
     return new SignUp(
-      this.repository,
-      this.makeUserAuthentication(),
-      this.encoder
-    );
-  }
-
-  static makeIrrigantSignUp(): IrrigantSignUp {
-    return new IrrigantSignUp(
       this.repository,
       this.makeUserAuthentication(),
       this.encoder
