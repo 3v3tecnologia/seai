@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 LABEL mode="development"
 
 COPY --from=base /usr/bin/dumb-init /usr/bin/dumb-init
-COPY --from=base package*.json ./
+COPY --from=base /usr/src/app/package*.json .
 
 ADD . .
 
