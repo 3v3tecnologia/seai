@@ -37,6 +37,12 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
     )
   );
 
+  router.post(
+    "/management/irrigation_crops/recommendations",
+    authorization,
+    adaptRouteV2(IrrigationRecommendationControllers.calcUsersRecommendations)
+  );
+
   router.delete(
     "/management/user/irrigation_crops/:id",
     authorization,

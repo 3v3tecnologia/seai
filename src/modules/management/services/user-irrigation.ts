@@ -275,64 +275,72 @@ export class UserRecommendationsServices {
     });
   }
 
-  // Get all irrigation crops calculated by user
-  static async calcAllIrrigationCropsRecommendationByUser(
-    user_id: number
-  ): Promise<Either<Error, Array<any>>> {
-    const irrigations = await IrrigationCropsRepository.getByUserId(user_id);
+  // Get all irrigation crops calculated per user
+  static async calcUsersRecommendations(): Promise<
+    Either<Error, Array<any> | null>
+  > {
+    const users =
+      await IrrigationCropsRepository.getUsersWithIrrigationReportsEnabled();
 
-    if (irrigations == null) {
-      return left(new Error("Não há recomendação de lâminas cadastradas"));
-    }
+    if (users == null) return right(null);
 
-    const userRecommendations: Array<any> = [];
-    //Calculate for each item
-    for (const irrigation of irrigations) {
-      // Verificar para trazer o KC da cultura na própria query de listar irrigação
-      const resultOrError = await this.calcBladeIrrigationRecommendation(
-        new CalcIrrigationRecommendationDTO(irrigation)
-      );
+    for (const user of users) {
+      const irrigationsStream =
+        IrrigationCropsRepository.getUserRecordedIrrigationStream(user.Id);
 
-      // O que fazer se der erro no cálculo da recomendação?
-      if (resultOrError.isLeft()) {
-        Logger.error(resultOrError.value.message);
+      // if (irrigations == null) {
+      //   return left(new Error("Não há recomendação de lâminas cadastradas"));
+      // }
+
+      const userRecommendations: Array<any> = [];
+      //Calculate for each item
+      for await (const irrigation of irrigationsStream) {
+        // Verificar para trazer o KC da cultura na própria query de listar irrigação
+        /*const resultOrError = await this.calcBladeIrrigationRecommendation(
+          new CalcIrrigationRecommendationDTO(irrigation)
+        );
+
+        // O que fazer se der erro no cálculo da recomendação?
+        if (resultOrError.isLeft()) {
+          Logger.error(resultOrError.value.message);
+          userRecommendations.push({
+            Id: irrigation.Id,
+            CropId: irrigation.CropId,
+            Crop: irrigation.Crop,
+            Etc: null,
+            RepositionBlade: null,
+            IrrigationEfficiency: null,
+            IrrigationTime: null,
+            CropDays: null,
+            Et0: null,
+            Precipitation: null,
+            Kc: null,
+            Created_at: irrigation.CreatedAt,
+            Updated_at: irrigation.UpdatedAt,
+          });
+          continue;
+        }
+
+        const suggestion = resultOrError.value;
+
         userRecommendations.push({
           Id: irrigation.Id,
           CropId: irrigation.CropId,
           Crop: irrigation.Crop,
-          Etc: null,
-          RepositionBlade: null,
-          IrrigationEfficiency: null,
-          IrrigationTime: null,
-          CropDays: null,
-          Et0: null,
-          Precipitation: null,
-          Kc: null,
+          Etc: suggestion.Etc,
+          RepositionBlade: suggestion.RepositionBlade,
+          IrrigationEfficiency: suggestion.IrrigationEfficiency,
+          IrrigationTime: suggestion.IrrigationTime,
+          CropDays: suggestion.CropDays,
+          Et0: suggestion.Et0,
+          Precipitation: suggestion.Precipitation,
+          Kc: suggestion.Kc,
           Created_at: irrigation.CreatedAt,
           Updated_at: irrigation.UpdatedAt,
-        });
-        continue;
+        });*/
       }
-
-      const suggestion = resultOrError.value;
-
-      userRecommendations.push({
-        Id: irrigation.Id,
-        CropId: irrigation.CropId,
-        Crop: irrigation.Crop,
-        Etc: suggestion.Etc,
-        RepositionBlade: suggestion.RepositionBlade,
-        IrrigationEfficiency: suggestion.IrrigationEfficiency,
-        IrrigationTime: suggestion.IrrigationTime,
-        CropDays: suggestion.CropDays,
-        Et0: suggestion.Et0,
-        Precipitation: suggestion.Precipitation,
-        Kc: suggestion.Kc,
-        Created_at: irrigation.CreatedAt,
-        Updated_at: irrigation.UpdatedAt,
-      });
     }
 
-    return right(userRecommendations);
+    return right();
   }
 }

@@ -2,42 +2,25 @@ import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
 import { TokenProvider } from "../../domain/use-cases/user/authentication/ports/token-provider";
-import ENV from '../../server/http/env';
+import ENV from "../../server/http/env";
 import { forbidden, ok, unauthenticated } from "../controllers/helpers";
 export class AuthMiddleware implements Middleware {
   private readonly tokenManager: TokenProvider;
-  private static openURLs = new Set(['faq', 'equipments', 'news'])
 
-  constructor(
-    tokenManager: TokenProvider
-  ) {
+  constructor(tokenManager: TokenProvider) {
     this.tokenManager = tokenManager;
   }
 
-
-  public allowedToOpenAccess(method: string, url: string): boolean {
-    let authorized = false
-
-    AuthMiddleware.openURLs.forEach((allowedURL) => {
-      if (url.includes(allowedURL) && method === 'GET') {
-        authorized = true
-        return
-      }
-    })
-
-    return authorized
-  }
-
-  checkAccesKey(requestKey: string, method: string, url: string): boolean {
+  checkAccesKey(requestKey: string): boolean {
     if (!ENV.apiKey) {
-      return false
+      return false;
     }
 
-    if (requestKey === ENV.apiKey && this.allowedToOpenAccess(method, url)) {
-      return true
+    if (requestKey === ENV.apiKey) {
+      return true;
     }
 
-    return false
+    return false;
   }
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
@@ -45,7 +28,7 @@ export class AuthMiddleware implements Middleware {
       const { authType, accessToken, accessKey, url, method } = request;
 
       if (accessKey) {
-        const hasValidApiKey = this.checkAccesKey(accessKey, method, url)
+        const hasValidApiKey = this.checkAccesKey(accessKey);
 
         if (hasValidApiKey) {
           return ok({
@@ -71,7 +54,6 @@ export class AuthMiddleware implements Middleware {
 
       return unauthenticated();
     } catch (error) {
-
       return forbidden(new Error(`Erro ao realizar autenticação`));
     }
   }

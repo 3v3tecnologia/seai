@@ -187,4 +187,20 @@ export class IrrigationRecommendationControllers {
       return badRequest(error as Error);
     }
   }
+
+  static async calcUsersRecommendations(): Promise<HttpResponse> {
+    try {
+      const successOrError =
+        await UserRecommendationsServices.calcUsersRecommendations();
+
+      if (successOrError.isLeft()) {
+        return badRequest(successOrError.value);
+      }
+
+      return ok(successOrError.value);
+    } catch (error) {
+      console.log(error);
+      return badRequest(error as Error);
+    }
+  }
 }

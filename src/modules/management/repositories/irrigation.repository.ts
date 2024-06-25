@@ -244,6 +244,49 @@ export class IrrigationCropsRepository {
     return data.map(mapIrrigationCropsToDomain);
   }
 
+  //ReadableStream
+  static getUserRecordedIrrigationStream(user_id: number) {
+    return governmentDb
+      .raw(
+        `
+            SELECT
+                irrigation.id ,
+                irrigation.planting_date,
+                irrigation.flow,
+                irrigation.system_type,
+                irrigation.area ,
+                irrigation.effective_area ,
+                irrigation.plants_qtd ,
+                irrigation.sprinkler_precipitation ,
+                irrigation.length ,
+                irrigation.spacing ,
+                irrigation.created_at  ,
+                irrigation.updated_at  ,
+                crop."Id" AS "crop_id",
+                crop."Name" AS "crop_name",
+                user_eqps.station_id,
+                (SELECT rs."Et0"  FROM government.equipments."ReadStations" rs
+            WHERE rs."FK_Equipment" = user_eqps.station_id
+            AND rs."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "ETo",
+                user_eqps.pluviometer_id,
+                (SELECT rp."Value"  FROM government.equipments."ReadPluviometers" rp
+            WHERE rp."FK_Equipment" = user_eqps.pluviometer_id
+            AND rp."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "pluviometry"
+            FROM
+                management."Irrigation_Crops" irrigation
+            INNER JOIN management."Crop" crop
+            ON
+                irrigation.crop_id = crop."Id"
+            INNER JOIN management."User_Equipments" user_eqps
+            ON
+                user_eqps.user_id = irrigation.user_id
+            WHERE irrigation.user_id  = ?
+            `,
+        [user_id]
+      )
+      .stream();
+  }
+
   static async getById(
     id: number,
     user_id: number
@@ -295,5 +338,34 @@ export class IrrigationCropsRepository {
     }
 
     return mapIrrigationCropsToDomain(data[0]);
+  }
+
+  static async getUsersWithIrrigationReportsEnabled(): Promise<Array<{
+    Id: number;
+    Name: string;
+    Email: string;
+  }> | null> {
+    const dbResponse = await governmentDb
+      .withSchema("users")
+      .select("Id", "Name", "Email")
+      .where({
+        Type: "irrigant",
+      })
+      .andWhere({
+        Status: "registered",
+      })
+      .from("User");
+
+    if (!dbResponse.length) {
+      return null;
+    }
+
+    return dbResponse.map((row: any) => {
+      return {
+        Id: row.Id,
+        Name: row.Name,
+        Email: row.Email,
+      };
+    });
   }
 }
