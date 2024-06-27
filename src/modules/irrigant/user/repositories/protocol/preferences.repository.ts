@@ -11,6 +11,9 @@ export interface IUserPreferencesRepository {
     pluviometer_id: number;
   }): Promise<void>;
   getUsersEquipments(user_id: number): Promise<Array<any>>;
+  checkIfUserStationHasYesterdayEtoMeasurements(
+    user_id: number
+  ): Promise<boolean>;
   getAvailableNotificationsServices(): Promise<Array<any> | null>;
   getUserNotificationsPreferences(user_id: number): Promise<Array<any> | null>;
   createUserNotificationsPreferences(

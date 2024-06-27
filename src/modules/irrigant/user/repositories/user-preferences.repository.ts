@@ -62,6 +62,32 @@ export class IrrigantPreferencesRepository
       });
   }
 
+  async checkIfUserStationHasYesterdayEtoMeasurements(
+    user_id: number
+  ): Promise<boolean> {
+    // get user's station with yesterday ET0 measurement
+    const dbResponse = await governmentDb.raw(
+      `
+      SELECT me."IdEquipmentExternal", me."Name" , rs."Et0"  FROM  (
+          SELECT * FROM management."User_Equipments" ue
+          WHERE ue.user_id = ?
+      ) AS n1
+      INNER JOIN equipments."MetereologicalEquipment" me
+      ON me."IdEquipment" = n1."station_id"
+      INNER JOIN government.equipments."ReadStations" rs
+      ON me."IdEquipment" = rs."FK_Equipment"
+      WHERE rs."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date
+      AND rs."Et0"  IS NOT NULL`,
+      [user_id]
+    );
+
+    if (!dbResponse.rows.length) {
+      return false;
+    }
+
+    return true;
+  }
+
   async getAvailableNotificationsServices(): Promise<Array<any> | null> {
     const response = await governmentDb
       .withSchema("management")

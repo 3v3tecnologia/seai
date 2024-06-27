@@ -219,7 +219,7 @@ export class IrrigationCropsRepository {
             WHERE rs."FK_Equipment" = user_eqps.station_id
             AND rs."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "ETo",
                 user_eqps.pluviometer_id,
-                (SELECT rp."Value"  FROM government.equipments."ReadPluviometers" rp
+                (SELECT COALESCE(rp."Value", 0)  FROM government.equipments."ReadPluviometers" rp
             WHERE rp."FK_Equipment" = user_eqps.pluviometer_id
             AND rp."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "pluviometry"
             FROM

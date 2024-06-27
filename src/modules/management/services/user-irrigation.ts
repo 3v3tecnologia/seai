@@ -25,6 +25,9 @@ import {
   ISaveIrrigationRecommendationDTO,
   IUpdateIrrigationRecommendationDTO,
 } from "./dto/irrigation";
+import { UserIrrigationRecommendation } from "../core/model/user-irrigation-recommendation";
+import { IrrigationRecommendation } from "../core/model/irrigation-recommendation";
+import { setTimeout } from "node:timers/promises";
 
 export class UserRecommendationsServices {
   static async calcBladeIrrigationRecommendation(
@@ -35,6 +38,12 @@ export class UserRecommendationsServices {
     let Et0: number | null = null;
 
     if (Reflect.has(command.Station, "Et0")) {
+      if (command.Station.Et0 === null) {
+        return left(
+          new Error("Não há dados de Et0 para a estação selecionada.")
+        );
+      }
+
       Et0 = command.Station.Et0 as number;
     } else {
       const lastStationMeasurements =
@@ -276,71 +285,88 @@ export class UserRecommendationsServices {
   }
 
   // Get all irrigation crops calculated per user
-  static async calcUsersRecommendations(): Promise<
-    Either<Error, Array<any> | null>
+  static async *calcUsersRecommendations(): AsyncGenerator<
+    UserIrrigationRecommendation,
+    null | undefined,
+    unknown
   > {
     const users =
       await IrrigationCropsRepository.getUsersWithIrrigationReportsEnabled();
 
-    if (users == null) return right(null);
+    if (users == null) return null;
 
     for (const user of users) {
-      const irrigationsStream =
-        IrrigationCropsRepository.getUserRecordedIrrigationStream(user.Id);
+      await setTimeout(2000);
+      const irrigations = await IrrigationCropsRepository.getByUserId(user.Id);
 
-      // if (irrigations == null) {
-      //   return left(new Error("Não há recomendação de lâminas cadastradas"));
-      // }
+      const userIrrigationRecommendation: UserIrrigationRecommendation =
+        new UserIrrigationRecommendation({
+          Email: user.Email,
+          Name: user.Name,
+        });
 
-      const userRecommendations: Array<any> = [];
+      if (irrigations == null) {
+        Logger.info(
+          `Não há recomendação de lâminas cadastradas para o usuário ${user.Email}`
+        );
+
+        yield userIrrigationRecommendation;
+        continue;
+      }
+
       //Calculate for each item
-      for await (const irrigation of irrigationsStream) {
+      for (const irrigation of irrigations) {
         // Verificar para trazer o KC da cultura na própria query de listar irrigação
-        /*const resultOrError = await this.calcBladeIrrigationRecommendation(
+        const resultOrError = await this.calcBladeIrrigationRecommendation(
           new CalcIrrigationRecommendationDTO(irrigation)
         );
 
         // O que fazer se der erro no cálculo da recomendação?
         if (resultOrError.isLeft()) {
           Logger.error(resultOrError.value.message);
-          userRecommendations.push({
-            Id: irrigation.Id,
-            CropId: irrigation.CropId,
-            Crop: irrigation.Crop,
-            Etc: null,
-            RepositionBlade: null,
-            IrrigationEfficiency: null,
-            IrrigationTime: null,
-            CropDays: null,
-            Et0: null,
-            Precipitation: null,
-            Kc: null,
-            Created_at: irrigation.CreatedAt,
-            Updated_at: irrigation.UpdatedAt,
-          });
+
+          userIrrigationRecommendation.addIrrigation(
+            new IrrigationRecommendation({
+              Id: irrigation.Id,
+              Crop: {
+                Id: irrigation.CropId,
+                Name: irrigation.Crop,
+              },
+              Suggestion: resultOrError.value.message,
+              Created_at: irrigation.CreatedAt,
+              Updated_at: irrigation.UpdatedAt,
+            })
+          );
+
           continue;
         }
 
         const suggestion = resultOrError.value;
 
-        userRecommendations.push({
-          Id: irrigation.Id,
-          CropId: irrigation.CropId,
-          Crop: irrigation.Crop,
-          Etc: suggestion.Etc,
-          RepositionBlade: suggestion.RepositionBlade,
-          IrrigationEfficiency: suggestion.IrrigationEfficiency,
-          IrrigationTime: suggestion.IrrigationTime,
-          CropDays: suggestion.CropDays,
-          Et0: suggestion.Et0,
-          Precipitation: suggestion.Precipitation,
-          Kc: suggestion.Kc,
-          Created_at: irrigation.CreatedAt,
-          Updated_at: irrigation.UpdatedAt,
-        });*/
+        userIrrigationRecommendation.addIrrigation(
+          new IrrigationRecommendation({
+            Id: irrigation.Id,
+            Crop: {
+              Id: irrigation.CropId,
+              Name: irrigation.Crop,
+            },
+            Suggestion: {
+              Etc: suggestion.Etc,
+              RepositionBlade: suggestion.RepositionBlade,
+              IrrigationEfficiency: suggestion.IrrigationEfficiency,
+              IrrigationTime: suggestion.IrrigationTime,
+              CropDays: suggestion.CropDays,
+              Et0: suggestion.Et0,
+              Precipitation: suggestion.Precipitation,
+              Kc: suggestion.Kc,
+            },
+            Created_at: irrigation.CreatedAt,
+            Updated_at: irrigation.UpdatedAt,
+          })
+        );
       }
-    }
 
-    return right();
+      yield userIrrigationRecommendation;
+    }
   }
 }
