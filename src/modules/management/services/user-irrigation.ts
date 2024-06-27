@@ -27,7 +27,7 @@ import {
 } from "./dto/irrigation";
 import { UserIrrigationRecommendation } from "../core/model/user-irrigation-recommendation";
 import { IrrigationRecommendation } from "../core/model/irrigation-recommendation";
-import { setTimeout } from "node:timers/promises";
+import { setTimeout } from "timers/promises";
 
 export class UserRecommendationsServices {
   static async calcBladeIrrigationRecommendation(
@@ -293,10 +293,13 @@ export class UserRecommendationsServices {
     const users =
       await IrrigationCropsRepository.getUsersWithIrrigationReportsEnabled();
 
-    if (users == null) return null;
+    if (users == null) {
+      console.log("No users");
+      return null;
+    }
 
     for (const user of users) {
-      await setTimeout(2000);
+      await setTimeout(100);
       const irrigations = await IrrigationCropsRepository.getByUserId(user.Id);
 
       const userIrrigationRecommendation: UserIrrigationRecommendation =
