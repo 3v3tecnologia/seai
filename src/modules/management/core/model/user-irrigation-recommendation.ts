@@ -9,6 +9,7 @@ export type UserIrrigationRecommendationProps = {
 export class UserIrrigationRecommendation {
   readonly Name: string;
   readonly Email: string;
+  private _Notification?: string;
   private _Irrigation: Array<IrrigationRecommendation> = [];
 
   constructor(props: UserIrrigationRecommendationProps) {
@@ -20,11 +21,19 @@ export class UserIrrigationRecommendation {
     }
   }
 
+  setNotification(message: string) {
+    this._Notification = message;
+  }
+
   addIrrigation(data: IrrigationRecommendation) {
     this._Irrigation.push(data);
   }
 
-  public getIrrigation() {
-    return this._Irrigation;
+  get Irrigation() {
+    return this._Irrigation.length ? this._Irrigation : null;
+  }
+
+  get Notification() {
+    return this._Notification ? this._Notification : undefined;
   }
 }

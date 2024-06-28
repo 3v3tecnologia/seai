@@ -28,6 +28,7 @@ import {
 import { UserIrrigationRecommendation } from "../core/model/user-irrigation-recommendation";
 import { IrrigationRecommendation } from "../core/model/irrigation-recommendation";
 import { setTimeout } from "timers/promises";
+import { IrrigantPreferencesRepository } from "../../irrigant/user/repositories/user-preferences.repository";
 
 export class UserRecommendationsServices {
   static async calcBladeIrrigationRecommendation(
@@ -85,8 +86,9 @@ export class UserRecommendationsServices {
           command.Pluviometer.Id as number
         );
 
-      if (lastPluviometerMeasurements?.Precipitation)
-        Precipitation = lastPluviometerMeasurements.Precipitation;
+      Precipitation = lastPluviometerMeasurements?.Precipitation
+        ? lastPluviometerMeasurements.Precipitation
+        : 0;
     }
 
     if (Precipitation == null) {
@@ -139,6 +141,7 @@ export class UserRecommendationsServices {
       ),
       IrrigationEfficiency: irrigationSystem.efficiency,
       IrrigationTime: bladeSuggestion.irrigationTime,
+      PlantingDate: command.PlantingDate,
       CropDays: cropDate,
       Et0: DecimalFormatter.truncate(Et0, 2),
       Precipitation,
@@ -294,7 +297,7 @@ export class UserRecommendationsServices {
       await IrrigationCropsRepository.getUsersWithIrrigationReportsEnabled();
 
     if (users == null) {
-      console.log("No users");
+      Logger.info("No users found");
       return null;
     }
 
@@ -313,8 +316,23 @@ export class UserRecommendationsServices {
           `Não há recomendação de lâminas cadastradas para o usuário ${user.Email}`
         );
 
+        userIrrigationRecommendation.setNotification(
+          "Não há recomendação de lâminas cadastradas"
+        );
+
         yield userIrrigationRecommendation;
         continue;
+      }
+
+      const hasStationWithYesterdayMeasurements =
+        await new IrrigantPreferencesRepository().checkIfUserStationHasYesterdayEtoMeasurements(
+          user.Id
+        );
+
+      if (hasStationWithYesterdayMeasurements == false) {
+        userIrrigationRecommendation.setNotification(
+          "Não há estação com leituras."
+        );
       }
 
       //Calculate for each item
@@ -335,7 +353,17 @@ export class UserRecommendationsServices {
                 Id: irrigation.CropId,
                 Name: irrigation.Crop,
               },
-              Suggestion: resultOrError.value.message,
+              Suggestion: {
+                CropDays: null,
+                Et0: null,
+                Etc: null,
+                IrrigationEfficiency: null,
+                IrrigationTime: null,
+                Kc: null,
+                Precipitation: null,
+                RepositionBlade: null,
+                Warning: resultOrError.value.message,
+              },
               Created_at: irrigation.CreatedAt,
               Updated_at: irrigation.UpdatedAt,
             })

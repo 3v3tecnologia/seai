@@ -3,18 +3,17 @@ export type IrrigationCrop = {
   Name: string;
 };
 
-type IrrigationSuggestion =
-  | {
-      Etc: number;
-      RepositionBlade: number;
-      IrrigationEfficiency: number;
-      IrrigationTime: string;
-      CropDays: number;
-      Et0: number;
-      Precipitation: number;
-      Kc: number;
-    }
-  | string;
+type IrrigationSuggestion = {
+  Etc: number | null;
+  RepositionBlade: number | null;
+  IrrigationEfficiency: number | null;
+  IrrigationTime: string | null;
+  CropDays: number | null;
+  Et0: number | null;
+  Precipitation: number | null;
+  Kc: number | null;
+  Warning?: string;
+};
 
 export type IrrigationRecommendationProps = {
   Id: number;

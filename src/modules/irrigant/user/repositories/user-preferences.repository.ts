@@ -81,7 +81,7 @@ export class IrrigantPreferencesRepository
       [user_id]
     );
 
-    if (!dbResponse.rows.length) {
+    if (dbResponse.rows.length == 0) {
       return false;
     }
 

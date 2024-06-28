@@ -40,7 +40,7 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
     )
   );
 
-  router.post(
+  router.get(
     "/management/irrigation_crops/recommendations",
     authorization,
     async (req: Request, res: Response) => {
@@ -65,14 +65,22 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
           encoding: "utf8",
           transform(chunk, enc, cb) {
             console.log("chunk ", chunk);
-            //Add LF (Line Feed)  to indicate the end of a line creating a chunk
+
+            const data = {
+              Name: chunk.Name,
+              Email: chunk.Email,
+              Irrigation: chunk.Irrigation,
+            };
+
+            if (chunk.Notification) {
+              Object.assign(data, {
+                Notification: chunk.Notification,
+              });
+            }
+
             cb(
               null,
-              JSON.stringify({
-                Name: chunk.Name,
-                Email: chunk.Email,
-                Irrigation: chunk.getIrrigation(),
-              }).concat("\n")
+              JSON.stringify(data).concat("\n") //Add LF (Line Feed)  to indicate the end of a line creating a chunk
             );
           },
         });
