@@ -3,7 +3,7 @@ import { DbAccountRepository } from "../../../../../infra/database/postgres/repo
 import env from "../../../../../server/http/env";
 import { UserUseCasesFactory } from "../../../../../server/http/factories";
 import { IrrigantPreferencesRepository } from "../../repositories/user-preferences.repository";
-import { UserIrrigantServices } from "../../services/account";
+import { UserIrrigantServices } from "../../services/account.service";
 import { IrrigantAccountControllers } from "../account.controller";
 
 export const makeIrrigantAccountController = (): IrrigantAccountControllers => {

@@ -8,15 +8,7 @@ import { Logger } from "../../../../shared/logger/logger";
 import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
-
-export interface IUserIrrigantServices {
-  create(
-    dto: CreateIrrigantAccountDTO.Input
-  ): Promise<CreateIrrigantAccountDTO.Output>;
-  login(user: any): Promise<Either<Error, string>>;
-  completeRegister(user: any): Promise<Either<Error, string>>;
-  resetPassword(user: any): Promise<Either<Error, string>>;
-}
+import { IUserIrrigantServices } from "./protocols/account";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: AccountRepositoryProtocol;

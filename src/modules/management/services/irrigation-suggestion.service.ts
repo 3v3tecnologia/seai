@@ -1,37 +1,35 @@
+import { setTimeout } from "timers/promises";
 import { Either, left, right } from "../../../shared/Either";
+import { Logger } from "../../../shared/logger/logger";
 import { getYesterDayDate } from "../../../shared/utils/date";
 import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
+import { ManagementCropErrors } from "../core/errors/crop-errors";
+import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { BladeSuggestion } from "../core/model/blade-suggestion";
+import { getCropDate } from "../core/model/crop";
+import { findKc, ManagementCropCycle } from "../core/model/crop-cycles";
 import {
   IrrigationSystemEntity,
-  IrrigationSystemTypes,
   makeIrrigationSystem,
-  makeSystemIrrigationMeasurements,
 } from "../core/model/irrigation-system";
-
-import { ManagementCropErrors } from "../core/errors/crop-errors";
-
-import { Logger } from "../../../shared/logger/logger";
-import { DbEquipmentsMeasurementsRepository } from "../../equipments/repositories/equipments-measurements.repository";
-import { IrrigantErrors } from "../core/errors/irrigant.error";
-import { getCropDate } from "../core/model/crop";
-import { ManagementCropCycle, findKc } from "../core/model/crop-cycles";
-import { IIrrigationSystemMeasurementsEntity } from "../core/model/irrigation-system-measurements";
-import { DbManagementCropRepository } from "../repositories/crop.repository";
-import { IrrigationCropsRepository } from "../repositories/irrigation.repository";
+import { UserIrrigationRecommendation } from "../core/model/user-irrigation-recommendation";
 import {
   CalcIrrigationRecommendationDTO,
   ICalcIrrigationRecommendationDTO,
-  ISaveIrrigationRecommendationDTO,
-  IUpdateIrrigationRecommendationDTO,
 } from "./dto/irrigation";
-import { UserIrrigationRecommendation } from "../core/model/user-irrigation-recommendation";
 import { IrrigationRecommendation } from "../core/model/irrigation-recommendation";
-import { setTimeout } from "timers/promises";
-import { IrrigantPreferencesRepository } from "../../irrigant/user/repositories/user-preferences.repository";
+import { IIrrigationSuggestionServices } from "./protocols/irrigation-suggestion";
 
-export class UserRecommendationsServices {
-  static async calcBladeIrrigationRecommendation(
+export class IrrigationCropsSuggestion
+  implements IIrrigationSuggestionServices
+{
+  constructor(
+    private equipmentsMeasurementsRepository: any,
+    private cropsRepository: any,
+    private irrigationRepository: any
+  ) {}
+
+  async calculate(
     command: ICalcIrrigationRecommendationDTO
   ): Promise<Either<Error, any | null>> {
     const yesterDay = getYesterDayDate("-");
@@ -48,7 +46,7 @@ export class UserRecommendationsServices {
       Et0 = command.Station.Et0 as number;
     } else {
       const lastStationMeasurements =
-        await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromStation(
+        await this.equipmentsMeasurementsRepository.getLastMeasurementsFromStation(
           command.Station.Id as number,
           yesterDay
         );
@@ -82,7 +80,7 @@ export class UserRecommendationsServices {
       Precipitation = command.Pluviometer.Precipitation as number;
     } else {
       const lastPluviometerMeasurements =
-        await DbEquipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
+        await this.equipmentsMeasurementsRepository.getLastMeasurementsFromPluviometer(
           command.Pluviometer.Id as number
         );
 
@@ -102,7 +100,7 @@ export class UserRecommendationsServices {
     }
 
     //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
-    const cropCycles = await DbManagementCropRepository.findCropsCycles(
+    const cropCycles = await this.cropsRepository.findCropsCycles(
       command.CropId
     );
 
@@ -142,6 +140,7 @@ export class UserRecommendationsServices {
       IrrigationEfficiency: irrigationSystem.efficiency,
       IrrigationTime: bladeSuggestion.irrigationTime,
       PlantingDate: command.PlantingDate,
+      Stage: cropCycle?.Title,
       CropDays: cropDate,
       Et0: DecimalFormatter.truncate(Et0, 2),
       Precipitation,
@@ -149,109 +148,11 @@ export class UserRecommendationsServices {
     });
   }
 
-  static async saveIrrigationCrops(
-    dto: ISaveIrrigationRecommendationDTO
-  ): Promise<Either<Error, number>> {
-    // Save Irrigation Crops
-    const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
-      dto.System
-    );
-
-    if (systemMeasurementsOrError.isLeft()) {
-      return left(systemMeasurementsOrError.value);
-    }
-
-    const systemMeasurements = (
-      systemMeasurementsOrError.value as IIrrigationSystemMeasurementsEntity
-    ).getAllMeasurement();
-
-    const id = await IrrigationCropsRepository.save({
-      user_id: dto.UserId,
-      crop_id: dto.CropId,
-      planting_date: dto.PlantingDate,
-      system_type: dto.System.Type as IrrigationSystemTypes,
-      area: systemMeasurements?.Area,
-      effective_area: systemMeasurements?.EfectiveArea,
-      flow: systemMeasurements?.Flow,
-      length: systemMeasurements?.Length,
-      plants_qtd: systemMeasurements?.PlantsQtd,
-      spacing: systemMeasurements?.Spacing,
-      sprinkler_precipitation: systemMeasurements?.Precipitation,
-    });
-
-    if (id) {
-      return right(id);
-    }
-
-    return left(new Error("Não foi possível cadastrar sistema de irrigação."));
-  }
-
-  // TO-DO
-  static async updateIrrigationCropsById(
-    dto: IUpdateIrrigationRecommendationDTO
-  ): Promise<Either<Error, string>> {
-    // Save Irrigation Crops
-    const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
-      dto.System
-    );
-
-    if (systemMeasurementsOrError.isLeft()) {
-      return left(systemMeasurementsOrError.value);
-    }
-
-    const systemMeasurements = (
-      systemMeasurementsOrError.value as IIrrigationSystemMeasurementsEntity
-    ).getAllMeasurement();
-
-    await IrrigationCropsRepository.update({
-      id: dto.Id,
-      user_id: dto.UserId,
-      crop_id: dto.CropId,
-      planting_date: dto.PlantingDate,
-      system_type: dto.System.Type as IrrigationSystemTypes,
-      area: systemMeasurements?.Area,
-      effective_area: systemMeasurements?.EfectiveArea,
-      flow: systemMeasurements?.Flow,
-      length: systemMeasurements?.Length,
-      plants_qtd: systemMeasurements?.PlantsQtd,
-      spacing: systemMeasurements?.Spacing,
-      sprinkler_precipitation: systemMeasurements?.Precipitation,
-    });
-
-    return right("Atualizado com sucesso");
-  }
-
-  static async deleteIrrigationCropsById(
-    id: number,
-    user_id: number
-  ): Promise<Either<Error, void>> {
-    return right(await IrrigationCropsRepository.deleteById(id, user_id));
-  }
-
-  static async deleteAllIrrigationCrops(
-    user_id: number
-  ): Promise<Either<Error, void>> {
-    return right(await IrrigationCropsRepository.deleteByUserId(user_id));
-  }
-
-  static async getIrrigationCropsById(
+  async calcByIrrigationId(
     id: number,
     user_id: number
   ): Promise<Either<Error, any>> {
-    return right(await IrrigationCropsRepository.getById(id, user_id));
-  }
-
-  static async getAllIrrigationCrops(
-    user_id: number
-  ): Promise<Either<Error, any>> {
-    return right(await IrrigationCropsRepository.getByUserId(user_id));
-  }
-
-  static async calcIrrigationRecommendationById(
-    id: number,
-    user_id: number
-  ): Promise<Either<Error, any>> {
-    const recordedRecommendation = await IrrigationCropsRepository.getById(
+    const recordedRecommendation = await this.irrigationRepository.getById(
       id,
       user_id
     );
@@ -260,7 +161,7 @@ export class UserRecommendationsServices {
       return left(new Error("Não há recomendação de lâmina cadastrada"));
     }
     // Verificar para trazer o KC da cultura na própria query de listar irrigação
-    const resultOrError = await this.calcBladeIrrigationRecommendation(
+    const resultOrError = await this.calculate(
       new CalcIrrigationRecommendationDTO(recordedRecommendation)
     );
 
@@ -287,14 +188,13 @@ export class UserRecommendationsServices {
     });
   }
 
-  // Get all irrigation crops calculated per user
-  static async *calcUsersRecommendations(): AsyncGenerator<
+  async *calPerUsers(): AsyncGenerator<
     UserIrrigationRecommendation,
     null | undefined,
     unknown
   > {
     const users =
-      await IrrigationCropsRepository.getUsersWithIrrigationReportsEnabled();
+      await this.irrigationRepository.getUsersWithIrrigationReportsEnabled();
 
     if (users == null) {
       Logger.info("No users found");
@@ -303,7 +203,8 @@ export class UserRecommendationsServices {
 
     for (const user of users) {
       await setTimeout(100);
-      const irrigations = await IrrigationCropsRepository.getByUserId(user.Id);
+
+      const irrigations = await this.irrigationRepository.getByUserId(user.Id);
 
       const userIrrigationRecommendation: UserIrrigationRecommendation =
         new UserIrrigationRecommendation({
@@ -321,7 +222,7 @@ export class UserRecommendationsServices {
       }
 
       const hasStationWithYesterdayMeasurements =
-        await new IrrigantPreferencesRepository().checkIfUserStationHasYesterdayEtoMeasurements(
+        await this.equipmentsMeasurementsRepository.checkIfUserStationHasYesterdayEtoMeasurements(
           user.Id
         );
 
@@ -334,7 +235,7 @@ export class UserRecommendationsServices {
       //Calculate for each item
       for (const irrigation of irrigations) {
         // Verificar para trazer o KC da cultura na própria query de listar irrigação
-        const resultOrError = await this.calcBladeIrrigationRecommendation(
+        const resultOrError = await this.calculate(
           new CalcIrrigationRecommendationDTO(irrigation)
         );
 
@@ -348,17 +249,21 @@ export class UserRecommendationsServices {
               Crop: {
                 Id: irrigation.CropId,
                 Name: irrigation.Crop,
-              },
-              Suggestion: {
-                CropDays: null,
-                Et0: null,
                 Etc: null,
-                IrrigationEfficiency: null,
+                CropDays: null,
                 IrrigationTime: null,
                 Kc: null,
-                Precipitation: null,
                 RepositionBlade: null,
+                PlantingDate: null,
+                Stage: null,
                 Warning: resultOrError.value.message,
+              },
+              System: {
+                IrrigationEfficiency: null,
+              },
+              Equipments: {
+                Et0: null,
+                Precipitation: null,
               },
               Created_at: irrigation.CreatedAt,
               Updated_at: irrigation.UpdatedAt,
@@ -376,16 +281,20 @@ export class UserRecommendationsServices {
             Crop: {
               Id: irrigation.CropId,
               Name: irrigation.Crop,
-            },
-            Suggestion: {
               Etc: suggestion.Etc,
-              RepositionBlade: suggestion.RepositionBlade,
-              IrrigationEfficiency: suggestion.IrrigationEfficiency,
+              Kc: suggestion.Kc,
               IrrigationTime: suggestion.IrrigationTime,
               CropDays: suggestion.CropDays,
+              RepositionBlade: suggestion.RepositionBlade,
+              Stage: suggestion.Stage,
+              PlantingDate: suggestion.PlantingDate,
+            },
+            Equipments: {
               Et0: suggestion.Et0,
               Precipitation: suggestion.Precipitation,
-              Kc: suggestion.Kc,
+            },
+            System: {
+              IrrigationEfficiency: suggestion.IrrigationEfficiency,
             },
             Created_at: irrigation.CreatedAt,
             Updated_at: irrigation.UpdatedAt,

@@ -1,9 +1,11 @@
 import { geoLocationExtension } from "./utils/geolocation";
-import { governmentDb } from '../../../infra/database/postgres/connection/knexfile'
+import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
+import { IEquipmentsRepository } from "./protocols/equipment";
 
-export class DbEquipmentsRepository {
-  static async insertLastUpdatedAtByOrgan(organId: number) {
-    await governmentDb.raw(`
+export class EquipmentsRepository implements IEquipmentsRepository {
+  async insertLastUpdatedAtByOrgan(organId: number) {
+    await governmentDb.raw(
+      `
         INSERT
             INTO
             equipments."LastUpdatedAt" (
@@ -21,24 +23,28 @@ export class DbEquipmentsRepository {
         UPDATE
         SET
             completedon = NOW();
-    `, [organId])
-
+    `,
+      [organId]
+    );
   }
 
-  static async getDateOfLastMeasurementTaken(): Promise<null | Array<{ Time: string, Id_Organ: number }>> {
+  async getDateOfLastMeasurementTaken(): Promise<null | Array<{
+    Time: string;
+    Id_Organ: number;
+  }>> {
     const meteorologicalOrganIds = await governmentDb
       .withSchema("equipments")
       .select("IdOrgan")
-      .from("MetereologicalOrgan")
+      .from("MetereologicalOrgan");
 
     if (meteorologicalOrganIds.length) {
-      const organsIds = meteorologicalOrganIds.map(item => item.IdOrgan)
+      const organsIds = meteorologicalOrganIds.map((item) => item.IdOrgan);
 
       const response = await governmentDb
         .withSchema("equipments")
         .select("*")
         .from("LastUpdatedAt")
-        .whereIn("fk_organ", organsIds)
+        .whereIn("fk_organ", organsIds);
 
       if (!response) {
         return null;
@@ -47,37 +53,38 @@ export class DbEquipmentsRepository {
       return response.map((item) => ({
         Time: item.completedon,
         Id_Organ: item.fk_organ,
-      }))
+      }));
     }
-    return null
+    return null;
   }
-  static async getTypes(): Promise<Array<{
-    Type: string,
-    Name: number
-  }>> {
+  async getTypes(): Promise<
+    Array<{
+      Type: string;
+      Name: number;
+    }>
+  > {
     let types: Array<{
-      Type: string,
-      Name: number
-    }> = []
+      Type: string;
+      Name: number;
+    }> = [];
 
     const response = await governmentDb
       .withSchema("equipments")
       .select("IdType", "Name")
       .from("EquipmentType");
 
-
     types = response.map((raw: any) => ({
       Type: raw.IdType,
-      Name: raw.Name
-    }))
+      Name: raw.Name,
+    }));
 
     return types;
   }
-  static async getOrganByName(organName: string): Promise<{
-    Id: number,
-    Host: string | null,
-    User: string | null,
-    Password: string | null
+  async getOrganByName(organName: string): Promise<{
+    Id: number;
+    Host: string | null;
+    User: string | null;
+    Password: string | null;
   } | null> {
     const response = await governmentDb
       .withSchema("equipments")
@@ -98,18 +105,20 @@ export class DbEquipmentsRepository {
     return null;
   }
 
-  static async getByType(type: string): Promise<Array<{
-    IdEquipmentExternal: string,
-    Name: string,
-    Altitude: number | null,
-    Location: {
-      Latitude: number,
-      Longitude: number
-    } | null,
-    FK_Organ: number,
-    FK_Type: number,
-    Enabled: number
-  }>> {
+  async getByType(type: string): Promise<
+    Array<{
+      IdEquipmentExternal: string;
+      Name: string;
+      Altitude: number | null;
+      Location: {
+        Latitude: number;
+        Longitude: number;
+      } | null;
+      FK_Organ: number;
+      FK_Type: number;
+      Enabled: number;
+    }>
+  > {
     const response = await governmentDb.raw(
       `
         SELECT
@@ -145,20 +154,22 @@ export class DbEquipmentsRepository {
         Location:
           coordinates !== null
             ? {
-              Latitude: coordinates[0],
-              Longitude: coordinates[1],
-            }
+                Latitude: coordinates[0],
+                Longitude: coordinates[1],
+              }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,
         Id_Organ: eqp.Organ_Id,
       };
     });
-    return data
+    return data;
   }
 
-  static async bulkInsert(equipments: Array<any>): Promise<Array<{ Code: string, Id: number }>> {
-    const insertedEquipments: Array<{ Code: string, Id: number }> = [];
+  async bulkInsert(
+    equipments: Array<any>
+  ): Promise<Array<{ Code: string; Id: number }>> {
+    const insertedEquipments: Array<{ Code: string; Id: number }> = [];
 
     const st = geoLocationExtension(governmentDb);
 
@@ -179,13 +190,10 @@ export class DbEquipmentsRepository {
           Enable: equipment.Enabled,
           CreatedAt: governmentDb.fn.now(),
         };
-      })
+      });
 
       const eqps = await trx
-        .batchInsert<any>(
-          "equipments.MetereologicalEquipment",
-          toPersistency
-        )
+        .batchInsert<any>("equipments.MetereologicalEquipment", toPersistency)
         .returning(["IdEquipment", "IdEquipmentExternal"]);
 
       // [ { IdEquipment: 1 }, { IdEquipment: 2 } ]
@@ -193,17 +201,18 @@ export class DbEquipmentsRepository {
         // insertedEquipments.set(eqp.IdEquipmentExternal, eqp.IdEquipment)
         insertedEquipments.push({
           Code: eqp.IdEquipmentExternal,
-          Id: eqp.IdEquipment
-        })
-      }
-      );
+          Id: eqp.IdEquipment,
+        });
+      });
     });
 
     return insertedEquipments;
   }
 
-  static async getStationCodesWithMeasurements(equipmentsCodes = [], time: string) {
-
+  async getStationCodesWithMeasurements(
+    equipmentsCodes: Array<string>,
+    time: string
+  ): Promise<any> {
     const result = await governmentDb
       .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
@@ -219,8 +228,6 @@ export class DbEquipmentsRepository {
 
     const equipmentsWithMeasures = new Set();
 
-    console.log("[getStationCodesWithMeasurements] ", result);
-
     if (result.length) {
       result.forEach((eqp) => {
         const { IdEquipmentExternal } = eqp;
@@ -232,7 +239,10 @@ export class DbEquipmentsRepository {
     return equipmentsWithMeasures;
   }
 
-  static async getPluviometersCodesWithMeasurements(equipmentsCodes = [], time: string) {
+  async getPluviometersCodesWithMeasurements(
+    equipmentsCodes: Array<string>,
+    time: string
+  ) {
     const result = await governmentDb
       .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
@@ -259,7 +269,7 @@ export class DbEquipmentsRepository {
     return equipmentsWithMeasures;
   }
 
-  static async getEquipments({ organName = null, eqpType = "" }) {
+  async getEquipments(organName: string, eqpType: string): Promise<any> {
     let equipments = [];
 
     if (organName) {
@@ -321,9 +331,9 @@ export class DbEquipmentsRepository {
         Location:
           coordinates !== null
             ? {
-              Latitude: coordinates[0],
-              Longitude: coordinates[1],
-            }
+                Latitude: coordinates[0],
+                Longitude: coordinates[1],
+              }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,

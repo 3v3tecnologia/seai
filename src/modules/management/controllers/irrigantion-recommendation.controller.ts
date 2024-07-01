@@ -1,25 +1,20 @@
 import {
   badRequest,
-  created,
-  noContent,
   ok,
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { UserRecommendationsServices } from "../services/user-irrigation";
+import { IIrrigationSuggestionServices } from "../services/protocols/irrigation-suggestion";
 import {
   CalcIrrigationRecommendationByIdRequest,
-  DeleteIrrigationCropsRequest,
-  GetAllIrrigationCropsRequest,
-  GetIrrigationCropsByIdRequest,
-  SaveIrrigationCropsRequest,
-  UpdateIrrigationCropsRequest,
   calcIrrigationRecommendationRequest,
 } from "./dto/irrigation-recommendation";
 import { bladeSuggestionValidator } from "./schema/blade-suggestion";
 
 export class IrrigationRecommendationControllers {
-  static async calcIrrigationRecommendation(
+  constructor(private services: IIrrigationSuggestionServices) {}
+
+  async calcIrrigationRecommendation(
     request: calcIrrigationRecommendationRequest
   ): Promise<HttpResponse> {
     try {
@@ -45,10 +40,7 @@ export class IrrigationRecommendationControllers {
         return badRequest(error);
       }
 
-      const successOrError =
-        await UserRecommendationsServices.calcBladeIrrigationRecommendation(
-          request
-        );
+      const successOrError = await this.services.calculate(request);
 
       if (successOrError.isLeft()) {
         return badRequest(successOrError.value);
@@ -62,121 +54,14 @@ export class IrrigationRecommendationControllers {
     }
   }
 
-  static async saveIrrigationCrops(
-    request: SaveIrrigationCropsRequest
-  ): Promise<HttpResponse> {
-    try {
-      const successOrError =
-        await UserRecommendationsServices.saveIrrigationCrops({
-          CropId: request.CropId,
-          IrrigationEfficiency: request.IrrigationEfficiency,
-          PlantingDate: request.PlantingDate,
-          System: request.System,
-          UserId: request.accountId,
-        });
-
-      if (successOrError.isLeft()) {
-        return badRequest(successOrError.value);
-      }
-
-      return created(successOrError.value);
-    } catch (error) {
-      return badRequest(error as Error);
-    }
-  }
-
-  static async updateIrrigationCropsById(
-    request: UpdateIrrigationCropsRequest
-  ): Promise<HttpResponse> {
-    try {
-      const successOrError =
-        await UserRecommendationsServices.updateIrrigationCropsById({
-          Id: request.id,
-          CropId: request.CropId,
-          IrrigationEfficiency: request.IrrigationEfficiency,
-          PlantingDate: request.PlantingDate,
-          System: request.System,
-          UserId: request.accountId,
-        });
-
-      if (successOrError.isLeft()) {
-        return badRequest(successOrError.value);
-      }
-
-      return noContent();
-    } catch (error) {
-      return badRequest(error as Error);
-    }
-  }
-
-  static async deleteIrrigationCrops(
-    request: DeleteIrrigationCropsRequest
-  ): Promise<HttpResponse> {
-    try {
-      const successOrError =
-        await UserRecommendationsServices.deleteIrrigationCropsById(
-          request.id,
-          request.accountId
-        );
-
-      if (successOrError.isLeft()) {
-        return badRequest(successOrError.value);
-      }
-
-      return noContent();
-    } catch (error) {
-      return badRequest(error as Error);
-    }
-  }
-
-  static async getIrrigationCropsById(
-    request: GetIrrigationCropsByIdRequest
-  ): Promise<HttpResponse> {
-    try {
-      const successOrError =
-        await UserRecommendationsServices.getIrrigationCropsById(
-          request.id,
-          request.accountId
-        );
-
-      if (successOrError.isLeft()) {
-        return badRequest(successOrError.value);
-      }
-
-      return ok(successOrError.value);
-    } catch (error) {
-      return badRequest(error as Error);
-    }
-  }
-
-  static async calcIrrigationRecommendationById(
+  async calcIrrigationRecommendationById(
     request: CalcIrrigationRecommendationByIdRequest
   ): Promise<HttpResponse> {
     try {
-      const successOrError =
-        await UserRecommendationsServices.calcIrrigationRecommendationById(
-          request.id,
-          request.accountId
-        );
-
-      if (successOrError.isLeft()) {
-        return badRequest(successOrError.value);
-      }
-
-      return ok(successOrError.value);
-    } catch (error) {
-      return badRequest(error as Error);
-    }
-  }
-
-  static async getAllIrrigationCrops(
-    request: GetAllIrrigationCropsRequest
-  ): Promise<HttpResponse> {
-    try {
-      const successOrError =
-        await UserRecommendationsServices.getAllIrrigationCrops(
-          request.accountId
-        );
+      const successOrError = await this.services.calcByIrrigationId(
+        request.id,
+        request.accountId
+      );
 
       if (successOrError.isLeft()) {
         return badRequest(successOrError.value);

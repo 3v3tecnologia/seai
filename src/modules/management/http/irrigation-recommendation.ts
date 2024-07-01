@@ -4,7 +4,7 @@ import { authorization } from "../../../server/http/http-middlewares";
 import { IrrigationRecommendationControllers } from "../controllers/irrigantion-recommendation.controller";
 import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { UserRecommendationsServices } from "../services/user-irrigation";
+import { UserRecommendationsServices } from "../services/user-irrigation.service";
 
 export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
   router.post(

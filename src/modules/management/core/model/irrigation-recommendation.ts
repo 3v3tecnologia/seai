@@ -1,24 +1,30 @@
 export type IrrigationCrop = {
   Id: number;
   Name: string;
+  CropDays: number | null;
+  Kc: number | null;
+  Etc: number | null;
+  PlantingDate: string | null;
+  RepositionBlade: number | null;
+  IrrigationTime: string | null;
+  Stage: string | null;
+  Warning?: string;
 };
 
-type IrrigationSuggestion = {
-  Etc: number | null;
-  RepositionBlade: number | null;
-  IrrigationEfficiency: number | null;
-  IrrigationTime: string | null;
-  CropDays: number | null;
+type Equipments = {
   Et0: number | null;
   Precipitation: number | null;
-  Kc: number | null;
-  Warning?: string;
+};
+
+type IrrigationSystem = {
+  IrrigationEfficiency: number | null;
 };
 
 export type IrrigationRecommendationProps = {
   Id: number;
   Crop: IrrigationCrop;
-  Suggestion: IrrigationSuggestion;
+  System: IrrigationSystem;
+  Equipments: Equipments;
   Created_at: string;
   Updated_at?: string | null;
 };
@@ -26,7 +32,8 @@ export type IrrigationRecommendationProps = {
 export class IrrigationRecommendation implements IrrigationRecommendationProps {
   readonly Id: number;
   readonly Crop: IrrigationCrop;
-  readonly Suggestion: IrrigationSuggestion;
+  readonly System: IrrigationSystem;
+  readonly Equipments: Equipments;
   readonly Created_at: string;
   readonly Updated_at?: string | null;
   // readonly Equipments: Equipments;
@@ -34,7 +41,8 @@ export class IrrigationRecommendation implements IrrigationRecommendationProps {
   constructor(props: IrrigationRecommendationProps) {
     this.Id = props.Id;
     this.Crop = props.Crop;
-    this.Suggestion = props.Suggestion;
+    this.System = props.System;
+    this.Equipments = props.Equipments;
     this.Created_at = props.Created_at;
     this.Updated_at = props.Updated_at;
   }

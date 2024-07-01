@@ -5,13 +5,13 @@ import {
   ok,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
-import { IUserPreferencesServices } from "../services/user-settings";
 import {
   DeleteEquipmentRequest,
   GetEquipmentsRequest,
   SaveEquipmentsRequest,
   UpdateEquipmentsRequest,
 } from "../../../management/controllers/dto/user-settings";
+import { IUserPreferencesServices } from "../services/protocols/user-settings";
 import {
   GetUserNotificationsPreferences,
   UpdateUserPreferencesRequest,

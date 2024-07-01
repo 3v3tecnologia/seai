@@ -5,8 +5,8 @@ import {
   ok,
   serverError,
 } from "../../../../presentation/controllers/helpers";
-import { IUserIrrigantServices } from "../services/account";
 import { IrrigantSignUpRequest } from "./requests/account";
+import { IUserIrrigantServices } from "../services/protocols/account";
 
 export class IrrigantAccountControllers {
   private services: IUserIrrigantServices;
