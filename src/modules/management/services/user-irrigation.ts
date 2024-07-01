@@ -316,11 +316,7 @@ export class UserRecommendationsServices {
           `Não há recomendação de lâminas cadastradas para o usuário ${user.Email}`
         );
 
-        userIrrigationRecommendation.setNotification(
-          "Não há recomendação de lâminas cadastradas"
-        );
-
-        yield userIrrigationRecommendation;
+        // yield userIrrigationRecommendation;
         continue;
       }
 
