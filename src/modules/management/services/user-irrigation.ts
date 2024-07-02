@@ -81,7 +81,8 @@ export class UserRecommendationsServices {
     }
 
     if (Precipitation == null) {
-      return left(new IrrigantErrors.PluviometerMeasurementsNotFound());
+      Precipitation = 0;
+      // return left(new IrrigantErrors.PluviometerMeasurementsNotFound());
     }
 
     const irrigationSystemOrError = makeIrrigationSystem(command.System);
