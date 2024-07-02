@@ -1,4 +1,8 @@
 import {
+  formatDateStringToTime,
+  parseBrazilianDateTime,
+} from "../../../../shared/utils/date";
+import {
   IrrigationSystemMeasurementsTypes,
   IrrigationSystemTypes,
   irrigationsTypesNames,
@@ -82,17 +86,10 @@ export class CalcIrrigationRecommendationDTO {
         throw new Error("Tipo de sistema não reconhecido.");
     }
 
-    const planingDate = new Date(recordedRecommendation.PlantingDate);
-
-    // DD/MM/YYYY
-    const formattedDate = `${planingDate.getDate()}/${
-      planingDate.getMonth() + 1
-    }/${planingDate.getFullYear()}`;
-
     this.params = {
       Name: recordedRecommendation.Name,
       CropId: recordedRecommendation.CropId,
-      PlantingDate: formattedDate,
+      PlantingDate: formatDateStringToTime(recordedRecommendation.PlantingDate),
       Pluviometer: {
         Id: recordedRecommendation.PluviometerId,
       },
