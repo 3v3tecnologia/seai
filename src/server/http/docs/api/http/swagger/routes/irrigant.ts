@@ -414,6 +414,7 @@ export const IRRIGANT = {
                 example: {
                   data: [
                     {
+                      Id: 1,
                       Name: "Test1",
                       System: {
                         Type: "Pivô Central",
@@ -431,6 +432,7 @@ export const IRRIGANT = {
                       },
                     },
                     {
+                      Id: 2,
                       Name: "Test2",
                       System: {
                         Type: "Microaspersão",
@@ -451,6 +453,7 @@ export const IRRIGANT = {
                       },
                     },
                     {
+                      Id: 3,
                       Name: "test30",
                       System: {
                         Type: "Pivô Central",
