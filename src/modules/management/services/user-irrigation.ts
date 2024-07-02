@@ -76,13 +76,13 @@ export class UserRecommendationsServices {
           command.Pluviometer.Id as number
         );
 
-      if (lastPluviometerMeasurements?.Precipitation)
-        Precipitation = lastPluviometerMeasurements.Precipitation;
+      Precipitation = lastPluviometerMeasurements?.Precipitation
+        ? lastPluviometerMeasurements.Precipitation
+        : 0;
     }
 
     if (Precipitation == null) {
-      Precipitation = 0;
-      // return left(new IrrigantErrors.PluviometerMeasurementsNotFound());
+      return left(new IrrigantErrors.PluviometerMeasurementsNotFound());
     }
 
     const irrigationSystemOrError = makeIrrigationSystem(command.System);
@@ -131,6 +131,8 @@ export class UserRecommendationsServices {
       ),
       IrrigationEfficiency: irrigationSystem.efficiency,
       IrrigationTime: bladeSuggestion.irrigationTime,
+      PlantingDate: command.PlantingDate,
+      Stage: cropCycle?.Title,
       CropDays: cropDate,
       Et0: DecimalFormatter.truncate(Et0, 2),
       Precipitation,
@@ -235,10 +237,11 @@ export class UserRecommendationsServices {
     );
 
     if (irrigationCrops) {
-      const { System, CropId, PlantingDate, Pluviometer, Station } =
+      const { System, CropId, PlantingDate, Pluviometer, Station, Name } =
         new CalcIrrigationRecommendationDTO(irrigationCrops);
 
       return right({
+        Name,
         System,
         CropId,
         PlantingDate,
@@ -258,10 +261,11 @@ export class UserRecommendationsServices {
     if (result) {
       return right(
         result.map((data) => {
-          const { System, CropId, PlantingDate, Pluviometer, Station } =
+          const { System, CropId, PlantingDate, Pluviometer, Station, Name } =
             new CalcIrrigationRecommendationDTO(data);
 
           return {
+            Name,
             System,
             CropId,
             PlantingDate,
@@ -305,6 +309,7 @@ export class UserRecommendationsServices {
       Etc: suggestion.Etc,
       RepositionBlade: suggestion.RepositionBlade,
       IrrigationEfficiency: suggestion.IrrigationEfficiency,
+      PlantingDate: suggestion.PlantingDate,
       IrrigationTime: suggestion.IrrigationTime,
       CropDays: suggestion.CropDays,
       Et0: suggestion.Et0,
