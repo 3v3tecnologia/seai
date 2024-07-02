@@ -23,6 +23,7 @@ export type IUpdateIrrigationRecommendationDTO =
   };
 
 export type ICalcIrrigationRecommendationDTO = {
+  Name: string;
   Station: {
     Id?: number;
     Et0?: number;
@@ -89,6 +90,7 @@ export class CalcIrrigationRecommendationDTO {
     }/${planingDate.getFullYear()}`;
 
     this.params = {
+      Name: recordedRecommendation.Name,
       CropId: recordedRecommendation.CropId,
       PlantingDate: formattedDate,
       Pluviometer: {
@@ -121,5 +123,8 @@ export class CalcIrrigationRecommendationDTO {
   }
   get System() {
     return this.params.System;
+  }
+  get Name() {
+    return this.params.Name;
   }
 }
