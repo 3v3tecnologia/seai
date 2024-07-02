@@ -1,4 +1,5 @@
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
+import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
 import { IrrigationSystemTypes } from "../core/model/irrigation-system";
 
 // Como é no banco (Trocar para portugues)
@@ -122,7 +123,7 @@ export class IrrigationCropsRepository {
         effective_area,
         flow,
         length,
-        planting_date,
+        planting_date: formatDateToYYYYMMDD(planting_date),
         plants_qtd,
         spacing,
         sprinkler_precipitation,
@@ -185,7 +186,7 @@ export class IrrigationCropsRepository {
         effective_area,
         flow,
         length,
-        planting_date,
+        planting_date: formatDateToYYYYMMDD(planting_date),
         plants_qtd,
         spacing,
         sprinkler_precipitation,

@@ -51,3 +51,9 @@ export function formatDateStringToTime(time: string, delimiter?: string) {
 
   return `${day}${limiter}${month}${limiter}${year}`;
 }
+
+export function formatDateToYYYYMMDD(date: string) {
+  const [day, month, year] = date.split("/");
+
+  return `${year}/${month}/${day}`;
+}

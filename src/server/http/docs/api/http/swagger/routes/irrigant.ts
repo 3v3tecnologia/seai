@@ -306,6 +306,17 @@ export const IRRIGANT = {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Irrigation id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       requestBody: {
         content: {
           "application/json": {
@@ -314,7 +325,7 @@ export const IRRIGANT = {
               example: {
                 CropId: 1,
                 Name: "test2",
-                PlantingDate: "10/06/2024",
+                PlantingDate: "20/06/2024",
                 System: {
                   Type: "Pivô Central",
                   Measurements: {
@@ -375,7 +386,7 @@ export const IRRIGANT = {
               example: {
                 CropId: 1,
                 Name: "test2",
-                PlantingDate: "10/06/2024",
+                PlantingDate: "20/06/2024",
                 System: {
                   Type: "Pivô Central",
                   Measurements: {
