@@ -225,14 +225,51 @@ export class UserRecommendationsServices {
   static async getIrrigationCropsById(
     id: number,
     user_id: number
-  ): Promise<Either<Error, any>> {
-    return right(await IrrigationCropsRepository.getById(id, user_id));
+  ): Promise<Either<Error, any | null>> {
+    const irrigationCrops = await IrrigationCropsRepository.getById(
+      id,
+      user_id
+    );
+
+    if (irrigationCrops) {
+      const { System, CropId, PlantingDate, Pluviometer, Station } =
+        new CalcIrrigationRecommendationDTO(irrigationCrops);
+
+      return right({
+        System,
+        CropId,
+        PlantingDate,
+        Pluviometer,
+        Station,
+      });
+    }
+
+    return right(null);
   }
 
   static async getAllIrrigationCrops(
     user_id: number
   ): Promise<Either<Error, any>> {
-    return right(await IrrigationCropsRepository.getByUserId(user_id));
+    const result = await IrrigationCropsRepository.getByUserId(user_id);
+
+    if (result) {
+      return right(
+        result.map((data) => {
+          const { System, CropId, PlantingDate, Pluviometer, Station } =
+            new CalcIrrigationRecommendationDTO(data);
+
+          return {
+            System,
+            CropId,
+            PlantingDate,
+            Pluviometer,
+            Station,
+          };
+        })
+      );
+    }
+
+    return right(null);
   }
 
   static async calcIrrigationRecommendationById(

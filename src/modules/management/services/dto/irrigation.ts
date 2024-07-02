@@ -7,6 +7,7 @@ import { IUserRecordedRecommendationData } from "../../repositories/irrigation.r
 
 export type ISaveIrrigationRecommendationDTO = {
   UserId: number;
+  Name: string;
   CropId: number;
   PlantingDate: string;
   IrrigationEfficiency: number;
