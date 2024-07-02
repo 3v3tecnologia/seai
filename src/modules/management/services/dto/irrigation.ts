@@ -27,6 +27,7 @@ export type IUpdateIrrigationRecommendationDTO =
   };
 
 export type ICalcIrrigationRecommendationDTO = {
+  Id?: number;
   Name: string;
   Station: {
     Id?: number;
@@ -86,7 +87,7 @@ export class CalcIrrigationRecommendationDTO {
         throw new Error("Tipo de sistema não reconhecido.");
     }
 
-    this.params = {
+    const data = {
       Name: recordedRecommendation.Name,
       CropId: recordedRecommendation.CropId,
       PlantingDate: formatDateStringToTime(recordedRecommendation.PlantingDate),
@@ -101,8 +102,19 @@ export class CalcIrrigationRecommendationDTO {
         Measurements: systemMeasurementsProps,
       },
     };
+
+    if (recordedRecommendation.Id) {
+      Object.assign(data, {
+        Id: recordedRecommendation.Id,
+      });
+    }
+
+    this.params = data;
   }
 
+  get Id() {
+    return this.params.Id;
+  }
   get Station() {
     return this.params.Station;
   }

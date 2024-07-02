@@ -237,10 +237,11 @@ export class UserRecommendationsServices {
     );
 
     if (irrigationCrops) {
-      const { System, CropId, PlantingDate, Pluviometer, Station, Name } =
+      const { System, CropId, PlantingDate, Pluviometer, Station, Name, Id } =
         new CalcIrrigationRecommendationDTO(irrigationCrops);
 
       return right({
+        Id,
         Name,
         System,
         CropId,
@@ -261,10 +262,18 @@ export class UserRecommendationsServices {
     if (result) {
       return right(
         result.map((data) => {
-          const { System, CropId, PlantingDate, Pluviometer, Station, Name } =
-            new CalcIrrigationRecommendationDTO(data);
+          const {
+            System,
+            CropId,
+            PlantingDate,
+            Pluviometer,
+            Station,
+            Name,
+            Id,
+          } = new CalcIrrigationRecommendationDTO(data);
 
           return {
+            Id,
             Name,
             System,
             CropId,
