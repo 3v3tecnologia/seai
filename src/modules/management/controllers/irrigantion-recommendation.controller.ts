@@ -69,6 +69,7 @@ export class IrrigationRecommendationControllers {
       const successOrError =
         await UserRecommendationsServices.saveIrrigationCrops({
           CropId: request.CropId,
+          Name: request.Name,
           IrrigationEfficiency: request.IrrigationEfficiency,
           PlantingDate: request.PlantingDate,
           System: request.System,
@@ -93,6 +94,7 @@ export class IrrigationRecommendationControllers {
         await UserRecommendationsServices.updateIrrigationCropsById({
           Id: request.id,
           CropId: request.CropId,
+          Name: request.Name,
           IrrigationEfficiency: request.IrrigationEfficiency,
           PlantingDate: request.PlantingDate,
           System: request.System,

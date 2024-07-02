@@ -14,6 +14,7 @@ export type IrrigationCropsData = {
   id?: number;
   user_id: number;
   crop_id: number;
+  name: string;
   planting_date: string;
   system_type: IrrigationSystemTypes;
   area?: number;
@@ -28,6 +29,7 @@ export type IrrigationCropsData = {
 export type IUserRecordedRecommendationData = {
   Id: number;
   StationId: number;
+  Name: string;
   PluviometerId: number;
   SystemType: IrrigationSystemTypes;
   CropId: number;
@@ -49,6 +51,7 @@ export type IUserRecordedRecommendationData = {
 function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
   const {
     id,
+    name,
     planting_date,
     flow,
     system_type,
@@ -70,6 +73,7 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
 
   return {
     Id: Number(id),
+    Name: name,
     CropId: Number(crop_id),
     Crop: crop_name,
     SystemType: system_type as IrrigationSystemTypes,
@@ -96,6 +100,7 @@ export class IrrigationCropsRepository {
   static async save(params: IrrigationCropsData): Promise<number | null> {
     const {
       area,
+      name,
       crop_id,
       effective_area,
       flow,
@@ -112,6 +117,7 @@ export class IrrigationCropsRepository {
       .withSchema("management")
       .insert({
         area,
+        name,
         crop_id,
         effective_area,
         flow,
@@ -157,6 +163,7 @@ export class IrrigationCropsRepository {
     const {
       id,
       area,
+      name,
       crop_id,
       effective_area,
       flow,
@@ -173,6 +180,7 @@ export class IrrigationCropsRepository {
       .withSchema("management")
       .update({
         area,
+        name,
         crop_id,
         effective_area,
         flow,
@@ -201,6 +209,7 @@ export class IrrigationCropsRepository {
       `
             SELECT
                 irrigation.id ,
+                irrigation.name,
                 irrigation.planting_date,
                 irrigation.flow,
                 irrigation.system_type,
@@ -254,6 +263,7 @@ export class IrrigationCropsRepository {
       `
             SELECT
                 irrigation.id ,
+                irrigation.name,
                 irrigation.planting_date,
                 irrigation.flow,
                 irrigation.system_type,
