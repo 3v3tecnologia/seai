@@ -1,43 +1,96 @@
 import { Request, Response, Router } from "express";
-import { adaptRouteV2 } from "../../../server/http/adapters/express-route.adapter";
-import { authorization } from "../../../server/http/http-middlewares";
-import { IrrigationRecommendationControllers } from "../controllers/irrigantion-recommendation.controller";
-import { Readable, Transform } from "node:stream";
+import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { UserRecommendationsServices } from "../services/user-irrigation.service";
+import { sendHTTPResponse } from "../../../server/http/adapters/express-route.adapter";
+import { authorization } from "../../../server/http/http-middlewares";
+import { makeIrrigationRecommendationControllers } from "../controllers/factories/irrigation-recommendation.controller";
+import { makeUserIrrigationControllers } from "../controllers/factories/user-irrigation.controller";
+import { ManagementCropRepository } from "../repositories/crop.repository";
+import { IrrigationCropsRepository } from "../repositories/irrigation.repository";
+import { IrrigationCropsSuggestion } from "../services/irrigation-suggestion.service";
 
 export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
+  const irrigationControllers = makeIrrigationRecommendationControllers();
+  const userIrrigationControllers = makeUserIrrigationControllers();
+
   router.post(
     "/management/blade_suggestion",
-    adaptRouteV2(
-      IrrigationRecommendationControllers.calcIrrigationRecommendation
-    )
+    async (request: Request, response: Response) => {
+      const req = {
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await irrigationControllers.calcIrrigationRecommendation(
+        req
+      );
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.post(
     "/management/user/irrigation_crops",
     authorization,
-    adaptRouteV2(IrrigationRecommendationControllers.saveIrrigationCrops)
+    async (request: Request, response: Response) => {
+      const req = {
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await irrigationControllers.calcIrrigationRecommendation(
+        req
+      );
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.get(
     "/management/user/irrigation_crops",
     authorization,
-    adaptRouteV2(IrrigationRecommendationControllers.getAllIrrigationCrops)
+    async (request: Request, response: Response) => {
+      const req = {
+        accountId: request.accountId as number,
+      };
+
+      const result = await userIrrigationControllers.getAllIrrigationCrops(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.get(
     "/management/user/irrigation_crops/:id",
     authorization,
-    adaptRouteV2(IrrigationRecommendationControllers.getIrrigationCropsById)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId as number,
+      };
+
+      const result = await userIrrigationControllers.getIrrigationCropsById(
+        req
+      );
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.get(
     "/management/user/irrigation_crops/recommendation/:id",
     authorization,
-    adaptRouteV2(
-      IrrigationRecommendationControllers.calcIrrigationRecommendationById
-    )
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId as number,
+      };
+
+      const result =
+        await irrigationControllers.calcIrrigationRecommendationById(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.get(
@@ -85,8 +138,11 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
           },
         });
 
-        const dataSource =
-          UserRecommendationsServices.calcUsersRecommendations();
+        const dataSource = new IrrigationCropsSuggestion(
+          new IrrigationCropsRepository(),
+          new ManagementCropRepository(),
+          new IrrigationCropsRepository()
+        ).calPerUsers();
 
         await pipeline(dataSource, addChunkLineBreaker, res, {
           signal: abortController.signal,
@@ -100,12 +156,33 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
   router.delete(
     "/management/user/irrigation_crops/:id",
     authorization,
-    adaptRouteV2(IrrigationRecommendationControllers.deleteIrrigationCrops)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId as number,
+      };
+
+      const result = await userIrrigationControllers.deleteIrrigationCrops(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.patch(
     "/management/user/irrigation_crops/:id",
     authorization,
-    adaptRouteV2(IrrigationRecommendationControllers.updateIrrigationCropsById)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId as number,
+        ...(request.body || {}),
+      };
+
+      const result = await userIrrigationControllers.updateIrrigationCropsById(
+        req
+      );
+
+      return sendHTTPResponse(result, response);
+    }
   );
 };

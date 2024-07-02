@@ -1,45 +1,113 @@
-import { Router } from "express";
-import { adaptRouteV2 } from "../../../server/http/adapters/express-route.adapter";
+import { Request, Response, Router } from "express";
+import { sendHTTPResponse } from "../../../server/http/adapters/express-route.adapter";
 import { authorization } from "../../../server/http/http-middlewares";
-import { ManagementCropControllers } from "../controllers/crop.controller";
+import { makeManagementCropControllers } from "../controllers/factories/crop.controller";
 
 export const setupManagementCropV2Routes = (router: Router): void => {
+  const controllers = makeManagementCropControllers();
+
   router.get(
     "/management/crop/:id",
-    adaptRouteV2(ManagementCropControllers.getCropById)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+      };
+
+      const result = await controllers.getCropById(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.post(
     "/management/crop",
     authorization,
-    adaptRouteV2(ManagementCropControllers.createCrop)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await controllers.createCrop(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.put(
     "/management/crop/:id",
     authorization,
-    adaptRouteV2(ManagementCropControllers.updateCrop)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await controllers.updateCrop(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.delete(
     "/management/crop/:id",
     authorization,
-    adaptRouteV2(ManagementCropControllers.deleteCrop)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+      };
+
+      const result = await controllers.deleteCrop(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   router.get(
     "/management/crop/cycles/:id",
-    adaptRouteV2(ManagementCropControllers.getAllCropCycles)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+      };
+
+      const result = await controllers.getAllCropCycles(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
   router.post(
     "/management/crop/cycles/:id",
     authorization,
-    adaptRouteV2(ManagementCropControllers.createCropCycles)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await controllers.createCropCycles(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 
   //Irrigant
   router.get(
     "/management/crops",
-    adaptRouteV2(ManagementCropControllers.getAllCrops)
+    async (request: Request, response: Response) => {
+      const req = {
+        id: +request.params.id,
+        accountId: request.accountId,
+        ...(request.body || {}),
+      };
+
+      const result = await controllers.getAllCrops(req);
+
+      return sendHTTPResponse(result, response);
+    }
   );
 };

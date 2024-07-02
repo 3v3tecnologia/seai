@@ -1,47 +1,115 @@
-import { Router } from "express";
-import { adaptRouteV2 } from "../../../server/http/adapters/express-route.adapter";
-import { EquipmentsControllers, EquipmentsMeasurementsControllers } from "../controllers";
+import { Request, Response, Router } from "express";
+import {
+  adaptRouteV2,
+  sendHTTPResponse,
+} from "../../../server/http/adapters/express-route.adapter";
+import {
+  EquipmentsControllers,
+  EquipmentsMeasurementsControllers,
+} from "../controllers";
 import { authorization } from "../../../server/http/http-middlewares";
+import { makeEquipmentsControllers } from "../controllers/factories/equipments";
+import { makeEquipmentsMeasurementsControllers } from "../controllers/factories/measurements";
 
 export const setupEquipmentsV2Routes = (router: Router): void => {
-    router.get(
-        "/equipments",
-        authorization,
-        adaptRouteV2(EquipmentsControllers.getAll)
-    );
-    router.get(
-        "/equipments/types",
-        authorization,
-        adaptRouteV2(EquipmentsControllers.getAllEquipmentsTypes)
-    );
-    router.post(
-        "/equipments",
-        // authorization,
-        adaptRouteV2(EquipmentsControllers.bulkInsert)
-    );
+  const controllers = makeEquipmentsControllers();
 
-    router.get(
-        "/equipments/last-updated-at",
-        authorization,
-        adaptRouteV2(EquipmentsControllers.getDateOfLastMeasurementTaken)
-    );
+  const equipmentsMeasurementsControllers =
+    makeEquipmentsMeasurementsControllers();
 
-    router.get(
-        "/equipments/meteorological_organ/access_credentials",
-        authorization,
-        adaptRouteV2(EquipmentsControllers.getMeteorologicalOrganAccessCredentials)
-    );
+  router.get(
+    "/equipments",
+    authorization,
+    async (request: Request, response: Response) => {
+      const req = {
+        type: request.query.type as "station" | "pluviometer",
+      };
 
-    router.get(
-        "/equipments/measurements",
-        authorization,
-        adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
-    );
+      const result = await controllers.getAll(req);
 
-    router.post(
-        "/equipments/measurements",
-        // authorization,
-        adaptRouteV2(EquipmentsMeasurementsControllers.bulkInsert)
-    );
+      return sendHTTPResponse(result, response);
+    }
+  );
 
+  router.get(
+    "/equipments/types",
+    authorization,
+    async (request: Request, response: Response) => {
+      const result = await controllers.getAllEquipmentsTypes();
+
+      return sendHTTPResponse(result, response);
+    }
+  );
+
+  router.post(
+    "/equipments",
+    // authorization,
+    async (request: Request, response: Response) => {
+      const req = {
+        ...(request.body || {}),
+      };
+
+      const result = await controllers.bulkInsert(req);
+
+      return sendHTTPResponse(result, response);
+    }
+  );
+
+  router.get(
+    "/equipments/last-updated-at",
+    authorization,
+    async (request: Request, response: Response) => {
+      const result = await controllers.getDateOfLastMeasurementTaken();
+
+      return sendHTTPResponse(result, response);
+    }
+  );
+
+  router.get(
+    "/equipments/meteorological_organ/access_credentials",
+    authorization,
+    async (request: Request, response: Response) => {
+      const req = {
+        organName: request.query.organName as string,
+      };
+
+      const result = await controllers.getMeteorologicalOrganAccessCredentials(
+        req
+      );
+
+      return sendHTTPResponse(result, response);
+    }
+  );
+
+  // adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
+  router.get(
+    "/equipments/measurements",
+    authorization,
+    async (request: Request, response: Response) => {
+      const req = {
+        ...(request.body || {}),
+      };
+
+      const result =
+        await equipmentsMeasurementsControllers.getByEquipmentsCodesAndDate(
+          req
+        );
+
+      return sendHTTPResponse(result, response);
+    }
+  );
+
+  router.post(
+    "/equipments/measurements",
+    // authorization,
+    async (request: Request, response: Response) => {
+      const req = {
+        ...(request.body || {}),
+      };
+
+      const result = await equipmentsMeasurementsControllers.bulkInsert(req);
+
+      return sendHTTPResponse(result, response);
+    }
+  );
 };
