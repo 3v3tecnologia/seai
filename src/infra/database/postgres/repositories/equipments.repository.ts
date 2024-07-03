@@ -532,7 +532,7 @@ export class DbEquipmentsRepository
               FROM
                   equipments."ReadStations" rs
               WHERE
-                  rs."FK_Equipment" = Stations."Id" AND rs."Time" = ${withoutLocalTimezone} AND rs."Et0" >= 0
+                  rs."FK_Equipment" = Stations."Id"
               ORDER BY
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
@@ -540,6 +540,8 @@ export class DbEquipmentsRepository
     `;
 
     const data = await governmentDb.raw(query);
+
+    console.log(query)
 
     const rows = data.rows;
 
@@ -606,7 +608,7 @@ export class DbEquipmentsRepository
               FROM
                   equipments."ReadPluviometers" rs
               WHERE
-                  rs."FK_Equipment" = Pluviometers."Id" AND rs."Time" = ${withoutLocalTimezone} AND rs."Value" >= 0
+                  rs."FK_Equipment" = Pluviometers."Id" 
               ORDER BY
                   rs."Time" DESC
               LIMIT 1
