@@ -81,7 +81,9 @@ export class CalcIrrigationRecommendationDTO {
         break;
       case irrigationsTypesNames.Sulcos:
         systemMeasurementsProps = {
-          Precipitation: recordedRecommendation.System_Precipitation as number,
+          Length: recordedRecommendation.Length as number,
+          Spacing: recordedRecommendation.Spacing as number,
+          Flow: recordedRecommendation.Flow as number,
         };
         break;
       default:
