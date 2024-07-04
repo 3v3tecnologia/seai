@@ -632,7 +632,7 @@ export class DbEquipmentsRepository
     const pluviometers: Array<PluviometerWithLastMeasurement> = rows.map(
       (row: any) => ({
         ...mapEquipmentToDomain(row),
-        Precipitation: row.Value ? Number(row.Value) : null,
+        Precipitation: row.Value !== null ? Number(row.Value) : null,
       })
     );
 
