@@ -38,6 +38,7 @@ export type ICalcIrrigationRecommendationDTO = {
     Precipitation?: number;
   };
   CropId: number;
+  Crop: string;
   PlantingDate: string;
   IrrigationEfficiency?: number;
   System: {
@@ -90,6 +91,7 @@ export class CalcIrrigationRecommendationDTO {
     const data = {
       Name: recordedRecommendation.Name,
       CropId: recordedRecommendation.CropId,
+      Crop: recordedRecommendation.Crop,
       PlantingDate: formatDateStringToTime(recordedRecommendation.PlantingDate),
       Pluviometer: {
         Id: recordedRecommendation.PluviometerId,
@@ -121,8 +123,13 @@ export class CalcIrrigationRecommendationDTO {
   get Pluviometer() {
     return this.params.Pluviometer;
   }
+
   get CropId() {
     return this.params.CropId;
+  }
+
+  get Crop() {
+    return this.params.Crop;
   }
   get PlantingDate() {
     return this.params.PlantingDate;
