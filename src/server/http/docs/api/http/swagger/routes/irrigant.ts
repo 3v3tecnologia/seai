@@ -168,6 +168,7 @@ export const IRRIGANT = {
                     data: [
                       {
                         Id: 1,
+                        Enable: true,
                         Code: "B850A89C",
                         Name: "São Benedito - Sítio Ingazeira",
                         Type: {
@@ -187,6 +188,7 @@ export const IRRIGANT = {
                       },
                       {
                         Id: 36,
+                        Enable: true,
                         Code: "32321",
                         Name: "Fortaleza - Itaperi",
                         Type: {
@@ -210,6 +212,7 @@ export const IRRIGANT = {
                     data: [
                       {
                         Id: 133,
+                        Enable: true,
                         Code: "24302",
                         Name: "MINEIROLANDIA",
                         Type: {
@@ -229,6 +232,7 @@ export const IRRIGANT = {
                       },
                       {
                         Id: 132,
+                        Enable: true,
                         Code: "24110",
                         Name: "SAO GONCALO DO AMARANTE",
                         Type: {
