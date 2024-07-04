@@ -4,7 +4,11 @@ import {
   SystemModulesProps,
 } from "../../../../domain/entities/user/user-modules-access";
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
-import { IOutputWithPagination, IPaginationInput, toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
+import {
+  IOutputWithPagination,
+  IPaginationInput,
+  toPaginatedOutput,
+} from "../../../../domain/use-cases/helpers/pagination";
 import { User } from "../../../../domain/use-cases/user/model/user";
 import { UserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
 import { governmentDb } from "../connection/knexfile";
@@ -18,8 +22,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     password?: string;
     status?: string;
     type: UserType;
-    modules?: SystemModulesProps,
-    code: string,
+    modules?: SystemModulesProps;
+    code: string;
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
@@ -28,30 +32,30 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         Name: params.name,
         Type: params.type,
         Code: params.code,
-        Status: params.status || 'pending',
+        Status: params.status || "pending",
         CreatedAt: governmentDb.fn.now(),
-      }
+      };
 
       if (params.login) {
         Object.assign(toInsert, {
           Login: params.login,
-        })
+        });
       }
 
       if (params.name) {
         Object.assign(toInsert, {
           Name: params.name,
-        })
+        });
       }
 
       if (params.password) {
         Object.assign(toInsert, {
           Password: params.password,
-        })
+        });
       }
 
       const id = await trx
-        .withSchema('users')
+        .withSchema("users")
         .insert(toInsert)
         .returning("Id")
         .into("User");
@@ -62,7 +66,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         // Refactor: Bulk insert
         // Refactor: add user permissions mapper
         await trx
-          .withSchema('users')
+          .withSchema("users")
           .insert({
             Fk_User: user_id,
             Fk_Module: params.modules[Modules.NEWS].id,
@@ -72,7 +76,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           .into("User_Access");
 
         await trx
-          .withSchema('users')
+          .withSchema("users")
           .insert({
             Fk_User: user_id,
             Fk_Module: params.modules[Modules.REGISTER].id,
@@ -82,7 +86,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           .into("User_Access");
 
         await trx
-          .withSchema('users')
+          .withSchema("users")
           .insert({
             Fk_User: user_id,
             Fk_Module: params.modules[Modules.USER].id,
@@ -92,7 +96,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           .into("User_Access");
 
         await trx
-          .withSchema('users')
+          .withSchema("users")
           .insert({
             Fk_User: user_id,
             Fk_Module: params.modules[Modules.JOBS].id,
@@ -112,7 +116,10 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     id: number;
     name: string;
   }> | null> {
-    const modules = await governmentDb.withSchema('users').select("*").from("Module");
+    const modules = await governmentDb
+      .withSchema("users")
+      .select("*")
+      .from("Module");
 
     if (!modules) {
       return null;
@@ -126,8 +133,18 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
   async getUserByCode(code: string): Promise<User | null> {
     const result = await governmentDb
-      .withSchema('users')
-      .select("Id", "Name", "Login", "Email", "Type", "Code", "Status", "CreatedAt", "UpdatedAt")
+      .withSchema("users")
+      .select(
+        "Id",
+        "Name",
+        "Login",
+        "Email",
+        "Type",
+        "Code",
+        "Status",
+        "CreatedAt",
+        "UpdatedAt"
+      )
       .where({ Code: code })
       .from("User")
       .first();
@@ -136,7 +153,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } = result;
+    const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } =
+      result;
 
     const user: User = {
       id: Id,
@@ -154,8 +172,18 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
   async getUserById(id_user: number): Promise<User | null> {
     const result = await governmentDb
-      .withSchema('users')
-      .select("Id", "Name", "Login", "Code", "Status", "Email", "Type", "CreatedAt", "UpdatedAt")
+      .withSchema("users")
+      .select(
+        "Id",
+        "Name",
+        "Login",
+        "Code",
+        "Status",
+        "Email",
+        "Type",
+        "CreatedAt",
+        "UpdatedAt"
+      )
       .where({ Id: id_user })
       .from("User")
       .first();
@@ -164,7 +192,8 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Code, Status, Email, Type, CreatedAt, UpdatedAt } = result;
+    const { Id, Name, Login, Code, Status, Email, Type, CreatedAt, UpdatedAt } =
+      result;
 
     const user: User = {
       id: Id,
@@ -191,7 +220,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
   async getUserModules(id_user: number): Promise<SystemModulesProps | null> {
     const result = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .where({ Fk_User: id_user })
       .from("User_Access")
@@ -223,7 +252,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     write: boolean;
   } | null> {
     const module = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .where({ Fk_User: id_user })
       .andWhere({ Name: name })
@@ -258,6 +287,10 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         `WHERE (to_tsvector('simple', coalesce(u."Name", ''))) @@ to_tsquery('simple', '${name}:*')`
       );
     }
+
+    queries.push(
+      `WHERE u."Type" IN ('admin'::users.user_types,'standard'::users.user_types )`
+    );
 
     if (type) {
       const baseWhere = `WHERE u."Type" = ?`;
@@ -325,10 +358,13 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
 
   async updateUserPassword(user_id: number, password: string): Promise<void> {
-    await governmentDb("User").withSchema('users').where({ Id: user_id }).update({
-      Password: password,
-      UpdatedAt: governmentDb.fn.now(),
-    });
+    await governmentDb("User")
+      .withSchema("users")
+      .where({ Id: user_id })
+      .update({
+        Password: password,
+        UpdatedAt: governmentDb.fn.now(),
+      });
   }
 
   async update(data: {
@@ -365,28 +401,27 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
         });
       }
 
-      const updateUserQueryBuilder = trx("User").withSchema('users')
+      const updateUserQueryBuilder = trx("User").withSchema("users");
 
       if (data.id) {
         updateUserQueryBuilder.where({
-          Id: data.id
-        })
-      }
-      else {
+          Id: data.id,
+        });
+      } else {
         updateUserQueryBuilder.where({
-          Code: data.code
-        })
+          Code: data.code,
+        });
 
         Object.assign(userToUpdate, {
-          Status: 'registered'
-        })
+          Status: "registered",
+        });
       }
 
       const updatedUserRows = await updateUserQueryBuilder.update(userToUpdate);
 
       if (data.modules) {
         await trx("User_Access")
-          .withSchema('users')
+          .withSchema("users")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
           .update({
             Read: data.modules[Modules.NEWS].read,
@@ -394,7 +429,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           });
 
         await trx("User_Access")
-          .withSchema('users')
+          .withSchema("users")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.JOBS].id })
           .update({
             Read: data.modules[Modules.JOBS].read,
@@ -402,7 +437,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           });
 
         await trx("User_Access")
-          .withSchema('users')
+          .withSchema("users")
           .where({
             Fk_User: data.id,
             Fk_Module: data.modules[Modules.REGISTER].id,
@@ -414,7 +449,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
           });
 
         await trx("User_Access")
-          .withSchema('users')
+          .withSchema("users")
           .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
           .update({
             Read: data.modules[Modules.USER].read,
@@ -431,7 +466,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
   async getByEmail(email: string): Promise<User | null> {
     const result = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .from("User")
       .where("Email", email)
@@ -441,8 +476,18 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
-      result;
+    const {
+      Id,
+      Name,
+      Login,
+      Code,
+      Status,
+      Email,
+      Password,
+      Type,
+      CreatedAt,
+      UpdatedAt,
+    } = result;
 
     const user: User = {
       id: Id,
@@ -471,7 +516,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
   async getByLogin(login: string): Promise<Required<UserAccount> | null> {
     const result = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .from("User")
       .where("Login", login)
@@ -518,18 +563,18 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
 
   async deleteById(id_user: number): Promise<boolean> {
-    await governmentDb("User").withSchema('users').where("Id", id_user).del();
+    await governmentDb("User").withSchema("users").where("Id", id_user).del();
     return true;
   }
 
   async deleteByEmail(email: string): Promise<boolean> {
-    await governmentDb("User").withSchema('users').where("Email", email).del();
+    await governmentDb("User").withSchema("users").where("Email", email).del();
     return true;
   }
 
   async getById(id_user: number): Promise<Required<User> | null> {
     const result = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .from("User")
       .where({ Id: id_user })
@@ -539,8 +584,18 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Code, Status, Email, Password, Type, CreatedAt, UpdatedAt } =
-      result;
+    const {
+      Id,
+      Name,
+      Login,
+      Code,
+      Status,
+      Email,
+      Password,
+      Type,
+      CreatedAt,
+      UpdatedAt,
+    } = result;
 
     const user: Required<User> = {
       id: Id,
@@ -568,18 +623,23 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   }
 
   async checkIfLoginAlreadyExists(login: string): Promise<boolean> {
-    const response = await governmentDb('User as u')
-      .withSchema('users')
-      .select(governmentDb.raw('CASE WHEN u."Login" = ? THEN true ELSE false END AS result', [login]))
+    const response = await governmentDb("User as u")
+      .withSchema("users")
+      .select(
+        governmentDb.raw(
+          'CASE WHEN u."Login" = ? THEN true ELSE false END AS result',
+          [login]
+        )
+      )
       .where("Login", login)
-      .first()
+      .first();
 
-    return response ? response.result : false
+    return response ? response.result : false;
   }
 
   async checkIfEmailAlreadyExists(email: string): Promise<boolean> {
     const user = await governmentDb
-      .withSchema('users')
+      .withSchema("users")
       .select("*")
       .from("User")
       .where("Email", email)
