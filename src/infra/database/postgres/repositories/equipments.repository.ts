@@ -526,7 +526,7 @@ export class DbEquipmentsRepository
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND equipment."Enable" = true ${coordinateFilter})
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${coordinateFilter})
       SELECT Stations.*, Measurements.* FROM Stations,
           LATERAL (
               SELECT
@@ -598,7 +598,7 @@ export class DbEquipmentsRepository
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2 AND equipment."Enable" = true ${
+      WHERE equipment."FK_Type" = 2  ${
         [params?.latitude, params?.longitude].every((e) => e)
           ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
           : ""
@@ -609,7 +609,8 @@ export class DbEquipmentsRepository
                   rs."FK_Equipment" ,
                   rs."Time",
                   rs."Hour",
-                  TRUNC(rs."Value"::numeric,2) AS "Value"
+                  CASE WHEN rs."Value" >=0 THEN TRUNC(rs."Value"::numeric,2)
+                  ELSE NULL  END AS "Value"
               FROM
                   equipments."ReadPluviometers" rs
               WHERE
@@ -631,7 +632,7 @@ export class DbEquipmentsRepository
     const pluviometers: Array<PluviometerWithLastMeasurement> = rows.map(
       (row: any) => ({
         ...mapEquipmentToDomain(row),
-        Precipitation: Number(row.Value),
+        Precipitation: row.Value ? Number(row.Value) : null,
       })
     );
 
