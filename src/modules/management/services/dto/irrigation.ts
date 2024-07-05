@@ -1,4 +1,8 @@
 import {
+  formatDateStringToTime,
+  parseBrazilianDateTime,
+} from "../../../../shared/utils/date";
+import {
   IrrigationSystemMeasurementsTypes,
   IrrigationSystemTypes,
   irrigationsTypesNames,
@@ -7,6 +11,7 @@ import { IUserRecordedRecommendationData } from "../../repositories/protocols/ir
 
 export type ISaveIrrigationRecommendationDTO = {
   UserId: number;
+  Name: string;
   CropId: number;
   PlantingDate: string;
   IrrigationEfficiency: number;
@@ -22,6 +27,8 @@ export type IUpdateIrrigationRecommendationDTO =
   };
 
 export type ICalcIrrigationRecommendationDTO = {
+  Id?: number;
+  Name: string;
   Station: {
     Id?: number;
     Et0?: number;
@@ -31,6 +38,7 @@ export type ICalcIrrigationRecommendationDTO = {
     Precipitation?: number;
   };
   CropId: number;
+  Crop: string;
   PlantingDate: string;
   IrrigationEfficiency?: number;
   System: {
@@ -73,23 +81,20 @@ export class CalcIrrigationRecommendationDTO {
         break;
       case irrigationsTypesNames.Sulcos:
         systemMeasurementsProps = {
-          Precipitation: recordedRecommendation.System_Precipitation as number,
+          Length: recordedRecommendation.Length as number,
+          Spacing: recordedRecommendation.Spacing as number,
+          Flow: recordedRecommendation.Flow as number,
         };
         break;
       default:
         throw new Error("Tipo de sistema não reconhecido.");
     }
 
-    const planingDate = new Date(recordedRecommendation.PlantingDate);
-
-    // DD/MM/YYYY
-    const formattedDate = `${planingDate.getDate()}/${
-      planingDate.getMonth() + 1
-    }/${planingDate.getFullYear()}`;
-
-    this.params = {
+    const data = {
+      Name: recordedRecommendation.Name,
       CropId: recordedRecommendation.CropId,
-      PlantingDate: formattedDate,
+      Crop: recordedRecommendation.Crop,
+      PlantingDate: formatDateStringToTime(recordedRecommendation.PlantingDate),
       Pluviometer: {
         Id: recordedRecommendation.PluviometerId,
       },
@@ -101,16 +106,32 @@ export class CalcIrrigationRecommendationDTO {
         Measurements: systemMeasurementsProps,
       },
     };
+
+    if (recordedRecommendation.Id) {
+      Object.assign(data, {
+        Id: recordedRecommendation.Id,
+      });
+    }
+
+    this.params = data;
   }
 
+  get Id() {
+    return this.params.Id;
+  }
   get Station() {
     return this.params.Station;
   }
   get Pluviometer() {
     return this.params.Pluviometer;
   }
+
   get CropId() {
     return this.params.CropId;
+  }
+
+  get Crop() {
+    return this.params.Crop;
   }
   get PlantingDate() {
     return this.params.PlantingDate;
@@ -120,5 +141,8 @@ export class CalcIrrigationRecommendationDTO {
   }
   get System() {
     return this.params.System;
+  }
+  get Name() {
+    return this.params.Name;
   }
 }

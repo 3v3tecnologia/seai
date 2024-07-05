@@ -35,7 +35,7 @@ services:
     command: npm run start:debug:container
     ports:
       - "${PORT}:${PORT}"
-      - "127.0.0.1:9229:9229"
+      - "9229:9229"
     volumes:
       - .:/usr/src/app
       - backend_node_modules:/usr/src/app/node_modules

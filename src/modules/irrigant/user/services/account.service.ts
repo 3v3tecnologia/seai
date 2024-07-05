@@ -1,35 +1,100 @@
 import { User, UserTypes } from "../../../../domain/entities/user/user";
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
-import { UnmatchedPasswordError } from "../../../../domain/use-cases/user/authentication/errors";
+import { UserNotFoundError } from "../../../../domain/use-cases/errors/user-not-found";
+import {
+  UnmatchedPasswordError,
+  WrongPasswordError,
+} from "../../../../domain/use-cases/user/authentication/errors";
 import { AuthenticationService } from "../../../../domain/use-cases/user/authentication/ports/authentication-service";
+import { TokenProvider } from "../../../../domain/use-cases/user/authentication/ports/token-provider";
 import { Either, left, right } from "../../../../shared/Either";
 import { Logger } from "../../../../shared/logger/logger";
 import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
-import { IUserIrrigantServices } from "./protocols/account";
+
+export interface IUserIrrigantServices {
+  create(
+    dto: CreateIrrigantAccountDTO.Input
+  ): Promise<CreateIrrigantAccountDTO.Output>;
+  login(user: any): Promise<
+    Either<
+      Error,
+      {
+        accessToken: string;
+        // accountId: number;
+      }
+    >
+  >;
+  completeRegister(user: any): Promise<Either<Error, string>>;
+  resetPassword(user: any): Promise<Either<Error, string>>;
+}
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly authentication: AuthenticationService;
   private readonly preferencesRepository: IUserPreferencesRepository;
+  private readonly tokenProvider: TokenProvider;
 
   constructor(
     accountRepository: AccountRepositoryProtocol,
     authentication: AuthenticationService,
     preferencesRepository: IUserPreferencesRepository,
-    encoder: Encoder
+    encoder: Encoder,
+    tokenProvider: TokenProvider
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
     this.authentication = authentication;
     this.preferencesRepository = preferencesRepository;
+    this.tokenProvider = tokenProvider;
   }
 
-  login(user: any): Promise<Either<Error, string>> {
-    throw new Error("Method not implemented.");
+  async login(user: {
+    login?: string;
+    email?: string;
+    password: string;
+  }): Promise<
+    Either<
+      Error,
+      {
+        accessToken: string;
+        // accountId: number;
+      }
+    >
+  > {
+    const account = user.login
+      ? await this.accountRepository.getByLogin(user.login)
+      : await this.accountRepository.getByEmail(user.email as string);
+
+    if (!account || account.type !== "irrigant") {
+      return left(new UserNotFoundError());
+    }
+
+    const isMatch = await this.encoder.compare(
+      user.password,
+      account.password as string
+    );
+
+    if (isMatch === false) {
+      return left(new WrongPasswordError());
+    }
+
+    const userId = account.id as number;
+
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: userId,
+      },
+      "7d"
+    );
+
+    return right({
+      accessToken: token,
+      userName: account.name,
+    });
   }
 
   completeRegister(user: any): Promise<Either<Error, string>> {

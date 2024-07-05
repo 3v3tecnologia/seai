@@ -2,6 +2,7 @@ import { IrrigationSystemTypes } from "../../core/model/irrigation-system";
 
 export type IrrigationCropsData = {
   id?: number;
+  name: string;
   user_id: number;
   crop_id: number;
   planting_date: string;
@@ -17,6 +18,7 @@ export type IrrigationCropsData = {
 
 export type IUserRecordedRecommendationData = {
   Id: number;
+  Name: string;
   StationId: number;
   PluviometerId: number;
   SystemType: IrrigationSystemTypes;

@@ -1,15 +1,107 @@
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
-import { mapIrrigationCropsToDomain } from "../core/mappers/irrigation-crops";
-import {
-  IIrrigationRepository,
-  IrrigationCropsData,
-  IUserRecordedRecommendationData,
-} from "./protocols/irrigation.repository";
+import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
+import { IrrigationSystemTypes } from "../core/model/irrigation-system";
 
-export class IrrigationCropsRepository implements IIrrigationRepository {
-  async save(params: IrrigationCropsData): Promise<number | null> {
+// Como é no banco (Trocar para portugues)
+// enum IrrigationSystemTypes {
+//     'Sprinkling',
+//     'MicroSprinkling',
+//     'Pivot',
+//     'Dripping',
+//     'Furrow'
+// }
+
+export type IrrigationCropsData = {
+  id?: number;
+  user_id: number;
+  crop_id: number;
+  name: string;
+  planting_date: string;
+  system_type: IrrigationSystemTypes;
+  area?: number;
+  effective_area?: number;
+  plants_qtd?: number;
+  sprinkler_precipitation?: number;
+  length?: number;
+  spacing?: number;
+  flow?: number;
+};
+
+export type IUserRecordedRecommendationData = {
+  Id: number;
+  StationId: number;
+  Name: string;
+  PluviometerId: number;
+  SystemType: IrrigationSystemTypes;
+  CropId: number;
+  Crop: string;
+  PlantingDate: string;
+  ETo: number | null;
+  Pluviometry: number | null;
+  Area?: number | null;
+  EffectiveArea?: number | null;
+  PlantsQtd?: number | null;
+  System_Precipitation?: number | null;
+  Length?: number | null;
+  Spacing?: number | null;
+  Flow?: number | null;
+  CreatedAt: string;
+  UpdatedAt?: string | null;
+};
+
+function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
+  const {
+    id,
+    name,
+    planting_date,
+    flow,
+    system_type,
+    area,
+    effective_area,
+    plants_qtd,
+    sprinkler_precipitation,
+    length,
+    spacing,
+    created_at,
+    updated_at,
+    crop_id,
+    crop_name,
+    station_id,
+    ETo,
+    pluviometer_id,
+    pluviometry,
+  } = row;
+
+  return {
+    Id: Number(id),
+    Name: name,
+    CropId: Number(crop_id),
+    Crop: crop_name,
+    SystemType: system_type as IrrigationSystemTypes,
+    PlantingDate: planting_date,
+    StationId: Number(station_id),
+    ETo: ETo ? Number(ETo) : null,
+    PluviometerId: Number(pluviometer_id),
+    Pluviometry: pluviometry ? Number(pluviometry) : null,
+    Flow: flow ? Number(flow) : null,
+    Area: area ? Number(area) : null,
+    EffectiveArea: effective_area ? Number(effective_area) : null,
+    PlantsQtd: plants_qtd ? Number(plants_qtd) : null,
+    System_Precipitation: sprinkler_precipitation
+      ? Number(sprinkler_precipitation)
+      : null,
+    Length: length ? Number(length) : null,
+    Spacing: spacing ? Number(spacing) : null,
+    CreatedAt: created_at,
+    UpdatedAt: updated_at,
+  };
+}
+
+export class IrrigationCropsRepository {
+  static async save(params: IrrigationCropsData): Promise<number | null> {
     const {
       area,
+      name,
       crop_id,
       effective_area,
       flow,
@@ -26,11 +118,12 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       .withSchema("management")
       .insert({
         area,
+        name,
         crop_id,
         effective_area,
         flow,
         length,
-        planting_date,
+        planting_date: formatDateToYYYYMMDD(planting_date),
         plants_qtd,
         spacing,
         sprinkler_precipitation,
@@ -70,6 +163,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
     const {
       id,
       area,
+      name,
       crop_id,
       effective_area,
       flow,
@@ -86,11 +180,12 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       .withSchema("management")
       .update({
         area,
+        name,
         crop_id,
         effective_area,
         flow,
         length,
-        planting_date,
+        planting_date: formatDateToYYYYMMDD(planting_date),
         plants_qtd,
         spacing,
         sprinkler_precipitation,
@@ -114,6 +209,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       `
             SELECT
                 irrigation.id ,
+                irrigation.name,
                 irrigation.planting_date,
                 irrigation.flow,
                 irrigation.system_type,
@@ -167,6 +263,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       `
             SELECT
                 irrigation.id ,
+                irrigation.name,
                 irrigation.planting_date,
                 irrigation.flow,
                 irrigation.system_type,

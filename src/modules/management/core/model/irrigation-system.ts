@@ -82,7 +82,7 @@ export function makeSystemIrrigationMeasurements(data: {
     case irrigationsTypesNames.Pivot:
       return Pivot.create(data.Measurements as PivotProps);
     case irrigationsTypesNames.Sulcos:
-      return Pivot.create(data.Measurements as PivotProps);
+      return Sulcos.create(data.Measurements as SulcosProps);
     default:
       return left(new IrrigantErrors.IrrigationSystemNotRecognized());
   }

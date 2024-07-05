@@ -13,6 +13,7 @@ export type CalcIrrigationRecommendationByIdRequest = UserId & Id;
 export type GetAllIrrigationCropsRequest = UserId;
 export type SaveIrrigationCropsRequest = {
   CropId: number;
+  Name: string;
   PlantingDate: string;
   IrrigationEfficiency: number;
   System: {
@@ -22,6 +23,7 @@ export type SaveIrrigationCropsRequest = {
 } & UserId;
 export type UpdateIrrigationCropsRequest = {
   CropId: number;
+  Name: string;
   PlantingDate: string;
   IrrigationEfficiency: number;
   System: {

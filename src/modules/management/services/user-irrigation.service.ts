@@ -35,6 +35,7 @@ export class UserIrrigationCropsServices
 
     const id = await this.irrigationCropsRepository.save({
       user_id: dto.UserId,
+      name: dto.Name,
       crop_id: dto.CropId,
       planting_date: dto.PlantingDate,
       system_type: dto.System.Type as IrrigationSystemTypes,
@@ -73,6 +74,7 @@ export class UserIrrigationCropsServices
     await this.irrigationCropsRepository.update({
       id: dto.Id,
       user_id: dto.UserId,
+      name: dto.Name,
       crop_id: dto.CropId,
       planting_date: dto.PlantingDate,
       system_type: dto.System.Type as IrrigationSystemTypes,

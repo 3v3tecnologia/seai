@@ -16,4 +16,17 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
 
     return sendHTTPResponse(res, response);
   });
+
+  router.post(
+    "/irrigant/login",
+    async (request: Request, response: Response) => {
+      const req = {
+        ...(request.body || {}),
+      };
+
+      const res = await controllers.login(req);
+
+      return sendHTTPResponse(res, response);
+    }
+  );
 };

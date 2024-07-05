@@ -4,9 +4,9 @@ export function getYesterDayDate(separator: string) {
   return `${date.getFullYear()}${separator}${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}${separator}${date
-      .getDate()
-      .toString()
-      .padStart(2, "0")}`;
+    .getDate()
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 export function dateDiffInDays(start: Date, end: Date) {
@@ -23,15 +23,37 @@ export function dateDiffInDays(start: Date, end: Date) {
 }
 
 export function isDateInThePast(date: Date): Boolean {
-  return date.getTime() < new Date().getTime()
+  return date.getTime() < new Date().getTime();
 }
 
-export function parseBrazilianDateTime(dateTimeString: string) {
+export function parseBrazilianDateTime(
+  dateTimeString: string,
+  separator?: string
+) {
   const [datePart, timePart] = dateTimeString.split(" ");
-  const [day, month, year] = datePart.split("/").map(Number);
+  const div = separator || "/";
+  const [day, month, year] = datePart.split(div).map(Number);
 
   // Create a Date object with the parsed components
   const brazilianDate = new Date(Date.UTC(year, month - 1, day));
 
   return brazilianDate;
+}
+
+export function formatDateStringToTime(time: string, delimiter?: string) {
+  const date = new Date(time);
+
+  const limiter = delimiter || "/";
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear().toString().padStart(2, "0");
+
+  return `${day}${limiter}${month}${limiter}${year}`;
+}
+
+export function formatDateToYYYYMMDD(date: string) {
+  const [day, month, year] = date.split("/");
+
+  return `${year}/${month}/${day}`;
 }

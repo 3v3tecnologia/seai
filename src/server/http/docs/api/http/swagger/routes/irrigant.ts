@@ -168,6 +168,7 @@ export const IRRIGANT = {
                     data: [
                       {
                         Id: 1,
+                        Enable: true,
                         Code: "B850A89C",
                         Name: "São Benedito - Sítio Ingazeira",
                         Type: {
@@ -187,6 +188,7 @@ export const IRRIGANT = {
                       },
                       {
                         Id: 36,
+                        Enable: true,
                         Code: "32321",
                         Name: "Fortaleza - Itaperi",
                         Type: {
@@ -210,6 +212,7 @@ export const IRRIGANT = {
                     data: [
                       {
                         Id: 133,
+                        Enable: true,
                         Code: "24302",
                         Name: "MINEIROLANDIA",
                         Type: {
@@ -229,6 +232,7 @@ export const IRRIGANT = {
                       },
                       {
                         Id: 132,
+                        Enable: true,
                         Code: "24110",
                         Name: "SAO GONCALO DO AMARANTE",
                         Type: {
@@ -279,24 +283,21 @@ export const IRRIGANT = {
               schema: {
                 example: {
                   data: {
-                    Id: 1,
+                    Name: "Test1",
+                    System: {
+                      Type: "Pivô Central",
+                      Measurements: {
+                        Precipitation: 10,
+                      },
+                    },
                     CropId: 1,
-                    Crop: "sorgo",
-                    SystemType: "Pivô Central",
-                    PlantingDate: "2024-06-15T00:00:00.000Z",
-                    StationId: 20,
-                    ETo: 4.571851,
-                    PluviometerId: 200,
-                    Pluviometry: null,
-                    Flow: null,
-                    Area: null,
-                    EffectiveArea: null,
-                    PlantsQtd: null,
-                    System_Precipitation: 10,
-                    Length: null,
-                    Spacing: null,
-                    CreatedAt: "2024-06-20T00:00:00.000Z",
-                    UpdatedAt: null,
+                    PlantingDate: "18/06/2024",
+                    Pluviometer: {
+                      Id: 200,
+                    },
+                    Station: {
+                      Id: 20,
+                    },
                   },
                 },
               },
@@ -309,26 +310,30 @@ export const IRRIGANT = {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Irrigation id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
       requestBody: {
         content: {
           "application/json": {
             schema: {
               type: "object",
               example: {
-                Station: {
-                  Id: 36,
-                  Et0: 2.1,
-                },
                 CropId: 1,
-                Pluviometer: {
-                  Precipitation: 26.0,
-                },
-                PlantingDate: "14/04/2024",
+                Name: "test2",
+                PlantingDate: "20/06/2024",
                 System: {
-                  Type: "Aspersão",
+                  Type: "Pivô Central",
                   Measurements: {
-                    Efficiency: 75,
-                    Precipitation: 2,
+                    Precipitation: 1,
                   },
                 },
               },
@@ -383,20 +388,13 @@ export const IRRIGANT = {
             schema: {
               type: "object",
               example: {
-                Station: {
-                  Id: 36,
-                  Et0: 2.1,
-                },
                 CropId: 1,
-                Pluviometer: {
-                  Precipitation: 26.0,
-                },
-                PlantingDate: "14/04/2024",
+                Name: "test2",
+                PlantingDate: "20/06/2024",
                 System: {
-                  Type: "Aspersão",
+                  Type: "Pivô Central",
                   Measurements: {
-                    Efficiency: 75,
-                    Precipitation: 2,
+                    Precipitation: 1,
                   },
                 },
               },
@@ -422,6 +420,7 @@ export const IRRIGANT = {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      description: "Get user irrigation crop recorded",
       responses: {
         200: {
           content: {
@@ -430,46 +429,110 @@ export const IRRIGANT = {
                 example: {
                   data: [
                     {
-                      Id: 4,
+                      Id: 1,
+                      Name: "Test1",
+                      System: {
+                        Type: "Pivô Central",
+                        Measurements: {
+                          Precipitation: 10,
+                        },
+                      },
                       CropId: 1,
-                      Crop: "sorgo",
-                      SystemType: "Pivô Central",
-                      PlantingDate: "2024-10-04T00:00:00.000Z",
-                      StationId: 20,
-                      ETo: 3.6001275,
-                      PluviometerId: 200,
-                      Pluviometry: 20,
-                      Flow: null,
-                      Area: null,
-                      EffectiveArea: null,
-                      PlantsQtd: null,
-                      System_Precipitation: 1,
-                      Length: null,
-                      Spacing: null,
-                      CreatedAt: "2024-06-21T00:00:00.000Z",
-                      UpdatedAt: null,
+                      PlantingDate: "18/06/2024",
+                      Pluviometer: {
+                        Id: 200,
+                      },
+                      Station: {
+                        Id: 20,
+                      },
                     },
                     {
-                      Id: 1,
+                      Id: 2,
+                      Name: "Test2",
+                      System: {
+                        Type: "Microaspersão",
+                        Measurements: {
+                          Area: null,
+                          EfectiveArea: null,
+                          Flow: null,
+                          PlantsQtd: null,
+                        },
+                      },
                       CropId: 1,
-                      Crop: "sorgo",
-                      SystemType: "Pivô Central",
-                      PlantingDate: "2024-06-15T00:00:00.000Z",
-                      StationId: 20,
-                      ETo: 3.6001275,
-                      PluviometerId: 200,
-                      Pluviometry: 20,
-                      Flow: null,
-                      Area: null,
-                      EffectiveArea: null,
-                      PlantsQtd: null,
-                      System_Precipitation: 10,
-                      Length: null,
-                      Spacing: null,
-                      CreatedAt: "2024-06-20T00:00:00.000Z",
-                      UpdatedAt: null,
+                      PlantingDate: "18/06/2024",
+                      Pluviometer: {
+                        Id: 200,
+                      },
+                      Station: {
+                        Id: 20,
+                      },
+                    },
+                    {
+                      Id: 3,
+                      Name: "test30",
+                      System: {
+                        Type: "Pivô Central",
+                        Measurements: {
+                          Precipitation: 1,
+                        },
+                      },
+                      CropId: 1,
+                      PlantingDate: "04/10/2024",
+                      Pluviometer: {
+                        Id: 200,
+                      },
+                      Station: {
+                        Id: 20,
+                      },
                     },
                   ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${BASE_URL.V2}/management/user/irrigation_crops/recommendation/{id}`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      description: "Calculate irrigation suggestion",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Irrigation id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                example: {
+                  data: {
+                    Id: 1,
+                    CropId: 1,
+                    Crop: "sorgo",
+                    Etc: 12.96,
+                    RepositionBlade: 15.71,
+                    IrrigationEfficiency: 0.825,
+                    PlantingDate: "18/06/2024",
+                    IrrigationTime: "01Hrs 34Min",
+                    CropDays: 15,
+                    Et0: 4.32,
+                    Precipitation: 0,
+                    Kc: 3,
+                    Created_at: "2024-06-20T03:00:00.000Z",
+                    Updated_at: null,
+                  },
                 },
               },
             },

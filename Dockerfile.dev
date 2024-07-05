@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 LABEL mode="development"
 
 COPY --from=base /usr/bin/dumb-init /usr/bin/dumb-init
-COPY --from=base package*.json ./
+COPY --from=base /usr/src/app/package*.json .
 
 ADD . .
 
@@ -25,8 +25,8 @@ ENV NODE_ENV development
 # expecting to receive API_PORT as argument
 ARG API_PORT
 
-# EXPOSE 80
-EXPOSE ${API_PORT}
+EXPOSE 80
+# EXPOSE ${API_PORT}
 EXPOSE 9229
 
 RUN chown -R node /usr/src/app

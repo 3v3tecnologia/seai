@@ -4,8 +4,7 @@ import { DEFAULT_RESPONSES } from "../commons/status";
 
 const TAGS = ["User"];
 
-
-const URL = `${BASE_URL.V1}/user`
+const URL = `${BASE_URL.V1}/user`;
 
 export const USER = {
   [`${URL}/`]: {
@@ -13,7 +12,8 @@ export const USER = {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Get all users",
-      description: "Get all users when the user authenticated has authorization",
+      description:
+        "Get all users when the user authenticated has authorization",
       parameters: [
         {
           name: "pageNumber",
@@ -209,25 +209,25 @@ export const USER = {
                   news: {
                     id: 1,
                     read: true,
-                    write: true
+                    write: true,
                   },
                   user: {
                     id: 2,
                     read: false,
-                    write: false
+                    write: false,
                   },
                   register: {
                     id: 3,
                     read: true,
-                    write: true
+                    write: true,
                   },
                   jobs: {
                     id: 4,
                     read: true,
-                    write: true
-                  }
-                }
-              }
+                    write: true,
+                  },
+                },
+              },
             },
           },
         },
@@ -385,24 +385,24 @@ export const USER = {
                   news: {
                     id: 1,
                     read: true,
-                    write: true
+                    write: true,
                   },
                   register: {
                     id: 3,
                     read: true,
-                    write: true
+                    write: true,
                   },
                   user: {
                     id: 2,
                     read: true,
-                    write: true
+                    write: true,
                   },
                   jobs: {
                     id: 4,
                     read: true,
-                    write: true
-                  }
-                }
+                    write: true,
+                  },
+                },
               },
             },
           },
@@ -530,23 +530,23 @@ export const USER = {
                           news: {
                             id: 1,
                             read: true,
-                            write: true
+                            write: true,
                           },
                           user: {
                             id: 2,
                             read: false,
-                            write: false
+                            write: false,
                           },
                           register: {
                             id: 3,
                             read: true,
-                            write: true
+                            write: true,
                           },
                           jobs: {
                             id: 4,
                             read: true,
-                            write: true
-                          }
+                            write: true,
+                          },
                         },
                       },
                     },
@@ -567,26 +567,26 @@ export const USER = {
                       news: {
                         id: 1,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       user: {
                         id: 2,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       register: {
                         id: 3,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       jobs: {
                         id: 4,
                         read: true,
-                        write: true
-                      }
-                    }
-                  }
-                }
+                        write: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -621,11 +621,11 @@ export const USER = {
                 },
                 confirmPassword: {
                   type: "string",
-                }
+                },
               },
               example: {
                 password: "1234",
-                confirmPassword: "1234"
+                confirmPassword: "1234",
               },
             },
           },
@@ -862,7 +862,7 @@ export const USER = {
                 },
                 confirmPassword: {
                   type: "string",
-                }
+                },
               },
               example: {
                 name: "tester",
@@ -892,8 +892,72 @@ export const USER = {
                 example: {
                   data: {
                     accessToken: "token",
-                    userName: "irrigant"
-                  }
+                    userName: "irrigant",
+                  },
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/irrigant/login`]: {
+    post: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "User login",
+      description: "User Irrigant login",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                },
+                password: {
+                  type: "string",
+                },
+              },
+              example: {
+                login: "irrigant_test",
+                password: "123456",
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Login successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "object",
+                      properties: {
+                        accessToken: {
+                          type: "string",
+                        },
+                        userName: {
+                          type: "string",
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: {
+                    accessToken: "token",
+                    userName: "admin",
+                  },
                 },
               },
             },
@@ -916,15 +980,15 @@ export const USER = {
               properties: {
                 email: {
                   type: "string",
-                  required: false
+                  required: false,
                 },
                 name: {
                   type: "string",
-                  required: true
+                  required: true,
                 },
                 login: {
                   type: "string",
-                  required: true
+                  required: true,
                 },
               },
               example: {
@@ -1010,23 +1074,23 @@ export const USER = {
                           news: {
                             id: 1,
                             read: true,
-                            write: true
+                            write: true,
                           },
                           user: {
                             id: 2,
                             read: false,
-                            write: false
+                            write: false,
                           },
                           register: {
                             id: 3,
                             read: true,
-                            write: true
+                            write: true,
                           },
                           jobs: {
                             id: 4,
                             read: true,
-                            write: true
-                          }
+                            write: true,
+                          },
                         },
                       },
                     },
@@ -1047,26 +1111,26 @@ export const USER = {
                       news: {
                         id: 1,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       user: {
                         id: 2,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       register: {
                         id: 3,
                         read: true,
-                        write: true
+                        write: true,
                       },
                       jobs: {
                         id: 4,
                         read: true,
-                        write: true
-                      }
-                    }
-                  }
-                }
+                        write: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
