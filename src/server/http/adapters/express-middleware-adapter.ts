@@ -4,7 +4,8 @@ import { Middleware } from "../../../presentation/middlewares/ports";
 export const adaptMiddleware = (middleware: Middleware) => {
   return async (request: Request, response: Response, next: NextFunction) => {
     const headerToken = request.headers?.authorization;
-    const accessKey = request.headers["x-api-key"];
+    const accessKey = request.headers["access-key"];
+    // const accessKey = request.headers["x-api-key"];
 
     const splittedHeader = headerToken?.split(" ");
 

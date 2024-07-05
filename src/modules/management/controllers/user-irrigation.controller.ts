@@ -20,6 +20,7 @@ export class UserIrrigationControllers {
   async create(request: SaveIrrigationCropsRequest): Promise<HttpResponse> {
     try {
       const successOrError = await this.services.saveIrrigationCrops({
+        Name: request.Name,
         CropId: request.CropId,
         IrrigationEfficiency: request.IrrigationEfficiency,
         PlantingDate: request.PlantingDate,
@@ -43,6 +44,7 @@ export class UserIrrigationControllers {
     try {
       const successOrError = await this.services.updateIrrigationCropsById({
         Id: request.id,
+        Name: request.Name,
         CropId: request.CropId,
         IrrigationEfficiency: request.IrrigationEfficiency,
         PlantingDate: request.PlantingDate,

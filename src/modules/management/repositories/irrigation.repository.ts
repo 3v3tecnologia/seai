@@ -1,15 +1,7 @@
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
 import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
 import { IrrigationSystemTypes } from "../core/model/irrigation-system";
-
-// Como é no banco (Trocar para portugues)
-// enum IrrigationSystemTypes {
-//     'Sprinkling',
-//     'MicroSprinkling',
-//     'Pivot',
-//     'Dripping',
-//     'Furrow'
-// }
+import { IIrrigationRepository } from "./protocols/irrigation.repository";
 
 export type IrrigationCropsData = {
   id?: number;
@@ -97,8 +89,8 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
   };
 }
 
-export class IrrigationCropsRepository {
-  static async save(params: IrrigationCropsData): Promise<number | null> {
+export class IrrigationCropsRepository implements IIrrigationRepository {
+  async save(params: IrrigationCropsData): Promise<number | null> {
     const {
       area,
       name,
