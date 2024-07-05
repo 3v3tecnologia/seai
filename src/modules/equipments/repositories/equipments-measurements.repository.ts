@@ -1,8 +1,40 @@
-import { PluviometerMeasurementsToPersist, StationMeasurementsToPersist } from "../services/measurements";
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
+import {
+  IEquipmentsMeasurementsRepository,
+  PluviometerMeasurementsToPersist,
+  StationMeasurementsToPersist,
+} from "./protocols/measurements";
 
-export class DbEquipmentsMeasurementsRepository {
-  static async getLastMeasurementsFromStation(
+export class EquipmentsMeasurementsRepository
+  implements IEquipmentsMeasurementsRepository
+{
+  async checkIfUserStationHasYesterdayEtoMeasurements(
+    user_id: number
+  ): Promise<boolean> {
+    // get user's station with yesterday ET0 measurement
+    const dbResponse = await governmentDb.raw(
+      `
+      SELECT me."IdEquipmentExternal", me."Name" , rs."Et0"  FROM  (
+          SELECT * FROM management."User_Equipments" ue
+          WHERE ue.user_id = ?
+      ) AS n1
+      INNER JOIN equipments."MetereologicalEquipment" me
+      ON me."IdEquipment" = n1."station_id"
+      INNER JOIN government.equipments."ReadStations" rs
+      ON me."IdEquipment" = rs."FK_Equipment"
+      WHERE rs."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date
+      AND rs."Et0"  IS NOT NULL`,
+      [user_id]
+    );
+
+    if (dbResponse.rows.length == 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async getLastMeasurementsFromStation(
     idStation: number,
     date: string
   ): Promise<null | { Time: Date; Et0: number }> {
@@ -26,7 +58,7 @@ export class DbEquipmentsMeasurementsRepository {
     };
   }
 
-  static async getLastMeasurementsFromPluviometer(
+  async getLastMeasurementsFromPluviometer(
     idPluviometer: number
   ): Promise<null | { Time: Date; Precipitation: number }> {
     const data = await governmentDb
@@ -48,70 +80,77 @@ export class DbEquipmentsMeasurementsRepository {
     return null;
   }
 
-  static async insertStations(measurements: Array<any>): Promise<Array<number>> {
+  async insertStations(measurements: Array<any>): Promise<Array<number>> {
     let ids: Array<number> = [];
 
     await governmentDb.transaction(async (trx) => {
-      ids = await trx.batchInsert<any>(
-        "equipments.ReadStations",
-        measurements.map((item: any) => {
-          return {
-            FK_Equipment: item.FK_Equipment,
-            FK_Organ: item.FK_Organ,
-            Time: item.Time,
-            Hour: item.Hour,
-            TotalRadiation: item.TotalRadiation,
-            MaxRelativeHumidity: item.MaxRelativeHumidity,
-            MinRelativeHumidity: item.MinRelativeHumidity,
-            AverageRelativeHumidity: item.AverageRelativeHumidity,
-            MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
-            MinAtmosphericTemperature: item.MinAtmosphericTemperature,
-            AverageAtmosphericTemperature:
-              item.AverageAtmosphericTemperature,
-            AtmosphericPressure: item.AtmosphericPressure,
-            WindVelocity: item.WindVelocity,
-            Et0: item.Et0 || null,
-          };
-        })
-        //@ts-ignore
-      ).returning("IdRead");
+      ids = await trx
+        .batchInsert<any>(
+          "equipments.ReadStations",
+          measurements.map((item: any) => {
+            return {
+              FK_Equipment: item.FK_Equipment,
+              FK_Organ: item.FK_Organ,
+              Time: item.Time,
+              Hour: item.Hour,
+              TotalRadiation: item.TotalRadiation,
+              MaxRelativeHumidity: item.MaxRelativeHumidity,
+              MinRelativeHumidity: item.MinRelativeHumidity,
+              AverageRelativeHumidity: item.AverageRelativeHumidity,
+              MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
+              MinAtmosphericTemperature: item.MinAtmosphericTemperature,
+              AverageAtmosphericTemperature: item.AverageAtmosphericTemperature,
+              AtmosphericPressure: item.AtmosphericPressure,
+              WindVelocity: item.WindVelocity,
+              Et0: item.Et0 || null,
+            };
+          })
+          //@ts-ignore
+        )
+        .returning("IdRead");
     });
 
-    return ids
+    return ids;
   }
 
-  static async bulkInsert(measurements: Array<StationMeasurementsToPersist | PluviometerMeasurementsToPersist>, type: 'station' | 'pluviometer') {
+  async bulkInsert(
+    measurements: Array<
+      StationMeasurementsToPersist | PluviometerMeasurementsToPersist
+    >,
+    type: "station" | "pluviometer"
+  ): Promise<Array<number>> {
     let ids: Array<number> = [];
 
     switch (type) {
       case "station":
-
         await governmentDb.transaction(async (trx) => {
-          ids = await trx.batchInsert<any>(
-            "equipments.ReadStations",
-            measurements.map((item: any) => {
-              return {
-                FK_Equipment: item.FK_Equipment,
-                FK_Organ: item.FK_Organ,
-                Time: item.Time,
-                Hour: item.Hour,
-                TotalRadiation: item.TotalRadiation,
-                MaxRelativeHumidity: item.MaxRelativeHumidity,
-                MinRelativeHumidity: item.MinRelativeHumidity,
-                AverageRelativeHumidity: item.AverageRelativeHumidity,
-                MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
-                MinAtmosphericTemperature: item.MinAtmosphericTemperature,
-                AverageAtmosphericTemperature:
-                  item.AverageAtmosphericTemperature,
-                AtmosphericPressure: item.AtmosphericPressure,
-                WindVelocity: item.WindVelocity,
-                Et0: item.Et0 || null,
-              };
-            })
-          ).returning("IdRead");
+          ids = await trx
+            .batchInsert<any>(
+              "equipments.ReadStations",
+              measurements.map((item: any) => {
+                return {
+                  FK_Equipment: item.FK_Equipment,
+                  FK_Organ: item.FK_Organ,
+                  Time: item.Time,
+                  Hour: item.Hour,
+                  TotalRadiation: item.TotalRadiation,
+                  MaxRelativeHumidity: item.MaxRelativeHumidity,
+                  MinRelativeHumidity: item.MinRelativeHumidity,
+                  AverageRelativeHumidity: item.AverageRelativeHumidity,
+                  MaxAtmosphericTemperature: item.MaxAtmosphericTemperature,
+                  MinAtmosphericTemperature: item.MinAtmosphericTemperature,
+                  AverageAtmosphericTemperature:
+                    item.AverageAtmosphericTemperature,
+                  AtmosphericPressure: item.AtmosphericPressure,
+                  WindVelocity: item.WindVelocity,
+                  Et0: item.Et0 || null,
+                };
+              })
+            )
+            .returning("IdRead");
         });
 
-        return ids
+        return ids;
 
       case "pluviometer":
         await governmentDb.transaction(async (trx) => {
@@ -128,33 +167,39 @@ export class DbEquipmentsMeasurementsRepository {
             })
           );
         });
-        break
+        break;
       default:
-        throw new Error("Necessário informar um tipo de equipamento válido")
+        throw new Error("Necessário informar um tipo de equipamento válido");
     }
 
-    return ids
+    return ids;
   }
 
-  static async bulkUpdate(measurements: Array<any>, type: 'station' | 'pluviometer'): Promise<void> {
+  async bulkUpdate(
+    measurements: Array<any>,
+    type: "station" | "pluviometer"
+  ): Promise<void> {
     try {
       switch (type) {
         case "station":
-          await updateStationsMeasurements(measurements)
-          break
+          await updateStationsMeasurements(measurements);
+          break;
         case "pluviometer":
-          await updatePluviometerMeasurements(measurements)
-          break
+          await updatePluviometerMeasurements(measurements);
+          break;
       }
 
       console.log("Sucesso ao atualizar medições");
     } catch (error) {
       console.error("Error during batch update:", error);
-      throw error
+      throw error;
     }
   }
 
-  static async getStationCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
+  async getStationCodesWithMeasurements(
+    equipmentsCodes: Array<string>,
+    time: string
+  ): Promise<Array<string>> {
     const result = await governmentDb
       .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
@@ -179,7 +224,11 @@ export class DbEquipmentsMeasurementsRepository {
 
     return equipmentsWithMeasures;
   }
-  static async getPluviometersCodesWithMeasurements(equipmentsCodes: Array<string>, time: string): Promise<Array<string>> {
+
+  async getPluviometersCodesWithMeasurements(
+    equipmentsCodes: Array<string>,
+    time: string
+  ): Promise<Array<string>> {
     const result = await governmentDb
       .withSchema("equipments")
       .select("MetereologicalEquipment.IdEquipmentExternal")
@@ -205,25 +254,29 @@ export class DbEquipmentsMeasurementsRepository {
     return equipmentsWithMeasures;
   }
 
-  static async getMeasurementsIdsByTime(time: string, type: 'station' | 'pluviometer', id_organ: number): Promise<Map<number, number>> {
+  async getMeasurementsIdsByTime(
+    time: string,
+    type: "station" | "pluviometer",
+    id_organ: number
+  ): Promise<Map<number, number>> {
     const sqlQuery = governmentDb
       .withSchema("equipments")
       .select("IdRead", "FK_Equipment")
       .where({ Time: time })
-      .andWhere({ FK_Organ: id_organ })
+      .andWhere({ FK_Organ: id_organ });
 
     switch (type) {
       case "station":
-        sqlQuery.from("ReadStations")
+        sqlQuery.from("ReadStations");
         break;
       case "pluviometer":
-        sqlQuery.from("ReadPluviometers")
+        sqlQuery.from("ReadPluviometers");
         break;
       default:
-        throw new Error("Necessário informar um tipo de equipamento válido")
+        throw new Error("Necessário informar um tipo de equipamento válido");
     }
 
-    const response = await sqlQuery
+    const response = await sqlQuery;
 
     const ids: Map<number, number> = new Map();
 
@@ -231,7 +284,7 @@ export class DbEquipmentsMeasurementsRepository {
       response.forEach((m: any) => {
         const { IdRead, FK_Equipment } = m;
 
-        ids.set(FK_Equipment, IdRead)
+        ids.set(FK_Equipment, IdRead);
       });
     }
 
@@ -239,8 +292,10 @@ export class DbEquipmentsMeasurementsRepository {
   }
 }
 
-async function updateStationsMeasurements(measurements: Array<StationMeasurementsToPersist>): Promise<Array<number>> {
-  let updatedIds: number[] = []
+async function updateStationsMeasurements(
+  measurements: Array<StationMeasurementsToPersist>
+): Promise<Array<number>> {
+  let updatedIds: number[] = [];
 
   await governmentDb.transaction(async (trx) => {
     const tempTableName = "Temp_ReadStations";
@@ -279,8 +334,7 @@ async function updateStationsMeasurements(measurements: Array<StationMeasurement
         AverageRelativeHumidity: measures.AverageRelativeHumidity,
         MaxAtmosphericTemperature: measures.MaxAtmosphericTemperature,
         MinAtmosphericTemperature: measures.MinAtmosphericTemperature,
-        AverageAtmosphericTemperature:
-          measures.AverageAtmosphericTemperature,
+        AverageAtmosphericTemperature: measures.AverageAtmosphericTemperature,
         AtmosphericPressure: measures.AtmosphericPressure,
         WindVelocity: measures.WindVelocity,
         Et0: measures.Et0,
@@ -315,14 +369,14 @@ async function updateStationsMeasurements(measurements: Array<StationMeasurement
     `);
 
     // Clean up the temporary table
-    await trx.raw(`DROP TABLE equipments."${tempTableName}"`)
-
+    await trx.raw(`DROP TABLE equipments."${tempTableName}"`);
   });
 
-  return updatedIds
-
+  return updatedIds;
 }
-async function updatePluviometerMeasurements(measurements: Array<PluviometerMeasurementsToPersist>) {
+async function updatePluviometerMeasurements(
+  measurements: Array<PluviometerMeasurementsToPersist>
+) {
   await governmentDb.transaction(async (trx) => {
     const tempTableName = "Temp_ReadPluviometers";
 
@@ -367,6 +421,6 @@ async function updatePluviometerMeasurements(measurements: Array<PluviometerMeas
 
     // Clean up the temporary table
     // await trx.dropTable(tempTableName);
-    await trx.raw(`DROP TABLE equipments."${tempTableName}"`)
+    await trx.raw(`DROP TABLE equipments."${tempTableName}"`);
   });
 }

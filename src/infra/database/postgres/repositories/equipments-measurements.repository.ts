@@ -58,10 +58,12 @@ function mapStationMeasurementsWithUnitsToDomain(row: any): StationReadEntity {
       Unit: "mm",
       Value: Number(row.Et0) || null,
     },
-  }
+  };
 }
 
-function mapPluviometerMeasurementsWithUnitsToDomain(row: any): PluviometerReadEntity {
+function mapPluviometerMeasurementsWithUnitsToDomain(
+  row: any
+): PluviometerReadEntity {
   const data = {
     IdRead: Number(row.IdRead) || null,
     Time: row.Time,
@@ -70,19 +72,20 @@ function mapPluviometerMeasurementsWithUnitsToDomain(row: any): PluviometerReadE
       Unit: "mm",
       Value: Number(row.Value) || null,
     },
-  }
+  };
 
-  if (Reflect.has(row, 'IdEquipment')) {
+  if (Reflect.has(row, "IdEquipment")) {
     Object.assign(data, {
-      IdEquipment: row.IdEquipment
-    })
+      IdEquipment: row.IdEquipment,
+    });
   }
 
-  return data
+  return data;
 }
 
 export class EquipmentsMeasurementsRepository
-  implements IEquipmentsMeasuresRepository {
+  implements IEquipmentsMeasuresRepository
+{
   async getStationMeasurementsById(
     id: IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Params
   ): IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Result {
@@ -107,15 +110,14 @@ export class EquipmentsMeasurementsRepository
           rs.*
       FROM
           StationMeasurements AS rs
-      INNER JOIN equipments."MetereologicalEquipment" me 
+      INNER JOIN equipments."MetereologicalEquipment" me
       ON
           me."IdEquipment" = rs."FK_Equipment"
     `;
 
-
     const response = await governmentDb.raw(querySQL, id);
 
-    const rawMeasure = response.rows[0]
+    const rawMeasure = response.rows[0];
 
     if (rawMeasure) {
       return {
@@ -132,7 +134,7 @@ export class EquipmentsMeasurementsRepository
         AtmosphericPressure: rawMeasure.AtmosphericPressure,
         TotalRadiation: rawMeasure.TotalRadiation,
         WindVelocity: rawMeasure.WindVelocity,
-      }
+      };
     }
 
     return null;
@@ -163,7 +165,7 @@ export class EquipmentsMeasurementsRepository
           rs.*
       FROM
           StationMeasurements AS rs
-      INNER JOIN equipments."MetereologicalEquipment" me 
+      INNER JOIN equipments."MetereologicalEquipment" me
       ON
           me."IdEquipment" = rs."FK_Equipment"
     `;
@@ -203,7 +205,6 @@ export class EquipmentsMeasurementsRepository
   ): IEquipsMeasurementsRepoDTO.GetStations.Result {
     const { idEquipment, pageNumber, limit, time } = params;
     const pageLimit = limit || 20;
-    console.log(pageNumber);
     // TODO: add format input here!
     const pageOffset = pageNumber;
 
@@ -277,7 +278,9 @@ export class EquipmentsMeasurementsRepository
       return null;
     }
 
-    const measuresToDomain = rows.map((row: any) => mapStationMeasurementsWithUnitsToDomain(row));
+    const measuresToDomain = rows.map((row: any) =>
+      mapStationMeasurementsWithUnitsToDomain(row)
+    );
 
     return toPaginatedOutput({
       data: measuresToDomain,
@@ -323,7 +326,6 @@ export class EquipmentsMeasurementsRepository
 
     const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
-
     queries.push('ORDER BY pluviometer."Time" ASC');
     queries.push(`LIMIT ? OFFSET ?`);
     binding.push(pageLimit);
@@ -354,7 +356,9 @@ export class EquipmentsMeasurementsRepository
       return null;
     }
 
-    const toDomain = rows.map((row: any) => mapPluviometerMeasurementsWithUnitsToDomain(row));
+    const toDomain = rows.map((row: any) =>
+      mapPluviometerMeasurementsWithUnitsToDomain(row)
+    );
 
     return toPaginatedOutput({
       data: toDomain,
@@ -480,13 +484,13 @@ export class EquipmentsMeasurementsRepository
 
     const data = response.rows[0];
 
-    return !!data
+    return !!data;
   }
   async checkIfPluviometerMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfPluviometerMeasureTimeAlreadyExists.Result {
     const measure = await governmentDb
-      .withSchema('equipments')
+      .withSchema("equipments")
       .select("IdRead")
       .from("ReadPluviometers")
       .where({ Time: params.time })
@@ -503,7 +507,7 @@ export class EquipmentsMeasurementsRepository
     params: IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Result {
     const measure = await governmentDb
-      .withSchema('equipments')
+      .withSchema("equipments")
       .select("IdRead")
       .from("ReadStations")
       .where({ Time: params.time })
@@ -520,7 +524,7 @@ export class EquipmentsMeasurementsRepository
     idRead: number
   ): Promise<boolean> {
     const measure = await governmentDb
-      .withSchema('equipments')
+      .withSchema("equipments")
       .select("IdRead")
       .from("ReadStations")
       .where({ IdRead: idRead })
@@ -537,7 +541,7 @@ export class EquipmentsMeasurementsRepository
   ): IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Result {
     await governmentDb.transaction(async (trx) => {
       await trx("ReadStations")
-        .withSchema('equipments')
+        .withSchema("equipments")
         .update({
           TotalRadiation: request.TotalRadiation,
           AverageRelativeHumidity: request.AverageRelativeHumidity,
@@ -557,9 +561,9 @@ export class EquipmentsMeasurementsRepository
     request: IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Params
   ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
     await governmentDb("ReadPluviometers")
-      .withSchema('equipments')
+      .withSchema("equipments")
       .update({
-        Value: request.Precipitation
+        Value: request.Precipitation,
       })
       .where("IdRead", request.IdRead);
   }
@@ -571,7 +575,7 @@ export class EquipmentsMeasurementsRepository
       await Promise.all(
         measurements.map((read) => {
           return governmentDb("ReadStations")
-            .withSchema('equipments')
+            .withSchema("equipments")
             .where("IdRead", read.IdRead)
             .update({
               Et0: read.Et0,

@@ -7,7 +7,7 @@ import {
   IrrigationSystemTypes,
   irrigationsTypesNames,
 } from "../../core/model/irrigation-system";
-import { IUserRecordedRecommendationData } from "../../repositories/irrigation.repository";
+import { IUserRecordedRecommendationData } from "../../repositories/protocols/irrigation.repository";
 
 export type ISaveIrrigationRecommendationDTO = {
   UserId: number;

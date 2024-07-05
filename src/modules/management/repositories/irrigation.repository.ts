@@ -136,8 +136,7 @@ export class IrrigationCropsRepository {
     return response.length ? response[0]?.id : null;
   }
 
-  // Delete all
-  static async deleteByUserId(user_id: number): Promise<void> {
+  async deleteByUserId(user_id: number): Promise<void> {
     await governmentDb
       .withSchema("management")
       .del()
@@ -147,7 +146,7 @@ export class IrrigationCropsRepository {
       .from("Irrigation_Crops");
   }
 
-  static async deleteById(id: number, user_id: number): Promise<void> {
+  async deleteById(id: number, user_id: number): Promise<void> {
     await governmentDb
       .withSchema("management")
       .del()
@@ -160,7 +159,7 @@ export class IrrigationCropsRepository {
       .from("Irrigation_Crops");
   }
 
-  static async update(params: Required<IrrigationCropsData>): Promise<void> {
+  async update(params: Required<IrrigationCropsData>): Promise<void> {
     const {
       id,
       area,
@@ -201,7 +200,7 @@ export class IrrigationCropsRepository {
       .from("Irrigation_Crops");
   }
 
-  static async getByUserId(
+  async getByUserId(
     user_id: number
   ): Promise<Array<IUserRecordedRecommendationData> | null> {
     // Join with MeteorologicalEquipments
@@ -229,7 +228,7 @@ export class IrrigationCropsRepository {
             WHERE rs."FK_Equipment" = user_eqps.station_id
             AND rs."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "ETo",
                 user_eqps.pluviometer_id,
-                (SELECT rp."Value"  FROM government.equipments."ReadPluviometers" rp
+                (SELECT COALESCE(rp."Value", 0)  FROM government.equipments."ReadPluviometers" rp
             WHERE rp."FK_Equipment" = user_eqps.pluviometer_id
             AND rp."Time" = (DATE_TRUNC('day', NOW()::date) - INTERVAL '3 hours')::date) AS "pluviometry"
             FROM
@@ -254,7 +253,7 @@ export class IrrigationCropsRepository {
     return data.map(mapIrrigationCropsToDomain);
   }
 
-  static async getById(
+  async getById(
     id: number,
     user_id: number
   ): Promise<IUserRecordedRecommendationData | null> {
@@ -306,5 +305,34 @@ export class IrrigationCropsRepository {
     }
 
     return mapIrrigationCropsToDomain(data[0]);
+  }
+
+  async getUsersWithIrrigationReportsEnabled(): Promise<Array<{
+    Id: number;
+    Name: string;
+    Email: string;
+  }> | null> {
+    const dbResponse = await governmentDb
+      .withSchema("users")
+      .select("Id", "Name", "Email")
+      .where({
+        Type: "irrigant",
+      })
+      .andWhere({
+        Status: "registered",
+      })
+      .from("User");
+
+    if (!dbResponse.length) {
+      return null;
+    }
+
+    return dbResponse.map((row: any) => {
+      return {
+        Id: row.Id,
+        Name: row.Name,
+        Email: row.Email,
+      };
+    });
   }
 }

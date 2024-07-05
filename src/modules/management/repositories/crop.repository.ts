@@ -2,26 +2,26 @@ import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
 
-import { governmentDb } from '../../../infra/database/postgres/connection/knexfile';
-export class DbManagementCropRepository {
-
-  static async createCrop(culture: ManagementCrop): Promise<number | null> {
+import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
+import { IManagementCropsRepository } from "./protocols/management-crop.repository";
+export class ManagementCropRepository implements IManagementCropsRepository {
+  async create(culture: ManagementCrop): Promise<number | null> {
     const insertedCrop = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .insert({
         Name: culture.Name,
         Location_Name: culture?.Location || null,
         CreatedAt: governmentDb.fn.now(),
       })
       .returning("Id")
-      .into('Crop');
+      .into("Crop");
 
     return insertedCrop.length ? insertedCrop[0]?.Id : null;
   }
 
-  static async updateCrop(culture: ManagementCrop): Promise<void> {
-    await governmentDb('Crop')
-      .withSchema('management')
+  async update(culture: ManagementCrop): Promise<void> {
+    await governmentDb("Crop")
+      .withSchema("management")
       .update({
         Name: culture.Name,
         Location_Name: culture.Location,
@@ -32,25 +32,25 @@ export class DbManagementCropRepository {
       });
   }
 
-  static async deleteCrop(idCrop: number): Promise<void> {
-    await governmentDb('Crop')
-      .withSchema('management')
+  async delete(idCrop: number): Promise<void> {
+    await governmentDb("Crop")
+      .withSchema("management")
       .where({ Id: idCrop })
       .del();
   }
 
-  static async createCropCycles(
+  async createCropCycles(
     idCrop: number,
     cycles: Array<ManagementCropCycle>
   ): Promise<void> {
     await governmentDb.transaction(async (trx) => {
-      await trx('Crop_Cycle')
-        .withSchema('management')
+      await trx("Crop_Cycle")
+        .withSchema("management")
         .where({ FK_Crop: idCrop })
         .del();
 
       await trx.batchInsert(
-        'management.Crop_Cycle',
+        "management.Crop_Cycle",
         cycles.map((cycle) => {
           return {
             FK_Crop: idCrop,
@@ -65,13 +65,13 @@ export class DbManagementCropRepository {
     });
   }
 
-  static async findCropsCycles(
+  async findCropsCycles(
     idCrop: number
   ): Promise<Array<ManagementCropCycle> | null> {
     const data = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .select("*")
-      .from('Crop_Cycle')
+      .from("Crop_Cycle")
       .where({ FK_Crop: idCrop })
       .orderBy("Start");
 
@@ -93,41 +93,41 @@ export class DbManagementCropRepository {
     });
   }
 
-  static async deleteCropCycles(idCrop: number): Promise<void> {
-    await governmentDb('Crop_Cycle')
-      .withSchema('management')
+  async deleteCropCycles(idCrop: number): Promise<void> {
+    await governmentDb("Crop_Cycle")
+      .withSchema("management")
       .where({ FK_Crop: idCrop })
       .del();
   }
 
-  static async nameExists(crop: string): Promise<boolean> {
+  async nameExists(crop: string): Promise<boolean> {
     const result = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .select("*")
-      .from('Crop')
+      .from("Crop")
       .where({ Name: crop })
       .first();
 
     return !!result;
   }
 
-  static async idExists(crop: number): Promise<boolean> {
+  async idExists(crop: number): Promise<boolean> {
     const result = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .select("*")
-      .from('Crop')
+      .from("Crop")
       .where({ Id: crop })
       .first();
 
     return !!result;
   }
 
-  static async findCropById(
+  async findCropById(
     id: number
   ): Promise<{ Id: number; Name: string; LocationName: string | null } | null> {
     const result = await governmentDb.raw(
       `
-      SELECT * FROM management."Crop" c 
+      SELECT * FROM management."Crop" c
       WHERE c."Id" = ?
     `,
       [id]
@@ -161,15 +161,15 @@ export class DbManagementCropRepository {
     };
   }
 
-  static async findAllCrops(): Promise<Array<{
+  async find(): Promise<Array<{
     Id: number;
     Name: string;
     LocationName: string | null;
   }> | null> {
     const data = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
-      .from('Crop');
+      .from("Crop");
 
     if (data.length === 0) {
       return null;
@@ -186,7 +186,7 @@ export class DbManagementCropRepository {
     });
   }
 
-  static async findCropByName(name: string): Promise<Array<{
+  async findCropByName(name: string): Promise<Array<{
     Id: number;
     Name: string;
     LocationName: string | null;
@@ -238,13 +238,13 @@ export class DbManagementCropRepository {
         DISTINCT ci."Cultura"
     FROM
         "CulturasIrrigadas" ci
-    INNER JOIN "Irrigacao" i 
+    INNER JOIN "Irrigacao" i
     ON
         i."Id" = ci."Irrigacao_Id"
-    INNER JOIN "Usos" u 
+    INNER JOIN "Usos" u
     ON
         u."Id" = i."Usos_Id"
-    INNER JOIN "Cadastro" cad 
+    INNER JOIN "Cadastro" cad
     ON
         cad."Id" = u."Cad_Id"
     INNER JOIN "Contatos" contato
@@ -253,7 +253,7 @@ export class DbManagementCropRepository {
     INNER JOIN "Municipios" mun
     ON
         mun."Id" = contato."Municipio_Id"
-    INNER JOIN "Bacias" bac 
+    INNER JOIN "Bacias" bac
     ON
         bac."Id" = mun."Bacia_Id"
     WHERE bac."Id" = ?
@@ -270,14 +270,14 @@ export class DbManagementCropRepository {
     return raw.rows.map((row: any) => row.Cultura);
   }
 
-  static async checkIfCropNameAlreadyExists(
+  async checkIfCropNameAlreadyExists(
     name: string
   ): Promise<ManagementCropParams | null> {
     const dbCrops = await governmentDb
-      .withSchema('management')
+      .withSchema("management")
       .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
       .where({ Name: name })
-      .from('Crop')
+      .from("Crop")
       .first();
 
     if (dbCrops) {

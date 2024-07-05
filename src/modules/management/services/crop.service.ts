@@ -1,12 +1,18 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCrop } from "../core/model/crop";
-import { ManagementCropCycle, checkCropCycleSequence } from "../core/model/crop-cycles";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
-import { DbManagementCropRepository } from "../repositories/crop.repository";
-import { ManagementCropDTO } from "../repositories/protocols/dto";
+import { ManagementCrop } from "../core/model/crop";
+import {
+  ManagementCropCycle,
+  checkCropCycleSequence,
+} from "../core/model/crop-cycles";
+import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
+import { ManagementCropDTO } from "./dto/crop";
+import { IManagementCropsServices } from "./protocols/management-crops";
 
-export class ManagementCropUseCases {
-  static async createCrop(
+export class ManagementCropsServices implements IManagementCropsServices {
+  constructor(private cropRepository: IManagementCropsRepository) {}
+
+  async createCrop(
     params: ManagementCropDTO.CreateCrop.Input
   ): Promise<
     Either<
@@ -16,7 +22,7 @@ export class ManagementCropUseCases {
   > {
     const { LocationName, Name } = params;
 
-    const alreadyExists = await DbManagementCropRepository.nameExists(Name);
+    const alreadyExists = await this.cropRepository.nameExists(Name);
 
     if (alreadyExists) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(Name));
@@ -33,7 +39,7 @@ export class ManagementCropUseCases {
 
     const crop = cropOrError.value as ManagementCrop;
 
-    const cropId = await DbManagementCropRepository.createCrop(crop);
+    const cropId = await this.cropRepository.create(crop);
 
     if (cropId === null) {
       return left(new ManagementCropErrors.CropNotExistsError());
@@ -42,7 +48,7 @@ export class ManagementCropUseCases {
     return right(cropId);
   }
 
-  static async deleteCrop(
+  async deleteCrop(
     id: ManagementCropDTO.DeleteCrop.Input
   ): Promise<
     Either<
@@ -50,18 +56,18 @@ export class ManagementCropUseCases {
       ManagementCropDTO.DeleteCrop.Output
     >
   > {
-    const notFound = (await DbManagementCropRepository.idExists(id)) === false;
+    const notFound = (await this.cropRepository.idExists(id)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    await DbManagementCropRepository.deleteCrop(id);
+    await this.cropRepository.delete(id);
 
     return right(true);
   }
 
-  static async getAllCrops(
+  async getAllCrops(
     params: ManagementCropDTO.GetAllCrops.Input
   ): Promise<
     Either<
@@ -71,13 +77,13 @@ export class ManagementCropUseCases {
   > {
     if (params?.Name) {
       return right(
-        await DbManagementCropRepository.findCropByName(params.Name as string)
+        await this.cropRepository.findCropByName(params.Name as string)
       );
     }
-    return right(await DbManagementCropRepository.findAllCrops());
+    return right(await this.cropRepository.find());
   }
 
-  static async getCropById(
+  async getCropById(
     id: ManagementCropDTO.GetCrop.Input
   ): Promise<
     Either<
@@ -85,10 +91,10 @@ export class ManagementCropUseCases {
       ManagementCropDTO.GetCrop.Output
     >
   > {
-    return right(await DbManagementCropRepository.findCropById(id));
+    return right(await this.cropRepository.findCropById(id));
   }
 
-  static async updateCrop(
+  async updateCrop(
     params: ManagementCropDTO.UpdateCrop.Input
   ): Promise<
     Either<
@@ -97,16 +103,14 @@ export class ManagementCropUseCases {
     >
   > {
     // Id or name?
-    const exists = await DbManagementCropRepository.idExists(params.Id);
+    const exists = await this.cropRepository.idExists(params.Id);
 
     if (!exists) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
     // Id or name?
     const cropWithSameName =
-      await DbManagementCropRepository.checkIfCropNameAlreadyExists(
-        params.Name
-      );
+      await this.cropRepository.checkIfCropNameAlreadyExists(params.Name);
 
     if (cropWithSameName && cropWithSameName.Id !== params.Id) {
       return left(new ManagementCropErrors.CropAlreadyExistsError(params.Name));
@@ -124,7 +128,7 @@ export class ManagementCropUseCases {
 
     const culture = cultureOrError.value as ManagementCrop;
 
-    const cultureId = await DbManagementCropRepository.updateCrop(culture);
+    const cultureId = await this.cropRepository.update(culture);
 
     if (cultureId === null) {
       return left(new ManagementCropErrors.CropNotExistsError());
@@ -133,47 +137,45 @@ export class ManagementCropUseCases {
     return right();
   }
 
-  static async insertCropCycles(
+  async insertCropCycles(
     idCrop: number,
     cycles: Array<ManagementCropCycle>
   ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>> {
-    const validCyclesOrError = checkCropCycleSequence(cycles)
+    const validCyclesOrError = checkCropCycleSequence(cycles);
 
     if (validCyclesOrError.isLeft()) {
-      return left(validCyclesOrError.value)
+      return left(validCyclesOrError.value);
     }
 
-    const notFound =
-      (await DbManagementCropRepository.idExists(idCrop)) === false;
+    const notFound = (await this.cropRepository.idExists(idCrop)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    await DbManagementCropRepository.createCropCycles(idCrop, cycles);
+    await this.cropRepository.createCropCycles(idCrop, cycles);
 
     return right(`Sucesso ao atualizar ciclos do cultivar ${idCrop}.`);
   }
 
   // Useless?
-  static async deleteCropCyclesByCropId(
+  async deleteCropCyclesByCropId(
     idCrop: number
   ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>> {
-    const notFound =
-      (await DbManagementCropRepository.idExists(idCrop)) === false;
+    const notFound = (await this.cropRepository.idExists(idCrop)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    await DbManagementCropRepository.deleteCropCycles(idCrop);
+    await this.cropRepository.deleteCropCycles(idCrop);
 
     return right(
       `Sucesso ao apagar dados de ciclo de cultura do cultivar ${idCrop}`
     );
   }
 
-  static async findCropCyclesByCropId(
+  async findCropCyclesByCropId(
     idCrop: number
   ): Promise<
     Either<
@@ -181,14 +183,13 @@ export class ManagementCropUseCases {
       Array<ManagementCropCycle> | null
     >
   > {
-    const notFound =
-      (await DbManagementCropRepository.idExists(idCrop)) === false;
+    const notFound = (await this.cropRepository.idExists(idCrop)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    const cycles = await DbManagementCropRepository.findCropsCycles(idCrop);
+    const cycles = await this.cropRepository.findCropsCycles(idCrop);
 
     return right(cycles);
   }
