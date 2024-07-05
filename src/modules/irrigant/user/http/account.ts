@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
 import { sendHTTPResponse } from "../../../../server/http/adapters/express-route.adapter";
-import { authorization } from "../../../../server/http/http-middlewares";
 import { makeIrrigantAccountController } from "../controllers/factories/account";
 
 export const setupUserIrrigantAccountRoutes = (router: Router): void => {
@@ -17,4 +16,17 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
 
     return sendHTTPResponse(res, response);
   });
+
+  router.post(
+    "/irrigant/login",
+    async (request: Request, response: Response) => {
+      const req = {
+        ...(request.body || {}),
+      };
+
+      const res = await controllers.login(req);
+
+      return sendHTTPResponse(res, response);
+    }
+  );
 };
