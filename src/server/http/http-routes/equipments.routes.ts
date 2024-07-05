@@ -2,10 +2,7 @@ import { Router } from "express";
 
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  authorization,
-  registerManagerWriteAccessAuth,
-} from "../http-middlewares";
+import { authorization } from "../http-middlewares";
 
 import {
   EquipmentsControllerFactory,
@@ -19,21 +16,18 @@ export const equipmentsRouter = (): Router => {
   router.post(
     "/organ",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeCreateMeteorologicalOrgan())
   );
 
   router.delete(
     "/organ/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeDeleteMeteorologicalOrgan())
   );
 
   router.put(
     "/organ/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeUpdateMeteorologicalOrgan())
   );
   router.get(
@@ -44,21 +38,18 @@ export const equipmentsRouter = (): Router => {
   router.post(
     "/",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeCreateEquipments())
   );
 
   router.delete(
     "/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeDeleteEquipment())
   );
 
   router.put(
     "/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(EquipmentsControllerFactory.makeUpdateEquipment())
   );
 
@@ -68,7 +59,6 @@ export const equipmentsRouter = (): Router => {
     adaptRoute(EquipmentsControllerFactory.makeFetchEquipments())
   );
 
-
   // Irrigant
   router.get(
     "/activated",
@@ -76,7 +66,6 @@ export const equipmentsRouter = (): Router => {
       EquipmentsControllerFactory.makeFetchEquipmentsWithYesterdayMeasurementsController()
     )
   );
-
 
   router.put(
     "/pluviometer/measurements/:id",

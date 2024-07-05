@@ -1,12 +1,8 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  authorization,
-  registerManagerWriteAccessAuth,
-} from "../http-middlewares";
+import { authorization } from "../http-middlewares";
 import { FaqControllersFactory } from "../factories/controllers";
-
 
 const setupFaqRoutes = (router: Router): void => {
   router.get(
@@ -18,24 +14,20 @@ const setupFaqRoutes = (router: Router): void => {
   router.put(
     "/categories/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
   );
 
   router.post(
     "/categories",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
   );
 
   router.delete(
     "/categories/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
   );
-
 
   router.get(
     "/",
@@ -49,32 +41,27 @@ const setupFaqRoutes = (router: Router): void => {
     adaptRoute(FaqControllersFactory.makeFetchFaqById())
   );
 
-
   router.post(
     "/",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeCreateFaq())
   );
 
   router.put(
     "/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeUpdateFaq())
   );
 
   router.delete(
     "/:id",
     authorization,
-    registerManagerWriteAccessAuth,
     adaptRoute(FaqControllersFactory.makeDeleteFaq())
   );
-
 };
 
 const faqRouter = Router();
 
-setupFaqRoutes(faqRouter)
+setupFaqRoutes(faqRouter);
 
-export { faqRouter }
+export { faqRouter };
