@@ -16,6 +16,13 @@ import { countTotalRows } from "./utils/paginate";
   TO-DO : Create domain layer
 */
 function mapEquipmentToDomain(row: any) {
+  let Coordinates = null;
+  // Convert (longitude,latitude) to (latitude,longitude)
+  if (row.GeoLocation) {
+    const [longitude, latitude] = row.GeoLocation["coordinates"];
+
+    Coordinates = [latitude, longitude];
+  }
   return {
     Id: Number(row.Id),
     Enable: row.Enable,
@@ -31,7 +38,7 @@ function mapEquipmentToDomain(row: any) {
     },
     Altitude: Number(row.Altitude) || null,
     Location: {
-      Coordinates: row.GeoLocation ? row.GeoLocation["coordinates"] : null,
+      Coordinates,
     },
     LastSync: row.LastSync,
   };
