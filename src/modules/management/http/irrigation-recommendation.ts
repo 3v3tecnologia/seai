@@ -8,6 +8,7 @@ import { makeUserIrrigationControllers } from "../controllers/factories/user-irr
 import { ManagementCropRepository } from "../repositories/crop.repository";
 import { IrrigationCropsRepository } from "../repositories/irrigation.repository";
 import { IrrigationCropsSuggestion } from "../services/irrigation-suggestion.service";
+import { EquipmentsMeasurementsRepository } from "../../equipments/repositories/equipments-measurements.repository";
 
 export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
   const irrigationControllers = makeIrrigationRecommendationControllers();
@@ -137,7 +138,7 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
         });
 
         const dataSource = new IrrigationCropsSuggestion(
-          new IrrigationCropsRepository(),
+          new EquipmentsMeasurementsRepository(),
           new ManagementCropRepository(),
           new IrrigationCropsRepository()
         ).calPerUsers();
