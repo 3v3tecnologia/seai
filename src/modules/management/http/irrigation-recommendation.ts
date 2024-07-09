@@ -38,9 +38,7 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
         ...(request.body || {}),
       };
 
-      const result = await irrigationControllers.calcIrrigationRecommendation(
-        req
-      );
+      const result = await userIrrigationControllers.create(req);
 
       return sendHTTPResponse(result, response);
     }
