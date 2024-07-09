@@ -7,6 +7,7 @@ import {
 import { IIrrigationSystemMeasurementsEntity } from "../core/model/irrigation-system-measurements";
 import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
 import {
+  CalcIrrigationRecommendationDTO,
   ISaveIrrigationRecommendationDTO,
   IUpdateIrrigationRecommendationDTO,
 } from "./dto/irrigation";
@@ -20,6 +21,18 @@ export class UserIrrigationCropsServices
   async saveIrrigationCrops(
     dto: ISaveIrrigationRecommendationDTO
   ): Promise<Either<Error, number>> {
+    const userIrrigationAlreadyExists =
+      await this.irrigationCropsRepository.getUserIrrigationByName(
+        dto.Name,
+        dto.UserId
+      );
+
+    if (!!userIrrigationAlreadyExists) {
+      return left(
+        new Error("Não é possível cadastrar irrigação com nome já existente.")
+      );
+    }
+
     // Save Irrigation Crops
     const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
       dto.System
@@ -58,6 +71,20 @@ export class UserIrrigationCropsServices
   async updateIrrigationCropsById(
     dto: IUpdateIrrigationRecommendationDTO
   ): Promise<Either<Error, string>> {
+    const userIrrigationAlreadyExists =
+      await this.irrigationCropsRepository.getUserIrrigationByName(
+        dto.Name,
+        dto.UserId
+      );
+
+    if (
+      userIrrigationAlreadyExists &&
+      userIrrigationAlreadyExists.id !== dto.Id
+    ) {
+      return left(
+        new Error("Não é possível cadastrar irrigação com nome já existente.")
+      );
+    }
     // Save Irrigation Crops
     const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
       dto.System
@@ -107,10 +134,69 @@ export class UserIrrigationCropsServices
     id: number,
     user_id: number
   ): Promise<Either<Error, any>> {
-    return right(await this.irrigationCropsRepository.getById(id, user_id));
+    const irrigationCrops = await this.irrigationCropsRepository.getById(
+      id,
+      user_id
+    );
+
+    if (irrigationCrops) {
+      const {
+        System,
+        CropId,
+        Crop,
+        PlantingDate,
+        Pluviometer,
+        Station,
+        Name,
+        Id,
+      } = new CalcIrrigationRecommendationDTO(irrigationCrops);
+
+      return right({
+        Id,
+        Name,
+        System,
+        CropId,
+        Crop,
+        PlantingDate,
+        Pluviometer,
+        Station,
+      });
+    }
+
+    return right(null);
   }
 
   async getAllIrrigationCrops(user_id: number): Promise<Either<Error, any>> {
-    return right(await this.irrigationCropsRepository.getByUserId(user_id));
+    const result = await this.irrigationCropsRepository.getByUserId(user_id);
+
+    if (result) {
+      return right(
+        result.map((data) => {
+          const {
+            System,
+            CropId,
+            Crop,
+            PlantingDate,
+            Pluviometer,
+            Station,
+            Name,
+            Id,
+          } = new CalcIrrigationRecommendationDTO(data);
+
+          return {
+            Id,
+            Name,
+            System,
+            CropId,
+            Crop,
+            PlantingDate,
+            Pluviometer,
+            Station,
+          };
+        })
+      );
+    }
+
+    return right(null);
   }
 }

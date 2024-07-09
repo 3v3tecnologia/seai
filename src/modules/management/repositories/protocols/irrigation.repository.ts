@@ -43,6 +43,10 @@ export interface IIrrigationRepository {
   deleteByUserId(user_id: number): Promise<void>;
   deleteById(id: number, user_id: number): Promise<void>;
   update(params: Required<IrrigationCropsData>): Promise<void>;
+  getUserIrrigationByName(
+    name: string,
+    user_id: number
+  ): Promise<{ id: number; name: string; user_id: number } | null>;
   getByUserId(
     user_id: number
   ): Promise<Array<IUserRecordedRecommendationData> | null>;

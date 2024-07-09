@@ -245,6 +245,35 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
     return data.map(mapIrrigationCropsToDomain);
   }
 
+  async getUserIrrigationByName(
+    name: string,
+    user_id: number
+  ): Promise<{ id: number; name: string; user_id: number } | null> {
+    const dbResponse = await governmentDb
+      .withSchema("management")
+      .select("id", "user_id", "name")
+      .from("Irrigation_Crops")
+      .where({
+        name,
+      })
+      .andWhere({
+        user_id,
+      })
+      .first();
+
+    if (dbResponse) {
+      const { id, name, user_id } = dbResponse;
+
+      return {
+        id,
+        name,
+        user_id,
+      };
+    }
+
+    return null;
+  }
+
   async getById(
     id: number,
     user_id: number
