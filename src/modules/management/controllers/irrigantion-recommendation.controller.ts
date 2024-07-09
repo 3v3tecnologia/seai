@@ -69,7 +69,7 @@ export class IrrigationRecommendationControllers {
 
       return ok(successOrError.value);
     } catch (error) {
-      return badRequest(error as Error);
+      return serverError(error as Error);
     }
   }
 
