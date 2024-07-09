@@ -19,14 +19,17 @@ import {
 } from "./dto/irrigation";
 import { IrrigationRecommendation } from "../core/model/irrigation-recommendation";
 import { IIrrigationSuggestionServices } from "./protocols/irrigation-suggestion";
+import { IEquipmentsMeasurementsRepository } from "../../equipments/repositories/protocols/measurements";
+import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
+import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
 
 export class IrrigationCropsSuggestion
   implements IIrrigationSuggestionServices
 {
   constructor(
-    private equipmentsMeasurementsRepository: any,
-    private cropsRepository: any,
-    private irrigationRepository: any
+    private equipmentsMeasurementsRepository: IEquipmentsMeasurementsRepository,
+    private cropsRepository: IManagementCropsRepository,
+    private irrigationRepository: IIrrigationRepository
   ) {}
 
   async calculate(
