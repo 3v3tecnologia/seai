@@ -36,4 +36,5 @@ export class UserIrrigationRecommendation {
   get Notification() {
     return this._Notification ? this._Notification : undefined;
   }
+
 }

@@ -146,6 +146,7 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
         await pipeline(dataSource, addChunkLineBreaker, res, {
           signal: abortController.signal,
         });
+
       } catch (error) {
         res.status(500).end();
       }

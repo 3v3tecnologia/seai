@@ -249,6 +249,7 @@ export class IrrigationCropsSuggestion
           userIrrigationRecommendation.addIrrigation(
             new IrrigationRecommendation({
               Id: irrigation.Id,
+              Name: irrigation.Name,
               Crop: {
                 Id: irrigation.CropId,
                 Name: irrigation.Crop,
@@ -281,6 +282,7 @@ export class IrrigationCropsSuggestion
         userIrrigationRecommendation.addIrrigation(
           new IrrigationRecommendation({
             Id: irrigation.Id,
+            Name: irrigation.Name,
             Crop: {
               Id: irrigation.CropId,
               Name: irrigation.Crop,
