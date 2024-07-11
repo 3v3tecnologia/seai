@@ -13,19 +13,48 @@ import {
   SaveIrrigationCropsRequest,
   UpdateIrrigationCropsRequest,
 } from "./dto/irrigation-recommendation";
+import {
+  createUserIrrigationValidator,
+  deleteUserIrrigationValidator,
+  getAllUserRecommendationsValidator,
+  getUserIrrigationCropsByIdValidator,
+  updateUserIrrigationValidator,
+} from "./schema/user-irrigation";
 
 export class UserIrrigationControllers {
   constructor(private services: IUserIrrigationCropsServices) {}
 
   async create(request: SaveIrrigationCropsRequest): Promise<HttpResponse> {
     try {
+      const {
+        accountId,
+        CropId,
+        IrrigationEfficiency,
+        Name,
+        PlantingDate,
+        System,
+      } = request;
+
+      const { error } = await createUserIrrigationValidator.validate({
+        accountId,
+        CropId,
+        IrrigationEfficiency,
+        Name,
+        PlantingDate,
+        System,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.saveIrrigationCrops({
-        Name: request.Name,
-        CropId: request.CropId,
-        IrrigationEfficiency: request.IrrigationEfficiency,
-        PlantingDate: request.PlantingDate,
-        System: request.System,
-        UserId: request.accountId,
+        UserId: accountId,
+        Name: Name,
+        CropId: CropId,
+        IrrigationEfficiency: IrrigationEfficiency,
+        PlantingDate: PlantingDate,
+        System: System,
       });
 
       if (successOrError.isLeft()) {
@@ -42,14 +71,38 @@ export class UserIrrigationControllers {
     request: UpdateIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
+      const {
+        id,
+        accountId,
+        CropId,
+        IrrigationEfficiency,
+        Name,
+        PlantingDate,
+        System,
+      } = request;
+
+      const { error } = await updateUserIrrigationValidator.validate({
+        id,
+        accountId,
+        CropId,
+        IrrigationEfficiency,
+        Name,
+        PlantingDate,
+        System,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.updateIrrigationCropsById({
-        Id: request.id,
-        Name: request.Name,
+        Id: id,
+        UserId: accountId,
+        Name: Name,
         CropId: request.CropId,
-        IrrigationEfficiency: request.IrrigationEfficiency,
-        PlantingDate: request.PlantingDate,
-        System: request.System,
-        UserId: request.accountId,
+        IrrigationEfficiency: IrrigationEfficiency,
+        PlantingDate: PlantingDate,
+        System: System,
       });
 
       if (successOrError.isLeft()) {
@@ -66,9 +119,20 @@ export class UserIrrigationControllers {
     request: DeleteIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
+      const { id, accountId } = request;
+
+      const { error } = await deleteUserIrrigationValidator.validate({
+        id,
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.deleteIrrigationCropsById(
-        request.id,
-        request.accountId
+        id,
+        accountId
       );
 
       if (successOrError.isLeft()) {
@@ -85,9 +149,20 @@ export class UserIrrigationControllers {
     request: GetIrrigationCropsByIdRequest
   ): Promise<HttpResponse> {
     try {
+      const { id, accountId } = request;
+
+      const { error } = await getUserIrrigationCropsByIdValidator.validate({
+        id,
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.getIrrigationCropsById(
-        request.id,
-        request.accountId
+        id,
+        accountId
       );
 
       if (successOrError.isLeft()) {
@@ -104,8 +179,18 @@ export class UserIrrigationControllers {
     request: GetAllIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
+      const { accountId } = request;
+
+      const { error } = await getAllUserRecommendationsValidator.validate({
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.getAllIrrigationCrops(
-        request.accountId
+        accountId
       );
 
       if (successOrError.isLeft()) {

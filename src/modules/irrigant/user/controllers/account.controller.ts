@@ -1,12 +1,14 @@
 import { HttpResponse } from "../../../../presentation/controllers/ports";
 
 import {
+  badRequest,
   forbidden,
   ok,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { IrrigantSignUpRequest } from "./requests/account";
 import { IUserIrrigantServices } from "../services/protocols/account";
+import { createUserValidator } from "./schema/account";
 
 export class IrrigantAccountControllers {
   private services: IUserIrrigantServices;
@@ -17,6 +19,20 @@ export class IrrigantAccountControllers {
 
   async create(request: IrrigantSignUpRequest): Promise<HttpResponse> {
     try {
+      const { email, login, name, confirmPassword, password } = request;
+
+      const { error } = await createUserValidator.validate({
+        email,
+        login,
+        name,
+        confirmPassword,
+        password,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const result = await this.services.create(request);
 
       if (result.isLeft()) {
@@ -36,6 +52,17 @@ export class IrrigantAccountControllers {
     password: string;
   }): Promise<HttpResponse> {
     try {
+      const { login, email, password } = request;
+
+      const { error } = await createUserValidator.validate({
+        login,
+        email,
+        password,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
       const result = await this.services.login(request);
 
       if (result.isLeft()) {

@@ -9,4 +9,5 @@ export type SaveEquipmentsRequest = {
 export type UpdateEquipmentsRequest = SaveEquipmentsRequest;
 
 export type DeleteEquipmentRequest = Id;
+
 export type GetEquipmentsRequest = UserId;

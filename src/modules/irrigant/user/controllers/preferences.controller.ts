@@ -16,16 +16,36 @@ import {
   GetUserNotificationsPreferences,
   UpdateUserPreferencesRequest,
 } from "./requests/user-settings";
+import {
+  deleteEquipmentsValidator,
+  getEquipmentsValidator,
+  getNotificationsValidator,
+  saveEquipmentsValidator,
+  updateEquipmentsValidator,
+  updateNotificationsValidator,
+} from "./schema/preferences";
 
 export class UserPreferencesControllers {
   constructor(private services: IUserPreferencesServices) {}
 
   async saveEquipments(request: SaveEquipmentsRequest): Promise<HttpResponse> {
     try {
+      const { PluviometerId, StationId, accountId } = request;
+
+      const { error } = await saveEquipmentsValidator.validate({
+        PluviometerId,
+        StationId,
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.saveEquipments({
-        UserId: request.accountId,
-        PluviometerId: request.PluviometerId,
-        StationId: request.StationId,
+        UserId: accountId,
+        PluviometerId: PluviometerId,
+        StationId: StationId,
       });
 
       if (successOrError.isLeft()) {
@@ -42,7 +62,17 @@ export class UserPreferencesControllers {
     request: DeleteEquipmentRequest
   ): Promise<HttpResponse> {
     try {
-      const successOrError = await this.services.deleteEquipments(request.id);
+      const { id } = request;
+
+      const { error } = await deleteEquipmentsValidator.validate({
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const successOrError = await this.services.deleteEquipments(id);
 
       if (successOrError.isLeft()) {
         return badRequest(successOrError.value);
@@ -58,10 +88,22 @@ export class UserPreferencesControllers {
     request: UpdateEquipmentsRequest
   ): Promise<HttpResponse> {
     try {
+      const { PluviometerId, StationId, accountId } = request;
+
+      const { error } = await updateEquipmentsValidator.validate({
+        PluviometerId,
+        StationId,
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const successOrError = await this.services.updateEquipments({
-        UserId: request.accountId,
-        StationId: request.StationId,
-        PluviometerId: request.PluviometerId,
+        UserId: accountId,
+        StationId: StationId,
+        PluviometerId: PluviometerId,
       });
 
       if (successOrError.isLeft()) {
@@ -76,6 +118,15 @@ export class UserPreferencesControllers {
 
   async getEquipments(request: GetEquipmentsRequest): Promise<HttpResponse> {
     try {
+      const { accountId } = request;
+
+      const { error } = await getEquipmentsValidator.validate({
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
       const successOrError = await this.services.getEquipments(
         request.accountId
       );
@@ -94,6 +145,18 @@ export class UserPreferencesControllers {
     request: UpdateUserPreferencesRequest
   ): Promise<HttpResponse> {
     try {
+      const { Enabled, ServiceId, accountId } = request;
+
+      const { error } = await updateNotificationsValidator.validate({
+        Enabled,
+        ServiceId,
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const response = await this.services.updateUserNotificationPreference({
         Enabled: request.Enabled,
         ServiceId: request.ServiceId,
@@ -114,6 +177,16 @@ export class UserPreferencesControllers {
     request: GetUserNotificationsPreferences
   ): Promise<HttpResponse> {
     try {
+      const { accountId } = request;
+
+      const { error } = await getNotificationsValidator.validate({
+        accountId,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const response = await this.services.getUserNotificationsPreferences(
         request.accountId
       );
