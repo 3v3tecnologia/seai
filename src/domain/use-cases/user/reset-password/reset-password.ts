@@ -32,9 +32,12 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
 
     const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getByEmail(userEmailToString, [
+      UserTypes.ADMIN,
+      UserTypes.STANDARD,
+    ]);
 
-    if (account === null || account.type === UserTypes.IRRIGANT) {
+    if (account === null) {
       return left(new AccountNotFoundError());
     }
 

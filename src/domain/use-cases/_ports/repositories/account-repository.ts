@@ -37,10 +37,13 @@ export interface AccountRepositoryProtocol {
   updateUserPassword(user_id: number, password: string): Promise<void>;
   deleteById(id_user: number): Promise<boolean>;
   deleteByEmail(email: string): Promise<boolean>;
-  getByEmail(email: string, user_type?: UserType): Promise<User | null>;
+  getByEmail(
+    email: string,
+    user_type?: UserType | Array<UserType>
+  ): Promise<User | null>;
   getByLogin(
     login: string,
-    user_type?: UserType
+    user_type?: UserType | Array<UserType>
   ): Promise<Required<UserAccount> | null>;
   getById(id_user: number): Promise<Required<User> | null>;
   getUserByCode(code: string): Promise<User | null>;

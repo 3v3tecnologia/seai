@@ -47,14 +47,12 @@ export class UpdateUser extends Command implements IUpdateUserUseCase {
 
     if (request.email) {
       const existingAccount = await this.accountRepository.getByEmail(
-        request.email
+        request.email,
+        [UserTypes.ADMIN, UserTypes.STANDARD]
       );
 
       if (existingAccount) {
-        if (
-          existingAccount.id !== request.id &&
-          existingAccount.type !== UserTypes.IRRIGANT
-        ) {
+        if (existingAccount.id !== request.id) {
           return left(
             new Error(`Usuário com email ${request.email} já existe.`)
           );

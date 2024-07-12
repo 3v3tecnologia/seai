@@ -49,9 +49,12 @@ export class CompleteUserRegister
     // Decode user code to base64
     const userEmailToString = base64Decode(request.code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getByEmail(userEmailToString, [
+      UserTypes.ADMIN,
+      UserTypes.STANDARD,
+    ]);
 
-    if (account === null || account.type === UserTypes.IRRIGANT) {
+    if (account === null) {
       return left(new UserNotFoundError());
     }
 
@@ -82,9 +85,12 @@ export class CompleteUserRegister
 
     const login = userLoginOrError.value?.value as string;
 
-    const existingUser = await this.accountRepository.getByLogin(login);
+    const existingUser = await this.accountRepository.getByLogin(login, [
+      UserTypes.ADMIN,
+      UserTypes.STANDARD,
+    ]);
 
-    if (existingUser && existingUser.type !== UserTypes.IRRIGANT) {
+    if (existingUser) {
       return left(new LoginAlreadyExists());
     }
 
