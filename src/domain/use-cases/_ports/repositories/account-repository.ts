@@ -1,9 +1,11 @@
-import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+import {
+  IPaginationInput,
+  IOutputWithPagination,
+} from "./../../helpers/pagination";
 import { UserType, UserTypes } from "../../../entities/user/user";
 import { SystemModulesProps } from "../../../entities/user/user-modules-access";
 import { User } from "../../user/model/user";
 import { UserAccount } from "../../user/model/user-with-modules";
-
 
 export interface AccountRepositoryProtocol {
   add(data: {
@@ -35,12 +37,15 @@ export interface AccountRepositoryProtocol {
   updateUserPassword(user_id: number, password: string): Promise<void>;
   deleteById(id_user: number): Promise<boolean>;
   deleteByEmail(email: string): Promise<boolean>;
-  getByEmail(email: string): Promise<User | null>;
-  getByLogin(login: string): Promise<Required<UserAccount> | null>;
+  getByEmail(email: string, user_type?: UserType): Promise<User | null>;
+  getByLogin(
+    login: string,
+    user_type?: UserType
+  ): Promise<Required<UserAccount> | null>;
   getById(id_user: number): Promise<Required<User> | null>;
-  getUserByCode(code: string): Promise<User | null>
+  getUserByCode(code: string): Promise<User | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
-  checkIfLoginAlreadyExists(login: string): Promise<boolean>
+  checkIfLoginAlreadyExists(login: string): Promise<boolean>;
   getUserById(id_user: number): Promise<User | null>;
   getModules(): Promise<Array<{
     id: number;

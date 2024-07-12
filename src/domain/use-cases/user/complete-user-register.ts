@@ -2,6 +2,7 @@ import { Either, left, right } from "../../../shared/Either";
 import { base64Decode } from "../../../shared/utils/base64Encoder";
 import { UserLogin } from "../../entities/user/login";
 import { UserName } from "../../entities/user/name";
+import { UserTypes } from "../../entities/user/user";
 import { UserPassword } from "../../entities/user/userPassword";
 import { Command } from "../_ports/core/command";
 import { Encoder } from "../_ports/cryptography/encoder";
@@ -20,9 +21,10 @@ import {
   UserModulesNotFound,
 } from "./errors/user-account-not-found";
 
-
-
-export class CompleteUserRegister extends Command implements ICompleteUserRegisterUseCase {
+export class CompleteUserRegister
+  extends Command
+  implements ICompleteUserRegisterUseCase
+{
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
 
@@ -44,20 +46,17 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
       string
     >
   > {
-
     // Decode user code to base64
-    const userEmailToString = base64Decode(request.code)
+    const userEmailToString = base64Decode(request.code);
 
-    const account = await this.accountRepository.getByEmail(
-      userEmailToString
-    );
+    const account = await this.accountRepository.getByEmail(userEmailToString);
 
-    if (account === null) {
+    if (account === null || account.type === UserTypes.IRRIGANT) {
       return left(new UserNotFoundError());
     }
 
-    if (account.status === 'registered') {
-      return left(new UserAlreadyRegisteredError())
+    if (account.status === "registered") {
+      return left(new UserAlreadyRegisteredError());
     }
 
     const userLoginOrError = UserLogin.create(request.login);
@@ -71,28 +70,26 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
       return left(userNameOrError.value);
     }
 
-
-
     const passwordOrError = UserPassword.create({
       value: request.password,
       confirm: request.confirmPassword,
-      isHashed: false
-    })
+      isHashed: false,
+    });
 
     if (passwordOrError.isLeft()) {
-      return left(passwordOrError.value)
+      return left(passwordOrError.value);
     }
 
-    const login = userLoginOrError.value?.value as string
+    const login = userLoginOrError.value?.value as string;
 
-    const hasDuplicatedLogin = await this.accountRepository.checkIfLoginAlreadyExists(login)
+    const existingUser = await this.accountRepository.getByLogin(login);
 
-    if (hasDuplicatedLogin) {
-      return left(new LoginAlreadyExists())
+    if (existingUser && existingUser.type !== UserTypes.IRRIGANT) {
+      return left(new LoginAlreadyExists());
     }
 
-    const name = userNameOrError.value?.value as string
-    const password = passwordOrError.value?.value as string
+    const name = userNameOrError.value?.value as string;
+    const password = passwordOrError.value?.value as string;
 
     const hashedPassword = await this.encoder.hash(password);
 
@@ -100,11 +97,11 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
       code: account.code,
       login: login,
       name: name,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     if (isUpdated) {
-      const successMessage = `Sucesso ao completar cadastro de usuário`
+      const successMessage = `Sucesso ao completar cadastro de usuário`;
       this.addLog({
         action: "update",
         table: "User",
@@ -114,7 +111,7 @@ export class CompleteUserRegister extends Command implements ICompleteUserRegist
       return right(successMessage);
     }
 
-    return left(new Error("Não foi possível completar o cadastro do usuário."))
+    return left(new Error("Não foi possível completar o cadastro do usuário."));
   }
 }
 

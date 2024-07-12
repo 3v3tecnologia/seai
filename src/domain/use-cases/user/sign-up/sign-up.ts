@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { User, UserType } from "../../../entities/user/user";
+import { User, UserType, UserTypes } from "../../../entities/user/user";
 import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
@@ -44,11 +44,9 @@ export class SignUp extends Command {
       AuthenticationDTO.result
     >
   > {
-    const loginAlreadyExists = await this.accountRepository.getByLogin(
-      user.login
-    );
+    const existingUser = await this.accountRepository.getByLogin(user.login);
 
-    if (!!loginAlreadyExists) {
+    if (!!existingUser && existingUser.type !== UserTypes.IRRIGANT) {
       return left(new LoginAlreadyExists(user.login));
     }
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco

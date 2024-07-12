@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { User } from "../../../entities/user/user";
+import { User, UserTypes } from "../../../entities/user/user";
 import {
   SystemModules,
   SystemModulesProps,
@@ -32,11 +32,15 @@ export class CreateUser extends Command implements CreateUserProtocol {
     request: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const alreadyExists =
-      await this.accountRepository.checkIfEmailAlreadyExists(request.email);
+    const existingUser = await this.accountRepository.getByEmail(request.email);
 
-    if (alreadyExists) {
-      return left(new UserAlreadyExistsError());
+    if (existingUser) {
+      if (
+        existingUser.type !== UserTypes.IRRIGANT ||
+        existingUser.email === request.email
+      ) {
+        return left(new UserAlreadyExistsError());
+      }
     }
 
     // validar se os módulos existem mesmo
@@ -67,16 +71,20 @@ export class CreateUser extends Command implements CreateUserProtocol {
 
     const user = userOrError.value as User;
 
+    const userEmail = user.email?.value as string;
 
-    const userHash = await this.encoder.hashInPbkdf2(user.email?.value as string, 100, 10, 'sha512')
-
-    const userEmail = user.email?.value as string
+    const userCode = await this.encoder.hashInPbkdf2(
+      userEmail,
+      100,
+      10,
+      "sha512"
+    );
 
     const user_id = await this.accountRepository.add({
       email: userEmail,
       type: user.type,
       modules: user.access?.value as SystemModulesProps,
-      code: userHash as string
+      code: userCode as string,
     });
 
     if (user_id) {
@@ -87,19 +95,19 @@ export class CreateUser extends Command implements CreateUserProtocol {
       });
       // const exp_date = this.dateProvider.addHours(3);
 
-      const notificationSuccessOrError = await this.scheduleUserAccountNotification.schedule({
-        user: {
-          email: userEmail,
-          base64Code: Buffer.from(userEmail).toString('base64')
-        },
-        templateName: AvailablesEmailServices.CREATE_ACCOUNT,
-      });
+      const notificationSuccessOrError =
+        await this.scheduleUserAccountNotification.schedule({
+          user: {
+            email: userEmail,
+            base64Code: Buffer.from(userEmail).toString("base64"),
+          },
+          templateName: AvailablesEmailServices.CREATE_ACCOUNT,
+        });
 
       if (notificationSuccessOrError.isRight()) {
         console.log(notificationSuccessOrError.value);
       }
     }
-
 
     return right(
       `Usuário criado com sucessso, aguardando confirmação do cadastro.`

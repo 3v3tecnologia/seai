@@ -4,7 +4,7 @@ export * from "./delete-user";
 export * from "./fetch-user-by-id";
 export * from "./fetch-users";
 export * from "./reset-password";
-export * from "./send-forgot-password";
+export * from "./forgot-password";
 export * from "./send-notification-to-user";
 export * from "./sign-in";
 export * from "./sign-up";
