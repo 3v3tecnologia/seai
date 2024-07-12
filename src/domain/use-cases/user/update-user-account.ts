@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
-import { User, UserType } from "../../entities/user/user";
+import { User, UserType, UserTypes } from "../../entities/user/user";
 import {
   SystemModules,
   SystemModulesProps,
@@ -39,48 +39,22 @@ export class UpdateUser extends Command implements IUpdateUserUseCase {
       string
     >
   > {
-    console.log(request);
-    const alreadyExistsAccount = await this.accountRepository.getById(
-      request.id
-    );
+    const existingAccount = await this.accountRepository.getById(request.id);
 
-    const userNotFound = alreadyExistsAccount === null;
-
-    if (userNotFound) {
+    if (existingAccount === null) {
       return left(new AccountNotFoundError(request.email));
     }
 
-    // Usuário admin pode editar usuário mesmo não havendo login ain
-
-    if (request.login !== null) {
-      const userWithLogin = await this.accountRepository.getByLogin(
-        request.login
-      );
-
-      /*if (userWithLogin) {
-        // Se login não for do mesmo usuário então é sinal que já existe um login
-        // cadastrado e o sistema deve bloquear a edição.
-        const hasOtherAccountWithSameLogin =
-          userWithLogin.id !== request.id && userWithLogin.login !== null;
-
-        if (hasOtherAccountWithSameLogin) {
-          return left(
-            new Error(`Usuário com login ${request.login} já existe.`)
-          );
-        }
-      }*/
-    }
-
-    if (request.email !== null) {
-      const userWithSameEmail = await this.accountRepository.getByEmail(
+    if (request.email) {
+      const existingAccount = await this.accountRepository.getByEmail(
         request.email
       );
 
-      if (userWithSameEmail) {
-        const hasOtherAccountWithSameEmail =
-          userWithSameEmail.id !== request.id;
-
-        if (hasOtherAccountWithSameEmail) {
+      if (existingAccount) {
+        if (
+          existingAccount.id !== request.id &&
+          existingAccount.type !== UserTypes.IRRIGANT
+        ) {
           return left(
             new Error(`Usuário com email ${request.email} já existe.`)
           );

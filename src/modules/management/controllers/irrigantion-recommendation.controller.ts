@@ -10,6 +10,7 @@ import {
   calcIrrigationRecommendationRequest,
 } from "./dto/irrigation-recommendation";
 import { bladeSuggestionValidator } from "./schema/blade-suggestion";
+import { calculateUserIrrigationRecommendationByIdValidator } from "./schema/user-irrigation";
 
 export class IrrigationRecommendationControllers {
   constructor(private services: IIrrigationSuggestionServices) {}
@@ -58,6 +59,17 @@ export class IrrigationRecommendationControllers {
     request: CalcIrrigationRecommendationByIdRequest
   ): Promise<HttpResponse> {
     try {
+      const { id, accountId } = request;
+
+      const { error } =
+        await calculateUserIrrigationRecommendationByIdValidator.validate({
+          id,
+          accountId,
+        });
+
+      if (error) {
+        return badRequest(error);
+      }
       const successOrError = await this.services.calcByIrrigationId(
         request.id,
         request.accountId

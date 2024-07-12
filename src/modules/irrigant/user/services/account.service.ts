@@ -66,10 +66,13 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     >
   > {
     const account = user.login
-      ? await this.accountRepository.getByLogin(user.login)
-      : await this.accountRepository.getByEmail(user.email as string);
+      ? await this.accountRepository.getByLogin(user.login, UserTypes.IRRIGANT)
+      : await this.accountRepository.getByEmail(
+          user.email as string,
+          UserTypes.IRRIGANT
+        );
 
-    if (!account || account.type !== "irrigant") {
+    if (!account) {
       return left(new UserNotFoundError());
     }
 
@@ -109,11 +112,24 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     dto: CreateIrrigantAccountDTO.Input
   ): Promise<CreateIrrigantAccountDTO.Output> {
     const emailAlreadyExists = await this.accountRepository.getByEmail(
-      dto.email
+      dto.email,
+      UserTypes.IRRIGANT
     );
 
-    if (!!emailAlreadyExists) {
+    if (
+      !!emailAlreadyExists &&
+      emailAlreadyExists.type === UserTypes.IRRIGANT
+    ) {
       return left(new Error("Email já existe"));
+    }
+
+    const existingLogin = await this.accountRepository.getByLogin(
+      dto.login,
+      UserTypes.IRRIGANT
+    );
+
+    if (existingLogin) {
+      return left(new Error("Login já existe"));
     }
 
     if (dto.password !== dto.confirmPassword) {

@@ -9,6 +9,7 @@ import { AccountEmailNotFound } from "./errors/user-account-not-found";
 import { Email } from "../../entities/user/email";
 import { UserLogin } from "../../entities/user/login";
 import { UserName } from "../../entities/user/name";
+import { UserTypes } from "../../entities/user/user";
 
 export class UpdateUserProfile
   extends Command
@@ -64,15 +65,15 @@ export class UpdateUserProfile
     // Usuário admin pode editar usuário mesmo não havendo login ain
 
     if (request.email) {
-      const userWithSameEmail = await this.accountRepository.getByEmail(
+      const existingAccount = await this.accountRepository.getByEmail(
         request.email
       );
 
-      if (userWithSameEmail) {
-        const hasOtherAccountWithSameEmail =
-          userWithSameEmail.id !== request.id;
-
-        if (hasOtherAccountWithSameEmail) {
+      if (existingAccount) {
+        if (
+          existingAccount.id !== request.id &&
+          existingAccount.type !== UserTypes.IRRIGANT
+        ) {
           return left(
             new Error(`Usuário com email ${request.email} já existe.`)
           );
@@ -85,7 +86,7 @@ export class UpdateUserProfile
         return left(userEmailOrError.value);
       }
 
-      const userEmail = userEmailOrError.value;
+      const userEmail = userEmailOrError.value?.value;
 
       Object.assign(toUpdate, {
         email: userEmail || null,

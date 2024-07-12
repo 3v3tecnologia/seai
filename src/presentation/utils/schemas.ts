@@ -1,11 +1,15 @@
 import Joi from "joi";
 
 export const paginationSchema = {
-    pageNumber: Joi.number().optional(),
-    limit: Joi.number().optional(),
-    offset: Joi.number().optional(),
-}
+  pageNumber: Joi.number().optional(),
+  limit: Joi.number().optional(),
+  offset: Joi.number().optional(),
+};
 
 export const idSchema = {
-    id: Joi.number().greater(0).required()
-}
+  id: Joi.number().greater(0).required(),
+};
+
+export const userAccountSchema = {
+  accountId: Joi.number().integer().required(),
+};

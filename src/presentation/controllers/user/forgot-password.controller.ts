@@ -1,4 +1,4 @@
-import { ForgotPassword } from "../../../domain/use-cases/user/send-forgot-password/forgot-password";
+import { ForgotPassword } from "../../../domain/use-cases/user/forgot-password/forgot-password";
 import { created, forbidden, serverError } from "../helpers";
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";

@@ -1,5 +1,6 @@
 import { Either, left, right } from "../../../../shared/Either";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
+import { UserTypes } from "../../../entities/user/user";
 import { UserPassword } from "../../../entities/user/userPassword";
 import { Command } from "../../_ports/core/command";
 import { Encoder } from "../../_ports/cryptography/encoder";
@@ -13,35 +14,27 @@ export class ResetPassword extends Command implements ResetPasswordProtocol {
   private readonly encoder: Encoder;
 
   // sendEmailToUser: SendEmailToUser,
-  constructor(
-    accountRepository: AccountRepositoryProtocol,
-    encoder: Encoder
-  ) {
+  constructor(accountRepository: AccountRepositoryProtocol, encoder: Encoder) {
     super();
     this.accountRepository = accountRepository;
     this.encoder = encoder;
   }
-  async execute(
-    params: {
-      code: string,
-      password: string,
-      confirmPassword: string
-    }
-  ): Promise<Either<Error, null>> {
-
-    const { code, confirmPassword, password } = params
+  async execute(params: {
+    code: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<Either<Error, null>> {
+    const { code, confirmPassword, password } = params;
 
     if (!code) {
       return left(new Error("Código não informado"));
     }
 
-    const userEmailToString = base64Decode(code)
+    const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(
-      userEmailToString
-    );
+    const account = await this.accountRepository.getByEmail(userEmailToString);
 
-    if (account === null) {
+    if (account === null || account.type === UserTypes.IRRIGANT) {
       return left(new AccountNotFoundError());
     }
 

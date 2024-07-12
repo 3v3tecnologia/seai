@@ -22,6 +22,7 @@ type IrrigationSystem = {
 
 export type IrrigationRecommendationProps = {
   Id: number;
+  Name: string;
   Crop: IrrigationCrop;
   System: IrrigationSystem;
   Equipments: Equipments;
@@ -31,6 +32,7 @@ export type IrrigationRecommendationProps = {
 
 export class IrrigationRecommendation implements IrrigationRecommendationProps {
   readonly Id: number;
+  readonly Name: string;
   readonly Crop: IrrigationCrop;
   readonly System: IrrigationSystem;
   readonly Equipments: Equipments;
@@ -40,6 +42,7 @@ export class IrrigationRecommendation implements IrrigationRecommendationProps {
 
   constructor(props: IrrigationRecommendationProps) {
     this.Id = props.Id;
+    this.Name = props.Name;
     this.Crop = props.Crop;
     this.System = props.System;
     this.Equipments = props.Equipments;

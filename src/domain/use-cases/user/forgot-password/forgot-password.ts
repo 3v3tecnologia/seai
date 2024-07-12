@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { UserTypes } from "../../../entities/user/user";
 import { AccountRepositoryProtocol } from "../../_ports/repositories/account-repository";
 import { UserNotFoundError } from "../delete-user/errors/user-not-found-error";
 import {
@@ -22,20 +23,18 @@ export class ForgotPassword {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.getByEmail(email);
 
-    if (!account) {
+    if (account == null || account.type === UserTypes.IRRIGANT) {
       return left(new UserNotFoundError());
     }
 
     await this.scheduleUserAccountNotification.schedule({
       user: {
         email: account.email,
-        base64Code: Buffer.from(account.email).toString('base64')
+        base64Code: Buffer.from(account.email).toString("base64"),
       },
       templateName: AvailablesEmailServices.FORGOT_PASSWORD,
     });
 
-    return right(
-      `Um email para rescuperação de senha será enviado em breve.`
-    );
+    return right(`Um email para rescuperação de senha será enviado em breve.`);
   }
 }
