@@ -464,18 +464,25 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     return result;
   }
 
-  async getByEmail(email: string, user_type?: UserType): Promise<User | null> {
+  async getByEmail(
+    email: string,
+    user_type?: UserType | Array<UserType>
+  ): Promise<User | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
-      .where("Email", email)
       .first();
 
     if (user_type) {
-      query.andWhere("Type", user_type);
+      if (typeof user_type === "string") {
+        query.andWhere("Type", user_type);
+      } else {
+        query.whereIn("Type", user_type);
+      }
     }
 
+    query.where("Email", email);
     const result = await query;
 
     if (!result) {
@@ -522,18 +529,22 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
   async getByLogin(
     login: string,
-    user_type?: UserType
+    user_type?: UserType | Array<UserType>
   ): Promise<Required<UserAccount> | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
-      .where("Login", login)
       .first();
 
     if (user_type) {
-      query.andWhere("Type", user_type);
+      if (typeof user_type === "string") {
+        query.andWhere("Type", user_type);
+      } else {
+        query.whereIn("Type", user_type);
+      }
     }
+    query.where("Login", login);
 
     const result = await query;
 

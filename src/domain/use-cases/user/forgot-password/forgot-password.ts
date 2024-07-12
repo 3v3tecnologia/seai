@@ -27,6 +27,7 @@ export class ForgotPassword {
       return left(new UserNotFoundError());
     }
 
+    // TO-DO: change to a specific queue
     await this.scheduleUserAccountNotification.schedule({
       user: {
         email: account.email,

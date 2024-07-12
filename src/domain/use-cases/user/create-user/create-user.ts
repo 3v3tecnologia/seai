@@ -32,15 +32,13 @@ export class CreateUser extends Command implements CreateUserProtocol {
     request: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const existingUser = await this.accountRepository.getByEmail(request.email);
+    const existingUser = await this.accountRepository.getByEmail(
+      request.email,
+      [UserTypes.ADMIN, UserTypes.STANDARD]
+    );
 
     if (existingUser) {
-      if (
-        existingUser.type !== UserTypes.IRRIGANT ||
-        existingUser.email === request.email
-      ) {
-        return left(new UserAlreadyExistsError());
-      }
+      return left(new UserAlreadyExistsError());
     }
 
     // validar se os módulos existem mesmo
