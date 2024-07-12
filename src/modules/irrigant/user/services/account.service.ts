@@ -1,7 +1,11 @@
+import { Email } from "../../../../domain/entities/user/email";
+import { UserLogin } from "../../../../domain/entities/user/login";
+import { UserName } from "../../../../domain/entities/user/name";
 import { User, UserTypes } from "../../../../domain/entities/user/user";
 import { UserPassword } from "../../../../domain/entities/user/userPassword";
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
+import { UserAlreadyExistsError } from "../../../../domain/use-cases/errors/user-already-exists";
 import { UserNotFoundError } from "../../../../domain/use-cases/errors/user-not-found";
 import {
   AvailablesEmailServices,
@@ -34,7 +38,7 @@ export interface IUserIrrigantServices {
       }
     >
   >;
-  completeRegister(user: any): Promise<Either<Error, string>>;
+  completeRegister(code: string): Promise<Either<Error, void>>;
   resetPassword(params: {
     code: string;
     password: string;
@@ -74,10 +78,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       UserTypes.IRRIGANT
     );
 
-    if (
-      !!emailAlreadyExists &&
-      emailAlreadyExists.type === UserTypes.IRRIGANT
-    ) {
+    if (!!emailAlreadyExists) {
       return left(new Error("Email já existe"));
     }
 
@@ -177,7 +178,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
           UserTypes.IRRIGANT
         );
 
-    if (!account) {
+    if (!account || account.status === "pending") {
       return left(new UserNotFoundError());
     }
 
@@ -206,14 +207,31 @@ export class UserIrrigantServices implements IUserIrrigantServices {
   }
 
   //
-  completeRegister(user: any): Promise<Either<Error, string>> {
-    throw new Error("Method not implemented.");
+  async completeRegister(code: string): Promise<Either<Error, void>> {
+    const userEmailToString = base64Decode(code);
+
+    const account = await this.accountRepository.getByEmail(userEmailToString);
+
+    if (account === null) {
+      return left(new UserNotFoundError());
+    }
+
+    if (account.status === "registered") {
+      return left(new UserAlreadyExistsError());
+    }
+
+    await this.accountRepository.updateUserStatus(account.id, "registered");
+
+    return right();
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    const account = await this.accountRepository.getByEmail(email);
+    const account = await this.accountRepository.getByEmail(
+      email,
+      UserTypes.IRRIGANT
+    );
 
-    if (account == null || account.type === UserTypes.IRRIGANT) {
+    if (account == null) {
       return left(new UserNotFoundError());
     }
     // TO-DO: change to a specific queue
@@ -269,11 +287,85 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     return right(null);
   }
 
-  async updateProfile(): Promise<Either<Error, string>> {
-    throw new Error("Method not implemented.");
+  async updateProfile(request: {
+    id: number;
+    email?: string;
+    login: string;
+    name: string;
+    password?: string;
+    confirmPassword?: string;
+  }): Promise<Either<Error, string>> {
+    const alreadyExistsAccount = await this.accountRepository.getById(
+      request.id
+    );
+
+    const userNotFound = alreadyExistsAccount === null;
+
+    if (userNotFound) {
+      return left(new AccountNotFoundError());
+    }
+
+    const userLoginOrError = UserLogin.create(request.login);
+    const userNameOrError = UserName.create(request.name);
+
+    if (userLoginOrError.isLeft()) {
+      return left(userLoginOrError.value);
+    }
+
+    if (userNameOrError.isLeft()) {
+      return left(userNameOrError.value);
+    }
+
+    const userLogin = userLoginOrError.value?.value as string;
+    const userName = userNameOrError.value?.value as string;
+
+    const toUpdate = {
+      id: request.id,
+      login: userLogin || null,
+      name: userName || null,
+    };
+
+    // Usuário admin pode editar usuário mesmo não havendo login ain
+
+    if (request.email) {
+      const existingAccount = await this.accountRepository.getByEmail(
+        request.email,
+        [UserTypes.ADMIN, UserTypes.STANDARD]
+      );
+
+      if (existingAccount) {
+        if (existingAccount.id !== request.id) {
+          return left(
+            new Error(`Usuário com email ${request.email} já existe.`)
+          );
+        }
+      }
+
+      const userEmailOrError = Email.create(request.email);
+
+      if (userEmailOrError.isLeft()) {
+        return left(userEmailOrError.value);
+      }
+
+      const userEmail = userEmailOrError.value?.value;
+
+      Object.assign(toUpdate, {
+        email: userEmail || null,
+      });
+    }
+
+    await this.accountRepository.update(toUpdate);
+
+    return right(`Usuário atualizado com sucesso.`);
   }
 
-  async deleteAccount(): Promise<Either<Error, void>> {
-    throw new Error("Method not implemented.");
+  async deleteAccount(id: number): Promise<Either<Error, void>> {
+    const result = await this.accountRepository.deleteById(id);
+
+    if (result === false) {
+      return left(new Error("Falha ao deletar conta do usuário"));
+    }
+
+    return right();
   }
 }
