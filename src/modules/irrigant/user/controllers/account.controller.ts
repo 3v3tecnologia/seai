@@ -161,7 +161,7 @@ export class IrrigantAccountControllers {
         return forbidden(result.value);
       }
 
-      return ok(result.value);
+      return noContent();
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -179,6 +179,22 @@ export class IrrigantAccountControllers {
       }
 
       return noContent();
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+  async getProfile(request: { accountId: number }): Promise<HttpResponse> {
+    try {
+      const { accountId } = request;
+
+      const result = await this.services.getProfile(accountId);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+
+      return ok(result.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

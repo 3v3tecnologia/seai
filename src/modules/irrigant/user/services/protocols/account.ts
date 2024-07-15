@@ -30,4 +30,17 @@ export interface IUserIrrigantServices {
     confirmPassword?: string;
   }): Promise<Either<Error, string>>;
   deleteAccount(id: number): Promise<Either<Error, void>>;
+  getProfile(id: number): Promise<
+    Either<
+      Error,
+      {
+        createdAt: string;
+        email: string;
+        login: string;
+        name: string;
+        type: string;
+        updatedAt: string;
+      }
+    >
+  >;
 }

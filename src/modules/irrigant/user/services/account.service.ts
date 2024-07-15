@@ -170,7 +170,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     }
 
     if (account.status === "pending") {
-      return left(new Error("Necessário ativar a conta"));
+      return left(new Error("Necessário confirmar a conta"));
     }
 
     const isMatch = await this.encoder.compare(
@@ -304,6 +304,15 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       return left(new Error("Necessário ativar a conta"));
     }
 
+    const existingLogin = await this.accountRepository.getByLogin(
+      request.login,
+      UserTypes.IRRIGANT
+    );
+
+    if (existingLogin && existingLogin.id !== request.id) {
+      return left(new Error("Login já existe"));
+    }
+
     const userLoginOrError = UserLogin.create(request.login);
     const userNameOrError = UserName.create(request.name);
 
@@ -324,7 +333,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       name: userName || null,
     };
 
-    if (Reflect.has(request, "password")) {
+    if (Reflect.has(request, "password") && request.password) {
       const passwordOrError = UserPassword.create({
         value: request.password as string,
         confirm: request.confirmPassword,
@@ -385,5 +394,29 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     }
 
     return right();
+  }
+
+  async getProfile(id: number): Promise<
+    Either<
+      Error,
+      {
+        createdAt: string;
+        email: string;
+        login: string;
+        name: string;
+        type: string;
+        updatedAt: string;
+      }
+    >
+  > {
+    const result = await this.accountRepository.getById(id);
+
+    if (result === null) {
+      return left(new Error("Falha ao buscar usuário"));
+    }
+
+    const { createdAt, email, login, name, type, updatedAt } = result;
+
+    return right({ createdAt, email, login, name, type, updatedAt });
   }
 }
