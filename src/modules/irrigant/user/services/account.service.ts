@@ -24,27 +24,7 @@ import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
-
-export interface IUserIrrigantServices {
-  create(
-    dto: CreateIrrigantAccountDTO.Input
-  ): Promise<CreateIrrigantAccountDTO.Output>;
-  login(user: any): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  >;
-  completeRegister(code: string): Promise<Either<Error, void>>;
-  resetPassword(params: {
-    code: string;
-    password: string;
-    confirmPassword: string;
-  }): Promise<Either<Error, null>>;
-}
+import { IUserIrrigantServices } from "./protocols/account";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -108,7 +88,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       return left(userOrError.value);
     }
 
-    const userHash = await this.encoder.hashInPbkdf2(
+    const userCode = await this.encoder.hashInPbkdf2(
       dto.email,
       100,
       10,
@@ -123,21 +103,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       login: dto.login,
       name: dto.name,
       type: UserTypes.IRRIGANT,
-      code: userHash as string,
-      status: "registered",
+      code: userCode as string,
       password: hashedPassword,
     });
 
     Logger.info(`Usuário ${user_id} criado com sucesso`);
-
-    const tokenOrError = await this.authentication.auth({
-      login: dto.login,
-      password: dto.password,
-    });
-
-    if (tokenOrError.isLeft()) {
-      return left(tokenOrError.value);
-    }
 
     const notificationSystems =
       await this.preferencesRepository.getAvailableNotificationsServices();
@@ -155,7 +125,24 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       );
     }
 
-    return right(tokenOrError.value);
+    // Send confirmation email
+    if (user_id) {
+      const notificationSuccessOrError = await this.userNotification.schedule({
+        user: {
+          email: dto.email,
+          base64Code: Buffer.from(dto.email).toString("base64"),
+        },
+        templateName: AvailablesEmailServices.CREATE_IRRIGANT,
+      });
+
+      if (notificationSuccessOrError.isRight()) {
+        Logger.info(notificationSuccessOrError.value);
+      }
+    }
+
+    return right(
+      `Usuário criado com sucessso, aguardando confirmação do cadastro.`
+    );
   }
 
   async login(user: {
@@ -178,8 +165,12 @@ export class UserIrrigantServices implements IUserIrrigantServices {
           UserTypes.IRRIGANT
         );
 
-    if (!account || account.status === "pending") {
+    if (!account) {
       return left(new UserNotFoundError());
+    }
+
+    if (account.status === "pending") {
+      return left(new Error("Necessário ativar a conta"));
     }
 
     const isMatch = await this.encoder.compare(
@@ -231,11 +222,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       UserTypes.IRRIGANT
     );
 
-    if (account == null) {
+    if (account == null || account.type == "pending") {
       return left(new UserNotFoundError());
     }
     // TO-DO: change to a specific queue
-    await this.userNotification.schedule({
+    const notificationSuccessOrError = await this.userNotification.schedule({
       user: {
         email: account.email,
         base64Code: Buffer.from(account.email).toString("base64"),
@@ -243,7 +234,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       templateName: AvailablesEmailServices.FORGOT_PASSWORD,
     });
 
-    return right(`Um email para rescuperação de senha será enviado em breve.`);
+    if (notificationSuccessOrError.isRight()) {
+      Logger.info(notificationSuccessOrError.value);
+    }
+
+    return right(`Um email para recuperação de senha será enviado em breve.`);
   }
 
   async resetPassword(params: {
@@ -263,6 +258,10 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     if (account === null) {
       return left(new AccountNotFoundError());
+    }
+
+    if (account.type === "pending") {
+      return left(new Error("Necessário ativar a conta"));
     }
 
     const passwordOrError = UserPassword.create({
@@ -295,14 +294,14 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     password?: string;
     confirmPassword?: string;
   }): Promise<Either<Error, string>> {
-    const alreadyExistsAccount = await this.accountRepository.getById(
-      request.id
-    );
+    const userAccount = await this.accountRepository.getById(request.id);
 
-    const userNotFound = alreadyExistsAccount === null;
-
-    if (userNotFound) {
+    if (userAccount === null) {
       return left(new AccountNotFoundError());
+    }
+
+    if (userAccount.type === "pending") {
+      return left(new Error("Necessário ativar a conta"));
     }
 
     const userLoginOrError = UserLogin.create(request.login);
@@ -324,6 +323,25 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       login: userLogin || null,
       name: userName || null,
     };
+
+    if (Reflect.has(request, "password")) {
+      const passwordOrError = UserPassword.create({
+        value: request.password as string,
+        confirm: request.confirmPassword,
+        isHashed: false,
+      });
+
+      if (passwordOrError.isLeft()) {
+        return left(passwordOrError.value);
+      }
+
+      const password = passwordOrError.value?.value as string;
+      const hashedPassword = await this.encoder.hash(password);
+
+      Object.assign(toUpdate, {
+        password: hashedPassword,
+      });
+    }
 
     // Usuário admin pode editar usuário mesmo não havendo login ain
 
