@@ -24,6 +24,7 @@ export interface AccountRepositoryProtocol {
       type?: Record<UserTypes, string>;
     } & IPaginationInput
   ): Promise<IOutputWithPagination<User>>;
+  updateUserStatus(user_id: number, status: string): Promise<void>;
   update(data: {
     id?: number;
     code?: string;
@@ -44,7 +45,7 @@ export interface AccountRepositoryProtocol {
   getByLogin(
     login: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<Required<UserAccount> | null>;
+  ): Promise<User | null>;
   getById(id_user: number): Promise<Required<User> | null>;
   getUserByCode(code: string): Promise<User | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;

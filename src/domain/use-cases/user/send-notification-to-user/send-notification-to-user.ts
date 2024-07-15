@@ -4,6 +4,7 @@ import { CreateJobUseCaseProtocol } from "../../jobs";
 export enum AvailablesEmailServices {
   CREATE_ACCOUNT = "createUserAccount",
   FORGOT_PASSWORD = "forgotUserPassword",
+  CREATE_IRRIGANT = "createIrrigantAccount",
 }
 export class ScheduleUserAccountNotification {
   private readonly backgroundJobs: CreateJobUseCaseProtocol.UseCase;
@@ -13,7 +14,7 @@ export class ScheduleUserAccountNotification {
   }
 
   async schedule(params: {
-    user: { email: string, base64Code: string };
+    user: { email: string; base64Code: string };
     templateName: AvailablesEmailServices;
   }): Promise<Either<Error, any | null>> {
     return await this.backgroundJobs.execute({

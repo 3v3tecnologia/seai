@@ -1,7 +1,11 @@
+import { Email } from "../../../../domain/entities/user/email";
+import { UserLogin } from "../../../../domain/entities/user/login";
+import { UserName } from "../../../../domain/entities/user/name";
 import { User, UserTypes } from "../../../../domain/entities/user/user";
 import { UserPassword } from "../../../../domain/entities/user/userPassword";
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
+import { UserAlreadyExistsError } from "../../../../domain/use-cases/errors/user-already-exists";
 import { UserNotFoundError } from "../../../../domain/use-cases/errors/user-not-found";
 import {
   AvailablesEmailServices,
@@ -20,27 +24,7 @@ import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
-
-export interface IUserIrrigantServices {
-  create(
-    dto: CreateIrrigantAccountDTO.Input
-  ): Promise<CreateIrrigantAccountDTO.Output>;
-  login(user: any): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  >;
-  completeRegister(user: any): Promise<Either<Error, string>>;
-  resetPassword(params: {
-    code: string;
-    password: string;
-    confirmPassword: string;
-  }): Promise<Either<Error, null>>;
-}
+import { IUserIrrigantServices } from "./protocols/account";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: AccountRepositoryProtocol;
@@ -74,10 +58,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       UserTypes.IRRIGANT
     );
 
-    if (
-      !!emailAlreadyExists &&
-      emailAlreadyExists.type === UserTypes.IRRIGANT
-    ) {
+    if (!!emailAlreadyExists) {
       return left(new Error("Email já existe"));
     }
 
@@ -107,7 +88,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       return left(userOrError.value);
     }
 
-    const userHash = await this.encoder.hashInPbkdf2(
+    const userCode = await this.encoder.hashInPbkdf2(
       dto.email,
       100,
       10,
@@ -122,21 +103,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       login: dto.login,
       name: dto.name,
       type: UserTypes.IRRIGANT,
-      code: userHash as string,
-      status: "registered",
+      code: userCode as string,
       password: hashedPassword,
     });
 
     Logger.info(`Usuário ${user_id} criado com sucesso`);
-
-    const tokenOrError = await this.authentication.auth({
-      login: dto.login,
-      password: dto.password,
-    });
-
-    if (tokenOrError.isLeft()) {
-      return left(tokenOrError.value);
-    }
 
     const notificationSystems =
       await this.preferencesRepository.getAvailableNotificationsServices();
@@ -154,7 +125,24 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       );
     }
 
-    return right(tokenOrError.value);
+    // Send confirmation email
+    if (user_id) {
+      const notificationSuccessOrError = await this.userNotification.schedule({
+        user: {
+          email: dto.email,
+          base64Code: Buffer.from(dto.email).toString("base64"),
+        },
+        templateName: AvailablesEmailServices.CREATE_IRRIGANT,
+      });
+
+      if (notificationSuccessOrError.isRight()) {
+        Logger.info(notificationSuccessOrError.value);
+      }
+    }
+
+    return right(
+      `Usuário criado com sucessso, aguardando confirmação do cadastro.`
+    );
   }
 
   async login(user: {
@@ -179,6 +167,10 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     if (!account) {
       return left(new UserNotFoundError());
+    }
+
+    if (account.status === "pending") {
+      return left(new Error("Necessário confirmar a conta"));
     }
 
     const isMatch = await this.encoder.compare(
@@ -206,18 +198,35 @@ export class UserIrrigantServices implements IUserIrrigantServices {
   }
 
   //
-  completeRegister(user: any): Promise<Either<Error, string>> {
-    throw new Error("Method not implemented.");
+  async completeRegister(code: string): Promise<Either<Error, void>> {
+    const userEmailToString = base64Decode(code);
+
+    const account = await this.accountRepository.getByEmail(userEmailToString);
+
+    if (account === null) {
+      return left(new UserNotFoundError());
+    }
+
+    if (account.status === "registered") {
+      return left(new UserAlreadyExistsError());
+    }
+
+    await this.accountRepository.updateUserStatus(account.id, "registered");
+
+    return right();
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    const account = await this.accountRepository.getByEmail(email);
+    const account = await this.accountRepository.getByEmail(
+      email,
+      UserTypes.IRRIGANT
+    );
 
-    if (account == null || account.type === UserTypes.IRRIGANT) {
+    if (account == null || account.type == "pending") {
       return left(new UserNotFoundError());
     }
     // TO-DO: change to a specific queue
-    await this.userNotification.schedule({
+    const notificationSuccessOrError = await this.userNotification.schedule({
       user: {
         email: account.email,
         base64Code: Buffer.from(account.email).toString("base64"),
@@ -225,7 +234,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       templateName: AvailablesEmailServices.FORGOT_PASSWORD,
     });
 
-    return right(`Um email para rescuperação de senha será enviado em breve.`);
+    if (notificationSuccessOrError.isRight()) {
+      Logger.info(notificationSuccessOrError.value);
+    }
+
+    return right(`Um email para recuperação de senha será enviado em breve.`);
   }
 
   async resetPassword(params: {
@@ -245,6 +258,10 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     if (account === null) {
       return left(new AccountNotFoundError());
+    }
+
+    if (account.type === "pending") {
+      return left(new Error("Necessário ativar a conta"));
     }
 
     const passwordOrError = UserPassword.create({
@@ -269,11 +286,137 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     return right(null);
   }
 
-  async updateProfile(): Promise<Either<Error, string>> {
-    throw new Error("Method not implemented.");
+  async updateProfile(request: {
+    id: number;
+    email?: string;
+    login: string;
+    name: string;
+    password?: string;
+    confirmPassword?: string;
+  }): Promise<Either<Error, string>> {
+    const userAccount = await this.accountRepository.getById(request.id);
+
+    if (userAccount === null) {
+      return left(new AccountNotFoundError());
+    }
+
+    if (userAccount.type === "pending") {
+      return left(new Error("Necessário ativar a conta"));
+    }
+
+    const existingLogin = await this.accountRepository.getByLogin(
+      request.login,
+      UserTypes.IRRIGANT
+    );
+
+    if (existingLogin && existingLogin.id !== request.id) {
+      return left(new Error("Login já existe"));
+    }
+
+    const userLoginOrError = UserLogin.create(request.login);
+    const userNameOrError = UserName.create(request.name);
+
+    if (userLoginOrError.isLeft()) {
+      return left(userLoginOrError.value);
+    }
+
+    if (userNameOrError.isLeft()) {
+      return left(userNameOrError.value);
+    }
+
+    const userLogin = userLoginOrError.value?.value as string;
+    const userName = userNameOrError.value?.value as string;
+
+    const toUpdate = {
+      id: request.id,
+      login: userLogin || null,
+      name: userName || null,
+    };
+
+    if (Reflect.has(request, "password") && request.password) {
+      const passwordOrError = UserPassword.create({
+        value: request.password as string,
+        confirm: request.confirmPassword,
+        isHashed: false,
+      });
+
+      if (passwordOrError.isLeft()) {
+        return left(passwordOrError.value);
+      }
+
+      const password = passwordOrError.value?.value as string;
+      const hashedPassword = await this.encoder.hash(password);
+
+      Object.assign(toUpdate, {
+        password: hashedPassword,
+      });
+    }
+
+    // Usuário admin pode editar usuário mesmo não havendo login ain
+
+    if (request.email) {
+      const existingAccount = await this.accountRepository.getByEmail(
+        request.email,
+        [UserTypes.ADMIN, UserTypes.STANDARD]
+      );
+
+      if (existingAccount) {
+        if (existingAccount.id !== request.id) {
+          return left(
+            new Error(`Usuário com email ${request.email} já existe.`)
+          );
+        }
+      }
+
+      const userEmailOrError = Email.create(request.email);
+
+      if (userEmailOrError.isLeft()) {
+        return left(userEmailOrError.value);
+      }
+
+      const userEmail = userEmailOrError.value?.value;
+
+      Object.assign(toUpdate, {
+        email: userEmail || null,
+      });
+    }
+
+    await this.accountRepository.update(toUpdate);
+
+    return right(`Usuário atualizado com sucesso.`);
   }
 
-  async deleteAccount(): Promise<Either<Error, void>> {
-    throw new Error("Method not implemented.");
+  async deleteAccount(id: number): Promise<Either<Error, void>> {
+    const result = await this.accountRepository.deleteById(id);
+
+    if (result === false) {
+      return left(new Error("Falha ao deletar conta do usuário"));
+    }
+
+    return right();
+  }
+
+  async getProfile(id: number): Promise<
+    Either<
+      Error,
+      {
+        createdAt: string;
+        email: string;
+        login: string;
+        name: string;
+        type: string;
+        updatedAt: string;
+      }
+    >
+  > {
+    const result = await this.accountRepository.getById(id);
+
+    if (result === null) {
+      return left(new Error("Falha ao buscar usuário"));
+    }
+
+    const { createdAt, email, login, name, type, updatedAt } = result;
+
+    return right({ createdAt, email, login, name, type, updatedAt });
   }
 }

@@ -10,3 +10,4 @@ export * from "./newsletter";
 // export * from "./api-key";
 export * from "./management";
 export * from "./irrigant";
+export * from "./user-irrigant";

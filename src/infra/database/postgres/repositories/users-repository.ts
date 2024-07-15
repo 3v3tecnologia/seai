@@ -10,7 +10,6 @@ import {
   toPaginatedOutput,
 } from "../../../../domain/use-cases/helpers/pagination";
 import { User } from "../../../../domain/use-cases/user/model/user";
-import { UserAccount } from "../../../../domain/use-cases/user/model/user-with-modules";
 import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
@@ -367,6 +366,16 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       });
   }
 
+  async updateUserStatus(user_id: number, status: string): Promise<void> {
+    await governmentDb("User")
+      .withSchema("users")
+      .where({ Id: user_id })
+      .update({
+        Status: status,
+        UpdatedAt: governmentDb.fn.now(),
+      });
+  }
+
   async update(data: {
     id?: number;
     code?: string;
@@ -530,7 +539,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
   async getByLogin(
     login: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<Required<UserAccount> | null> {
+  ): Promise<User | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
@@ -552,21 +561,23 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       return null;
     }
 
-    const { Id, Name, Login, Email, Password, Type, CreatedAt, UpdatedAt } =
-      result;
+    const {
+      Id,
+      Name,
+      Login,
+      Code,
+      Status,
+      Email,
+      Password,
+      Type,
+      CreatedAt,
+      UpdatedAt,
+    } = result;
 
-    const user: {
-      id: number;
-      name: string;
-      login: string;
-      email: string;
-      password: string;
-      type: string;
-      createdAt: string;
-      updatedAt: string;
-      modules: SystemModulesProps | null;
-    } = {
+    const user: User = {
       id: Id,
+      code: Code,
+      status: Status,
       name: Name,
       login: Login,
       email: Email,
