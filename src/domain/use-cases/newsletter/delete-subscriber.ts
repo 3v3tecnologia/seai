@@ -24,6 +24,10 @@ export class DeleteNewsletterSubscriber
       return left(new Error("Email não encontrado"));
     }
 
+    await this.repository.delete({
+      Email: request.Email,
+    });
+
     this.addLog({
       action: "delete",
       table: DATABASES.NEWSLETTER.SUBSCRIBER,
