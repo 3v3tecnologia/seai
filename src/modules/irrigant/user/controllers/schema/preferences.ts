@@ -1,6 +1,9 @@
 import Joi from "joi";
 
-import { userAccountSchema } from "../../../../../presentation/utils/schemas";
+import {
+  idSchema,
+  userAccountSchema,
+} from "../../../../../presentation/utils/schemas";
 import { SchemaValidator } from "../../../../../shared/validation/validator";
 
 export const saveEquipmentsValidator = new SchemaValidator(
@@ -34,8 +37,8 @@ export const getEquipmentsValidator = new SchemaValidator(
 export const updateNotificationsValidator = new SchemaValidator(
   Joi.object({
     ...userAccountSchema,
-    StationId: Joi.number().required(),
-    PluviometerId: Joi.number().required(),
+    ...idSchema,
+    Enabled: Joi.boolean().required(),
   })
 );
 

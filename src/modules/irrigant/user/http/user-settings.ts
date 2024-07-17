@@ -71,7 +71,7 @@ export const setupUserIrrigantSettingsV2Routes = (router: Router): void => {
       const res = await controllers.updateUserNotificationPreference({
         accountId: request.accountId as number,
         Enabled: request.body.Enabled,
-        ServiceId: parseInt(request.params.id),
+        id: parseInt(request.params.id),
       });
 
       return sendHTTPResponse(res, response);
