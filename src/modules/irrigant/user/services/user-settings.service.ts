@@ -1,4 +1,9 @@
-import { Either, right } from "../../../../shared/Either";
+import { AccountRepositoryProtocol } from "../../../../domain/use-cases/_ports/repositories/account-repository";
+import {
+  DeleteNewsletterSubscriberUseCaseProtocol,
+  SubscribeToNewsUseCaseProtocol,
+} from "../../../../domain/use-cases/newsletter";
+import { Either, left, right } from "../../../../shared/Either";
 import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import {
@@ -10,7 +15,12 @@ import {
 import { IUserPreferencesServices } from "./protocols/user-settings";
 
 export class UserSettingsServices implements IUserPreferencesServices {
-  constructor(private repository: IUserPreferencesRepository) {}
+  constructor(
+    private repository: IUserPreferencesRepository,
+    private readonly accountRepository: AccountRepositoryProtocol,
+    private readonly subscribeToNewsletter: SubscribeToNewsUseCaseProtocol.UseCase,
+    private readonly unsubscribeToNewsletter: DeleteNewsletterSubscriberUseCaseProtocol.UseCase
+  ) {}
   //Associate equipments to User
   // The user is allowed to have only 2 equipments
   async saveEquipments(
@@ -79,12 +89,66 @@ export class UserSettingsServices implements IUserPreferencesServices {
   async updateUserNotificationPreference(
     dto: UpdateUserPreferencesDTO
   ): Promise<Either<Error, void>> {
+    const availableNotificationsService =
+      await this.repository.getAvailableNotificationsServicesById(
+        dto.ServiceId
+      );
+
+    if (availableNotificationsService === null) {
+      return left(new Error("Serviço de notificação não encontrado"));
+    }
+
+    if (availableNotificationsService.service == "newsletter") {
+      const userAccount = await this.accountRepository.getUserById(dto.UserId);
+      if (dto.Enabled) {
+        // subscribe user email to newsletter
+        const successOrError = await this.subscribeToNewsletter.execute({
+          Email: userAccount!.email,
+          Name: userAccount!.name,
+        });
+
+        if (successOrError.isLeft()) return left(successOrError.value);
+      } else {
+        // remove user email from newsletter
+        const successOrError = await this.unsubscribeToNewsletter.execute({
+          Email: userAccount!.email,
+        });
+        if (successOrError.isLeft()) return left(successOrError.value);
+      }
+    }
+    // If the user enable newsletter notification then should to add user email to newsletter subscriber
     await this.repository.updateUserNotificationPreference({
       service_id: dto.ServiceId,
       user_id: dto.UserId,
       enabled: dto.Enabled,
     });
+
     return right();
+  }
+
+  async removeUserNotificationsPreferences(
+    user_id: number,
+    email: string
+  ): Promise<Either<Error, void>> {
+    await this.repository.removeUserNotificationsPreferences(user_id);
+
+    await this.unsubscribeToNewsletter.execute({
+      Email: email,
+    });
+
+    return right();
+  }
+
+  async createUserNotificationsPreferences(
+    input: Array<{ user_id: number; service_id: number; enabled: boolean }>
+  ): Promise<Either<Error, void>> {
+    await this.repository.createUserNotificationsPreferences(input);
+
+    return right();
+  }
+
+  async getAvailableNotificationsServices(): Promise<Array<any> | null> {
+    return await this.repository.getAvailableNotificationsServices();
   }
 
   async getUserNotificationsPreferences(

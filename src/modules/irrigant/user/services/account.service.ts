@@ -21,33 +21,33 @@ import { AccountNotFoundError } from "../../../../domain/use-cases/user/errors/u
 import { Either, left, right } from "../../../../shared/Either";
 import { Logger } from "../../../../shared/logger/logger";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
-import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
+import { IUserPreferencesServices } from "./protocols/user-settings";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: AccountRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly authentication: AuthenticationService;
-  private readonly preferencesRepository: IUserPreferencesRepository;
   private readonly tokenProvider: TokenProvider;
   private readonly userNotification: ScheduleUserAccountNotification;
+  private readonly userPreferencesServices: IUserPreferencesServices;
 
   constructor(
     accountRepository: AccountRepositoryProtocol,
     authentication: AuthenticationService,
-    preferencesRepository: IUserPreferencesRepository,
     encoder: Encoder,
     tokenProvider: TokenProvider,
-    userNotification: ScheduleUserAccountNotification
+    userNotification: ScheduleUserAccountNotification,
+    userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
     this.authentication = authentication;
-    this.preferencesRepository = preferencesRepository;
     this.tokenProvider = tokenProvider;
     this.userNotification = userNotification;
+    this.userPreferencesServices = userPreferencesServices;
   }
 
   async create(
@@ -110,11 +110,11 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     Logger.info(`Usuário ${user_id} criado com sucesso`);
 
     const notificationSystems =
-      await this.preferencesRepository.getAvailableNotificationsServices();
+      await this.userPreferencesServices.getAvailableNotificationsServices();
 
     if (notificationSystems) {
       Logger.info("Inserindo preferências de notificações dos usuários...");
-      await this.preferencesRepository.createUserNotificationsPreferences(
+      await this.userPreferencesServices.createUserNotificationsPreferences(
         notificationSystems.map((service: any) => {
           return {
             enabled: false,
@@ -355,6 +355,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     // Usuário admin pode editar usuário mesmo não havendo login ain
 
     if (request.email) {
+      // TO-DO: update newsleter subscriber
       const existingAccount = await this.accountRepository.getByEmail(
         request.email,
         [UserTypes.ADMIN, UserTypes.STANDARD]
@@ -387,11 +388,17 @@ export class UserIrrigantServices implements IUserIrrigantServices {
   }
 
   async deleteAccount(id: number): Promise<Either<Error, void>> {
-    const result = await this.accountRepository.deleteById(id);
+    const account = await this.accountRepository.getById(id);
 
-    if (result === false) {
-      return left(new Error("Falha ao deletar conta do usuário"));
+    if (account === null) {
+      return left(new UserNotFoundError());
     }
+    await this.userPreferencesServices.removeUserNotificationsPreferences(
+      id,
+      account.email
+    );
+
+    await this.accountRepository.deleteById(id);
 
     return right();
   }

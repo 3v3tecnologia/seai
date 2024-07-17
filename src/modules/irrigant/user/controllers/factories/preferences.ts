@@ -1,10 +1,7 @@
-import { IrrigantPreferencesRepository } from "../../repositories/user-preferences.repository";
-import { UserSettingsServices } from "../../services/user-settings.service";
+import { makeUserSettingsService } from "../../services/factories/user-settings";
 import { UserPreferencesControllers } from "../preferences.controller";
 
 export const makeUserIrrigantPreferencesControllers =
   (): UserPreferencesControllers => {
-    return new UserPreferencesControllers(
-      new UserSettingsServices(new IrrigantPreferencesRepository())
-    );
+    return new UserPreferencesControllers(makeUserSettingsService());
   };

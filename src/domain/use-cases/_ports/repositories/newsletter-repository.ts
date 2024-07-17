@@ -1,7 +1,10 @@
 import { Content } from "../../../entities/newsletter/news";
 import { Sender } from "../../../entities/newsletter/sender";
 import { Subscriber } from "../../../entities/newsletter/subscriber";
-import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+import {
+  IPaginationInput,
+  IOutputWithPagination,
+} from "./../../helpers/pagination";
 
 export namespace NewsletterSenderRepositoryDTO {
   export namespace Create {
@@ -37,15 +40,16 @@ export namespace NewsletterSenderRepositoryDTO {
 
   export namespace GetAll {
     export type Request = IPaginationInput;
-    export type Response = Promise<IOutputWithPagination<
-      Required<Sender>
-    >>;
+    export type Response = Promise<IOutputWithPagination<Required<Sender>>>;
   }
 }
 
 export namespace ContentRepositoryDTO {
   export namespace GetAll {
-    export type Request = { only_sent: boolean; title?: string } & IPaginationInput;
+    export type Request = {
+      only_sent: boolean;
+      title?: string;
+    } & IPaginationInput;
 
     export type Response = Promise<IOutputWithPagination<
       Required<Content>
@@ -97,7 +101,7 @@ export namespace ContentRepositoryDTO {
 
 export namespace SubscriberRepositoryDTO {
   export namespace GetAll {
-    export type Request = { name?: string, email?: string } & IPaginationInput;
+    export type Request = { name?: string; email?: string } & IPaginationInput;
     export type Response = Promise<IOutputWithPagination<Subscriber>>;
   }
 
@@ -151,7 +155,7 @@ export interface SenderRepositoryProtocol {
   ): NewsletterSenderRepositoryDTO.GetAll.Response;
 }
 
-export interface SubscriberRepositoryProtocol {
+export interface NewsletterSubscriberRepositoryProtocol {
   create(
     request: SubscriberRepositoryDTO.Create.Request
   ): SubscriberRepositoryDTO.Create.Response;
@@ -200,6 +204,6 @@ export interface NewsRepositoryProtocol {
     Data: any;
     CreatedAt: any;
     UpdatedAt: any;
-  } | null>
-  updateSendAt(id: number): Promise<void>
+  } | null>;
+  updateSendAt(id: number): Promise<void>;
 }

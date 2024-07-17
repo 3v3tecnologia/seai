@@ -62,7 +62,10 @@ export class IrrigantPreferencesRepository
       });
   }
 
-  async getAvailableNotificationsServices(): Promise<Array<any> | null> {
+  async getAvailableNotificationsServices(): Promise<Array<{
+    id: number;
+    service: string;
+  }> | null> {
     const response = await governmentDb
       .withSchema("management")
       .select("*")
@@ -73,6 +76,28 @@ export class IrrigantPreferencesRepository
         id: row.id,
         service: row.service_id,
       }));
+    }
+
+    return null;
+  }
+
+  async getAvailableNotificationsServicesById(
+    id: number
+  ): Promise<{ id: number; service: string } | null> {
+    const response = await governmentDb
+      .withSchema("management")
+      .select("*")
+      .where({
+        id,
+      })
+      .from("Notification_Services")
+      .first();
+
+    if (response) {
+      return {
+        id: response.id,
+        service: response.service_id,
+      };
     }
 
     return null;
@@ -120,6 +145,16 @@ export class IrrigantPreferencesRepository
     }>
   ): Promise<void> {
     await governmentDb.batchInsert<any>("management.User_Notifications", input);
+  }
+
+  async removeUserNotificationsPreferences(user_id: number): Promise<void> {
+    await governmentDb
+      .withSchema("management")
+      .del()
+      .where({
+        user_id,
+      })
+      .from("User_Notifications");
   }
 
   async updateUserNotificationPreference(input: {

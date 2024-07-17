@@ -72,19 +72,24 @@ export class UserIrrigationCropsServices
     dto: IUpdateIrrigationRecommendationDTO
   ): Promise<Either<Error, string>> {
     const userIrrigationAlreadyExists =
-      await this.irrigationCropsRepository.getUserIrrigationByName(
-        dto.Name,
+      await this.irrigationCropsRepository.getUserIrrigationCropsById(
+        dto.Id,
         dto.UserId
       );
 
-    if (
-      userIrrigationAlreadyExists &&
-      userIrrigationAlreadyExists.id !== dto.Id
-    ) {
-      return left(
-        new Error("Não é possível cadastrar irrigação com nome já existente.")
-      );
+    if (userIrrigationAlreadyExists == null) {
+      return left(new Error("Irrigação não encontrada"));
     }
+
+    // if (
+    //   userIrrigationAlreadyExists &&
+    //   userIrrigationAlreadyExists.id !== dto.Id
+    // ) {
+    //   return left(
+    //     new Error("Não é possível cadastrar irrigação com nome já existente.")
+    //   );
+    // }
+
     // Save Irrigation Crops
     const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
       dto.System
@@ -98,21 +103,51 @@ export class UserIrrigationCropsServices
       systemMeasurementsOrError.value as IIrrigationSystemMeasurementsEntity
     ).getAllMeasurement();
 
-    await this.irrigationCropsRepository.update({
-      id: dto.Id,
-      user_id: dto.UserId,
-      name: dto.Name,
-      crop_id: dto.CropId,
-      planting_date: dto.PlantingDate,
-      system_type: dto.System.Type as IrrigationSystemTypes,
-      area: systemMeasurements?.Area,
-      effective_area: systemMeasurements?.EfectiveArea,
-      flow: systemMeasurements?.Flow,
-      length: systemMeasurements?.Length,
-      plants_qtd: systemMeasurements?.PlantsQtd,
-      spacing: systemMeasurements?.Spacing,
-      sprinkler_precipitation: systemMeasurements?.Precipitation,
-    });
+    const currentDate = toISOstringShortDate(new Date());
+    const createdAt = toISOstringShortDate(
+      new Date(userIrrigationAlreadyExists?.created_at)
+    );
+
+    // Se editar um setor  no mesmo dia que foi criado (created_At) então é para deixar editar os valores  da linha da tabela irrigation_crops
+    if (createdAt == currentDate) {
+      await this.irrigationCropsRepository.update({
+        id: dto.Id,
+        user_id: dto.UserId,
+        name: dto.Name,
+        crop_id: dto.CropId,
+        planting_date: dto.PlantingDate,
+        system_type: dto.System.Type as IrrigationSystemTypes,
+        area: systemMeasurements?.Area,
+        effective_area: systemMeasurements?.EfectiveArea,
+        flow: systemMeasurements?.Flow,
+        length: systemMeasurements?.Length,
+        plants_qtd: systemMeasurements?.PlantsQtd,
+        spacing: systemMeasurements?.Spacing,
+        sprinkler_precipitation: systemMeasurements?.Precipitation,
+      });
+    } else {
+      // Se editar um setor depois de 1 dia criado então só colocar  updated_at no relação e criar uma nova linha na irrigation_crops
+      // e na relação também;
+      await this.irrigationCropsRepository.updateUserIrrigationById(
+        dto.Id,
+        dto.UserId
+      );
+
+      await this.irrigationCropsRepository.save({
+        user_id: dto.UserId,
+        name: dto.Name,
+        crop_id: dto.CropId,
+        planting_date: dto.PlantingDate,
+        system_type: dto.System.Type as IrrigationSystemTypes,
+        area: systemMeasurements?.Area,
+        effective_area: systemMeasurements?.EfectiveArea,
+        flow: systemMeasurements?.Flow,
+        length: systemMeasurements?.Length,
+        plants_qtd: systemMeasurements?.PlantsQtd,
+        spacing: systemMeasurements?.Spacing,
+        sprinkler_precipitation: systemMeasurements?.Precipitation,
+      });
+    }
 
     return right("Atualizado com sucesso");
   }
@@ -121,7 +156,26 @@ export class UserIrrigationCropsServices
     id: number,
     user_id: number
   ): Promise<Either<Error, void>> {
-    return right(await this.irrigationCropsRepository.deleteById(id, user_id));
+    const data =
+      await this.irrigationCropsRepository.getUserIrrigationCropsById(
+        id,
+        user_id
+      );
+
+    // Se criar um setor e tentar apagar no mesmo dia então é para deixar apagar a linha da relação  e da irrigation_crops;
+    if (
+      data &&
+      toISOstringShortDate(new Date(data.created_at)) ===
+        toISOstringShortDate(new Date())
+    ) {
+      await this.irrigationCropsRepository.deleteById(id, user_id);
+      return right();
+    }
+
+    // Se criar um setor e tentar apagar um setor depois de 1 dia de criado então só colocar  updated_at no relação
+    await this.irrigationCropsRepository.updateUserIrrigationById(id, user_id);
+
+    return right();
   }
 
   async deleteAllIrrigationCrops(
@@ -199,4 +253,8 @@ export class UserIrrigationCropsServices
 
     return right(null);
   }
+}
+
+function toISOstringShortDate(data: Date) {
+  return data.toISOString().split("T")[0];
 }

@@ -1,15 +1,15 @@
 import { Either, left, right } from "../../../shared/Either";
 import { DATABASES } from "../../../shared/db/tableNames";
 import { Command } from "../_ports/core/command";
-import { SubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
+import { NewsletterSubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 
 export class DeleteNewsletterSubscriber
   extends Command
   implements DeleteNewsletterSubscriberUseCaseProtocol.UseCase
 {
-  private repository: SubscriberRepositoryProtocol;
+  private repository: NewsletterSubscriberRepositoryProtocol;
 
-  constructor(repository: SubscriberRepositoryProtocol) {
+  constructor(repository: NewsletterSubscriberRepositoryProtocol) {
     super();
     this.repository = repository;
   }
