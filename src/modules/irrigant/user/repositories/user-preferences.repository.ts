@@ -110,15 +110,22 @@ export class IrrigantPreferencesRepository
       `
       SELECT
           un.service_id ,
-          ns.service_id AS "service" ,
-          un.enabled
+                ns.service_id AS "service" ,
+                un.enabled
       FROM
-          management."User_Notifications" un
-      INNER JOIN management."Notification_Services" ns ON
-          un.user_id = ns.id
-      WHERE un.user_id = ?
+          (
+              SELECT
+                  *
+              FROM
+                  management."User_Notifications" un
+              WHERE
+                  un.user_id = ?
+          ) AS un
+      INNER JOIN management."Notification_Services" ns
+      ON
+          ns.id = un.service_id
       ORDER BY
-          un.service_id ASC
+                un.service_id ASC
       `,
       [user_id]
     );
