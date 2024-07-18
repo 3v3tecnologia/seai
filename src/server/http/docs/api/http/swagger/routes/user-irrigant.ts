@@ -2,7 +2,7 @@ import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 
-const TAGS = ["User", "Irrigation System"];
+const TAGS = ["User"];
 
 const URL = `${BASE_URL.V1}/user`;
 
