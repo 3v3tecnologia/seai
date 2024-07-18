@@ -379,6 +379,17 @@ export const USER_IRRIGANT = {
   [`${URL}/irrigant/activate/{code}`]: {
     patch: {
       tags: TAGS,
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User base64 code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       summary: "Complete user account registration",
       responses: {
         204: {},
