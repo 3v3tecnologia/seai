@@ -1,13 +1,13 @@
 import { Either, right } from "../../../shared/Either";
 import { Subscriber } from "../../entities/newsletter/subscriber";
-import { SubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
+import { NewsletterSubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 
 export class FetchNewsletterSubscriberByEmail
   implements FetchNewsletterSubscriberByEmailUseCaseProtocol.UseCase
 {
-  private repository: SubscriberRepositoryProtocol;
+  private repository: NewsletterSubscriberRepositoryProtocol;
 
-  constructor(repository: SubscriberRepositoryProtocol) {
+  constructor(repository: NewsletterSubscriberRepositoryProtocol) {
     this.repository = repository;
   }
   async execute(

@@ -12,8 +12,8 @@ export type DeleteEquipmentRequest = Id;
 export type GetEquipmentsRequest = UserId;
 
 export type UpdateUserPreferencesRequest = {
-  ServiceId: number;
   Enabled: boolean;
-} & UserId;
+} & UserId &
+  Id;
 
 export type GetUserNotificationsPreferences = UserId;

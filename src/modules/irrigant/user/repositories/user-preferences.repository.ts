@@ -62,7 +62,10 @@ export class IrrigantPreferencesRepository
       });
   }
 
-  async getAvailableNotificationsServices(): Promise<Array<any> | null> {
+  async getAvailableNotificationsServices(): Promise<Array<{
+    id: number;
+    service: string;
+  }> | null> {
     const response = await governmentDb
       .withSchema("management")
       .select("*")
@@ -78,6 +81,28 @@ export class IrrigantPreferencesRepository
     return null;
   }
 
+  async getAvailableNotificationsServicesById(
+    id: number
+  ): Promise<{ id: number; service: string } | null> {
+    const response = await governmentDb
+      .withSchema("management")
+      .select("*")
+      .where({
+        id,
+      })
+      .from("Notification_Services")
+      .first();
+
+    if (response) {
+      return {
+        id: response.id,
+        service: response.service_id,
+      };
+    }
+
+    return null;
+  }
+
   async getUserNotificationsPreferences(
     user_id: number
   ): Promise<Array<any> | null> {
@@ -85,15 +110,22 @@ export class IrrigantPreferencesRepository
       `
       SELECT
           un.service_id ,
-          ns.service_id AS "service" ,
-          un.enabled
+                ns.service_id AS "service" ,
+                un.enabled
       FROM
-          management."User_Notifications" un
-      INNER JOIN management."Notification_Services" ns ON
-          un.user_id = ns.id
-      WHERE un.user_id = ?
+          (
+              SELECT
+                  *
+              FROM
+                  management."User_Notifications" un
+              WHERE
+                  un.user_id = ?
+          ) AS un
+      INNER JOIN management."Notification_Services" ns
+      ON
+          ns.id = un.service_id
       ORDER BY
-          un.service_id ASC
+                un.service_id ASC
       `,
       [user_id]
     );
@@ -120,6 +152,16 @@ export class IrrigantPreferencesRepository
     }>
   ): Promise<void> {
     await governmentDb.batchInsert<any>("management.User_Notifications", input);
+  }
+
+  async removeUserNotificationsPreferences(user_id: number): Promise<void> {
+    await governmentDb
+      .withSchema("management")
+      .del()
+      .where({
+        user_id,
+      })
+      .from("User_Notifications");
   }
 
   async updateUserNotificationPreference(input: {

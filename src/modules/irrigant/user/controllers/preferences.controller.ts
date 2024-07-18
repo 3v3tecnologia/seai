@@ -145,12 +145,12 @@ export class UserPreferencesControllers {
     request: UpdateUserPreferencesRequest
   ): Promise<HttpResponse> {
     try {
-      const { Enabled, ServiceId, accountId } = request;
+      const { Enabled, id, accountId } = request;
 
       const { error } = await updateNotificationsValidator.validate({
         Enabled,
-        ServiceId,
         accountId,
+        id,
       });
 
       if (error) {
@@ -159,7 +159,7 @@ export class UserPreferencesControllers {
 
       const response = await this.services.updateUserNotificationPreference({
         Enabled: request.Enabled,
-        ServiceId: request.ServiceId,
+        ServiceId: request.id,
         UserId: request.accountId,
       });
 

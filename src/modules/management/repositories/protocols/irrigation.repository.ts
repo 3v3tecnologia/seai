@@ -54,6 +54,17 @@ export interface IIrrigationRepository {
     id: number,
     user_id: number
   ): Promise<IUserRecordedRecommendationData | null>;
+  getUserIrrigationCropsById(
+    id: number,
+    user_id: number
+  ): Promise<{
+    id: number;
+    user_id: number;
+    irrigation_crops_id: number;
+    created_at: string;
+    updated_at: string;
+  } | null>;
+  updateUserIrrigationById(id: number, user_id: number): Promise<void>;
   getUsersWithIrrigationReportsEnabled(): Promise<Array<{
     Id: number;
     Name: string;

@@ -1,14 +1,15 @@
 import { NewsSubscriberMapper } from "../../../../domain/entities/newsletter/mapper/subscriber";
 import {
   SubscriberRepositoryDTO,
-  SubscriberRepositoryProtocol,
+  NewsletterSubscriberRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
 import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 export class DbNewsLetterSubscriberRepository
-  implements SubscriberRepositoryProtocol {
+  implements NewsletterSubscriberRepositoryProtocol
+{
   async create(
     request: SubscriberRepositoryDTO.Create.Request
   ): SubscriberRepositoryDTO.Create.Response {
@@ -66,7 +67,9 @@ export class DbNewsLetterSubscriberRepository
   }
 
   async getReceiversEmails(): Promise<null | Array<string>> {
-    const result = await newsletterDb.select('Email').from(DATABASES.NEWSLETTER.SUBSCRIBER)
+    const result = await newsletterDb
+      .select("Email")
+      .from(DATABASES.NEWSLETTER.SUBSCRIBER);
 
     if (!result.length) {
       return null;
@@ -103,12 +106,12 @@ export class DbNewsLetterSubscriberRepository
         'simple',
         '${email}:*'
         )
-      `
+      `;
 
       if (queries.length) {
-        queries.push(`OR ${byEmail}`)
+        queries.push(`OR ${byEmail}`);
       } else {
-        queries.push(`WHERE ${byEmail}`)
+        queries.push(`WHERE ${byEmail}`);
       }
     }
 
@@ -129,22 +132,19 @@ export class DbNewsLetterSubscriberRepository
 
     const sql = `
       SELECT "Id", "Name", "Email", "CreatedAt", "UpdatedAt"
-      FROM "${DATABASES.NEWSLETTER.SUBSCRIBER}" as sub 
+      FROM "${DATABASES.NEWSLETTER.SUBSCRIBER}" as sub
       ${queries.join(" ")}
-    `
+    `;
 
     const response = await newsletterDb.raw(sql, binding);
 
-
-    const rows = response.rows
+    const rows = response.rows;
 
     if (rows.length === 0) {
       return null;
     }
 
-    const data = rows.map((row: any) =>
-      NewsSubscriberMapper.toDomain(row)
-    );
+    const data = rows.map((row: any) => NewsSubscriberMapper.toDomain(row));
 
     return toPaginatedOutput({
       data: data,
