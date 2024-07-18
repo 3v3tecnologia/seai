@@ -7,7 +7,7 @@ const TAGS = ["User", "Irrigation System"];
 const URL = `${BASE_URL.V1}/user`;
 
 export const USER_IRRIGANT = {
-  [`${URL}/irrigant/account`]: {
+  [`${URL}/irrigant`]: {
     post: {
       tags: TAGS,
       summary: "Create a new user irrigant",
@@ -222,7 +222,7 @@ export const USER_IRRIGANT = {
       },
     },
   },
-  [`${URL}/irrigant/account/login`]: {
+  [`${URL}/irrigant/login`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
@@ -286,7 +286,7 @@ export const USER_IRRIGANT = {
       },
     },
   },
-  [`${URL}/irrigant/account/reset-password/{code}`]: {
+  [`${URL}/irrigant/reset-password/{code}`]: {
     patch: {
       tags: TAGS,
       summary: "Reset user password",
@@ -328,7 +328,7 @@ export const USER_IRRIGANT = {
       },
     },
   },
-  [`${URL}/irrigant/account/forgot-password`]: {
+  [`${URL}/irrigant/forgot-password`]: {
     post: {
       tags: TAGS,
       summary: "Send an email to the user for reset the password",
@@ -376,7 +376,7 @@ export const USER_IRRIGANT = {
       },
     },
   },
-  [`${URL}/irrigant/account/activate/{code}`]: {
+  [`${URL}/irrigant/activate/{code}`]: {
     patch: {
       tags: TAGS,
       summary: "Complete user account registration",

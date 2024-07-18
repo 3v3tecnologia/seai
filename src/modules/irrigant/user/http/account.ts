@@ -6,23 +6,20 @@ import { authorization } from "../../../../server/http/http-middlewares";
 export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   const controllers = makeIrrigantAccountController();
 
-  router.post(
-    "/irrigant/account",
-    async (request: Request, response: Response) => {
-      const req = {
-        ...(request.body || {}),
-        url: request.originalUrl,
-        accountId: request.accountId,
-      };
+  router.post("/irrigant", async (request: Request, response: Response) => {
+    const req = {
+      ...(request.body || {}),
+      url: request.originalUrl,
+      accountId: request.accountId,
+    };
 
-      const res = await controllers.create(req);
+    const res = await controllers.create(req);
 
-      return sendHTTPResponse(res, response);
-    }
-  );
+    return sendHTTPResponse(res, response);
+  });
 
   router.get(
-    "/irrigant/account",
+    "/irrigant",
     authorization,
     async (request: Request, response: Response) => {
       const req = {
@@ -36,7 +33,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.delete(
-    "/irrigant/account",
+    "/irrigant",
     authorization,
     async (request: Request, response: Response) => {
       const res = await controllers.deleteAccount({
@@ -48,7 +45,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.patch(
-    "/irrigant/account",
+    "/irrigant",
     authorization,
     async (request: Request, response: Response) => {
       const req = {
@@ -63,7 +60,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.post(
-    "/irrigant/account/login",
+    "/irrigant/login",
     async (request: Request, response: Response) => {
       const req = {
         ...(request.body || {}),
@@ -76,7 +73,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.patch(
-    "/irrigant/account/reset-password/:code",
+    "/irrigant/reset-password/:code",
     async (request: Request, response: Response) => {
       const req = {
         ...(request.body || {}),
@@ -90,7 +87,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.patch(
-    "/irrigant/account/activate/:code",
+    "/irrigant/activate/:code",
     async (request: Request, response: Response) => {
       const req = {
         code: request.params.code as string,
@@ -103,7 +100,7 @@ export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   );
 
   router.post(
-    "/irrigant/account/forgot-password",
+    "/irrigant/forgot-password",
     async (request: Request, response: Response) => {
       const req = {
         ...(request.body || {}),
