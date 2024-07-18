@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import { authorization } from "../http-middlewares";
+import { authorization, needFAQWritePermission } from "../http-middlewares";
 import { FaqControllersFactory } from "../factories/controllers";
 
 const setupFaqRoutes = (router: Router): void => {
@@ -14,18 +14,21 @@ const setupFaqRoutes = (router: Router): void => {
   router.put(
     "/categories/:id",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
   );
 
   router.post(
     "/categories",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
   );
 
   router.delete(
     "/categories/:id",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
   );
 
@@ -44,18 +47,21 @@ const setupFaqRoutes = (router: Router): void => {
   router.post(
     "/",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeCreateFaq())
   );
 
   router.put(
     "/:id",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeUpdateFaq())
   );
 
   router.delete(
     "/:id",
     authorization,
+    needFAQWritePermission,
     adaptRoute(FaqControllersFactory.makeDeleteFaq())
   );
 };
