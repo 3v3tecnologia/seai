@@ -14,6 +14,29 @@ export const equipmentsRouter = (): Router => {
   const router = Router();
 
   router.post(
+    "/organ",
+    authorization,
+    adaptRoute(EquipmentsControllerFactory.makeCreateMeteorologicalOrgan())
+  );
+
+  router.delete(
+    "/organ/:id",
+    authorization,
+    adaptRoute(EquipmentsControllerFactory.makeDeleteMeteorologicalOrgan())
+  );
+
+  router.put(
+    "/organ/:id",
+    authorization,
+    adaptRoute(EquipmentsControllerFactory.makeUpdateMeteorologicalOrgan())
+  );
+  router.get(
+    "/organ",
+    authorization,
+    adaptRoute(EquipmentsControllerFactory.makeFetchMeteorologicalOrgan())
+  );
+
+  router.post(
     "/",
     authorization,
     equipmentsPermissions.write,
