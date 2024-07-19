@@ -1,7 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
 import {
   againstNullOrUndefinedBulk,
-  checkArgumentsTypesBulk,
   concatenateMessages,
 } from "../../../shared/Guard";
 import {
@@ -18,11 +17,15 @@ export type SystemModulesPermissions = {
   write: boolean;
 };
 
+// System modules
 export enum Modules {
-  NEWS = "news",
-  REGISTER = "register",
+  NEWSLETTER = "newsletter",
   USER = "user",
-  JOBS = "jobs",
+  FAQ = "faq",
+  STUDIES = "studies",
+  WEIGHTS = "weights",
+  CROP = "crop",
+  EQUIPMENTS = "equipments",
 }
 
 export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
@@ -38,85 +41,37 @@ export class SystemModules {
     return this.modules;
   }
 
-  private static hasAdminPermission(module: any) {
-    return module.read === true && module.write === true;
-  }
-
   static validate(
     modules: Required<SystemModulesProps>,
     permission_type: UserType
   ): Either<string, void> {
     const isNullOrUndefinedArgs = againstNullOrUndefinedBulk([
-      { argument: modules[Modules.NEWS], argumentName: Modules.NEWS },
-      { argument: modules[Modules.REGISTER], argumentName: Modules.REGISTER },
-      { argument: modules[Modules.USER], argumentName: Modules.USER },
-      { argument: modules[Modules.JOBS], argumentName: Modules.JOBS },
+      { argument: modules[Modules.CROP], argumentName: Modules.CROP },
+      {
+        argument: modules[Modules.EQUIPMENTS],
+        argumentName: Modules.EQUIPMENTS,
+      },
+      { argument: modules[Modules.FAQ], argumentName: Modules.FAQ },
+      {
+        argument: modules[Modules.NEWSLETTER],
+        argumentName: Modules.NEWSLETTER,
+      },
+      {
+        argument: modules[Modules.STUDIES],
+        argumentName: Modules.STUDIES,
+      },
+      {
+        argument: modules[Modules.WEIGHTS],
+        argumentName: Modules.WEIGHTS,
+      },
+      {
+        argument: modules[Modules.USER],
+        argumentName: Modules.USER,
+      },
     ]);
 
     if (isNullOrUndefinedArgs.isLeft()) {
       return left(concatenateMessages(isNullOrUndefinedArgs.value));
-    }
-
-    const isSatisfiedTypes = checkArgumentsTypesBulk([
-      {
-        argument: modules[Modules.NEWS].id,
-        argumentName: "identificador do acesso ao módulo de notícias",
-        type: "number",
-      },
-      {
-        argument: modules[Modules.USER].id,
-        argumentName: "identificador do acesso ao módulo de usuários",
-        type: "number",
-      },
-      {
-        argument: modules[Modules.REGISTER].id,
-        argumentName: "identificador do acesso ao módulo de cadastro",
-        type: "number",
-      },
-      {
-        argument: modules[Modules.NEWS].read,
-        argumentName: "permissão para leitura de notícias",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.NEWS].write,
-        argumentName: "permissão para escrita de notícias",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.USER].read,
-        argumentName: "permissão para leitura de usuários",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.USER].write,
-        argumentName: "permissão para escrita de usuários",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.REGISTER].read,
-        argumentName: "permissão para leitura de registros",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.REGISTER].write,
-        argumentName: "permissão para escrita ",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.JOBS].read,
-        argumentName: "permissão para leitura de tarefas automatizadas",
-        type: "boolean",
-      },
-      {
-        argument: modules[Modules.JOBS].write,
-        argumentName: "permissão para escrita para tarefas automatizadas",
-        type: "boolean",
-      },
-    ]);
-
-    if (isSatisfiedTypes.isLeft()) {
-      return left(concatenateMessages(isSatisfiedTypes.value));
     }
 
     /*if (permission_type === "admin") {

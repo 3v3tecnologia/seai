@@ -2,9 +2,8 @@ import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
 import {
-  userWriteAccessAuth,
-  userReadAccessAuth,
   authorization,
+  userPermissions
 } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
 import { setupUserIrrigantAccountRoutes } from "../../../modules/irrigant/user/http/account";
@@ -35,37 +34,38 @@ export const userRouter = (): Router => {
   router.post(
     "/",
     authorization,
-    userWriteAccessAuth,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeCreateUser())
   );
 
   router.patch(
     "/:id",
     authorization,
-    userWriteAccessAuth,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeUpdateUser())
   );
 
   router.get(
     "/",
     authorization,
-    userReadAccessAuth,
+    userPermissions.read,
     adaptRoute(UserControllersFactory.makeGetUsers())
   );
 
   router.get(
     "/:id",
     authorization,
-    userReadAccessAuth,
+    userPermissions.read,
     adaptRoute(UserControllersFactory.makeFetchUserById())
   );
 
   router.delete(
     "/:id",
     authorization,
-    userWriteAccessAuth,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeDeleteUser())
   );
+
   // Delete by email
   router.delete(
     "/",

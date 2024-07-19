@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import { authorization, newsReadAccessAuth } from "../http-middlewares";
+import {
+  authorization,
+  newsletterPermissions
+} from "../http-middlewares";
 
 import { NewsletterControllersFactory } from "../factories/controllers";
-import { newsWriteAccessAuth } from "../http-middlewares/news-write";
 
 export const newsRouter = (): Router => {
   const router = Router();
@@ -30,13 +32,15 @@ export const newsRouter = (): Router => {
   router.get(
     "/subscribers/email",
     authorization,
-    adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribersEmails())
+    adaptRoute(
+      NewsletterControllersFactory.makeFetchNewsletterSubscribersEmails()
+    )
   );
 
   router.post(
     "/",
     authorization,
-    newsWriteAccessAuth,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletter())
   );
 
@@ -49,17 +53,16 @@ export const newsRouter = (): Router => {
   router.put(
     "/:id",
     authorization,
-    newsWriteAccessAuth,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeUpdateNewsletter())
   );
 
   router.delete(
     "/:id",
     authorization,
-    newsWriteAccessAuth,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletter())
   );
-
 
   router.get(
     "/sent",
@@ -78,11 +81,9 @@ export const newsRouter = (): Router => {
   router.get(
     "/",
     authorization,
-    newsReadAccessAuth,
+    newsletterPermissions.read,
     adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
   );
-
-
 
   return router;
 };

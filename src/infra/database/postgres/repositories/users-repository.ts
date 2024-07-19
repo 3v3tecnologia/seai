@@ -1,3 +1,4 @@
+import { Knex } from "knex";
 import { UserType, UserTypes } from "../../../../domain/entities/user/user";
 import {
   Modules,
@@ -13,43 +14,57 @@ import { User } from "../../../../domain/use-cases/user/model/user";
 import { governmentDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
+function mapUserModulePermissionsToPersistence(
+  user_id: number,
+  modules: SystemModulesProps
+) {
+  return Object.entries(modules).map(([_, permissions]) => {
+    return {
+      Fk_User: user_id,
+      Fk_Module: permissions.id,
+      Read: permissions.read,
+      Write: permissions.write,
+    };
+  });
+}
+
 export class DbAccountRepository implements AccountRepositoryProtocol {
-  async add(params: {
+  async add(user: {
+    type: UserType;
+    code: string;
+    status?: string;
     email: string;
     login?: string;
     name?: string;
     password?: string;
-    status?: string;
-    type: UserType;
     modules?: SystemModulesProps;
-    code: string;
   }): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
       const toInsert = {
-        Email: params.email,
-        Name: params.name,
-        Type: params.type,
-        Code: params.code,
-        Status: params.status || "pending",
+        Email: user.email,
+        Name: user.name,
+        Type: user.type,
+        Code: user.code,
+        Status: user.status || "pending",
         CreatedAt: governmentDb.fn.now(),
       };
 
-      if (params.login) {
+      if (user.login) {
         Object.assign(toInsert, {
-          Login: params.login,
+          Login: user.login,
         });
       }
 
-      if (params.name) {
+      if (user.name) {
         Object.assign(toInsert, {
-          Name: params.name,
+          Name: user.name,
         });
       }
 
-      if (params.password) {
+      if (user.password) {
         Object.assign(toInsert, {
-          Password: params.password,
+          Password: user.password,
         });
       }
 
@@ -61,48 +76,15 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
       const user_id = id.length && id[0].Id;
 
-      if (params.modules) {
+      if (user.modules) {
         // Refactor: Bulk insert
         // Refactor: add user permissions mapper
-        await trx
-          .withSchema("users")
-          .insert({
-            Fk_User: user_id,
-            Fk_Module: params.modules[Modules.NEWS].id,
-            Read: params.modules[Modules.NEWS].read,
-            Write: params.modules[Modules.NEWS].write,
-          })
-          .into("User_Access");
+        const permissions = mapUserModulePermissionsToPersistence(
+          user_id,
+          user.modules
+        );
 
-        await trx
-          .withSchema("users")
-          .insert({
-            Fk_User: user_id,
-            Fk_Module: params.modules[Modules.REGISTER].id,
-            Read: params.modules[Modules.REGISTER].read,
-            Write: params.modules[Modules.REGISTER].write,
-          })
-          .into("User_Access");
-
-        await trx
-          .withSchema("users")
-          .insert({
-            Fk_User: user_id,
-            Fk_Module: params.modules[Modules.USER].id,
-            Read: params.modules[Modules.USER].read,
-            Write: params.modules[Modules.USER].write,
-          })
-          .into("User_Access");
-
-        await trx
-          .withSchema("users")
-          .insert({
-            Fk_User: user_id,
-            Fk_Module: params.modules[Modules.JOBS].id,
-            Read: params.modules[Modules.JOBS].read,
-            Write: params.modules[Modules.JOBS].write,
-          })
-          .into("User_Access");
+        await trx.batchInsert("users.User_Access", permissions);
       }
 
       id_user = user_id;
@@ -376,7 +358,7 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
       });
   }
 
-  async update(data: {
+  async update(user: {
     id?: number;
     code?: string;
     email?: string | null;
@@ -389,36 +371,36 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
     let result = false;
     await governmentDb.transaction(async (trx) => {
       const userToUpdate = {
-        Name: data.name,
-        Login: data.login,
+        Name: user.name,
+        Login: user.login,
         UpdatedAt: governmentDb.fn.now(),
       };
 
-      if (data.password) {
+      if (user.password) {
         Object.assign(userToUpdate, {
-          Password: data.password,
+          Password: user.password,
         });
       }
-      if (data.type) {
+      if (user.type) {
         Object.assign(userToUpdate, {
-          Type: data.type,
+          Type: user.type,
         });
       }
-      if (data.email) {
+      if (user.email) {
         Object.assign(userToUpdate, {
-          Email: data.email,
+          Email: user.email,
         });
       }
 
       const updateUserQueryBuilder = trx("User").withSchema("users");
 
-      if (data.id) {
+      if (user.id) {
         updateUserQueryBuilder.where({
-          Id: data.id,
+          Id: user.id,
         });
       } else {
         updateUserQueryBuilder.where({
-          Code: data.code,
+          Code: user.code,
         });
 
         Object.assign(userToUpdate, {
@@ -428,43 +410,19 @@ export class DbAccountRepository implements AccountRepositoryProtocol {
 
       const updatedUserRows = await updateUserQueryBuilder.update(userToUpdate);
 
-      if (data.modules) {
-        await trx("User_Access")
-          .withSchema("users")
-          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.NEWS].id })
-          .update({
-            Read: data.modules[Modules.NEWS].read,
-            Write: data.modules[Modules.NEWS].write,
-          });
-
-        await trx("User_Access")
-          .withSchema("users")
-          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.JOBS].id })
-          .update({
-            Read: data.modules[Modules.JOBS].read,
-            Write: data.modules[Modules.JOBS].write,
-          });
-
-        await trx("User_Access")
-          .withSchema("users")
-          .where({
-            Fk_User: data.id,
-            Fk_Module: data.modules[Modules.REGISTER].id,
-          })
-          .update({
-            Read: data.modules[Modules.REGISTER].read,
-            Write: data.modules[Modules.REGISTER].write,
-            UpdatedAt: governmentDb.fn.now(),
-          });
-
-        await trx("User_Access")
-          .withSchema("users")
-          .where({ Fk_User: data.id, Fk_Module: data.modules[Modules.USER].id })
-          .update({
-            Read: data.modules[Modules.USER].read,
-            Write: data.modules[Modules.USER].write,
-            UpdatedAt: governmentDb.fn.now(),
-          });
+      if (user.modules) {
+        for (const [_, permissions] of Object.entries(user.modules)) {
+          await trx("User_Access")
+            .withSchema("users")
+            .where({
+              Fk_User: user.id,
+              Fk_Module: permissions.id,
+            })
+            .update({
+              Read: permissions.read,
+              Write: permissions.write,
+            });
+        }
       }
 
       result = updatedUserRows > 0 ? true : false;

@@ -457,9 +457,9 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
                 ) AS "pluviometry",
                 user_irrigations.created_at,
                 user_irrigations.updated_at
-            FROM (SELECT * FROM "User_Irrigation_Crops" uic
+            FROM (SELECT * FROM management."User_Irrigation_Crops" uic
             WHERE uic.user_id  = ? AND uic.updated_at IS NULL AND uic.irrigation_crops_id = ?) AS user_irrigations
-            INNER JOIN "Irrigation_Crops" irrigation
+            INNER JOIN management."Irrigation_Crops" irrigation
             ON irrigation.id = user_irrigations.irrigation_crops_id
             INNER JOIN management."Crop" crop
                         ON

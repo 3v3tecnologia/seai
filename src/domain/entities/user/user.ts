@@ -12,7 +12,10 @@ export enum UserTypes {
   STANDARD = "standard",
   IRRIGANT = "irrigant",
 }
-export type UserType = UserTypes.ADMIN | UserTypes.STANDARD | UserTypes.IRRIGANT;
+export type UserType =
+  | UserTypes.ADMIN
+  | UserTypes.STANDARD
+  | UserTypes.IRRIGANT;
 interface UserProps {
   name?: UserName | null;
   login?: UserLogin | null;
@@ -77,8 +80,6 @@ export class User {
     this._password = password;
   }
 
-  public setUserPermission() { }
-
   static create(
     props: {
       email: string;
@@ -99,13 +100,13 @@ export class User {
       errors.addError(emailOrError.value);
     }
 
-
-    if (!props.type || (!["admin", "standard", "irrigant"].includes(props.type))) {
-      errors.addError(
-        new Error(
-          'Tipo do usuário não pode ser nulo e tem que ser "admin" ou "standard"'
-        )
-      );
+    if (
+      !props.type ||
+      ![UserTypes.ADMIN, UserTypes.IRRIGANT, UserTypes.STANDARD].includes(
+        props.type
+      )
+    ) {
+      errors.addError(new Error("Necessário informar o tipo do usuário"));
     }
 
     let userAccess: SystemModules | null = null;
@@ -135,11 +136,11 @@ export class User {
     const passwordOrError =
       Reflect.has(props, "password") && props.password !== null
         ? UserPassword.create({
-          value: props.password as string,
-          confirm: Reflect.has(props, "confirmPassword")
-            ? props.confirmPassword
-            : null,
-        })
+            value: props.password as string,
+            confirm: Reflect.has(props, "confirmPassword")
+              ? props.confirmPassword
+              : null,
+          })
         : null;
 
     if (passwordOrError !== null && passwordOrError.isLeft()) {

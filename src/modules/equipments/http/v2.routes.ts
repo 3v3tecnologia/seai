@@ -1,12 +1,7 @@
 import { Request, Response, Router } from "express";
 import {
-  adaptRouteV2,
-  sendHTTPResponse,
+  sendHTTPResponse
 } from "../../../server/http/adapters/express-route.adapter";
-import {
-  EquipmentsControllers,
-  EquipmentsMeasurementsControllers,
-} from "../controllers";
 import { authorization } from "../../../server/http/http-middlewares";
 import { makeEquipmentsControllers } from "../controllers/factories/equipments";
 import { makeEquipmentsMeasurementsControllers } from "../controllers/factories/measurements";
@@ -43,7 +38,7 @@ export const setupEquipmentsV2Routes = (router: Router): void => {
 
   router.post(
     "/equipments",
-    // authorization,
+    authorization,
     async (request: Request, response: Response) => {
       const req = {
         ...(request.body || {}),
@@ -81,7 +76,6 @@ export const setupEquipmentsV2Routes = (router: Router): void => {
     }
   );
 
-  // adaptRouteV2(EquipmentsMeasurementsControllers.getByEquipmentsCodesAndDate)
   router.get(
     "/equipments/measurements",
     authorization,
@@ -101,7 +95,6 @@ export const setupEquipmentsV2Routes = (router: Router): void => {
 
   router.post(
     "/equipments/measurements",
-    // authorization,
     async (request: Request, response: Response) => {
       const req = {
         ...(request.body || {}),
