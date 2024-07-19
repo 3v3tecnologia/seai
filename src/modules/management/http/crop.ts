@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { sendHTTPResponse } from "../../../server/http/adapters/express-route.adapter";
-import { authorization } from "../../../server/http/http-middlewares";
+import { authorization, cropPermissions } from "../../../server/http/http-middlewares";
 import { makeManagementCropControllers } from "../controllers/factories/crop.controller";
 
 export const setupManagementCropV2Routes = (router: Router): void => {
@@ -8,6 +8,8 @@ export const setupManagementCropV2Routes = (router: Router): void => {
 
   router.get(
     "/management/crop/:id",
+    authorization,
+    cropPermissions.read,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,
@@ -23,6 +25,7 @@ export const setupManagementCropV2Routes = (router: Router): void => {
   router.post(
     "/management/crop",
     authorization,
+    cropPermissions.write,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,
@@ -39,6 +42,7 @@ export const setupManagementCropV2Routes = (router: Router): void => {
   router.put(
     "/management/crop/:id",
     authorization,
+    cropPermissions.write,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,
@@ -55,6 +59,7 @@ export const setupManagementCropV2Routes = (router: Router): void => {
   router.delete(
     "/management/crop/:id",
     authorization,
+    cropPermissions.write,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,
@@ -69,6 +74,8 @@ export const setupManagementCropV2Routes = (router: Router): void => {
 
   router.get(
     "/management/crop/cycles/:id",
+    authorization,
+    cropPermissions.write,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,
@@ -79,9 +86,11 @@ export const setupManagementCropV2Routes = (router: Router): void => {
       return sendHTTPResponse(result, response);
     }
   );
+  
   router.post(
     "/management/crop/cycles/:id",
     authorization,
+    cropPermissions.write,
     async (request: Request, response: Response) => {
       const req = {
         id: +request.params.id,

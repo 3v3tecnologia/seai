@@ -3,8 +3,7 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 
 import {
   authorization,
-  needNewsletterReadPermission,
-  needNewsletterWritePermission,
+  newsletterPermissions
 } from "../http-middlewares";
 
 import { NewsletterControllersFactory } from "../factories/controllers";
@@ -41,7 +40,7 @@ export const newsRouter = (): Router => {
   router.post(
     "/",
     authorization,
-    needNewsletterWritePermission,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletter())
   );
 
@@ -54,14 +53,14 @@ export const newsRouter = (): Router => {
   router.put(
     "/:id",
     authorization,
-    needNewsletterWritePermission,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeUpdateNewsletter())
   );
 
   router.delete(
     "/:id",
     authorization,
-    needNewsletterWritePermission,
+    newsletterPermissions.write,
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletter())
   );
 
@@ -82,7 +81,7 @@ export const newsRouter = (): Router => {
   router.get(
     "/",
     authorization,
-    needNewsletterReadPermission,
+    newsletterPermissions.read,
     adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
   );
 

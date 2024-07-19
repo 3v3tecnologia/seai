@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import { authorization } from "../http-middlewares";
+import { authorization, equipmentsPermissions } from "../http-middlewares";
 
 import {
   EquipmentsControllerFactory,
@@ -14,42 +14,23 @@ export const equipmentsRouter = (): Router => {
   const router = Router();
 
   router.post(
-    "/organ",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeCreateMeteorologicalOrgan())
-  );
-
-  router.delete(
-    "/organ/:id",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeDeleteMeteorologicalOrgan())
-  );
-
-  router.put(
-    "/organ/:id",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeUpdateMeteorologicalOrgan())
-  );
-  router.get(
-    "/organ",
-    authorization,
-    adaptRoute(EquipmentsControllerFactory.makeFetchMeteorologicalOrgan())
-  );
-  router.post(
     "/",
     authorization,
+    equipmentsPermissions.write,
     adaptRoute(EquipmentsControllerFactory.makeCreateEquipments())
   );
 
   router.delete(
     "/:id",
     authorization,
+    equipmentsPermissions.write,
     adaptRoute(EquipmentsControllerFactory.makeDeleteEquipment())
   );
 
   router.put(
     "/:id",
     authorization,
+    equipmentsPermissions.write,
     adaptRoute(EquipmentsControllerFactory.makeUpdateEquipment())
   );
 
@@ -70,6 +51,7 @@ export const equipmentsRouter = (): Router => {
   router.put(
     "/pluviometer/measurements/:id",
     authorization,
+    equipmentsPermissions.write,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeUpdatePluviometerMeasures()
     )
@@ -78,6 +60,7 @@ export const equipmentsRouter = (): Router => {
   router.put(
     "/station/measurements/:id",
     authorization,
+    equipmentsPermissions.write,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeUpdateStationMeasurements()
     )
@@ -91,6 +74,7 @@ export const equipmentsRouter = (): Router => {
   router.get(
     "/:id/measurements",
     authorization,
+    equipmentsPermissions.read,
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
     )
@@ -99,6 +83,7 @@ export const equipmentsRouter = (): Router => {
   router.get(
     "/logs/:id",
     authorization,
+    equipmentsPermissions.read,
     adaptRoute(SystemLogsControllersFactory.makeFetchEquipmentMeasuresLogs())
   );
 

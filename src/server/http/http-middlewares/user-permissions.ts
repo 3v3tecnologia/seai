@@ -1,86 +1,93 @@
 import { Modules } from "../../../domain/entities/user/user-modules-access";
 import { adaptMiddleware } from "../adapters/express-middleware-adapter";
-import { makeAdminMiddleware } from "../factories/middlewares/admin-middleware-factory";
+import { makeUserPermissionMiddleware } from "../factories/middlewares/admin-middleware-factory";
 
-export const needNewsletterReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.NEWSLETTER, {
+export const newsletterPermissions = {
+  read : adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.NEWSLETTER, {
     read: true,
-  })
-);
-
-export const needNewsletterWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.NEWSLETTER, {
+  })),
+  write: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.NEWSLETTER, {
     write: true,
   })
-);
+)
+}
 
-export const needUserReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.USER, {
+export const userPermissions = {
+  read:adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.USER, {
     read: true,
   })
-);
-
-export const needUserWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.USER, {
+),
+write:adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.USER, {
     write: true,
   })
-);
+)
+}
 
-export const needFAQReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.FAQ, {
+export const FAQPermissions = {
+  read:adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.FAQ, {
     read: true,
   })
-);
-
-export const needFAQWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.FAQ, {
+),
+write:adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.FAQ, {
     write: true,
   })
-);
-export const needEquipmentsReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.EQUIPMENTS, {
+)
+}
+
+export const equipmentsPermissions = {
+  read: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.EQUIPMENTS, {
     read: true,
   })
-);
-
-export const needEquipmentsWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.EQUIPMENTS, {
+),
+write:adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.EQUIPMENTS, {
     write: true,
   })
-);
+)
+}
 
-export const needCropReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.CROP, {
+export const cropPermissions = {
+  read: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.CROP, {
     read: true,
   })
-);
-
-export const needCropWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.CROP, {
+),
+write: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.CROP, {
     write: true,
   })
-);
+)
+}
 
-export const needWeightsReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.WEIGHTS, {
+export const weightsPermissions = {
+  read: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.WEIGHTS, {
     read: true,
   })
-);
-
-export const needWeightsWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.WEIGHTS, {
+),
+write: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.WEIGHTS, {
     write: true,
   })
-);
+)
+}
 
-export const needStudiesReadPermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.STUDIES, {
+export const studiesPermissions = {
+  read: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.STUDIES, {
     read: true,
   })
-);
-
-export const needStudiesWritePermission = adaptMiddleware(
-  makeAdminMiddleware(Modules.STUDIES, {
+),
+write: adaptMiddleware(
+  makeUserPermissionMiddleware(Modules.STUDIES, {
     write: true,
   })
-);
+)
+}

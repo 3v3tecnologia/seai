@@ -3,8 +3,7 @@ import { adaptRoute } from "../adapters/express-route.adapter";
 
 import {
   authorization,
-  needUserReadPermission,
-  needUserWritePermission,
+  userPermissions
 } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
 import { setupUserIrrigantAccountRoutes } from "../../../modules/irrigant/user/http/account";
@@ -35,35 +34,35 @@ export const userRouter = (): Router => {
   router.post(
     "/",
     authorization,
-    needUserWritePermission,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeCreateUser())
   );
 
   router.patch(
     "/:id",
     authorization,
-    needUserWritePermission,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeUpdateUser())
   );
 
   router.get(
     "/",
     authorization,
-    needUserReadPermission,
+    userPermissions.read,
     adaptRoute(UserControllersFactory.makeGetUsers())
   );
 
   router.get(
     "/:id",
     authorization,
-    needUserReadPermission,
+    userPermissions.read,
     adaptRoute(UserControllersFactory.makeFetchUserById())
   );
 
   router.delete(
     "/:id",
     authorization,
-    needUserWritePermission,
+    userPermissions.write,
     adaptRoute(UserControllersFactory.makeDeleteUser())
   );
 
