@@ -1,10 +1,7 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  authorization,
-  newsletterPermissions
-} from "../http-middlewares";
+import { authorization, newsletterPermissions } from "../http-middlewares";
 
 import { NewsletterControllersFactory } from "../factories/controllers";
 
@@ -21,6 +18,16 @@ export const newsRouter = (): Router => {
     "/unregister",
     authorization,
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletterSubscriber())
+  );
+
+  router.patch(
+    "subscribe/:code",
+    adaptRoute(NewsletterControllersFactory.makeConfirmSubscriberByCode())
+  );
+
+  router.delete(
+    "/unsubscribe/:code",
+    adaptRoute(NewsletterControllersFactory.makeConfirmUnsubscribeByCode())
   );
 
   router.get(

@@ -1,15 +1,24 @@
 import { NewsSubscriberMapper } from "../../../../domain/entities/newsletter/mapper/subscriber";
+import { Subscriber } from "../../../../domain/entities/newsletter/subscriber";
 import {
-  SubscriberRepositoryDTO,
   NewsletterSubscriberRepositoryProtocol,
+  SubscriberRepositoryDTO,
 } from "../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
-import { DATABASES } from "../../../../shared/db/tableNames";
 import { newsletterDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 export class DbNewsLetterSubscriberRepository
   implements NewsletterSubscriberRepositoryProtocol
 {
+  async confirmSubscriber(code: string): Promise<void> {
+    await newsletterDb("Subscriber")
+      .where({
+        Code: code,
+      })
+      .update({
+        Confirmation_Status: "confirmed",
+      });
+  }
   async create(
     request: SubscriberRepositoryDTO.Create.Request
   ): SubscriberRepositoryDTO.Create.Response {
@@ -17,9 +26,10 @@ export class DbNewsLetterSubscriberRepository
       .insert({
         Email: request.Email,
         Name: request.Name,
+        Code: request.Code,
       })
       .returning("Id")
-      .into(DATABASES.NEWSLETTER.SUBSCRIBER);
+      .into("Subscriber");
 
     const id = result.length && result[0].Id;
 
@@ -29,7 +39,7 @@ export class DbNewsLetterSubscriberRepository
   async update(
     request: SubscriberRepositoryDTO.Update.Request
   ): SubscriberRepositoryDTO.Update.Response {
-    await newsletterDb(DATABASES.NEWSLETTER.SUBSCRIBER)
+    await newsletterDb("Subscriber")
       .where({
         Id: request.Id,
       })
@@ -42,9 +52,17 @@ export class DbNewsLetterSubscriberRepository
   async delete(
     request: SubscriberRepositoryDTO.Delete.Request
   ): SubscriberRepositoryDTO.Delete.Response {
-    await newsletterDb(DATABASES.NEWSLETTER.SUBSCRIBER)
+    await newsletterDb("Subscriber")
       .where({
         Email: request.Email,
+      })
+      .delete();
+  }
+
+  async deleteByCode(code: string): Promise<void> {
+    await newsletterDb("Subscriber")
+      .where({
+        Code: code,
       })
       .delete();
   }
@@ -52,7 +70,7 @@ export class DbNewsLetterSubscriberRepository
   async getByEmail(
     request: SubscriberRepositoryDTO.GetByEmail.Request
   ): SubscriberRepositoryDTO.GetByEmail.Response {
-    const result = await newsletterDb(DATABASES.NEWSLETTER.SUBSCRIBER)
+    const result = await newsletterDb("Subscriber")
       .select("Id", "Name", "Email", "CreatedAt", "UpdatedAt")
       .where({
         Email: request.Email,
@@ -66,10 +84,39 @@ export class DbNewsLetterSubscriberRepository
     return NewsSubscriberMapper.toDomain(result);
   }
 
+  async getByCode(
+    code: string,
+    status: "confirmed" | "pending"
+  ): Promise<Required<Subscriber> | null> {
+    const result = await newsletterDb("Subscriber")
+      .select(
+        "Id",
+        "Name",
+        "Confirmation_Status",
+        "Email",
+        "CreatedAt",
+        "UpdatedAt"
+      )
+      .where({
+        Code: code,
+        Confirmation_Status: status,
+      })
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    return NewsSubscriberMapper.toDomain(result);
+  }
+
   async getReceiversEmails(): Promise<null | Array<string>> {
     const result = await newsletterDb
       .select("Email")
-      .from(DATABASES.NEWSLETTER.SUBSCRIBER);
+      .where({
+        Confirmation_Status: "confirmed",
+      })
+      .from("Subscriber");
 
     if (!result.length) {
       return null;
@@ -119,7 +166,7 @@ export class DbNewsLetterSubscriberRepository
       SELECT
         count(sub."Id")
       FROM
-          "${DATABASES.NEWSLETTER.SUBSCRIBER}" AS sub
+          "Subscriber" AS sub
       ${queries.join(" ")}
     `;
 
@@ -132,7 +179,7 @@ export class DbNewsLetterSubscriberRepository
 
     const sql = `
       SELECT "Id", "Name", "Email", "CreatedAt", "UpdatedAt"
-      FROM "${DATABASES.NEWSLETTER.SUBSCRIBER}" as sub
+      FROM "Subscriber" as sub
       ${queries.join(" ")}
     `;
 

@@ -1,3 +1,4 @@
+import { env } from "process";
 import {
   CreateNews,
   DeleteNews,
@@ -11,6 +12,10 @@ import {
   UpdateNews,
   UpdateSendAtNews,
 } from "../../../../domain/use-cases/newsletter";
+import { ConfirmSubscriberByCode } from "../../../../domain/use-cases/newsletter/confirm-subscriber-by-code";
+import { ConfirmUnsubscribeByCode } from "../../../../domain/use-cases/newsletter/confirm-unsubscribe-by-code";
+import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
+import { DbBackgroundJobsRepository } from "../../../../infra/database/postgres/repositories/background-jobs-repository";
 import { DbNewsLetterContentRepository } from "../../../../infra/database/postgres/repositories/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../../../infra/database/postgres/repositories/newsletter-subscriber-repository";
 import { JobsUseCasesFactory } from "./jobs.useCase.factory";
@@ -23,7 +28,10 @@ export class NewsletterUseCasesFactory {
   }
 
   static makeDeleteNewsletter(): DeleteNews {
-    return new DeleteNews(this.repository, JobsUseCasesFactory.makeDeleteJobByKey());
+    return new DeleteNews(
+      this.repository,
+      JobsUseCasesFactory.makeDeleteJobByKey()
+    );
   }
 
   static makeFetchAllNewsletter(): FetchAllNews {
@@ -38,8 +46,6 @@ export class NewsletterUseCasesFactory {
     return new FetchByIdNews(this.repository);
   }
 
-
-
   static makeUpdateNewsletter(): UpdateNews {
     return new UpdateNews(
       this.repository,
@@ -48,9 +54,7 @@ export class NewsletterUseCasesFactory {
     );
   }
   static makeUpdateSendAt(): UpdateSendAtNews {
-    return new UpdateSendAtNews(
-      this.repository,
-    );
+    return new UpdateSendAtNews(this.repository);
   }
 }
 
@@ -58,7 +62,19 @@ export class NewsletterSubscriberUseCasesFactory {
   private static repository = new DbNewsLetterSubscriberRepository();
 
   static makeSubscribeToNewsletter(): SubscribeToNews {
-    return new SubscribeToNews(this.repository);
+    return new SubscribeToNews(
+      this.repository,
+      JobsUseCasesFactory.makeCreateJob(),
+      new BcryptAdapter(env.hashSalt)
+    );
+  }
+
+  static makeConfirmUnsubscribeToNewsletter(): ConfirmUnsubscribeByCode {
+    return new ConfirmUnsubscribeByCode(this.repository);
+  }
+
+  static makeConfirmSubscribeToNewsletter(): ConfirmSubscriberByCode {
+    return new ConfirmSubscriberByCode(this.repository);
   }
 
   static makeDeleteNewsletterSubscriber(): DeleteNewsletterSubscriber {

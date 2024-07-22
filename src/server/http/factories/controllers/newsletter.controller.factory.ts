@@ -1,4 +1,6 @@
 import {
+  ConfirmSubscriberByCodeController,
+  ConfirmUnsubscribeByCodeController,
   CreateNewsController,
   DeleteNewsController,
   DeleteNewsletterSubscriberController,
@@ -19,12 +21,25 @@ import {
   SystemLogsUseCaseFactory,
 } from "../use-cases";
 
-
 export class NewsletterControllersFactory {
   static makeCreateNewsletterSubscriber(): SubscribeToNewsController {
     return new SubscribeToNewsController(
       NewsletterSubscriberUseCasesFactory.makeSubscribeToNewsletter(),
       SystemLogsUseCaseFactory.makeRegisterUserLogs(),
+      subscriberValidator.subscribe
+    );
+  }
+
+  static makeConfirmSubscriberByCode(): ConfirmSubscriberByCodeController {
+    return new ConfirmSubscriberByCodeController(
+      NewsletterSubscriberUseCasesFactory.makeConfirmSubscribeToNewsletter(),
+      subscriberValidator.subscribe
+    );
+  }
+
+  static makeConfirmUnsubscribeByCode(): ConfirmUnsubscribeByCodeController {
+    return new ConfirmUnsubscribeByCodeController(
+      NewsletterSubscriberUseCasesFactory.makeConfirmUnsubscribeToNewsletter(),
       subscriberValidator.subscribe
     );
   }

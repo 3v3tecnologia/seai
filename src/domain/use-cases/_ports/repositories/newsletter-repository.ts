@@ -109,6 +109,7 @@ export namespace SubscriberRepositoryDTO {
     export type Request = {
       Email: string;
       Name: string;
+      Code: string;
     };
     export type Response = Promise<number>;
   }
@@ -165,6 +166,7 @@ export interface NewsletterSubscriberRepositoryProtocol {
   delete(
     request: SubscriberRepositoryDTO.Delete.Request
   ): SubscriberRepositoryDTO.Delete.Response;
+  deleteByCode(code: string): Promise<void>;
   getByEmail(
     request: SubscriberRepositoryDTO.GetByEmail.Request
   ): SubscriberRepositoryDTO.GetByEmail.Response;
@@ -172,6 +174,11 @@ export interface NewsletterSubscriberRepositoryProtocol {
   getAll(
     request: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response;
+  getByCode(
+    code: string,
+    status: "confirmed" | "pending"
+  ): Promise<Required<Subscriber> | null>;
+  confirmSubscriber(code: string): Promise<void>;
 }
 
 export interface NewsRepositoryProtocol {
