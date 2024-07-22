@@ -74,27 +74,35 @@ export class SystemModules {
       return left(concatenateMessages(isNullOrUndefinedArgs.value));
     }
 
-    /*if (permission_type === "admin") {
+    // Avoid module with true write permission  but false read permission
+    for (const [moduleName, permissions] of Object.entries(modules)) {
+      if (SystemModules.hasOnlyWritePermission(permissions)) {
+        return left(
+          `O módulo "${moduleName}" tem a propriedade "write" verdadeira, mas a propriedade "read" não é verdadeira.`
+        );
+      }
+    }
+
+    if (permission_type === "admin") {
       const hasAdminPermissions = [
-        SystemModules.hasAdminPermission(modules[Modules.NEWS]),
-        SystemModules.hasAdminPermission(modules[Modules.REGISTER]),
-        SystemModules.hasAdminPermission(modules[Modules.USER]),
+        SystemModules.hasFullPermissions(modules[Modules.CROP]),
+        SystemModules.hasFullPermissions(modules[Modules.EQUIPMENTS]),
+        SystemModules.hasFullPermissions(modules[Modules.STUDIES]),
+        SystemModules.hasFullPermissions(modules[Modules.WEIGHTS]),
+        SystemModules.hasFullPermissions(modules[Modules.FAQ]),
+        SystemModules.hasFullPermissions(modules[Modules.USER]),
+        SystemModules.hasFullPermissions(modules[Modules.NEWSLETTER]),
       ].every((permission) => permission === true);
 
       if (hasAdminPermissions === false) {
         return left(
-          "Para usuário administrador, é necessário definir todas as permissões."
+          "Para usuário administrador, é necessário ativar todas as permissões."
         );
       }
-    }*/
+    }
 
     if (permission_type === "standard") {
-      const hasUserManageAccess = [
-        modules[Modules.USER].read,
-        modules[Modules.USER].write,
-      ].some((permission) => permission === true);
-
-      if (hasUserManageAccess) {
+      if (SystemModules.hasSomePermission(modules[Modules.USER])) {
         return left(
           "Para usuário básico, não deve haver permissão para gerenciar usuários."
         );
@@ -138,6 +146,20 @@ export class SystemModules {
     }
 
     return right(true);
+  }
+
+  private static hasFullPermissions(module: SystemModulesPermissions) {
+    return module.read === true && module.write === true;
+  }
+
+  private static hasSomePermission(module: SystemModulesPermissions) {
+    return [module.read, module.write].some(
+      (permission) => permission === true
+    );
+  }
+
+  private static hasOnlyWritePermission(module: SystemModulesPermissions) {
+    return module.read === false && module.write === true;
   }
 
   static create(
