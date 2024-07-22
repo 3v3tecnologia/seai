@@ -214,34 +214,6 @@ export const USER = {
                 modules: {
                   type: "object",
                   properties: {
-                    news: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    register: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
                     user: {
                       type: "object",
                       properties: {
@@ -256,7 +228,77 @@ export const USER = {
                         },
                       },
                     },
-                    jobs: {
+                    weights: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    faq: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    crop: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    equipments: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    studies: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    newsletter: {
                       type: "object",
                       properties: {
                         id: {
@@ -277,23 +319,38 @@ export const USER = {
                 email: "test@gmail.com",
                 type: "standard",
                 modules: {
-                  news: {
-                    id: 1,
-                    read: true,
-                    write: true,
-                  },
                   user: {
-                    id: 2,
+                    id: 1,
                     read: false,
                     write: false,
                   },
-                  register: {
+                  weights: {
+                    id: 2,
+                    read: true,
+                    write: true,
+                  },
+                  faq: {
                     id: 3,
                     read: true,
                     write: true,
                   },
-                  jobs: {
+                  crop: {
                     id: 4,
+                    read: true,
+                    write: true,
+                  },
+                  equipments: {
+                    id: 5,
+                    read: true,
+                    write: true,
+                  },
+                  studies: {
+                    id: 6,
+                    read: true,
+                    write: true,
+                  },
+                  newsletter: {
+                    id: 7,
                     read: true,
                     write: true,
                   },
@@ -397,35 +454,91 @@ export const USER = {
                 modules: {
                   type: "object",
                   properties: {
-                    news: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
-                    register: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
                     user: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    weights: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    faq: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    crop: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    equipments: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    studies: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
+                    newsletter: {
                       type: "object",
                       properties: {
                         id: {
@@ -453,23 +566,38 @@ export const USER = {
                 email: "teste@gmail.com",
                 name: "test",
                 modules: {
-                  news: {
-                    id: 1,
-                    read: true,
-                    write: true,
-                  },
-                  register: {
-                    id: 3,
-                    read: true,
-                    write: true,
-                  },
                   user: {
+                    id: 1,
+                    read: false,
+                    write: false,
+                  },
+                  weights: {
                     id: 2,
                     read: true,
                     write: true,
                   },
-                  jobs: {
+                  faq: {
+                    id: 3,
+                    read: true,
+                    write: true,
+                  },
+                  crop: {
                     id: 4,
+                    read: true,
+                    write: true,
+                  },
+                  equipments: {
+                    id: 5,
+                    read: true,
+                    write: true,
+                  },
+                  studies: {
+                    id: 6,
+                    read: true,
+                    write: true,
+                  },
+                  newsletter: {
+                    id: 7,
                     read: true,
                     write: true,
                   },
@@ -598,24 +726,39 @@ export const USER = {
                           type: "string",
                         },
                         modules: {
-                          news: {
-                            id: 1,
-                            read: true,
-                            write: true,
-                          },
                           user: {
-                            id: 2,
+                            id: 1,
                             read: false,
                             write: false,
                           },
-                          register: {
+                          weights: {
+                            id: 2,
+                            read: true,
+                            write: true,
+                          },
+                          faq: {
                             id: 3,
                             read: true,
                             write: true,
                           },
-                          jobs: {
+                          crop: {
                             id: 4,
                             read: true,
+                            write: true,
+                          },
+                          equipments: {
+                            id: 5,
+                            read: true,
+                            write: true,
+                          },
+                          studies: {
+                            id: 6,
+                            read: true,
+                            write: true,
+                          },
+                          newsletter: {
+                            id: 7,
+                            read: false,
                             write: true,
                           },
                         },
@@ -634,25 +777,40 @@ export const USER = {
                     type: "admin",
                     createdAt: "2023-06-28T11:23:10.437Z",
                     updatedAt: "2024-05-17T17:52:58.699Z",
-                    module: {
-                      news: {
-                        id: 1,
-                        read: true,
-                        write: true,
-                      },
+                    modules: {
                       user: {
+                        id: 1,
+                        read: false,
+                        write: false,
+                      },
+                      weights: {
                         id: 2,
                         read: true,
                         write: true,
                       },
-                      register: {
+                      faq: {
                         id: 3,
                         read: true,
                         write: true,
                       },
-                      jobs: {
+                      crop: {
                         id: 4,
                         read: true,
+                        write: true,
+                      },
+                      equipments: {
+                        id: 5,
+                        read: true,
+                        write: true,
+                      },
+                      studies: {
+                        id: 6,
+                        read: true,
+                        write: true,
+                      },
+                      newsletter: {
+                        id: 7,
+                        read: false,
                         write: true,
                       },
                     },
@@ -1013,24 +1171,39 @@ export const USER = {
                           type: "string",
                         },
                         modules: {
-                          news: {
-                            id: 1,
-                            read: true,
-                            write: true,
-                          },
                           user: {
-                            id: 2,
+                            id: 1,
                             read: false,
                             write: false,
                           },
-                          register: {
+                          weights: {
+                            id: 2,
+                            read: true,
+                            write: true,
+                          },
+                          faq: {
                             id: 3,
                             read: true,
                             write: true,
                           },
-                          jobs: {
+                          crop: {
                             id: 4,
                             read: true,
+                            write: true,
+                          },
+                          equipments: {
+                            id: 5,
+                            read: true,
+                            write: true,
+                          },
+                          studies: {
+                            id: 6,
+                            read: true,
+                            write: true,
+                          },
+                          newsletter: {
+                            id: 7,
+                            read: false,
                             write: true,
                           },
                         },
@@ -1050,24 +1223,39 @@ export const USER = {
                     createdAt: "2023-06-28T11:23:10.437Z",
                     updatedAt: "2024-05-17T17:52:58.699Z",
                     module: {
-                      news: {
-                        id: 1,
-                        read: true,
-                        write: true,
-                      },
                       user: {
+                        id: 1,
+                        read: false,
+                        write: false,
+                      },
+                      weights: {
                         id: 2,
                         read: true,
                         write: true,
                       },
-                      register: {
+                      faq: {
                         id: 3,
                         read: true,
                         write: true,
                       },
-                      jobs: {
+                      crop: {
                         id: 4,
                         read: true,
+                        write: true,
+                      },
+                      equipments: {
+                        id: 5,
+                        read: true,
+                        write: true,
+                      },
+                      studies: {
+                        id: 6,
+                        read: true,
+                        write: true,
+                      },
+                      newsletter: {
+                        id: 7,
+                        read: false,
                         write: true,
                       },
                     },
