@@ -54,10 +54,13 @@ export namespace CreateUserController {
     type: UserType;
     code: string;
     modules: {
-      [Modules.NEWS]: Required<SystemModulesPermissions>;
-      [Modules.REGISTER]: Required<SystemModulesPermissions>;
       [Modules.USER]: Required<SystemModulesPermissions>;
-      [Modules.JOBS]: Required<SystemModulesPermissions>;
+      [Modules.EQUIPMENTS]: Required<SystemModulesPermissions>;
+      [Modules.CROP]: Required<SystemModulesPermissions>;
+      [Modules.FAQ]: Required<SystemModulesPermissions>;
+      [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
+      [Modules.STUDIES]: Required<SystemModulesPermissions>;
+      [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
     };
   };
 }
