@@ -1,10 +1,7 @@
 import { Router } from "express";
 import { adaptRoute } from "../adapters/express-route.adapter";
 
-import {
-  authorization,
-  userPermissions
-} from "../http-middlewares";
+import { authorization, userPermissions } from "../http-middlewares";
 import { UserControllersFactory } from "../factories/controllers";
 import { setupUserIrrigantAccountRoutes } from "../../../modules/irrigant/user/http/account";
 
@@ -12,6 +9,13 @@ export const userRouter = (): Router => {
   const router = Router();
 
   setupUserIrrigantAccountRoutes(router);
+
+  router.get(
+    "/system/modules",
+    authorization,
+    userPermissions.read,
+    adaptRoute(UserControllersFactory.makeFetchSystemModules())
+  );
 
   router.get(
     "/profile",

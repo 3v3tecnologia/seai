@@ -12,6 +12,77 @@ export const USER = {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Get all users",
+      description: "Get all system modules names",
+      responses: {
+        200: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "number",
+                          },
+                          name: {
+                            type: "string",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  data: [
+                    {
+                      id: 1,
+                      name: "user",
+                    },
+                    {
+                      id: 2,
+                      name: "weights",
+                    },
+                    {
+                      id: 3,
+                      name: "faq",
+                    },
+                    {
+                      id: 4,
+                      name: "crop",
+                    },
+                    {
+                      id: 5,
+                      name: "equipments",
+                    },
+                    {
+                      id: 6,
+                      name: "studies",
+                    },
+                    {
+                      id: 7,
+                      name: "newsletter",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      summary: "Get all users",
       description:
         "Get all users when the user authenticated has authorization",
       parameters: [
