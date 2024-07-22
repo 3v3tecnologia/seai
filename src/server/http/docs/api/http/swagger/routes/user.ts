@@ -564,12 +564,13 @@ export const USER = {
               example: {
                 type: "admin",
                 email: "teste@gmail.com",
-                name: "test",
+                login: "tester",
+                name: "tester",
                 modules: {
                   user: {
                     id: 1,
-                    read: false,
-                    write: false,
+                    read: true,
+                    write: true,
                   },
                   weights: {
                     id: 2,
