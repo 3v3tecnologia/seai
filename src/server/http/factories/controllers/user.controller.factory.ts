@@ -1,3 +1,4 @@
+import { DbAccountRepository } from "../../../../infra/database/postgres/repositories/users-repository";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 
 import {
@@ -5,6 +6,7 @@ import {
   CreateUserController,
   DeleteUserController,
   FetchAllUsersController,
+  FetchSystemModulesController,
   FetchUserByIdController,
   ForgotPasswordController,
   ResetPasswordController,
@@ -17,6 +19,9 @@ import { makeLogControllerDecorator } from "../decorators";
 import { SystemLogsUseCaseFactory, UserUseCasesFactory } from "../use-cases";
 
 export class UserControllersFactory {
+  static makeFetchSystemModules(): Controller {
+    return new FetchSystemModulesController(new DbAccountRepository());
+  }
   static makeCreateUser(): Controller {
     return makeLogControllerDecorator(
       new CreateUserController(

@@ -84,7 +84,7 @@ export class UserUseCasesFactory {
     return new UpdateUser(this.repository, this.encoder);
   }
   static makeUpdateUserProfile(): UpdateUserProfile {
-    return new UpdateUserProfile(this.repository);
+    return new UpdateUserProfile(this.repository, this.encoder);
   }
   static makeCompleteUserRegister(): CompleteUserRegister {
     return new CompleteUserRegister(this.repository, this.encoder);
