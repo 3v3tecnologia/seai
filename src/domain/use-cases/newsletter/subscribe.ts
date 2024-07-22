@@ -1,5 +1,4 @@
 import { Either, left, right } from "../../../shared/Either";
-import { DATABASES } from "../../../shared/db/tableNames";
 import { Command } from "../_ports/core/command";
 import { NewsletterSubscriberRepositoryProtocol } from "../_ports/repositories/newsletter-repository";
 
@@ -30,12 +29,6 @@ export class SubscribeToNews
     });
 
     let msg = `Usuário inscrito com sucesso na lista de emails`;
-
-    this.addLog({
-      action: "create",
-      table: DATABASES.NEWSLETTER.SUBSCRIBER,
-      description: msg,
-    });
 
     return right(msg);
   }
