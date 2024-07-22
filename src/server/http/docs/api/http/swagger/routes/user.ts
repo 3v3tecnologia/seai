@@ -7,11 +7,11 @@ const TAGS = ["User"];
 const URL = `${BASE_URL.V1}/user`;
 
 export const USER = {
-  [`${URL}/`]: {
+  [`${URL}/system/modules`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Get all users",
+      summary: "Get system modules",
       description: "Get all system modules names",
       responses: {
         200: {
