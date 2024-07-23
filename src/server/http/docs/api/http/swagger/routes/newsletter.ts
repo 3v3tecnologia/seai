@@ -549,6 +549,50 @@ export const NEWSLETTER = {
       },
     },
   },
+  [`${URL}/unsubscribe/{code}`]: {
+    delete: {
+      tags: TAGS,
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User Code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      security: [BEARER_AUTH],
+      summary: "Cancel subscription",
+      responses: {
+        204: {},
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/confirm-subscription/{code}`]: {
+    patch: {
+      tags: TAGS,
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User Code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      security: [BEARER_AUTH],
+      summary: "Subscribe to newsletter",
+      responses: {
+        204: {},
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${URL}/unregister`]: {
     delete: {
       tags: TAGS,
