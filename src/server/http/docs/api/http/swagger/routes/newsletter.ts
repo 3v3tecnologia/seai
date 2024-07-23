@@ -508,7 +508,7 @@ export const NEWSLETTER = {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
-      summary: "Create news",
+      summary: "Subscribe to newsletter",
       requestBody: {
         content: {
           "application/json": {
@@ -586,7 +586,7 @@ export const NEWSLETTER = {
         },
       ],
       security: [BEARER_AUTH],
-      summary: "Subscribe to newsletter",
+      summary: "Confirm newsletter subscription",
       responses: {
         204: {},
         ...DEFAULT_RESPONSES,
