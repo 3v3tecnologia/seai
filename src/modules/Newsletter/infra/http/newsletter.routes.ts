@@ -11,19 +11,17 @@ export const newsRouter = (): Router => {
   const router = Router();
 
   router.post(
-    "/enroll",
-    authorization,
+    "/subscribe",
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletterSubscriber())
   );
 
   router.delete(
     "/unregister",
-    authorization,
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletterSubscriber())
   );
 
   router.patch(
-    "subscribe/:code",
+    "/confirm-subscription/:code",
     adaptRoute(NewsletterControllersFactory.makeConfirmSubscriberByCode())
   );
 

@@ -5,7 +5,6 @@ export class NewsSubscriberMapper {
     return {
       Id: row.Id,
       Email: row.Email,
-      Name: row.Name,
       CreatedAt: row.CreatedAt,
       UpdatedAt: row.UpdatedAt,
     };

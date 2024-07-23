@@ -39,7 +39,6 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
 
     const subscriberId = await this.repository.create({
       Email: request.Email,
-      Name: request.Name,
       Code: userCode as string,
     });
 
@@ -50,7 +49,6 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
         retryDelay: 180,
         retryLimit: 3,
         data: {
-          action: "subscribe",
           email: request.Email,
           link: `${PUBLIC_ASSETS_BASE_URL}/newsletter/subscriber/${userCode}/confirmation`,
         },
@@ -70,7 +68,6 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
 export namespace SubscribeToNewsUseCaseProtocol {
   export type Request = {
     Email: string;
-    Name: string;
   };
 
   export type Response = Promise<Either<Error, string>>;

@@ -486,7 +486,6 @@ export const NEWSLETTER = {
                       {
                         Id: 1,
                         Email: "tester@gmail.com",
-                        Name: "Tester",
                         CreatedAt: "2024-04-30T16:11:16.522Z",
                         UpdatedAt: "2024-04-30T16:11:16.522Z",
                       },
@@ -505,12 +504,11 @@ export const NEWSLETTER = {
       },
     },
   },
-  [`${URL}/enroll`]: {
+  [`${URL}/subscribe`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Create news",
-      description: "SendDate is Unix Timestamp",
       requestBody: {
         content: {
           "application/json": {
@@ -518,11 +516,9 @@ export const NEWSLETTER = {
               type: "object",
               properties: {
                 Email: "string",
-                Name: "string",
               },
               example: {
                 Email: "tester2@gmail.com",
-                Name: "Tester",
               },
             },
           },
@@ -543,12 +539,56 @@ export const NEWSLETTER = {
                   },
                 },
                 example: {
-                  data: "Usuário inscrito com sucesso na lista de emails",
+                  data: "Aguardando o envio do email de confirmação de cadastro nas notícias.",
                 },
               },
             },
           },
         },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/unsubscribe/{code}`]: {
+    delete: {
+      tags: TAGS,
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User Code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      security: [BEARER_AUTH],
+      summary: "Cancel subscription",
+      responses: {
+        204: {},
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
+  [`${URL}/confirm-subscription/{code}`]: {
+    patch: {
+      tags: TAGS,
+      parameters: [
+        {
+          name: "code",
+          in: "path",
+          description: "User Code",
+          required: true,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
+      security: [BEARER_AUTH],
+      summary: "Subscribe to newsletter",
+      responses: {
+        204: {},
         ...DEFAULT_RESPONSES,
       },
     },

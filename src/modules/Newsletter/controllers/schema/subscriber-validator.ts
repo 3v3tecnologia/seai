@@ -5,7 +5,6 @@ import { paginationSchema } from "../../../../presentation/utils/schemas";
 const subscribe = new SchemaValidator(
   Joi.object({
     Email: Joi.string().required(),
-    Name: Joi.string().required(),
   })
 );
 
@@ -18,7 +17,6 @@ const unsubscribe = new SchemaValidator(
 const fetchNews = new SchemaValidator(
   Joi.object({
     email: Joi.string().optional(),
-    name: Joi.string().optional(),
     ...paginationSchema,
   })
 );

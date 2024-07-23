@@ -99,14 +99,13 @@ export namespace ContentRepositoryDTO {
 
 export namespace SubscriberRepositoryDTO {
   export namespace GetAll {
-    export type Request = { name?: string; email?: string } & IPaginationInput;
+    export type Request = { email?: string } & IPaginationInput;
     export type Response = Promise<IOutputWithPagination<Subscriber>>;
   }
 
   export namespace Create {
     export type Request = {
       Email: string;
-      Name: string;
       Code: string;
     };
     export type Response = Promise<number>;
@@ -123,7 +122,6 @@ export namespace SubscriberRepositoryDTO {
     export type Request = {
       Id: number;
       Email: string;
-      Name: string;
     };
     export type Response = Promise<void>;
   }
