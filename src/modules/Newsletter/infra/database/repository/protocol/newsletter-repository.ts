@@ -1,10 +1,10 @@
-import { Content } from "../../../entities/newsletter/news";
-import { Sender } from "../../../entities/newsletter/sender";
-import { Subscriber } from "../../../entities/newsletter/subscriber";
 import {
-  IPaginationInput,
   IOutputWithPagination,
-} from "./../../helpers/pagination";
+  IPaginationInput,
+} from "../../../../../../domain/use-cases/helpers/pagination";
+import { Content } from "../../../../model/content";
+import { Sender } from "../../../../model/sender";
+import { Subscriber } from "../../../../model/subscriber";
 
 export namespace NewsletterSenderRepositoryDTO {
   export namespace Create {

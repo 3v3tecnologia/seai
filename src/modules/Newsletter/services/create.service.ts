@@ -1,7 +1,7 @@
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { CreateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/logger/logger";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;

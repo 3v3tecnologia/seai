@@ -1,9 +1,9 @@
 import { Encoder } from "../../../domain/use-cases/_ports/cryptography/encoder";
-import { NewsletterSubscriberRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { CreateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../server/http/config/url";
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/logger/logger";
+import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
   private repository: NewsletterSubscriberRepositoryProtocol;

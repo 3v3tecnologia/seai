@@ -1,5 +1,5 @@
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { Either, right } from "../../../shared/Either";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { Content } from "../model/content";
 
 export class FetchByIdNews implements FetchNewsByIdUseCaseProtocol.UseCase {

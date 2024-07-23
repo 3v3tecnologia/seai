@@ -1,12 +1,12 @@
-import {
-  ContentRepositoryDTO,
-  NewsRepositoryProtocol,
-} from "../../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { toPaginatedOutput } from "../../../../../domain/use-cases/helpers/pagination";
 import { newsletterDb } from "../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../infra/database/postgres/repositories/utils/paginate";
 import { Content } from "../../../model/content";
 import { NewsMapper } from "../../../model/mapper/newsletter";
+import {
+  ContentRepositoryDTO,
+  NewsRepositoryProtocol,
+} from "./protocol/newsletter-repository";
 
 export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(

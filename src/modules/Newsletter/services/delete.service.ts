@@ -1,6 +1,6 @@
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { DeleteJobByKeyUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { Either, right } from "../../../shared/Either";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;

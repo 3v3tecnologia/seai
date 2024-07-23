@@ -1,12 +1,12 @@
-import {
-  NewsletterSubscriberRepositoryProtocol,
-  SubscriberRepositoryDTO,
-} from "../../../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { toPaginatedOutput } from "../../../../../domain/use-cases/helpers/pagination";
 import { newsletterDb } from "../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../infra/database/postgres/repositories/utils/paginate";
 import { NewsSubscriberMapper } from "../../../model/mapper/subscriber";
 import { Subscriber } from "../../../model/subscriber";
+import {
+  NewsletterSubscriberRepositoryProtocol,
+  SubscriberRepositoryDTO,
+} from "./protocol/newsletter-repository";
 
 export class DbNewsLetterSubscriberRepository
   implements NewsletterSubscriberRepositoryProtocol

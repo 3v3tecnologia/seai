@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
-import { NewsletterSubscriberRepositoryProtocol } from "./../../../domain/use-cases/_ports/repositories/newsletter-repository";
+import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class ConfirmUnsubscribeByCode
   implements ConfirmUnsubscribeByCodeUseCaseProtocol.UseCase

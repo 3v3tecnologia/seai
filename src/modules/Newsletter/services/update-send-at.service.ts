@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class UpdateSendAtNews
   implements UpdateNewsletterSendAtUseCaseProtocol.UseCase

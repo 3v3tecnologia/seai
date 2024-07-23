@@ -1,5 +1,5 @@
-import { NewsletterSubscriberRepositoryProtocol } from "./../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import { Either, left, right } from "../../../shared/Either";
+import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class ConfirmSubscriberByCode
   implements ConfirmSubscriberByCodeUseCaseProtocol.UseCase

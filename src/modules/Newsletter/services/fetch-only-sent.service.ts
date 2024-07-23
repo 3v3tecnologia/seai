@@ -1,10 +1,10 @@
 import { Either, right } from "../../../shared/Either";
 import { Content } from "../model/content";
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../domain/use-cases/helpers/pagination";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class FetchOnlySentNews implements FetchOnlySentNews.UseCase {
   private repository: NewsRepositoryProtocol;

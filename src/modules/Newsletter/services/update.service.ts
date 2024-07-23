@@ -1,10 +1,9 @@
-import { Either, left, right } from "../../../shared/Either";
-import { DATABASES } from "../../../shared/db/tableNames";
-import { NewsRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/newsletter-repository";
 import {
   CreateJobUseCaseProtocol,
   DeleteJobByKeyUseCaseProtocol,
 } from "../../../domain/use-cases/jobs";
+import { Either, left, right } from "../../../shared/Either";
+import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
