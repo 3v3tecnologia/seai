@@ -1,6 +1,7 @@
 import express from "express";
-import { equipmentsRouter, faqRouter, userRouter } from "../http-routes";
+import { equipmentsRouter, faqRouter } from "../http-routes";
 import { newsRouter } from "../../../modules/Newsletter/infra/http/newsletter.routes";
+import { userRouter } from "../../../modules/User/Government/infra/http/user.routes";
 
 const v1Router = express.Router();
 

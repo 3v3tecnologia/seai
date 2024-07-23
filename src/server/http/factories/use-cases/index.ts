@@ -4,4 +4,3 @@ export * from "./faq.useCase.factory";
 export * from "./jobs.useCase.factory";
 export * from "../../../../modules/Newsletter/services/factory/newsletter.useCase.factory";
 export * from "./system-logs.useCase.factory";
-export * from "./user.useCase.factory";

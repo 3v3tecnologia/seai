@@ -1,8 +1,7 @@
-import { HttpResponse } from "../ports";
-import { Controller } from "../ports/controllers";
-
-import { AccountRepositoryProtocol } from "../../../modules/User/Government/infra/database/repository/protocol/user-repository";
-import { ok, serverError } from "../helpers";
+import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
+import { ok, serverError } from "../../../../presentation/controllers/helpers";
+import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { Controller } from "../../../../presentation/controllers/ports/controllers";
 
 export class FetchSystemModulesController
   implements Controller<void, HttpResponse>
