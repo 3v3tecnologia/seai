@@ -1,10 +1,6 @@
 import express from "express";
-import {
-  equipmentsRouter,
-  faqRouter,
-  newsRouter,
-  userRouter,
-} from "../http-routes";
+import { equipmentsRouter, faqRouter, userRouter } from "../http-routes";
+import { newsRouter } from "../../../modules/Newsletter/infra/http/newsletter.routes";
 
 const v1Router = express.Router();
 
