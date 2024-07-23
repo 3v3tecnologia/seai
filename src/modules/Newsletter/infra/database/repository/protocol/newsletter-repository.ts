@@ -107,6 +107,7 @@ export namespace SubscriberRepositoryDTO {
     export type Request = {
       Email: string;
       Code: string;
+      Status?: "pending" | "confirmed";
     };
     export type Response = Promise<number>;
   }

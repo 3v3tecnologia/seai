@@ -37,10 +37,18 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
       "sha512"
     );
 
-    const subscriberId = await this.repository.create({
+    const data = {
       Email: request.Email,
       Code: userCode as string,
-    });
+    };
+
+    if (request.Status) {
+      Object.assign(data, {
+        Status: request.Status,
+      });
+    }
+
+    const subscriberId = await this.repository.create(data);
 
     if (subscriberId) {
       const scheduledOrError = await this.queueService.execute({
@@ -68,6 +76,7 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
 export namespace SubscribeToNewsUseCaseProtocol {
   export type Request = {
     Email: string;
+    Status?: "pending" | "confirmed";
   };
 
   export type Response = Promise<Either<Error, string>>;

@@ -104,6 +104,7 @@ export class UserSettingsServices implements IUserPreferencesServices {
         // subscribe user email to newsletter
         const successOrError = await this.subscribeToNewsletter.execute({
           Email: userAccount!.email,
+          Status: "confirmed",
         });
 
         if (successOrError.isLeft()) return left(successOrError.value);

@@ -23,11 +23,19 @@ export class DbNewsLetterSubscriberRepository
   async create(
     request: SubscriberRepositoryDTO.Create.Request
   ): SubscriberRepositoryDTO.Create.Response {
+    const data = {
+      Email: request.Email,
+      Code: request.Code,
+    };
+
+    if (request.Status) {
+      Object.assign(data, {
+        Confirmation_Status: request.Status,
+      });
+    }
+
     const result = await newsletterDb
-      .insert({
-        Email: request.Email,
-        Code: request.Code,
-      })
+      .insert(data)
       .returning("Id")
       .into("Subscriber");
 
