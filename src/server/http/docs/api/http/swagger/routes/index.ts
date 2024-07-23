@@ -6,8 +6,6 @@ export * from "./meteorologicalOrgan";
 export * from "./user";
 export * from "./system-logs";
 export * from "./newsletter";
-// export * from "./background-jobs";
-// export * from "./api-key";
 export * from "./management";
 export * from "./irrigant";
 export * from "./user-irrigant";

@@ -1,7 +1,7 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { AccountRepositoryProtocol } from "../../../domain/use-cases/_ports/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../../modules/User/Government/infra/database/repository/protocol/user-repository";
 import { ok, serverError } from "../helpers";
 
 export class FetchSystemModulesController

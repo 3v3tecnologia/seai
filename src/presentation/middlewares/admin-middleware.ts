@@ -1,7 +1,7 @@
 import { HttpResponse } from "../controllers/ports";
 import { Middleware } from "./ports/middleware";
 
-import { AccountRepositoryProtocol } from "../../domain/use-cases/_ports/repositories/account-repository";
+import { AccountRepositoryProtocol } from "../../modules/User/Government/infra/database/repository/protocol/user-repository";
 import {
   forbidden,
   ok,
@@ -67,7 +67,6 @@ export class AdminMiddleware implements Middleware {
 
       return unauthorized();
     } catch (error) {
-
       return serverError(new Error("Error ao verificar autorização."));
     }
   }
