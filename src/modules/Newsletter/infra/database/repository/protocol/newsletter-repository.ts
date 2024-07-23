@@ -58,7 +58,6 @@ export namespace ContentRepositoryDTO {
 
   export namespace Create {
     export type Request = {
-      FK_Author: number;
       Title: string;
       Description: string | null;
       Data: any;
@@ -80,7 +79,6 @@ export namespace ContentRepositoryDTO {
     export type Request = {
       Id: number;
       Title: string;
-      FK_Author: string;
       Description: string | null;
       Data: any;
       LocationName?: string;
@@ -197,20 +195,14 @@ export interface NewsRepositoryProtocol {
   getAll(
     request: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response;
-  deleteJobFromNews(id_news: number): Promise<void>;
-  getIdJobFromNews(id_news: number): Promise<string | null>;
   getNewsById(id: number): Promise<{
-    Id: any;
-    Author: {
-      Id: any;
-      Email: any;
-      Organ: any;
-    };
-    Title: any;
-    Description: any;
-    Data: any;
-    CreatedAt: any;
-    UpdatedAt: any;
+    Id: number;
+    Title: string;
+    Description: string;
+    Data: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    SendDate: string;
   } | null>;
   updateSendAt(id: number): Promise<void>;
 }

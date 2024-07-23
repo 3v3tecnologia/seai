@@ -14,7 +14,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   ): ContentRepositoryDTO.Create.Response {
     const result = await newsletterDb
       .insert({
-        Fk_Sender: request.FK_Author,
         Title: request.Title,
         Description: request.Description,
         SendDate: request.SendDate,
@@ -28,24 +27,27 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
     return id;
   }
 
-  async getNewsById(id: number) {
+  async getNewsById(id: number): Promise<{
+    Id: number;
+    Title: string;
+    Description: string;
+    Data: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    SendDate: string;
+  } | null> {
     const result = await newsletterDb.raw(
       `
       SELECT
           n."Id" ,
-          n."Fk_Sender" ,
           n."Title" ,
           n."Description" ,
           n."Content" ,
           n."CreatedAt" ,
           n."UpdatedAt",
-          s."Email" ,
-          s."Organ" ,
-          s."SendAt",
-          n."SendDate",
+          n."SendAt",
+          n."SendDate"
       FROM "News" n
-      INNER JOIN "Sender" s
-      ON s."Id" = n."Fk_Sender"
       WHERE n."Id" = ?
     `,
       [id]
@@ -59,11 +61,11 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     return {
       Id: newsRow.Id,
-      Author: {
-        Id: newsRow.Fk_Sender,
-        Email: newsRow.Email,
-        Organ: newsRow.Organ,
-      },
+      // Author: {
+      //   Id: newsRow.Fk_Sender,
+      //   Email: newsRow.Email,
+      //   Organ: newsRow.Organ,
+      // },
       Title: newsRow.Title,
       Description: newsRow.Description,
       Data: newsRow.Content,
@@ -82,28 +84,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         SentAt: newsletterDb.fn.now(),
       });
   }
-  async deleteJobFromNews(id_news: number): Promise<void> {
-    // await newsletterDb("NewsJob")
-    //   .where({
-    //     Fk_News: id_news,
-    //   })
-    //   .delete();
-  }
-
-  async getIdJobFromNews(id_news: number): Promise<string | null> {
-    // const result = await newsletterDb(DATABASES.NEWSLETTER.NEWS_JOBS)
-    //   .select("*")
-    //   .where({
-    //     Fk_News: id_news,
-    //   })
-    //   .first();
-
-    // if (!result) {
-    //   return null;
-    // }
-
-    return null;
-  }
 
   async update(
     request: ContentRepositoryDTO.Update.Request
@@ -113,7 +93,6 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
         Id: request.Id,
       })
       .update({
-        Fk_Sender: request.FK_Author,
         Title: request.Title,
         Description: request.Description,
         SendDate: request.SendDate,
@@ -134,19 +113,14 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       `
       SELECT
           n."Id" ,
-          n."Fk_Sender" ,
           n."Title" ,
           n."Description" ,
           n."Content" ,
           n."CreatedAt" ,
           n."UpdatedAt",
-          s."Email" ,
-          s."Organ",
           n."SentAt",
           n."SendDate"
       FROM "News" n
-      INNER JOIN "Sender" s
-      ON s."Id" = n."Fk_Sender"
       WHERE n."Id" = ?
     `,
       [request.Id]
@@ -194,18 +168,13 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       `
       SELECT
           news."Id" ,
-          news."Fk_Sender" ,
           news."Title" ,
           news."Description" ,
           news."CreatedAt" ,
           news."UpdatedAt",
           news."SentAt",
-          news."SendDate",
-          sender."Email" ,
-          sender."Organ"
+          news."SendDate"
       FROM "News" as news
-      INNER JOIN "Sender" as sender
-      ON sender."Id" = news."Fk_Sender"
       ${queries.join(" ")}
     `,
       binding

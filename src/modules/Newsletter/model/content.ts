@@ -1,11 +1,11 @@
 export type Content = {
   Id?: number;
   Title: string;
-  Author: {
-    Id: number;
-    Email: string;
-    Organ: string;
-  };
+  // Author: {
+  //   Id: number;
+  //   Email: string;
+  //   Organ: string;
+  // };
   SendDate?: string;
   SentAt?: string | null;
   Description: string | null;

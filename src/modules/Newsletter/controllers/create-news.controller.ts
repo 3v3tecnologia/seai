@@ -20,13 +20,11 @@ export class CreateNewsController {
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
-      const { Data, Description, FK_Author, SendDate, Title, LocationName } =
-        request;
+      const { Data, Description, SendDate, Title, LocationName } = request;
 
       const { error } = await this.validator.validate({
         Data,
         Description,
-        FK_Author,
         SendDate,
         Title,
         LocationName,
@@ -39,7 +37,6 @@ export class CreateNewsController {
       const createdOrError = await this.useCase.create({
         Data: request.Data,
         Description: request.Description,
-        FK_Author: request.FK_Author,
         Title: request.Title,
         SendDate: request.SendDate,
       });
@@ -59,7 +56,6 @@ export class CreateNewsController {
 export namespace CreateNewsController {
   export type Request = {
     accountId: number;
-    FK_Author: number;
     Title: string;
     Description: string | null;
     Data: any;

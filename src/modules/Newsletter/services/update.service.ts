@@ -96,7 +96,6 @@ export namespace UpdateNewsUseCaseProtocol {
   export type Request = {
     Id: number;
     Title: string;
-    FK_Author: string;
     Description: string | null;
     Data: any;
     LocationName?: string;

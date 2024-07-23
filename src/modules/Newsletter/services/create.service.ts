@@ -72,7 +72,6 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
 
 export namespace CreateNewsUseCaseProtocol {
   export type Request = {
-    FK_Author: number;
     Title: string;
     Description: string | null;
     Data: any;

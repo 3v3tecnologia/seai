@@ -6,7 +6,6 @@ import {
 } from "../../../../presentation/utils/schemas";
 
 const newsletterSchema = Joi.object({
-  FK_Author: Joi.number().required(),
   Title: Joi.string().required(),
   Description: Joi.string().allow(null),
   Data: Joi.any(),

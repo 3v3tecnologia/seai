@@ -4,11 +4,11 @@ export class NewsMapper {
   static toDomain(row: any): Content {
     const domain = {
       Id: row.Id,
-      Author: {
-        Id: row.Fk_Sender,
-        Email: row.Email,
-        Organ: row.Organ,
-      },
+      // Author: {
+      //   Id: row.Fk_Sender,
+      //   Email: row.Email,
+      //   Organ: row.Organ,
+      // },
       Title: row.Title,
       SentAt: row.SentAt,
       SendDate: row.SendDate,

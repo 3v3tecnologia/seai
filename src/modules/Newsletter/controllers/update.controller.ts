@@ -22,21 +22,12 @@ export class UpdateController {
 
   async handle(request: UpdateController.Request): Promise<HttpResponse> {
     try {
-      const {
-        id,
-        Data,
-        Description,
-        FK_Author,
-        SendDate,
-        Title,
-        LocationName,
-      } = request;
+      const { id, Data, Description, SendDate, Title, LocationName } = request;
 
       const { error } = await this.validator.validate({
         id,
         Data,
         Description,
-        FK_Author,
         SendDate,
         Title,
         LocationName,
@@ -50,7 +41,6 @@ export class UpdateController {
         Id: request.id,
         Data: request.Data,
         Description: request.Description,
-        FK_Author: request.FK_Author,
         Title: request.Title,
         SendDate: request.SendDate,
       });
@@ -72,7 +62,6 @@ export namespace UpdateController {
     accountId: number;
     id: number;
     Title: string;
-    FK_Author: string;
     Description: string | null;
     Data: any;
     LocationName?: string;
