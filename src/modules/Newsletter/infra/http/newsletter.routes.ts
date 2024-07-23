@@ -11,7 +11,7 @@ export const newsRouter = (): Router => {
   const router = Router();
 
   router.post(
-    "/enroll",
+    "/subscribe",
     authorization,
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletterSubscriber())
   );

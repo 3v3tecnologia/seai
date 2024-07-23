@@ -504,12 +504,11 @@ export const NEWSLETTER = {
       },
     },
   },
-  [`${URL}/enroll`]: {
+  [`${URL}/subscribe`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Create news",
-      description: "SendDate is Unix Timestamp",
       requestBody: {
         content: {
           "application/json": {
@@ -540,7 +539,7 @@ export const NEWSLETTER = {
                   },
                 },
                 example: {
-                  data: "Usuário inscrito com sucesso na lista de emails",
+                  data: "Aguardando o envio do email de confirmação de cadastro nas notícias.",
                 },
               },
             },
