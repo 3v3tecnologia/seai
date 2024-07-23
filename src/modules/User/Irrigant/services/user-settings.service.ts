@@ -98,9 +98,14 @@ export class UserSettingsServices implements IUserPreferencesServices {
       return left(new Error("Serviço de notificação não encontrado"));
     }
 
+    console.log(dto);
+
     if (availableNotificationsService.service == "newsletter") {
       const userAccount = await this.accountRepository.getUserById(dto.UserId);
       if (dto.Enabled) {
+        await this.unsubscribeToNewsletter.execute({
+          Email: userAccount!.email,
+        });
         // subscribe user email to newsletter
         const successOrError = await this.subscribeToNewsletter.execute({
           Email: userAccount!.email,
