@@ -23,7 +23,7 @@ export const newsRouter = (): Router => {
   );
 
   router.patch(
-    "subscribe/:code",
+    "/confirm-subscription/:code",
     adaptRoute(NewsletterControllersFactory.makeConfirmSubscriberByCode())
   );
 

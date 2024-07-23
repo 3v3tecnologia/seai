@@ -18,8 +18,8 @@ import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
 import { JobsUseCasesFactory } from "../../../../server/http/factories/use-cases/jobs.useCase.factory";
 import { DbNewsLetterContentRepository } from "../../infra/database/repository/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../infra/database/repository/newsletter-subscriber-repository";
-import { ConfirmSubscriberByCode } from "../confirm-subscriber-by-code.service";
-import { ConfirmUnsubscribeByCode } from "../confirm-unsubscribe-by-code.service";
+import { ConfirmSubscriberByCode } from "../confirm-user-subscription.service";
+import { ConfirmUnsubscribeByCode } from "../confirm-remove-subscription.service";
 
 export class NewsletterUseCasesFactory {
   private static repository = new DbNewsLetterContentRepository();

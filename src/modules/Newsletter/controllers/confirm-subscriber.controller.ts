@@ -1,11 +1,11 @@
-import { ISchemaValidator } from "../../../shared/validation/validator";
 import {
   badRequest,
+  noContent,
   serverError,
-  ok,
 } from "../../../presentation/controllers/helpers";
-import { ConfirmSubscriberByCodeUseCaseProtocol } from "../services/confirm-subscriber-by-code.service";
 import { HttpResponse } from "../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../shared/validation/validator";
+import { ConfirmSubscriberByCodeUseCaseProtocol } from "../services/confirm-user-subscription.service";
 
 export class ConfirmSubscriberByCodeController {
   private useCase: ConfirmSubscriberByCodeUseCaseProtocol.UseCase;
@@ -33,7 +33,7 @@ export class ConfirmSubscriberByCodeController {
         return badRequest(createdOrError.value);
       }
 
-      return ok(createdOrError.value);
+      return noContent();
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

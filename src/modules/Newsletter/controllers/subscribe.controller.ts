@@ -22,11 +22,10 @@ export class SubscribeToNewsController {
     request: SubscribeToNewsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const { Email, Name } = request;
+      const { Email } = request;
 
       const { error } = await this.validator.validate({
         Email,
-        Name,
       });
 
       if (error) {
@@ -35,7 +34,6 @@ export class SubscribeToNewsController {
 
       const createdOrError = await this.useCase.execute({
         Email: request.Email,
-        Name: request.Name,
       });
 
       if (createdOrError.isLeft()) {
@@ -54,6 +52,5 @@ export namespace SubscribeToNewsControllerProtocol {
   export type Request = {
     accountId: number;
     Email: string;
-    Name: string;
   };
 }

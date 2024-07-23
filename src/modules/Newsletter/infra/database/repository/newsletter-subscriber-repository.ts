@@ -26,7 +26,6 @@ export class DbNewsLetterSubscriberRepository
     const result = await newsletterDb
       .insert({
         Email: request.Email,
-        Name: request.Name,
         Code: request.Code,
       })
       .returning("Id")
@@ -46,7 +45,6 @@ export class DbNewsLetterSubscriberRepository
       })
       .update({
         Email: request.Email,
-        Name: request.Name,
       });
   }
 
@@ -72,7 +70,7 @@ export class DbNewsLetterSubscriberRepository
     request: SubscriberRepositoryDTO.GetByEmail.Request
   ): SubscriberRepositoryDTO.GetByEmail.Response {
     const result = await newsletterDb("Subscriber")
-      .select("Id", "Name", "Email", "CreatedAt", "UpdatedAt")
+      .select("Id", "Email", "CreatedAt", "UpdatedAt")
       .where({
         Email: request.Email,
       })
@@ -90,14 +88,7 @@ export class DbNewsLetterSubscriberRepository
     status: "confirmed" | "pending"
   ): Promise<Required<Subscriber> | null> {
     const result = await newsletterDb("Subscriber")
-      .select(
-        "Id",
-        "Name",
-        "Confirmation_Status",
-        "Email",
-        "CreatedAt",
-        "UpdatedAt"
-      )
+      .select("Id", "Confirmation_Status", "Email", "CreatedAt", "UpdatedAt")
       .where({
         Code: code,
         Confirmation_Status: status,
@@ -129,16 +120,10 @@ export class DbNewsLetterSubscriberRepository
   async getAll(
     params: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response {
-    const { pageNumber, limit, offset, name, email } = params;
+    const { pageNumber, limit, offset, email } = params;
 
     const binding = [];
     const queries: Array<string> = [];
-
-    if (name) {
-      queries.push(`WHERE (
-          to_tsvector('simple', coalesce(sub."Name", ''))
-          ) @@ to_tsquery('simple', '${name}:*')`);
-    }
 
     if (email) {
       const byEmail = `
@@ -179,7 +164,7 @@ export class DbNewsLetterSubscriberRepository
     binding.push(offset);
 
     const sql = `
-      SELECT "Id", "Name", "Email", "CreatedAt", "UpdatedAt"
+      SELECT "Id", "Email", "CreatedAt", "UpdatedAt"
       FROM "Subscriber" as sub
       ${queries.join(" ")}
     `;

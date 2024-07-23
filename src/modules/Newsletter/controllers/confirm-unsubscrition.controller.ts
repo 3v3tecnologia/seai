@@ -5,9 +5,10 @@ import {
   badRequest,
   serverError,
   ok,
+  noContent,
 } from "../../../presentation/controllers/helpers";
-import { ConfirmUnsubscribeByCodeUseCaseProtocol } from "../services/confirm-unsubscribe-by-code.service";
-import { ConfirmSubscriberByCodeUseCaseProtocol } from "../services/confirm-subscriber-by-code.service";
+import { ConfirmUnsubscribeByCodeUseCaseProtocol } from "../services/confirm-remove-subscription.service";
+import { ConfirmSubscriberByCodeUseCaseProtocol } from "../services/confirm-user-subscription.service";
 
 export class ConfirmUnsubscribeByCodeController {
   private useCase: ConfirmUnsubscribeByCodeUseCaseProtocol.UseCase;
@@ -35,7 +36,7 @@ export class ConfirmUnsubscribeByCodeController {
         return badRequest(createdOrError.value);
       }
 
-      return ok(createdOrError.value);
+      return noContent();
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
