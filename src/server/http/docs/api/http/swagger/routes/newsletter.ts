@@ -486,7 +486,6 @@ export const NEWSLETTER = {
                       {
                         Id: 1,
                         Email: "tester@gmail.com",
-                        Name: "Tester",
                         CreatedAt: "2024-04-30T16:11:16.522Z",
                         UpdatedAt: "2024-04-30T16:11:16.522Z",
                       },
@@ -518,11 +517,9 @@ export const NEWSLETTER = {
               type: "object",
               properties: {
                 Email: "string",
-                Name: "string",
               },
               example: {
                 Email: "tester2@gmail.com",
-                Name: "Tester",
               },
             },
           },
