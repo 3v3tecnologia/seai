@@ -12,13 +12,11 @@ export const newsRouter = (): Router => {
 
   router.post(
     "/subscribe",
-    authorization,
     adaptRoute(NewsletterControllersFactory.makeCreateNewsletterSubscriber())
   );
 
   router.delete(
     "/unregister",
-    authorization,
     adaptRoute(NewsletterControllersFactory.makeDeleteNewsletterSubscriber())
   );
 
