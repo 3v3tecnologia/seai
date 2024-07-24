@@ -49,6 +49,7 @@ export namespace ContentRepositoryDTO {
     export type Request = {
       only_sent: boolean;
       title?: string;
+      sendDate?: string;
     } & IPaginationInput;
 
     export type Response = Promise<IOutputWithPagination<

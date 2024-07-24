@@ -136,7 +136,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async getAll(
     params: ContentRepositoryDTO.GetAll.Request
   ): ContentRepositoryDTO.GetAll.Response {
-    const { pageNumber, limit, offset, title } = params;
+    const { pageNumber, limit, offset, title, sendDate } = params;
 
     const binding = [];
 
@@ -152,12 +152,19 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
           ) @@ to_tsquery('simple', '${title}:*')`);
     }
 
+    if (sendDate) {
+      queries.push(
+        `${queries.length ? "AND" : "WHERE"} news."SendDate"::date = ?`
+      );
+      binding.push(sendDate);
+    }
+
     const countSQL = `
       SELECT count(news."Id") FROM "News" as news
       ${queries.join(" ")}
     `;
 
-    const countRows = await countTotalRows(newsletterDb)(countSQL);
+    const countRows = await countTotalRows(newsletterDb)(countSQL, binding);
 
     queries.push(`ORDER BY news."SendDate" DESC LIMIT ? OFFSET ?`);
 

@@ -21,10 +21,17 @@ const deleteNews = new SchemaValidator(Joi.object(idSchema));
 
 const fetchNewsById = new SchemaValidator(Joi.object(idSchema));
 
+const fetchNewsletterFilter = {
+  title: Joi.string().optional(),
+  sendDate: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD")
+    .optional(),
+};
+
 const fetchNews = new SchemaValidator(
   Joi.object({
     ...paginationSchema,
-    title: Joi.string().optional(),
+    ...fetchNewsletterFilter,
   })
 );
 
@@ -33,7 +40,7 @@ const updateSendAt = new SchemaValidator(Joi.object(idSchema));
 const fetchOnlySent = new SchemaValidator(
   Joi.object({
     ...paginationSchema,
-    title: Joi.string().optional(),
+    ...fetchNewsletterFilter,
   })
 );
 

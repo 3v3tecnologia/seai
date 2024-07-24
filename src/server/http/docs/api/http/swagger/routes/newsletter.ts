@@ -23,6 +23,15 @@ export const NEWSLETTER = {
           },
         },
         {
+          name: "sendDate",
+          in: "query",
+          required: false,
+          description: "Newsletter send date in YYYY-MM-DD format",
+          schema: {
+            type: "string",
+          },
+        },
+        {
           name: "pageNumber",
           in: "query",
           description: "Pagination number. Default 1",
@@ -166,6 +175,15 @@ export const NEWSLETTER = {
           in: "query",
           required: false,
           description: "News title",
+          schema: {
+            type: "string",
+          },
+        },
+        {
+          name: "sendDate",
+          in: "query",
+          required: false,
+          description: "Newsletter send date in YYYY-MM-DD format",
           schema: {
             type: "string",
           },

@@ -22,7 +22,10 @@ export class FetchAllNews implements FetchAllNews.UseCase {
 }
 
 export namespace FetchAllNews {
-  export type Request = { title?: string } & IPaginationInput;
+  export type Request = {
+    title?: string;
+    sendDate?: string;
+  } & IPaginationInput;
 
   export type Response = Promise<
     Either<Error, IOutputWithPagination<Required<Content>>>

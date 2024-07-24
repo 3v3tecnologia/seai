@@ -27,36 +27,37 @@ export class FetchNewsController {
     try {
       const { limit, offset, pageNumber } = request;
 
-      const toValidate = {
+      const params = {
         limit,
         offset,
         pageNumber,
       };
 
       if (Reflect.has(request, "title")) {
-        Object.assign(toValidate, {
+        Object.assign(params, {
           title: request.title,
         });
       }
 
-      const { error } = await this.validator.validate(toValidate);
+      if (Reflect.has(request, "sendDate")) {
+        Object.assign(params, {
+          sendDate: request.sendDate,
+        });
+      }
+
+      const { error } = await this.validator.validate(params);
 
       if (error) {
         return badRequest(error);
       }
 
       const dto = {
+        ...params,
         ...parsePaginationInput({
           page: request.pageNumber,
           limit: request.limit,
         }),
       };
-
-      if (request.title) {
-        Object.assign(dto, {
-          title: request.title,
-        });
-      }
 
       const createdOrError = await this.useCase.execute(dto);
 
@@ -75,6 +76,7 @@ export class FetchNewsController {
 export namespace FetchNewsController {
   export type Request = {
     title?: string;
+    sendDate?: string;
     // start?: string;
     // end?: string | null;
   } & IPaginationInput;

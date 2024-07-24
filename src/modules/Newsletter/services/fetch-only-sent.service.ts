@@ -24,7 +24,10 @@ export class FetchOnlySentNews implements FetchOnlySentNews.UseCase {
 }
 
 export namespace FetchOnlySentNews {
-  export type Request = { title?: string } & IPaginationInput;
+  export type Request = {
+    title?: string;
+    sendDate?: string;
+  } & IPaginationInput;
 
   export type Response = Promise<
     Either<Error, IOutputWithPagination<Required<Content>>>
