@@ -464,8 +464,6 @@ export class DbEquipmentsRepository
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
 
-    console.log(sql);
-
     const data = await governmentDb.raw(sql, binding);
 
     // [ { total_registers: 'number', equipments: [ [Object] ] } ]
