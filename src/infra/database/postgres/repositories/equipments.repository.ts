@@ -372,7 +372,7 @@ export class DbEquipmentsRepository
         FROM
             "ReadStations" rs
         WHERE
-            rs."Et0" IS NOT NULL
+            rs."Et0" >= 0
             AND rs."Time" = CURRENT_DATE - INTERVAL '1 DAY'
     )`);
         } else {
@@ -383,7 +383,7 @@ export class DbEquipmentsRepository
             FROM
                 "ReadPluviometers" rp
             WHERE
-                rp."Value" IS NOT NULL
+                rp."Value" >= 0
                 AND rp."Time" = CURRENT_DATE - INTERVAL '1 DAY'
           )`);
         }
@@ -463,6 +463,8 @@ export class DbEquipmentsRepository
                 INNER JOIN equipments."EquipmentType" eqpType ON
                     eqpType."IdType" = equipment."FK_Type"
                ${queries.join(" ")}) as t`;
+
+    console.log(sql);
 
     const data = await governmentDb.raw(sql, binding);
 
