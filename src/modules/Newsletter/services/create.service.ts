@@ -1,7 +1,9 @@
 import { CreateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/logger/logger";
+import { isDateInThePast } from "../../../shared/utils/date";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
+import { validateContentSize, validateSendDate } from "../model/content";
 
 export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
@@ -47,10 +49,18 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
   async create(
     request: CreateNewsUseCaseProtocol.Request
   ): CreateNewsUseCaseProtocol.Response {
+    const hasValidContentSizeOrError = validateContentSize(request.Data);
+
+    if (hasValidContentSizeOrError.isLeft()) {
+      return left(hasValidContentSizeOrError.value);
+    }
+
     const sendDate = new Date(request.SendDate);
 
-    // if (isDateInThePast(sendDate)) {
-    //   return left(new Error("Não é possível cadastrar uma notícia com data de envio no pasado"))
+    // const hasValidSendDateOrError = validateSendDate(sendDate);
+
+    // if (hasValidSendDateOrError.isLeft()) {
+    //   return left(hasValidSendDateOrError.value);
     // }
 
     const newsId = await this.repository.create(request);
