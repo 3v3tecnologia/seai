@@ -36,7 +36,7 @@ export namespace UpdateJobUseCaseProtocol {
     priority: number;
     retryLimit: number;
     retryDelay: number;
-    startAfter?: string;
+    startAfter?: Date;
     data: any;
   };
 

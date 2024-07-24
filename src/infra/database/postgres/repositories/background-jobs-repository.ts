@@ -9,7 +9,8 @@ import { backgroundJobsDb } from "../connection/knexfile";
 import { withPagination } from "./mapper/WithPagination";
 
 export class DbBackgroundJobsRepository
-  implements ScheduleRepositoryProtocol, JobsRepositoryProtocol {
+  implements ScheduleRepositoryProtocol, JobsRepositoryProtocol
+{
   async createSchedule(
     request: ScheduleRepositoryDTO.Create.Request
   ): ScheduleRepositoryDTO.Create.Response {
@@ -54,7 +55,7 @@ export class DbBackgroundJobsRepository
   ): ScheduleRepositoryDTO.GetByQueue.Response {
     const { rows } = await backgroundJobsDb.raw(
       `
-      SELECT 
+      SELECT
           n."name" ,
           n."cron" ,
           n."timezone" ,
@@ -199,9 +200,11 @@ export class DbBackgroundJobsRepository
       retrydelay: request.retryDelay || 60,
     };
 
-    if (Reflect.has(request, "startAfter")) {
+    if (request.startAfter) {
+      formatDateToTimezone(request.startAfter, 3);
+
       Object.assign(data, {
-        startafter: request.startAfter,
+        startafter: request.startAfter.toISOString(),
       });
     }
 
@@ -251,9 +254,11 @@ export class DbBackgroundJobsRepository
       retrydelay: request.retryDelay || 60,
     };
 
-    if (Reflect.has(request, "startAfter")) {
+    if (request.startAfter) {
+      formatDateToTimezone(request.startAfter, 3);
+
       Object.assign(data, {
-        startafter: request.startAfter,
+        startafter: request.startAfter.toISOString(),
       });
     }
 
@@ -268,21 +273,17 @@ export class DbBackgroundJobsRepository
       });
     }
 
-    await backgroundJobsDb("pgboss.job")
-      .update(data)
-      .where({
-        id: request.id,
-      });
+    await backgroundJobsDb("pgboss.job").update(data).where({
+      id: request.id,
+    });
   }
 
   async deleteJob(
     request: JobsRepositoryDTO.Delete.Request
   ): JobsRepositoryDTO.Delete.Response {
-    await backgroundJobsDb("pgboss.job")
-      .delete()
-      .where({
-        id: request.id,
-      });
+    await backgroundJobsDb("pgboss.job").delete().where({
+      id: request.id,
+    });
   }
 
   async getJobById(
@@ -342,7 +343,7 @@ export class DbBackgroundJobsRepository
     };
   }
   async getJobsStates(): JobsRepositoryDTO.FetchJobsStates.Response {
-    const { rows } = await backgroundJobsDb.raw(`SELECT     
+    const { rows } = await backgroundJobsDb.raw(`SELECT
        e.enumlabel AS state
         FROM
             pg_type t
@@ -363,10 +364,12 @@ export class DbBackgroundJobsRepository
   }
 
   async deleteJobByKey(key: string): Promise<void> {
-    await backgroundJobsDb("pgboss.job")
-      .delete()
-      .where({
-        singletonkey: key,
-      });
+    await backgroundJobsDb("pgboss.job").delete().where({
+      singletonkey: key,
+    });
   }
+}
+
+function formatDateToTimezone(date: Date, timezone: number) {
+  date.setHours(date.getHours() + timezone);
 }

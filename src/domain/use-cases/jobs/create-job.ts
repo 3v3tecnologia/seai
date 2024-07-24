@@ -17,8 +17,8 @@ export class CreateJob implements CreateJobUseCaseProtocol.UseCase {
 
       return right(data);
     } catch (error) {
-      console.error(error)
-      return left(new BackgroundJobsErrors.ServiceNotAvailable())
+      console.error(error);
+      return left(new BackgroundJobsErrors.ServiceNotAvailable());
     }
   }
 }
@@ -29,7 +29,7 @@ export namespace CreateJobUseCaseProtocol {
     priority: number;
     retryLimit: number;
     retryDelay: number;
-    startAfter?: string;
+    startAfter?: Date;
     state?: string;
     singletonkey?: string;
     data: any;

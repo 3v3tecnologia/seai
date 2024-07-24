@@ -1,4 +1,7 @@
-import { IPaginationInput, OldOutputWithPagination } from "../../helpers/pagination";
+import {
+  IPaginationInput,
+  OldOutputWithPagination,
+} from "../../helpers/pagination";
 
 export interface Jobs {
   id: string;
@@ -78,7 +81,7 @@ export namespace JobsRepositoryDTO {
       priority: number;
       retryLimit: number;
       retryDelay: number;
-      startAfter?: string;
+      startAfter?: Date;
       singletonkey?: string;
       data: any;
     };
@@ -94,7 +97,7 @@ export namespace JobsRepositoryDTO {
       priority: number;
       retryLimit: number;
       retryDelay: number;
-      startAfter?: string;
+      startAfter?: Date;
       data: any;
     };
 
@@ -165,5 +168,5 @@ export interface JobsRepositoryProtocol {
   getJobById(
     request: JobsRepositoryDTO.FetchById.Request
   ): JobsRepositoryDTO.FetchById.Response;
-  deleteJobByKey(key: string): Promise<void>
+  deleteJobByKey(key: string): Promise<void>;
 }

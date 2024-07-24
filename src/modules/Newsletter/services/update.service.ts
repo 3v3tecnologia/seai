@@ -37,7 +37,7 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: new Date(request.SendDate).toISOString(),
+        startAfter: new Date(request.SendDate),
         singletonkey: String(request.Id),
       });
 

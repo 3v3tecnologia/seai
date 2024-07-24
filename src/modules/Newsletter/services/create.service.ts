@@ -27,7 +27,7 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: sendDate.toISOString(),
+        startAfter: sendDate,
         singletonkey: String(newsId),
       });
 
