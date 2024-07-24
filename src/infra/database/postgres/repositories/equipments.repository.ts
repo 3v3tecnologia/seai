@@ -343,6 +343,7 @@ export class DbEquipmentsRepository
       offset,
       name,
       only_with_measurements,
+      enabled,
     } = params;
     const pageLimit = limit;
 
@@ -359,6 +360,18 @@ export class DbEquipmentsRepository
       }
 
       binding.push(idOrgan);
+    }
+
+    if (enabled !== undefined) {
+      if (queries.length) {
+        queries.push(`AND
+        equipment."Enable" = ?`);
+      } else {
+        queries.push(`WHERE
+        equipment."Enable" = ?`);
+      }
+
+      binding.push(enabled);
     }
 
     if (idType) {

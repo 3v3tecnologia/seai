@@ -32,6 +32,7 @@ export namespace FetchEquipmentsUseCaseProtocol {
     idOrgan?: number;
     idType?: number;
     name?: string;
+    enabled?: boolean;
     only_with_measurements?: boolean;
   } & IPaginationInput;
   export type Response =

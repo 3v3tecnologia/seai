@@ -21,10 +21,10 @@ export const EQUIPMENTS = {
                   data: [
                     {
                       Time: "2024-05-03T18:52:22.192Z",
-                      Id_Organ: 1
-                    }
-                  ]
-                }
+                      Id_Organ: 1,
+                    },
+                  ],
+                },
               },
             },
           },
@@ -91,6 +91,14 @@ export const EQUIPMENTS = {
           in: "query",
           description:
             "Filter equipment that has measurements. It is necessary to pass the equipment type ID before",
+          required: false,
+          schema: {
+            type: "boolean",
+          },
+        },
+        {
+          name: "enabled",
+          in: "query",
           required: false,
           schema: {
             type: "boolean",

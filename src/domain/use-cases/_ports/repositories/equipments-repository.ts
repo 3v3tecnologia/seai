@@ -1,11 +1,13 @@
-import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+import {
+  IPaginationInput,
+  IOutputWithPagination,
+} from "./../../helpers/pagination";
 import {
   EquipmentEntity,
   PluviometerWithLastMeasurement,
   StationWithLastMeasurement,
 } from "../../../entities/equipments/Equipment";
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
-
 
 export namespace MeteorologicalOrganRepositoryDTOProtocol {
   export namespace Get {
@@ -89,6 +91,7 @@ export namespace EquipmentRepositoryDTOProtocol {
       idOrgan?: number;
       idType?: number;
       name?: string;
+      enabled?: boolean;
       only_with_measurements?: boolean;
     } & IPaginationInput;
     export type Result = Promise<IOutputWithPagination<EquipmentEntity>>;
