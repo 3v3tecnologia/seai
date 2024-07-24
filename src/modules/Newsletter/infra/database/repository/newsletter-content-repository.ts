@@ -159,7 +159,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
 
     const countRows = await countTotalRows(newsletterDb)(countSQL);
 
-    queries.push(`order by news."Id" LIMIT ? OFFSET ?`);
+    queries.push(`ORDER BY news."SendDate" DESC LIMIT ? OFFSET ?`);
 
     binding.push(limit);
     binding.push(offset);
