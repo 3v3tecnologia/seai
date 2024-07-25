@@ -1,38 +1,30 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../shared/Either";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { Email } from "../model/email";
 import { UserLogin } from "../model/login";
 import { UserName } from "../model/name";
 import { UserTypes } from "../model/user";
 import { UserPassword } from "../model/userPassword";
-import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import {
-  AccountEmailNotFound,
-  AccountNotFoundError,
-} from "./errors/user-account-not-found";
+import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
+import { UserNotFoundError } from "../model/errors/user-not-found-error";
 
 export class UpdateUserProfile implements IUpdateUserProfileUseCase {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
 
-  constructor(accountRepository: AccountRepositoryProtocol, encoder: Encoder) {
+  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
   }
 
   async execute(
     request: UpdateUserProfileDTO.Params
-  ): Promise<
-    Either<
-      AccountEmailNotFound | AccountNotFoundError | LoginAlreadyExists,
-      string
-    >
-  > {
+  ): Promise<Either<LoginAlreadyExists, string>> {
     const userAccount = await this.accountRepository.getById(request.id);
 
     if (userAccount == null) {
-      return left(new AccountNotFoundError());
+      return left(new UserNotFoundError());
     }
 
     if (userAccount.type === "pending") {
@@ -78,8 +70,6 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
       });
     }
 
-    // Usuário admin pode editar usuário mesmo não havendo login ain
-
     if (request.email) {
       const existingAccount = await this.accountRepository.getByEmail(
         request.email,
@@ -122,10 +112,7 @@ export namespace UpdateUserProfileDTO {
     password?: string;
     confirmPassword?: string;
   };
-  export type Result = Either<
-    AccountEmailNotFound | AccountNotFoundError | LoginAlreadyExists,
-    string
-  >;
+  export type Result = Either<UserNotFoundError | LoginAlreadyExists, string>;
 }
 
 export interface IUpdateUserProfileUseCase {

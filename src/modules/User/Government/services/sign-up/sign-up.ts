@@ -1,28 +1,29 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../../shared/Either";
-import { User, UserType, UserTypes } from "../../model/user";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
+import { UserModulesNotFound } from "../../model/errors/invalid-modules";
+import { LoginAlreadyExists } from "../../model/errors/login-aready-exists";
+import { UserNotFoundError } from "../../model/errors/user-not-found-error";
 import {
-  AccountNotFoundError,
   UnmatchedPasswordError,
   WrongPasswordError,
-} from "../authentication/errors";
+} from "../../model/errors/wrong-password";
+import { User, UserType, UserTypes } from "../../model/user";
+
 import {
   AuthenticationDTO,
   AuthenticationService,
 } from "../authentication/ports/authentication-service";
-import { UserModulesNotFound } from "../errors/user-account-not-found";
-import { AccountEmailNotFound } from "./errors/user-email-not-found";
-import { LoginAlreadyExists } from "./errors/user-login";
+
 import { SignUpDTO } from "./ports/sign-up";
 
 export class SignUp {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly authentication: AuthenticationService;
 
   constructor(
-    accountRepository: AccountRepositoryProtocol,
+    accountRepository: UserRepositoryProtocol,
     authentication: AuthenticationService,
     encoder: Encoder
   ) {
@@ -34,10 +35,10 @@ export class SignUp {
     user: SignUpDTO.params
   ): Promise<
     Either<
-      | AccountEmailNotFound
-      | AccountNotFoundError
+      | UserNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists
+      | UnmatchedPasswordError
       | UserModulesNotFound,
       AuthenticationDTO.result
     >
@@ -45,7 +46,7 @@ export class SignUp {
     const existingUser = await this.accountRepository.getByLogin(user.login);
 
     if (!!existingUser && existingUser.type !== UserTypes.IRRIGANT) {
-      return left(new LoginAlreadyExists(user.login));
+      return left(new LoginAlreadyExists());
     }
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.getUserById(user.accountId);

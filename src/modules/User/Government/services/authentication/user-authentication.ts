@@ -1,8 +1,8 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../../shared/Either";
-import { UserNotFoundError } from "../delete-user/errors/user-not-found-error";
-import { AccountNotFoundError, WrongPasswordError } from "./errors";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
+import { UserNotFoundError } from "../../model/errors/user-not-found-error";
+import { WrongPasswordError } from "../../model/errors/wrong-password";
 import {
   AuthenticationDTO,
   AuthenticationService,
@@ -10,12 +10,12 @@ import {
 import { TokenProvider } from "./ports/token-provider";
 
 export class UserAuthentication implements AuthenticationService {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly tokenProvider: TokenProvider;
 
   constructor(
-    accountRepository: AccountRepositoryProtocol,
+    accountRepository: UserRepositoryProtocol,
     encoder: Encoder,
     tokenProvider: TokenProvider
   ) {
@@ -29,7 +29,7 @@ export class UserAuthentication implements AuthenticationService {
     password,
     email,
   }: AuthenticationDTO.params): Promise<
-    Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
+    Either<UserNotFoundError | WrongPasswordError, AuthenticationDTO.result>
   > {
     const account = login
       ? await this.accountRepository.getByLogin(login)

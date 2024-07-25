@@ -1,6 +1,6 @@
-import { SystemModulesProps } from "../../model/user-modules-access";
+import { SystemModulesProps } from "./user-modules-access";
 
-export type UserData = {
+export type UserAccountProps = {
   id: number;
   name: string;
   code: string;
@@ -8,8 +8,8 @@ export type UserData = {
   login: string;
   email: string;
   type: string;
-  createdAt?: string;
   password?: string;
-  updatedAt?: string;
   modules?: SystemModulesProps | null;
+  updatedAt?: string;
+  createdAt?: string;
 };

@@ -1,4 +1,4 @@
-import { DomainError } from "./errors";
+import { DomainError } from "../../../../../shared/errors/domain-error";
 
 export namespace PasswordErrors {
   export class EmptyPasswordError extends Error implements DomainError {

@@ -12,19 +12,19 @@ import {
   AvailablesEmailServices,
   ScheduleUserAccountNotification,
 } from "../../Government/services";
-import {
-  UnmatchedPasswordError,
-  WrongPasswordError,
-} from "../../Government/services/authentication/errors";
+
 import { AuthenticationService } from "../../Government/services/authentication/ports/authentication-service";
 import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
-import { UserAlreadyExistsError } from "../../Government/services/create-user/errors/user-already-exists";
-import { UserNotFoundError } from "../../Government/services/delete-user/errors/user-not-found-error";
-import { AccountNotFoundError } from "../../Government/services/errors/user-account-not-found";
+import { UserAlreadyExistsError } from "../../Government/model/errors/user-already-exists";
+import { UserNotFoundError } from "../../Government/model/errors/user-not-found-error";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
 import { IUserPreferencesServices } from "./protocols/user-settings";
+import {
+  UnmatchedPasswordError,
+  WrongPasswordError,
+} from "../../Government/model/errors/wrong-password";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: UserRepositoryProtocol;
@@ -260,7 +260,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     const account = await this.accountRepository.getByEmail(userEmailToString);
 
     if (account === null) {
-      return left(new AccountNotFoundError());
+      return left(new UserNotFoundError());
     }
 
     if (account.type === "pending") {
@@ -302,7 +302,7 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     );
 
     if (userAccount === null) {
-      return left(new AccountNotFoundError());
+      return left(new UserNotFoundError());
     }
 
     if (userAccount.type === "pending") {

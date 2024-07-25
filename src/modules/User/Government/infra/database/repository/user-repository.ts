@@ -5,9 +5,9 @@ import {
 } from "../../../../../../domain/use-cases/helpers/pagination";
 import { governmentDb } from "../../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../../infra/database/postgres/repositories/utils/paginate";
-import { User, UserType, UserTypes } from "../../../model/user";
+import { UserAccountProps } from "../../../model/account";
+import { UserType, UserTypes } from "../../../model/user";
 import { SystemModulesProps } from "../../../model/user-modules-access";
-import { UserAccount } from "../../../services/model/user-with-modules";
 import { UserRepositoryProtocol } from "./protocol/user-repository";
 
 function mapUserModulePermissionsToPersistence(
@@ -108,7 +108,7 @@ export class UserRepository implements UserRepositoryProtocol {
       };
     });
   }
-  async getUserByCode(code: string): Promise<UserAccount | null> {
+  async getUserByCode(code: string): Promise<UserAccountProps | null> {
     const result = await governmentDb
       .withSchema("users")
       .select(
@@ -133,7 +133,7 @@ export class UserRepository implements UserRepositoryProtocol {
     const { Id, Name, Login, Email, Type, CreatedAt, UpdatedAt, Code, Status } =
       result;
 
-    const user: UserAccount = {
+    const user: UserAccountProps = {
       id: Id,
       name: Name,
       login: Login,
@@ -147,7 +147,7 @@ export class UserRepository implements UserRepositoryProtocol {
 
     return user;
   }
-  async getUserById(id_user: number): Promise<UserAccount | null> {
+  async getUserById(id_user: number): Promise<UserAccountProps | null> {
     const result = await governmentDb
       .withSchema("users")
       .select(
@@ -172,7 +172,7 @@ export class UserRepository implements UserRepositoryProtocol {
     const { Id, Name, Login, Code, Status, Email, Type, CreatedAt, UpdatedAt } =
       result;
 
-    const user: UserAccount = {
+    const user: UserAccountProps = {
       id: Id,
       name: Name,
       login: Login,
@@ -251,7 +251,7 @@ export class UserRepository implements UserRepositoryProtocol {
       name?: string;
       type?: Record<UserTypes, string>;
     } & IPaginationInput
-  ): Promise<IOutputWithPagination<User>> {
+  ): Promise<IOutputWithPagination<UserAccountProps>> {
     const { pageNumber, limit, offset, name, type } = params;
 
     const pageLimit = limit;
@@ -430,7 +430,7 @@ export class UserRepository implements UserRepositoryProtocol {
   async getByEmail(
     email: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<UserAccount | null> {
+  ): Promise<UserAccountProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
@@ -465,7 +465,7 @@ export class UserRepository implements UserRepositoryProtocol {
       UpdatedAt,
     } = result;
 
-    const user: UserAccount = {
+    const user: UserAccountProps = {
       id: Id,
       name: Name,
       login: Login,
@@ -493,7 +493,7 @@ export class UserRepository implements UserRepositoryProtocol {
   async getByLogin(
     login: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<UserAccount | null> {
+  ): Promise<UserAccountProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
@@ -528,7 +528,7 @@ export class UserRepository implements UserRepositoryProtocol {
       UpdatedAt,
     } = result;
 
-    const user: UserAccount = {
+    const user: UserAccountProps = {
       id: Id,
       code: Code,
       status: Status,
@@ -563,7 +563,7 @@ export class UserRepository implements UserRepositoryProtocol {
     return true;
   }
 
-  async getById(id_user: number): Promise<Required<UserAccount> | null> {
+  async getById(id_user: number): Promise<Required<UserAccountProps> | null> {
     const result = await governmentDb
       .withSchema("users")
       .select("*")
@@ -588,7 +588,7 @@ export class UserRepository implements UserRepositoryProtocol {
       UpdatedAt,
     } = result;
 
-    const user: Required<UserAccount> = {
+    const user: Required<UserAccountProps> = {
       id: Id,
       name: Name,
       login: Login,

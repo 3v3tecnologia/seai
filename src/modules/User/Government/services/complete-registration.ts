@@ -1,28 +1,23 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { UserAlreadyRegisteredError } from "../../../../domain/use-cases/errors/user-already-registered";
 import { Either, left, right } from "../../../../shared/Either";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { UserLogin } from "../model/login";
 import { UserName } from "../model/name";
 import { UserTypes } from "../model/user";
 import { UserPassword } from "../model/userPassword";
-import {
-  AccountNotFoundError,
-  WrongPasswordError,
-} from "./authentication/errors";
-import { UserNotFoundError } from "./delete-user/errors/user-not-found-error";
-import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import {
-  AccountEmailNotFound,
-  UserModulesNotFound,
-} from "./errors/user-account-not-found";
+
+import { UserNotFoundError } from "../model/errors/user-not-found-error";
+import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
+import { UserModulesNotFound } from "../model/errors/invalid-modules";
+import { WrongPasswordError } from "../model/errors/wrong-password";
 
 export class CompleteUserRegister implements ICompleteUserRegisterUseCase {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
 
-  constructor(accountRepository: AccountRepositoryProtocol, encoder: Encoder) {
+  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
   }
@@ -31,8 +26,7 @@ export class CompleteUserRegister implements ICompleteUserRegisterUseCase {
     request: CompleteUserRegisterDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
-      | AccountNotFoundError
+      | UserNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists
       | UserModulesNotFound,
@@ -125,8 +119,7 @@ export interface ICompleteUserRegisterUseCase {
     user: CompleteUserRegisterDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
-      | AccountNotFoundError
+      | UserNotFoundError
       | WrongPasswordError
       | LoginAlreadyExists
       | UserModulesNotFound,

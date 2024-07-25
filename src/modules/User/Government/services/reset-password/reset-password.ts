@@ -1,18 +1,18 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../../shared/Either";
 import { base64Decode } from "../../../../../shared/utils/base64Encoder";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
+import { UserNotFoundError } from "../../model/errors/user-not-found-error";
 import { UserTypes } from "../../model/user";
 import { UserPassword } from "../../model/userPassword";
-import { AccountNotFoundError } from "../errors/user-account-not-found";
 import { ResetPasswordProtocol } from "./protocol";
 
 export class ResetPassword implements ResetPasswordProtocol {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
 
   // sendEmailToUser: SendEmailToUser,
-  constructor(accountRepository: AccountRepositoryProtocol, encoder: Encoder) {
+  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
   }
@@ -35,7 +35,7 @@ export class ResetPassword implements ResetPasswordProtocol {
     ]);
 
     if (account === null) {
-      return left(new AccountNotFoundError());
+      return left(new UserNotFoundError());
     }
 
     const passwordOrError = UserPassword.create({

@@ -1,6 +1,6 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../../shared/Either";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { User, UserTypes } from "../../model/user";
 import {
   SystemModules,
@@ -10,16 +10,16 @@ import {
   AvailablesEmailServices,
   ScheduleUserAccountNotification,
 } from "../send-notification-to-user/send-notification-to-user";
-import { UserAlreadyExistsError } from "./errors/user-already-exists";
+import { UserAlreadyExistsError } from "../../model/errors/user-already-exists";
 import { CreateUserDTO } from "./ports";
 
 export class CreateUser {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
   private readonly encoder: Encoder;
 
   constructor(
-    accountRepository: AccountRepositoryProtocol,
+    accountRepository: UserRepositoryProtocol,
     scheduleUserAccountNotification: ScheduleUserAccountNotification,
     encoder: Encoder
   ) {
