@@ -1,5 +1,6 @@
 import { Either } from "../../../../../../shared/Either";
-import { AccountNotFoundError, WrongPasswordError } from "../errors";
+import { UserNotFoundError } from "../../../model/errors/user-not-found-error";
+import { WrongPasswordError } from "../../../model/errors/wrong-password";
 
 export namespace AuthenticationDTO {
   export type params = { login?: string; email?: string; password: string };
@@ -15,6 +16,6 @@ export interface AuthenticationService {
     params: AuthenticationDTO.params,
     test?: string
   ): Promise<
-    Either<AccountNotFoundError | WrongPasswordError, AuthenticationDTO.result>
+    Either<UserNotFoundError | WrongPasswordError, AuthenticationDTO.result>
   >;
 }

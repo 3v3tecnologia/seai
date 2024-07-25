@@ -6,7 +6,7 @@ import {
 import { Either, right } from "../../../../shared/Either";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { UserTypes } from "../model/user";
-import { UserAccount } from "../model/account";
+import { UserAccountProps } from "../model/account";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
   private readonly accountRepository: UserRepositoryProtocol;
@@ -40,7 +40,7 @@ export namespace FetchUsersDTO {
   } & Partial<IPaginationInput>;
 
   type account = Optional<
-    UserAccount,
+    UserAccountProps,
     "id" | "name" | "code" | "status" | "login"
   >;
 

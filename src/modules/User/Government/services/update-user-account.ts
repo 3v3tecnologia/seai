@@ -37,6 +37,12 @@ export class UpdateUser implements IUpdateUserUseCase {
       return left(new UserNotFoundError());
     }
 
+    if (existingAccount.type === "admin" && request.type !== "admin") {
+      return left(
+        new Error("Não é possível alterar o tipo de um usuário administrador")
+      );
+    }
+
     if (request.email) {
       const existingAccount = await this.accountRepository.getByEmail(
         request.email,

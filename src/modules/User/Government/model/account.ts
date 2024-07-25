@@ -1,6 +1,6 @@
 import { SystemModulesProps } from "./user-modules-access";
 
-export type UserAccount = {
+export type UserAccountProps = {
   id: number;
   name: string;
   code: string;

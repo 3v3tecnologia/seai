@@ -3,7 +3,7 @@ import {
   IPaginationInput,
 } from "../../../../../../../domain/use-cases/helpers/pagination";
 import { Optional } from "../../../../../../../shared/optional";
-import { UserAccount } from "../../../../model/account";
+import { UserAccountProps } from "../../../../model/account";
 import { UserType, UserTypes } from "../../../../model/user";
 import { SystemModulesProps } from "../../../../model/user-modules-access";
 
@@ -25,7 +25,7 @@ export interface UserRepositoryProtocol {
     } & IPaginationInput
   ): Promise<
     IOutputWithPagination<
-      Optional<UserAccount, "id" | "name" | "code" | "status" | "login">
+      Optional<UserAccountProps, "id" | "name" | "code" | "status" | "login">
     >
   >;
   updateUserStatus(user_id: number, status: string): Promise<void>;
@@ -45,23 +45,23 @@ export interface UserRepositoryProtocol {
   getById(
     id_user: number
   ): Promise<Required<
-    Optional<UserAccount, "id" | "name" | "code" | "status" | "login">
+    Optional<UserAccountProps, "id" | "name" | "code" | "status" | "login">
   > | null>;
   getByEmail(
     email: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<UserAccount | null>;
+  ): Promise<UserAccountProps | null>;
   getByLogin(
     login: string,
     user_type?: UserType | Array<UserType>
-  ): Promise<UserAccount | null>;
+  ): Promise<UserAccountProps | null>;
   getUserById(
     id_user: number
   ): Promise<Optional<
-    UserAccount,
+    UserAccountProps,
     "id" | "name" | "code" | "status" | "login"
   > | null>;
-  getUserByCode(code: string): Promise<UserAccount | null>;
+  getUserByCode(code: string): Promise<UserAccountProps | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   checkIfLoginAlreadyExists(login: string): Promise<boolean>;
   getModules(): Promise<Array<{
