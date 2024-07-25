@@ -251,7 +251,7 @@ export class UserRepository implements UserRepositoryProtocol {
       name?: string;
       type?: Record<UserTypes, string>;
     } & IPaginationInput
-  ): Promise<IOutputWithPagination<User>> {
+  ): Promise<IOutputWithPagination<UserAccount>> {
     const { pageNumber, limit, offset, name, type } = params;
 
     const pageLimit = limit;

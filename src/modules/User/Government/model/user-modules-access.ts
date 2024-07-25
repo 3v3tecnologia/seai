@@ -6,7 +6,8 @@ import {
 import {
   UserModuleIdNotFound,
   UserModulesNotFound,
-} from "../services/errors/user-account-not-found";
+} from "./errors/invalid-modules";
+
 import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserType } from "./user";
 

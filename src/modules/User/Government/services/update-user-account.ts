@@ -1,26 +1,21 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
-import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../shared/Either";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { User, UserType, UserTypes } from "../model/user";
 import {
   SystemModules,
   SystemModulesProps,
 } from "../model/user-modules-access";
-import {
-  AccountNotFoundError,
-  WrongPasswordError,
-} from "./authentication/errors";
-import { LoginAlreadyExists } from "./errors/login-aready-exists";
-import {
-  AccountEmailNotFound,
-  UserModulesNotFound,
-} from "./errors/user-account-not-found";
+
+import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
+import { UserNotFoundError } from "../model/errors/user-not-found-error";
+import { WrongPasswordError } from "../model/errors/wrong-password";
 
 export class UpdateUser implements IUpdateUserUseCase {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
 
-  constructor(accountRepository: AccountRepositoryProtocol, encoder: Encoder) {
+  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
   }
@@ -29,18 +24,17 @@ export class UpdateUser implements IUpdateUserUseCase {
     request: UpdateUserDTO.Params
   ): Promise<
     Either<
-      | AccountEmailNotFound
-      | AccountNotFoundError
+      | UserNotFoundError
+      | UserNotFoundError
       | WrongPasswordError
-      | LoginAlreadyExists
-      | UserModulesNotFound,
+      | LoginAlreadyExists,
       string
     >
   > {
     const existingAccount = await this.accountRepository.getById(request.id);
 
     if (existingAccount === null) {
-      return left(new AccountNotFoundError(request.email));
+      return left(new UserNotFoundError());
     }
 
     if (request.email) {
@@ -142,13 +136,6 @@ export interface IUpdateUserUseCase {
   execute(
     user: UpdateUserDTO.Params
   ): Promise<
-    Either<
-      | AccountEmailNotFound
-      | AccountNotFoundError
-      | WrongPasswordError
-      | LoginAlreadyExists
-      | UserModulesNotFound,
-      string
-    >
+    Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   >;
 }

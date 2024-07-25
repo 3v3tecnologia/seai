@@ -1,10 +1,11 @@
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, right } from "../../../../../shared/Either";
-import { User } from "../model/user";
+import { Optional } from "../../../../../shared/optional";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
+import { UserAccount } from "../../model/account";
 
 export class FetchUserById {
-  private readonly accountRepository: AccountRepositoryProtocol;
-  constructor(accountRepository: AccountRepositoryProtocol) {
+  private readonly accountRepository: UserRepositoryProtocol;
+  constructor(accountRepository: UserRepositoryProtocol) {
     this.accountRepository = accountRepository;
   }
   async execute(
@@ -20,5 +21,8 @@ namespace LoadUser {
     userId: number;
   };
 
-  export type Response = User | null;
+  export type Response = Optional<
+    UserAccount,
+    "id" | "name" | "code" | "status" | "login"
+  > | null;
 }

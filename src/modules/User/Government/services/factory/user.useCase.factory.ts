@@ -1,24 +1,23 @@
-import { JobsUseCasesFactory } from "./../../../../../server/http/factories/use-cases/jobs.useCase.factory";
-import { BcryptAdapter } from "./../../../../../infra/cryptography/bcrypt-adapter";
-import { DateProvider } from "./../../../../../infra/dateprovider/date";
-import { JwtAdapter } from "./../../../../../infra/cryptography/jwt-adapter";
 import {
+  CompleteUserRegister,
   CreateUser,
   DeleteUser,
   FetchUserById,
-  ForgotPassword,
   FetchUsersUseCase,
+  ForgotPassword,
   ResetPassword,
   ScheduleUserAccountNotification,
   SignIn,
   SignUp,
   UpdateUser,
-  UserAuthentication,
   UpdateUserProfile,
-  CompleteUserRegister,
+  UserAuthentication,
 } from "../";
 import env from "../../../../../server/http/env";
 import { UserRepository } from "../../infra/database/repository/user-repository";
+import { BcryptAdapter } from "./../../../../../infra/cryptography/bcrypt-adapter";
+import { JwtAdapter } from "./../../../../../infra/cryptography/jwt-adapter";
+import { JobsUseCasesFactory } from "./../../../../../server/http/factories/use-cases/jobs.useCase.factory";
 
 export class UserUseCasesFactory {
   private static repository = new UserRepository();

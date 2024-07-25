@@ -2,9 +2,10 @@ import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../../../domain/use-cases/helpers/pagination";
-import { User, UserType, UserTypes } from "../../../../model/user";
+import { Optional } from "../../../../../../../shared/optional";
+import { UserAccount } from "../../../../model/account";
+import { UserType, UserTypes } from "../../../../model/user";
 import { SystemModulesProps } from "../../../../model/user-modules-access";
-import { UserAccount } from "../../../../services/model/user-with-modules";
 
 export interface UserRepositoryProtocol {
   add(data: {
@@ -22,7 +23,11 @@ export interface UserRepositoryProtocol {
       name?: string;
       type?: Record<UserTypes, string>;
     } & IPaginationInput
-  ): Promise<IOutputWithPagination<User>>;
+  ): Promise<
+    IOutputWithPagination<
+      Optional<UserAccount, "id" | "name" | "code" | "status" | "login">
+    >
+  >;
   updateUserStatus(user_id: number, status: string): Promise<void>;
   update(data: {
     id?: number;
@@ -37,7 +42,11 @@ export interface UserRepositoryProtocol {
   updateUserPassword(user_id: number, password: string): Promise<void>;
   deleteById(id_user: number): Promise<boolean>;
   deleteByEmail(email: string): Promise<boolean>;
-  getById(id_user: number): Promise<Required<UserAccount> | null>;
+  getById(
+    id_user: number
+  ): Promise<Required<
+    Optional<UserAccount, "id" | "name" | "code" | "status" | "login">
+  > | null>;
   getByEmail(
     email: string,
     user_type?: UserType | Array<UserType>
@@ -46,7 +55,12 @@ export interface UserRepositoryProtocol {
     login: string,
     user_type?: UserType | Array<UserType>
   ): Promise<UserAccount | null>;
-  getUserById(id_user: number): Promise<UserAccount | null>;
+  getUserById(
+    id_user: number
+  ): Promise<Optional<
+    UserAccount,
+    "id" | "name" | "code" | "status" | "login"
+  > | null>;
   getUserByCode(code: string): Promise<UserAccount | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   checkIfLoginAlreadyExists(login: string): Promise<boolean>;

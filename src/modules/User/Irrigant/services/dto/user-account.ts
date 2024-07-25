@@ -1,11 +1,8 @@
 import { Either } from "../../../../../shared/Either";
-import { WrongPasswordError } from "../../../Government/services/authentication/errors";
-import { LoginAlreadyExists } from "../../../Government/services/errors/login-aready-exists";
-import {
-  AccountEmailNotFound,
-  AccountNotFoundError,
-  UserModulesNotFound,
-} from "../../../Government/services/errors/user-account-not-found";
+import { UserModulesNotFound } from "../../../Government/model/errors/invalid-modules";
+import { LoginAlreadyExists } from "../../../Government/model/errors/login-aready-exists";
+import { UserNotFoundError } from "../../../Government/model/errors/user-not-found-error";
+import { WrongPasswordError } from "../../../Government/model/errors/wrong-password";
 
 export namespace CreateIrrigantAccountDTO {
   export type Input = {
@@ -17,8 +14,7 @@ export namespace CreateIrrigantAccountDTO {
   };
 
   export type Output = Either<
-    | AccountEmailNotFound
-    | AccountNotFoundError
+    | UserNotFoundError
     | WrongPasswordError
     | LoginAlreadyExists
     | UserModulesNotFound,

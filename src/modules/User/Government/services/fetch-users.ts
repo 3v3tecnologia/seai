@@ -1,16 +1,17 @@
-import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
+import { Optional } from "./../../../../shared/optional";
 import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../domain/use-cases/helpers/pagination";
 import { Either, right } from "../../../../shared/Either";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { UserTypes } from "../model/user";
-import { User } from "./model/user";
+import { UserAccount } from "../model/account";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
 
-  constructor(accountRepository: AccountRepositoryProtocol) {
+  constructor(accountRepository: UserRepositoryProtocol) {
     this.accountRepository = accountRepository;
   }
   async execute(
@@ -38,7 +39,12 @@ export namespace FetchUsersDTO {
     type?: Record<UserTypes, string>;
   } & Partial<IPaginationInput>;
 
-  export type Response = User | IOutputWithPagination<User> | null;
+  type account = Optional<
+    UserAccount,
+    "id" | "name" | "code" | "status" | "login"
+  >;
+
+  export type Response = account | IOutputWithPagination<account> | null;
 }
 
 export interface IFetchUsersUseCase {

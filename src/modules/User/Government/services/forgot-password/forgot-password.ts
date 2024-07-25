@@ -1,25 +1,24 @@
-import { AccountRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { Either, left, right } from "../../../../../shared/Either";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { UserTypes } from "../../model/user";
-import { UserNotFoundError } from "../delete-user/errors/user-not-found-error";
+import { UserNotFoundError } from "../../model/errors/user-not-found-error";
 import {
   AvailablesEmailServices,
   ScheduleUserAccountNotification,
 } from "../send-notification-to-user/send-notification-to-user";
-import { AccountEmailNotFound } from "../sign-up/errors/user-email-not-found";
 
 export class ForgotPassword {
-  private readonly accountRepository: AccountRepositoryProtocol;
+  private readonly accountRepository: UserRepositoryProtocol;
   private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
 
   constructor(
-    accountRepository: AccountRepositoryProtocol,
+    accountRepository: UserRepositoryProtocol,
     scheduleUserAccountNotification: ScheduleUserAccountNotification
   ) {
     this.accountRepository = accountRepository;
     this.scheduleUserAccountNotification = scheduleUserAccountNotification;
   }
-  async execute(email: string): Promise<Either<AccountEmailNotFound, string>> {
+  async execute(email: string): Promise<Either<UserNotFoundError, string>> {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.getByEmail(email);
 
