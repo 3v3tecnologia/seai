@@ -9,44 +9,41 @@ import { UserName } from "../../Government/model/name";
 import { User, UserTypes } from "../../Government/model/user";
 import { UserPassword } from "../../Government/model/userPassword";
 import {
-  AvailablesEmailServices,
-  ScheduleUserAccountNotification,
+  AvailablesEmailServices
 } from "../../Government/services";
 
-import { AuthenticationService } from "../../Government/services/authentication/ports/authentication-service";
-import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
 import { UserAlreadyExistsError } from "../../Government/model/errors/user-already-exists";
 import { UserNotFoundError } from "../../Government/model/errors/user-not-found-error";
+import { AuthenticationService } from "../../Government/services/authentication/ports/authentication-service";
+import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
 
-import { CreateIrrigantAccountDTO } from "./dto/user-account";
-import { IUserIrrigantServices } from "./protocols/account";
-import { IUserPreferencesServices } from "./protocols/user-settings";
+import { QueueProviderProtocol } from "../../../../infra/queueProvider/queue.provider";
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
 } from "../../Government/model/errors/wrong-password";
+import { CreateIrrigantAccountDTO } from "./dto/user-account";
+import { IUserIrrigantServices } from "./protocols/account";
+import { IUserPreferencesServices } from "./protocols/user-settings";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
-  private readonly authentication: AuthenticationService;
   private readonly tokenProvider: TokenProvider;
-  private readonly userNotification: ScheduleUserAccountNotification;
+  private readonly queueProvider: QueueProviderProtocol;
   private readonly userPreferencesServices: IUserPreferencesServices;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    authentication: AuthenticationService,
     encoder: Encoder,
     tokenProvider: TokenProvider,
-    userNotification: ScheduleUserAccountNotification,
+    queueProvider: QueueProviderProtocol,
     userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
-    this.authentication = authentication;
     this.tokenProvider = tokenProvider;
-    this.userNotification = userNotification;
+    this.queueProvider = queueProvider;
     this.userPreferencesServices = userPreferencesServices;
   }
 
@@ -127,17 +124,17 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     // Send confirmation email
     if (user_id) {
-      const notificationSuccessOrError = await this.userNotification.schedule({
-        user: {
+      await this.queueProvider.queue({
+        name: "user-account-notification",
+        priority: 1,
+        retryDelay: 60,
+        retryLimit: 3,
+        data: {
           email: dto.email,
           base64Code: Buffer.from(dto.email).toString("base64"),
+          templateName: AvailablesEmailServices.CREATE_IRRIGANT,
         },
-        templateName: AvailablesEmailServices.CREATE_IRRIGANT,
-      });
-
-      if (notificationSuccessOrError.isRight()) {
-        Logger.info(notificationSuccessOrError.value);
-      }
+      })
     }
 
     return right(
@@ -228,18 +225,19 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     if (account == null || account.type == "pending") {
       return left(new UserNotFoundError());
     }
-    // TO-DO: change to a specific queue
-    const notificationSuccessOrError = await this.userNotification.schedule({
-      user: {
-        email: account.email,
-        base64Code: Buffer.from(account.email).toString("base64"),
-      },
-      templateName: AvailablesEmailServices.FORGOT_PASSWORD,
-    });
 
-    if (notificationSuccessOrError.isRight()) {
-      Logger.info(notificationSuccessOrError.value);
-    }
+    await this.queueProvider.queue({
+        name: "user-account-notification",
+        priority: 1,
+        retryDelay: 60,
+        retryLimit: 3,
+        data: {
+          email: account.email,
+          base64Code: Buffer.from(account.email).toString("base64"),
+          templateName: AvailablesEmailServices.FORGOT_PASSWORD,
+        },
+      })
+
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
   }

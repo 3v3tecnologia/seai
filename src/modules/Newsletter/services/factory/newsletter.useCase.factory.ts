@@ -15,23 +15,23 @@ import {
 } from "../";
 
 import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
-import { JobsUseCasesFactory } from "../../../../server/http/factories/use-cases/jobs.useCase.factory";
+import { QueueProvider } from "../../../../infra/queueProvider/queue.provider";
 import { DbNewsLetterContentRepository } from "../../infra/database/repository/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../infra/database/repository/newsletter-subscriber-repository";
-import { ConfirmSubscriberByCode } from "../confirm-user-subscription.service";
 import { ConfirmUnsubscribeByCode } from "../confirm-remove-subscription.service";
+import { ConfirmSubscriberByCode } from "../confirm-user-subscription.service";
 
 export class NewsletterUseCasesFactory {
   private static repository = new DbNewsLetterContentRepository();
 
   static makeCreateNewsletterController(): CreateNews {
-    return new CreateNews(this.repository, JobsUseCasesFactory.makeCreateJob());
+    return new CreateNews(this.repository, new QueueProvider());
   }
 
   static makeDeleteNewsletter(): DeleteNews {
     return new DeleteNews(
       this.repository,
-      JobsUseCasesFactory.makeDeleteJobByKey()
+      new QueueProvider()
     );
   }
 
@@ -50,8 +50,7 @@ export class NewsletterUseCasesFactory {
   static makeUpdateNewsletter(): UpdateNews {
     return new UpdateNews(
       this.repository,
-      JobsUseCasesFactory.makeCreateJob(),
-      JobsUseCasesFactory.makeDeleteJobByKey()
+      new QueueProvider()
     );
   }
   static makeUpdateSendAt(): UpdateSendAtNews {
@@ -65,7 +64,7 @@ export class NewsletterSubscriberUseCasesFactory {
   static makeSubscribeToNewsletter(): SubscribeToNews {
     return new SubscribeToNews(
       this.repository,
-      JobsUseCasesFactory.makeCreateJob(),
+      new QueueProvider(),
       new BcryptAdapter(env.hashSalt)
     );
   }

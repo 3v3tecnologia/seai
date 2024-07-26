@@ -1,50 +1,20 @@
-import { CreateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
+import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
 import { Either, left, right } from "../../../shared/Either";
-import { Logger } from "../../../shared/logger/logger";
-import { isDateInThePast } from "../../../shared/utils/date";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
-import { validateContentSize, validateSendDate } from "../model/content";
+import { validateContentSize } from "../model/content";
 
 export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
-  private readonly createJobQueue: CreateJobUseCaseProtocol.UseCase;
+  private readonly queueProvider: QueueProviderProtocol;
+
   constructor(
     repository: NewsRepositoryProtocol,
-    createJobQueue: CreateJobUseCaseProtocol.UseCase
+    queueProvider: QueueProviderProtocol
   ) {
     this.repository = repository;
-    this.createJobQueue = createJobQueue;
+    this.queueProvider = queueProvider;
   }
 
-  private async createJob(
-    newsId: number,
-    sendDate: Date
-  ): Promise<Either<Error, string>> {
-    try {
-      const jobOrError = await this.createJobQueue.execute({
-        name: "send-newsletter",
-        data: {
-          id: newsId,
-        },
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        startAfter: sendDate,
-        singletonkey: String(newsId),
-      });
-
-      if (jobOrError.isLeft()) {
-        return left(jobOrError.value);
-      }
-
-      const job = jobOrError.value;
-
-      return right("Sucesso ao agentar job de notícias");
-    } catch (error) {
-      console.error(error);
-      return left(new Error("Falha ao agendar job de notícias"));
-    }
-  }
 
   async create(
     request: CreateNewsUseCaseProtocol.Request
@@ -65,14 +35,18 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
 
     const newsId = await this.repository.create(request);
 
-    const scheduleJobOrError = await this.createJob(newsId, sendDate);
-
     // E se o sistema de jobs estiver indisponível? Como o sistema deve se comportar?
-    if (scheduleJobOrError.isLeft()) {
-      Logger.error(scheduleJobOrError.value.message);
-    } else {
-      Logger.info(scheduleJobOrError.value as string);
-    }
+    await this.queueProvider.queue({
+        name: "send-newsletter",
+        data: {
+          id: newsId,
+        },
+        priority: 1,
+        retryDelay: 60,
+        retryLimit: 3,
+        startAfter: sendDate,
+        singletonkey: String(newsId),
+      });
 
     const successLog = `Notícia criada com sucessso.`;
 

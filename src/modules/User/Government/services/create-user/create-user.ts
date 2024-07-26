@@ -1,30 +1,30 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
+import { QueueProviderProtocol } from "../../../../../infra/queueProvider/queue.provider";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
+import { UserAlreadyExistsError } from "../../model/errors/user-already-exists";
 import { User, UserTypes } from "../../model/user";
 import {
   SystemModules,
   SystemModulesProps,
 } from "../../model/user-modules-access";
 import {
-  AvailablesEmailServices,
-  ScheduleUserAccountNotification,
+  AvailablesEmailServices
 } from "../send-notification-to-user/send-notification-to-user";
-import { UserAlreadyExistsError } from "../../model/errors/user-already-exists";
 import { CreateUserDTO } from "./ports";
 
 export class CreateUser {
   private readonly accountRepository: UserRepositoryProtocol;
-  private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
+  private readonly queueProvider: QueueProviderProtocol;
   private readonly encoder: Encoder;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    scheduleUserAccountNotification: ScheduleUserAccountNotification,
+    queueProvider: QueueProviderProtocol,
     encoder: Encoder
   ) {
     this.accountRepository = accountRepository;
-    this.scheduleUserAccountNotification = scheduleUserAccountNotification;
+    this.queueProvider = queueProvider;
     this.encoder = encoder;
   }
   async create(
@@ -85,20 +85,19 @@ export class CreateUser {
     });
 
     if (user_id) {
-      // const exp_date = this.dateProvider.addHours(3);
 
-      const notificationSuccessOrError =
-        await this.scheduleUserAccountNotification.schedule({
-          user: {
+        await this.queueProvider.queue({
+          name: "user-account-notification",
+          priority: 1,
+          retryDelay: 60,
+          retryLimit: 3,
+          data: {
             email: userEmail,
             base64Code: Buffer.from(userEmail).toString("base64"),
+            templateName: AvailablesEmailServices.CREATE_ACCOUNT
           },
-          templateName: AvailablesEmailServices.CREATE_ACCOUNT,
-        });
+    })
 
-      if (notificationSuccessOrError.isRight()) {
-        console.log(notificationSuccessOrError.value);
-      }
     }
 
     return right(

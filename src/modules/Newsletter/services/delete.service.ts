@@ -1,17 +1,17 @@
-import { DeleteJobByKeyUseCaseProtocol } from "../../../domain/use-cases/jobs";
+import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
 import { Either, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
-  private readonly deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase;
+  private readonly queueProvider: QueueProviderProtocol;
 
   constructor(
     repository: NewsRepositoryProtocol,
-    deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase
+    queueProvider: QueueProviderProtocol
   ) {
     this.repository = repository;
-    this.deleteJobByKey = deleteJobByKey;
+    this.queueProvider = queueProvider;
   }
   async create(
     request: DeleteNewsUseCaseProtocol.Request
@@ -21,9 +21,7 @@ export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
     const successLog = `Notícia deletada com sucessso.`;
 
     // delete all jobs related to the news (purge by news id)
-    await this.deleteJobByKey.execute({
-      key: String(request.Id),
-    });
+    await this.queueProvider.removeByKey(String(request.Id));
 
     return right(successLog);
   }

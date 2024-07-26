@@ -1,5 +1,5 @@
 import { Encoder } from "../../../domain/use-cases/_ports/cryptography/encoder";
-import { CreateJobUseCaseProtocol } from "../../../domain/use-cases/jobs";
+import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../server/http/config/url";
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/logger/logger";
@@ -7,12 +7,12 @@ import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/reposi
 
 export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
   private repository: NewsletterSubscriberRepositoryProtocol;
-  private readonly queueService: CreateJobUseCaseProtocol.UseCase;
+  private readonly queueService: QueueProviderProtocol
   private readonly encoder: Encoder;
 
   constructor(
     repository: NewsletterSubscriberRepositoryProtocol,
-    queueService: CreateJobUseCaseProtocol.UseCase,
+    queueService: QueueProviderProtocol,
     encoder: Encoder
   ) {
     this.repository = repository;
@@ -51,7 +51,7 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
     const subscriberId = await this.repository.create(data);
 
     if (subscriberId) {
-      const scheduledOrError = await this.queueService.execute({
+      const scheduledOrError = await this.queueService.queue({
         name: "newsletter-subscriber-notification",
         priority: 3,
         retryDelay: 180,

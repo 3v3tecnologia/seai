@@ -6,18 +6,17 @@ import {
   FetchUsersUseCase,
   ForgotPassword,
   ResetPassword,
-  ScheduleUserAccountNotification,
   SignIn,
   SignUp,
   UpdateUser,
   UpdateUserProfile,
-  UserAuthentication,
+  UserAuthentication
 } from "../";
+import { QueueProvider } from "../../../../../infra/queueProvider/queue.provider";
 import env from "../../../../../server/http/env";
 import { UserRepository } from "../../infra/database/repository/user-repository";
 import { BcryptAdapter } from "./../../../../../infra/cryptography/bcrypt-adapter";
 import { JwtAdapter } from "./../../../../../infra/cryptography/jwt-adapter";
-import { JobsUseCasesFactory } from "./../../../../../server/http/factories/use-cases/jobs.useCase.factory";
 
 export class UserUseCasesFactory {
   private static repository = new UserRepository();
@@ -31,7 +30,7 @@ export class UserUseCasesFactory {
   static makeCreateUser(): CreateUser {
     return new CreateUser(
       this.repository,
-      this.makeSendNotificationToUser(),
+      new QueueProvider(),
       this.encoder
     );
   }
@@ -43,7 +42,7 @@ export class UserUseCasesFactory {
   static makeForgotPasswordUser(): ForgotPassword {
     return new ForgotPassword(
       this.repository,
-      this.makeSendNotificationToUser()
+      new QueueProvider()
     );
   }
 
@@ -57,12 +56,6 @@ export class UserUseCasesFactory {
 
   static makeResetUserPassword(): ResetPassword {
     return new ResetPassword(this.repository, this.encoder);
-  }
-
-  static makeSendNotificationToUser(): ScheduleUserAccountNotification {
-    return new ScheduleUserAccountNotification(
-      JobsUseCasesFactory.makeCreateJob()
-    );
   }
 
   static makeUserSignIn(): SignIn {
