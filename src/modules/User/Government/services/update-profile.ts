@@ -1,13 +1,13 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { Email } from "../model/email";
-import { UserLogin } from "../model/login";
-import { UserName } from "../model/name";
-import { UserTypes } from "../model/user";
-import { UserPassword } from "../model/userPassword";
-import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
-import { UserNotFoundError } from "../model/errors/user-not-found-error";
+import { Email } from "../../core/model/email";
+import { UserLogin } from "../../core/model/login";
+import { UserName } from "../../core/model/name";
+import { UserTypes } from "../../core/model/user";
+import { UserPassword } from "../../core/model/userPassword";
+import { LoginAlreadyExists } from "../../core/model/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
 
 export class UpdateUserProfile implements IUpdateUserProfileUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

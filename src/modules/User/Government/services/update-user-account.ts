@@ -1,15 +1,15 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { User, UserType, UserTypes } from "../model/user";
+import { User, UserType, UserTypes } from "../../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
-} from "../model/user-modules-access";
+} from "../../core/model/user-modules-access";
 
-import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
-import { UserNotFoundError } from "../model/errors/user-not-found-error";
-import { WrongPasswordError } from "../model/errors/wrong-password";
+import { LoginAlreadyExists } from "../../core/model/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/model/errors/wrong-password";
 
 export class UpdateUser implements IUpdateUserUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

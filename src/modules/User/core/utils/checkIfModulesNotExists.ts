@@ -1,6 +1,6 @@
-import { Either, left, right } from "../../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/Either";
 import { UserModuleAccessErrors } from "../errors/invalid-user-permissions";
-import { Modules, SystemModules } from "../user-modules-access";
+import { Modules, SystemModules } from "../model/user-modules-access";
 
 type existsModules = Array<{
   id: number;

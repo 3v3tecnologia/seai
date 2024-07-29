@@ -1,24 +1,38 @@
 import {
+  badRequest,
   created,
   forbidden,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { UpdateUserProfile } from "../services";
 
 export class UpdateUserProfileController {
   private updateUser: UpdateUserProfile;
+  private validator: ISchemaValidator;
 
-  constructor(updateUser: UpdateUserProfile) {
+  constructor(updateUser: UpdateUserProfile, validator: ISchemaValidator) {
     this.updateUser = updateUser;
+    this.validator = validator;
   }
 
   async handle(
     request: UpdateUserProfileController.Request
   ): Promise<HttpResponse> {
     try {
-      console.log(request);
       const { accountId, email, login, name } = request;
+
+      const { error } = await this.validator.validate({
+        accountId,
+        email,
+        login,
+        name,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
 
       const dto = {
         id: accountId,

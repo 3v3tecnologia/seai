@@ -1,7 +1,7 @@
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { FailToDeleteUserError } from "../../model/errors/fail-to-delete-user-error";
-import { UserNotFoundError } from "../../model/errors/user-not-found-error";
+import { FailToDeleteUserError } from "../../../core/model/errors/fail-to-delete-user-error";
+import { UserNotFoundError } from "../../../core/model/errors/user-not-found-error";
 
 export class DeleteUser implements DeleteUserProtocol.UseCase {
   private readonly accountRepository: UserRepositoryProtocol;

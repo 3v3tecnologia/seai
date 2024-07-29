@@ -1,4 +1,4 @@
-import { AccountRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 import { ok, serverError } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
@@ -6,7 +6,7 @@ import { Controller } from "../../../../presentation/controllers/ports/controlle
 export class FetchSystemModulesController
   implements Controller<void, HttpResponse>
 {
-  constructor(private readonly accountRepository: AccountRepositoryProtocol) {}
+  constructor(private readonly accountRepository: UserRepositoryProtocol) {}
 
   async handle(): Promise<HttpResponse> {
     try {

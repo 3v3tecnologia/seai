@@ -5,8 +5,8 @@ import {
 } from "../../../../domain/use-cases/helpers/pagination";
 import { Either, right } from "../../../../shared/Either";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { UserTypes } from "../model/user";
-import { UserAccountProps } from "../model/account";
+import { UserTypes } from "../../core/model/user";
+import { UserAccountProps } from "../../core/model/account";
 
 export class FetchUsersUseCase implements IFetchUsersUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

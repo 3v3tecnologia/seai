@@ -4,12 +4,12 @@ import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvide
 import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserAlreadyExistsError } from "../../model/errors/user-already-exists";
-import { User, UserTypes } from "../../model/user";
+import { UserAlreadyExistsError } from "../../../core/model/errors/user-already-exists";
+import { User, UserTypes } from "../../../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
-} from "../../model/user-modules-access";
+} from "../../../core/model/user-modules-access";
 import { CreateUserDTO } from "./ports";
 
 export class CreateUser {

@@ -5,9 +5,9 @@ import {
 } from "../../../../../../domain/use-cases/helpers/pagination";
 import { governmentDb } from "../../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../../infra/database/postgres/repositories/utils/paginate";
-import { UserAccountProps } from "../../../model/account";
-import { UserType, UserTypes } from "../../../model/user";
-import { SystemModulesProps } from "../../../model/user-modules-access";
+import { UserAccountProps } from "../../../../core/model/account";
+import { UserType, UserTypes } from "../../../../core/model/user";
+import { SystemModulesProps } from "../../../../core/model/user-modules-access";
 import { UserRepositoryProtocol } from "./protocol/user-repository";
 
 function mapUserModulePermissionsToPersistence(

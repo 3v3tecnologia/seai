@@ -3,14 +3,14 @@ import { Either, left, right } from "../../../../shared/Either";
 import { Logger } from "../../../../shared/logger/logger";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { UserRepositoryProtocol } from "../../Government/infra/database/repository/protocol/user-repository";
-import { Email } from "../../Government/model/email";
-import { UserLogin } from "../../Government/model/login";
-import { UserName } from "../../Government/model/name";
-import { User, UserTypes } from "../../Government/model/user";
-import { UserPassword } from "../../Government/model/userPassword";
+import { Email } from "../../core/model/email";
+import { UserLogin } from "../../core/model/login";
+import { UserName } from "../../core/model/name";
+import { User, UserTypes } from "../../core/model/user";
+import { UserPassword } from "../../core/model/userPassword";
 
-import { UserAlreadyExistsError } from "../../Government/model/errors/user-already-exists";
-import { UserNotFoundError } from "../../Government/model/errors/user-not-found-error";
+import { UserAlreadyExistsError } from "../../core/model/errors/user-already-exists";
+import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
 import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
 
 import { TASK_QUEUES } from "../../../../infra/queueProvider/helpers/queues";
@@ -18,7 +18,7 @@ import { TaskSchedulerProviderProtocol } from "../../../../infra/queueProvider/p
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
-} from "../../Government/model/errors/wrong-password";
+} from "../../core/model/errors/wrong-password";
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
 import { IUserPreferencesServices } from "./protocols/user-settings";

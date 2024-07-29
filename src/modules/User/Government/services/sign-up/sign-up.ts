@@ -1,14 +1,14 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserModulesNotFound } from "../../model/errors/invalid-modules";
-import { LoginAlreadyExists } from "../../model/errors/login-aready-exists";
-import { UserNotFoundError } from "../../model/errors/user-not-found-error";
+import { UserModulesNotFound } from "../../../core/model/errors/invalid-modules";
+import { LoginAlreadyExists } from "../../../core/model/errors/login-aready-exists";
+import { UserNotFoundError } from "../../../core/model/errors/user-not-found-error";
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
-} from "../../model/errors/wrong-password";
-import { User, UserType, UserTypes } from "../../model/user";
+} from "../../../core/model/errors/wrong-password";
+import { User, UserType, UserTypes } from "../../../core/model/user";
 
 import {
   AuthenticationDTO,

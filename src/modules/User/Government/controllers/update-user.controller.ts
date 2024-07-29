@@ -1,28 +1,55 @@
 import {
+  badRequest,
   created,
   forbidden,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
-import { UserType } from "../model/user";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
+import { UserType } from "../../core/model/user";
 import {
   Modules,
   SystemModulesPermissions,
-} from "../model/user-modules-access";
+} from "../../core/model/user-modules-access";
 import { UpdateUser } from "../services";
 
 export class UpdateUserController {
   private updateUser: UpdateUser;
+  private validator: ISchemaValidator;
 
-  constructor(updateUser: UpdateUser) {
+  constructor(updateUser: UpdateUser, validator: ISchemaValidator) {
     this.updateUser = updateUser;
+    this.validator = validator;
   }
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
-      const { id, email, modules } = request;
+      const {
+        id,
+        email,
+        modules,
+        login,
+        name,
+        type,
+        confirmPassword,
+        password,
+      } = request;
 
-      const dto = {
+      const { error } = await this.validator.validate({
+        id,
+        email,
+        modules,
+        login,
+        name,
+        type,
+        confirmPassword,
+        password,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+      const updateOrError = await this.updateUser.execute({
         id: Number(id),
         name: Reflect.has(request, "name") ? (request.name as string) : null,
         login: Reflect.has(request, "login") ? (request.login as string) : null,
@@ -35,9 +62,7 @@ export class UpdateUserController {
           : null,
         modules,
         type: request.type,
-      };
-
-      const updateOrError = await this.updateUser.execute(dto);
+      });
 
       if (updateOrError.isLeft()) {
         return forbidden(updateOrError.value);

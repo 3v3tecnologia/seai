@@ -1,12 +1,19 @@
-import { forbidden, ok } from "../../../../presentation/controllers/helpers";
+import {
+  badRequest,
+  forbidden,
+  ok,
+} from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { DeleteUser } from "../services";
 
 export class DeleteUserController {
   private deleteUser: DeleteUser;
+  private validator: ISchemaValidator;
 
-  constructor(deleteUser: DeleteUser) {
+  constructor(deleteUser: DeleteUser, validator: ISchemaValidator) {
     this.deleteUser = deleteUser;
+    this.validator = validator;
   }
 
   async handle(request: DeleteUserController.Request): Promise<HttpResponse> {
@@ -14,22 +21,26 @@ export class DeleteUserController {
       id: Reflect.has(request, "id") ? request.id : request.accountId,
     };
 
-    console.log(dto);
-
     if (request.email) {
       Object.assign(dto, {
         email: request.email,
       });
     }
 
-    if (
-      [Reflect.has(dto, "id"), Reflect.has(dto, "email")].every(
-        (c) => c == false
-      )
-    ) {
-      return forbidden(
-        new Error("Necessário informar a identificação do usuário")
-      );
+    // if (
+    //   [Reflect.has(dto, "id"), Reflect.has(dto, "email")].every(
+    //     (c) => c == false
+    //   )
+    // ) {
+    //   return forbidden(
+    //     new Error("Necessário informar a identificação do usuário")
+    //   );
+    // }
+
+    const { error } = await this.validator.validate(dto);
+
+    if (error) {
+      return badRequest(error);
     }
 
     const result = await this.deleteUser.execute(dto);

@@ -1,29 +1,43 @@
 import {
+  badRequest,
   created,
   forbidden,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { CompleteUserRegister } from "../services";
 
 export class CompleteUserRegisterController {
   private updateUser: CompleteUserRegister;
+  private validator: ISchemaValidator;
 
-  constructor(updateUser: CompleteUserRegister) {
+  constructor(updateUser: CompleteUserRegister, validator: ISchemaValidator) {
     this.updateUser = updateUser;
+    this.validator = validator;
   }
 
   async handle(
     request: CompleteUserRegisterDTO.Request
   ): Promise<HttpResponse> {
     try {
-      const updateOrError = await this.updateUser.execute({
-        code: request.code,
-        name: request.name,
-        login: request.login,
-        password: request.password,
-        confirmPassword: request.confirmPassword,
-      });
+      const { code, confirmPassword, login, name, password } = request;
+
+      const dto = {
+        code,
+        confirmPassword,
+        login,
+        name,
+        password,
+      };
+
+      const { error } = await this.validator.validate(dto);
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const updateOrError = await this.updateUser.execute(dto);
 
       if (updateOrError.isLeft()) {
         return forbidden(updateOrError.value);

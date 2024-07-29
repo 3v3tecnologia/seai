@@ -7,28 +7,33 @@ import {
   serverError,
   forbidden,
 } from "../../../../presentation/controllers/helpers";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 
 export class SignInController
   implements Controller<SignInControllerProtocol.Request, HttpResponse>
 {
   private signIn: SignIn;
+  private validator: ISchemaValidator;
 
-  constructor(signIn: SignIn) {
+  constructor(signIn: SignIn, validator: ISchemaValidator) {
     this.signIn = signIn;
+    this.validator = validator;
   }
 
   async handle(
     request: SignInControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      // if (!request.login ) {
-      //   return badRequest(new Error("É necessário informar o login"));
-      // }
-      if (!request.password) {
-        return badRequest(new Error("É necessário informar a senha"));
-      }
-      if (typeof request.password !== "string") {
-        return badRequest(new Error("Senha deve ser do formato textual"));
+      const { password, email, login } = request;
+
+      const { error } = await this.validator.validate({
+        password,
+        email,
+        login,
+      });
+
+      if (error) {
+        return badRequest(error);
       }
 
       const result = await this.signIn.execute(request);

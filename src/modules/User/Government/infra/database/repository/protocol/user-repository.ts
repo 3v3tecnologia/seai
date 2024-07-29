@@ -3,9 +3,9 @@ import {
   IPaginationInput,
 } from "../../../../../../../domain/use-cases/helpers/pagination";
 import { Optional } from "../../../../../../../shared/optional";
-import { UserAccountProps } from "../../../../model/account";
-import { UserType, UserTypes } from "../../../../model/user";
-import { SystemModulesProps } from "../../../../model/user-modules-access";
+import { UserAccountProps } from "../../../../../core/model/account";
+import { UserType, UserTypes } from "../../../../../core/model/user";
+import { SystemModulesProps } from "../../../../../core/model/user-modules-access";
 
 export interface UserRepositoryProtocol {
   add(data: {
