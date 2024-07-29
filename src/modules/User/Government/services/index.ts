@@ -5,7 +5,6 @@ export * from "./fetch-user-by-id";
 export * from "./fetch-users";
 export * from "./reset-password";
 export * from "./forgot-password";
-export * from "./send-notification-to-user";
 export * from "./sign-in";
 export * from "./sign-up";
 export * from "./update-user-account";

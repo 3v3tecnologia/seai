@@ -15,7 +15,7 @@ import {
 } from "../";
 
 import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
-import { QueueProvider } from "../../../../infra/queueProvider/queue.provider";
+import { PgBossAdapter } from "../../../../infra/queueProvider/pg-boss";
 import { DbNewsLetterContentRepository } from "../../infra/database/repository/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../infra/database/repository/newsletter-subscriber-repository";
 import { ConfirmUnsubscribeByCode } from "../confirm-remove-subscription.service";
@@ -25,14 +25,11 @@ export class NewsletterUseCasesFactory {
   private static repository = new DbNewsLetterContentRepository();
 
   static makeCreateNewsletterController(): CreateNews {
-    return new CreateNews(this.repository, new QueueProvider());
+    return new CreateNews(this.repository, new PgBossAdapter());
   }
 
   static makeDeleteNewsletter(): DeleteNews {
-    return new DeleteNews(
-      this.repository,
-      new QueueProvider()
-    );
+    return new DeleteNews(this.repository, new PgBossAdapter());
   }
 
   static makeFetchAllNewsletter(): FetchAllNews {
@@ -48,10 +45,7 @@ export class NewsletterUseCasesFactory {
   }
 
   static makeUpdateNewsletter(): UpdateNews {
-    return new UpdateNews(
-      this.repository,
-      new QueueProvider()
-    );
+    return new UpdateNews(this.repository, new PgBossAdapter());
   }
   static makeUpdateSendAt(): UpdateSendAtNews {
     return new UpdateSendAtNews(this.repository);
@@ -64,7 +58,7 @@ export class NewsletterSubscriberUseCasesFactory {
   static makeSubscribeToNewsletter(): SubscribeToNews {
     return new SubscribeToNews(
       this.repository,
-      new QueueProvider(),
+      new PgBossAdapter(),
       new BcryptAdapter(env.hashSalt)
     );
   }

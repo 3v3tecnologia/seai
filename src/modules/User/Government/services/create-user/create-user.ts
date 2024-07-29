@@ -1,5 +1,7 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
-import { QueueProviderProtocol } from "../../../../../infra/queueProvider/queue.provider";
+import { TASK_QUEUES } from "../../../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
+import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { UserAlreadyExistsError } from "../../model/errors/user-already-exists";
@@ -8,19 +10,16 @@ import {
   SystemModules,
   SystemModulesProps,
 } from "../../model/user-modules-access";
-import {
-  AvailablesEmailServices
-} from "../send-notification-to-user/send-notification-to-user";
 import { CreateUserDTO } from "./ports";
 
 export class CreateUser {
   private readonly accountRepository: UserRepositoryProtocol;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
   private readonly encoder: Encoder;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    queueProvider: QueueProviderProtocol,
+    queueProvider: TaskSchedulerProviderProtocol,
     encoder: Encoder
   ) {
     this.accountRepository = accountRepository;
@@ -85,19 +84,12 @@ export class CreateUser {
     });
 
     if (user_id) {
-
-        await this.queueProvider.queue({
-          name: "user-account-notification",
-          priority: 1,
-          retryDelay: 60,
-          retryLimit: 3,
-          data: {
-            email: userEmail,
-            base64Code: Buffer.from(userEmail).toString("base64"),
-            templateName: AvailablesEmailServices.CREATE_ACCOUNT
-          },
-    })
-
+      const base64Code = Buffer.from(userEmail).toString("base64");
+      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+        email: userEmail,
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${base64Code}`,
+        action: "create-user-account",
+      });
     }
 
     return right(

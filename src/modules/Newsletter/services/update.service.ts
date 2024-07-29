@@ -1,15 +1,16 @@
-import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
+import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
 export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
 
   constructor(
     repository: NewsRepositoryProtocol,
-    queueProvider: QueueProviderProtocol
+    queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.repository = repository;
     this.queueProvider = queueProvider;
@@ -50,20 +51,21 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
 
     const successLog = `Notícia atualizada com sucessso.`;
 
-    await this.queueProvider.removeByKey(String(request.Id))
+    await this.queueProvider.removeByKey(String(request.Id));
 
-      await this.queueProvider.queue({
-        name: "send-newsletter",
-        data: {
-          id: request.Id,
-        },
+    await this.queueProvider.send(
+      TASK_QUEUES.NEWSLETTER,
+      {
+        id: request.Id,
+      },
+      {
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
         startAfter: new Date(request.SendDate),
         singletonkey: String(request.Id),
-      })
-
+      }
+    );
 
     return right(successLog);
   }

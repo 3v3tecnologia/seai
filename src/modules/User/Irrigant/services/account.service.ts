@@ -8,16 +8,13 @@ import { UserLogin } from "../../Government/model/login";
 import { UserName } from "../../Government/model/name";
 import { User, UserTypes } from "../../Government/model/user";
 import { UserPassword } from "../../Government/model/userPassword";
-import {
-  AvailablesEmailServices
-} from "../../Government/services";
 
 import { UserAlreadyExistsError } from "../../Government/model/errors/user-already-exists";
 import { UserNotFoundError } from "../../Government/model/errors/user-not-found-error";
-import { AuthenticationService } from "../../Government/services/authentication/ports/authentication-service";
 import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
 
-import { QueueProviderProtocol } from "../../../../infra/queueProvider/queue.provider";
+import { TASK_QUEUES } from "../../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
@@ -25,19 +22,20 @@ import {
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
 import { IUserPreferencesServices } from "./protocols/user-settings";
+import { PUBLIC_ASSETS_BASE_URL } from "../../../../server/http/config/url";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
   private readonly tokenProvider: TokenProvider;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
   private readonly userPreferencesServices: IUserPreferencesServices;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
     encoder: Encoder,
     tokenProvider: TokenProvider,
-    queueProvider: QueueProviderProtocol,
+    queueProvider: TaskSchedulerProviderProtocol,
     userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
@@ -124,17 +122,13 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     // Send confirmation email
     if (user_id) {
-      await this.queueProvider.queue({
-        name: "user-account-notification",
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        data: {
-          email: dto.email,
-          base64Code: Buffer.from(dto.email).toString("base64"),
-          templateName: AvailablesEmailServices.CREATE_IRRIGANT,
-        },
-      })
+      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+        email: dto.email,
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/irrigant/activate/${Buffer.from(
+          dto.email
+        ).toString("base64")}`,
+        action: "create-user-account",
+      });
     }
 
     return right(
@@ -226,18 +220,13 @@ export class UserIrrigantServices implements IUserIrrigantServices {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.queue({
-        name: "user-account-notification",
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        data: {
-          email: account.email,
-          base64Code: Buffer.from(account.email).toString("base64"),
-          templateName: AvailablesEmailServices.FORGOT_PASSWORD,
-        },
-      })
-
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      email: account.email,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${Buffer.from(
+        account.email
+      ).toString("base64")}`,
+      action: "forgot-user-account",
+    });
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
   }

@@ -1,19 +1,18 @@
-import { QueueProviderProtocol } from "../../../../../infra/queueProvider/queue.provider";
+import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 import { UserNotFoundError } from "../../model/errors/user-not-found-error";
 import { UserTypes } from "../../model/user";
-import {
-  AvailablesEmailServices
-} from "../send-notification-to-user/send-notification-to-user";
+import { TASK_QUEUES } from "../../../../../infra/queueProvider/helpers/queues";
+import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
 
 export class ForgotPassword {
   private readonly accountRepository: UserRepositoryProtocol;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    queueProvider: QueueProviderProtocol
+    queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.accountRepository = accountRepository;
     this.queueProvider = queueProvider;
@@ -26,17 +25,13 @@ export class ForgotPassword {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.queue({
-          name: "user-account-notification",
-          priority: 1,
-          retryDelay: 60,
-          retryLimit: 3,
-          data: {
-            email: account.email,
-            base64Code: Buffer.from(account.email).toString("base64"),
-            templateName: AvailablesEmailServices.FORGOT_PASSWORD,
-          },
-    })
+    const base64Code = Buffer.from(account.email).toString("base64");
+
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      email: account.email,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${base64Code}`,
+      action: "forgot-user-account",
+    });
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);
   }

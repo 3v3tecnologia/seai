@@ -1,14 +1,14 @@
-import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
 
   constructor(
     repository: NewsRepositoryProtocol,
-    queueProvider: QueueProviderProtocol
+    queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.repository = repository;
     this.queueProvider = queueProvider;

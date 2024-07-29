@@ -1,5 +1,6 @@
 import { Encoder } from "../../../domain/use-cases/_ports/cryptography/encoder";
-import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
+import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../server/http/config/url";
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/logger/logger";
@@ -7,12 +8,12 @@ import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/reposi
 
 export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
   private repository: NewsletterSubscriberRepositoryProtocol;
-  private readonly queueService: QueueProviderProtocol
+  private readonly queueService: TaskSchedulerProviderProtocol;
   private readonly encoder: Encoder;
 
   constructor(
     repository: NewsletterSubscriberRepositoryProtocol,
-    queueService: QueueProviderProtocol,
+    queueService: TaskSchedulerProviderProtocol,
     encoder: Encoder
   ) {
     this.repository = repository;
@@ -51,20 +52,11 @@ export class SubscribeToNews implements SubscribeToNewsUseCaseProtocol.UseCase {
     const subscriberId = await this.repository.create(data);
 
     if (subscriberId) {
-      const scheduledOrError = await this.queueService.queue({
-        name: "newsletter-subscriber-notification",
-        priority: 3,
-        retryDelay: 180,
-        retryLimit: 3,
-        data: {
-          email: request.Email,
-          link: `${PUBLIC_ASSETS_BASE_URL}/newsletter/subscriber/${userCode}/confirmation`,
-        },
+      await this.queueService.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+        email: request.Email,
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/newsletter/subscriber/${userCode}/confirmation`,
+        action: "newsletter-subscription",
       });
-
-      if (scheduledOrError.isRight()) {
-        Logger.fatal(scheduledOrError.value);
-      }
     }
 
     return right(

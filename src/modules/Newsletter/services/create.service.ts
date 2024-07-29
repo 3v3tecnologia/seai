@@ -1,20 +1,20 @@
-import { QueueProviderProtocol } from "../../../infra/queueProvider/queue.provider";
+import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
 export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
   private repository: NewsRepositoryProtocol;
-  private readonly queueProvider: QueueProviderProtocol;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
 
   constructor(
     repository: NewsRepositoryProtocol,
-    queueProvider: QueueProviderProtocol
+    queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.repository = repository;
     this.queueProvider = queueProvider;
   }
-
 
   async create(
     request: CreateNewsUseCaseProtocol.Request
@@ -36,17 +36,19 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
     const newsId = await this.repository.create(request);
 
     // E se o sistema de jobs estiver indisponível? Como o sistema deve se comportar?
-    await this.queueProvider.queue({
-        name: "send-newsletter",
-        data: {
-          id: newsId,
-        },
+    await this.queueProvider.send(
+      TASK_QUEUES.NEWSLETTER,
+      {
+        id: newsId,
+      },
+      {
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
         startAfter: sendDate,
         singletonkey: String(newsId),
-      });
+      }
+    );
 
     const successLog = `Notícia criada com sucessso.`;
 

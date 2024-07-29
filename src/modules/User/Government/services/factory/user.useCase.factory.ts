@@ -10,9 +10,9 @@ import {
   SignUp,
   UpdateUser,
   UpdateUserProfile,
-  UserAuthentication
+  UserAuthentication,
 } from "../";
-import { QueueProvider } from "../../../../../infra/queueProvider/queue.provider";
+import { PgBossAdapter } from "../../../../../infra/queueProvider/pg-boss";
 import env from "../../../../../server/http/env";
 import { UserRepository } from "../../infra/database/repository/user-repository";
 import { BcryptAdapter } from "./../../../../../infra/cryptography/bcrypt-adapter";
@@ -28,11 +28,7 @@ export class UserUseCasesFactory {
   }
 
   static makeCreateUser(): CreateUser {
-    return new CreateUser(
-      this.repository,
-      new QueueProvider(),
-      this.encoder
-    );
+    return new CreateUser(this.repository, new PgBossAdapter(), this.encoder);
   }
 
   static makeDeleteUser(): DeleteUser {
@@ -40,10 +36,7 @@ export class UserUseCasesFactory {
   }
 
   static makeForgotPasswordUser(): ForgotPassword {
-    return new ForgotPassword(
-      this.repository,
-      new QueueProvider()
-    );
+    return new ForgotPassword(this.repository, new PgBossAdapter());
   }
 
   static makeGetUsers(): FetchUsersUseCase {
