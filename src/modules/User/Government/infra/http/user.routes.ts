@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { setupUserIrrigantAccountRoutes } from "../../../Irrigant/http/account";
 import { UserControllersFactory } from "../../controllers/factory/user.controller.factory";
 import {
   authorization,
   userPermissions,
 } from "../../../../../server/http/http-middlewares";
 import { adaptRoute } from "../../../../../server/http/adapters/express-route.adapter";
+import { setupUserIrrigantAccountRoutes } from "../../../Irrigant/infra/http/account.routes";
 
 export const userRouter = (): Router => {
   const router = Router();

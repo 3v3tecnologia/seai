@@ -9,20 +9,21 @@ import { UserName } from "../../core/model/name";
 import { User, UserTypes } from "../../core/model/user";
 import { UserPassword } from "../../core/model/userPassword";
 
-import { UserAlreadyExistsError } from "../../core/model/errors/user-already-exists";
-import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
 import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
 
 import { TASK_QUEUES } from "../../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
-import {
-  UnmatchedPasswordError,
-  WrongPasswordError,
-} from "../../core/model/errors/wrong-password";
+
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
 import { IUserPreferencesServices } from "./protocols/user-settings";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../../server/http/config/url";
+import {
+  UnmatchedPasswordError,
+  WrongPasswordError,
+} from "../../core/errors/wrong-password";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { UserAlreadyExistsError } from "../../core/errors/user-already-exists";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: UserRepositoryProtocol;

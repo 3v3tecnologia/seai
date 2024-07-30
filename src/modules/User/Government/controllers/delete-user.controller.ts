@@ -37,11 +37,11 @@ export class DeleteUserController {
     //   );
     // }
 
-    const { error } = await this.validator.validate(dto);
+    // const { error } = await this.validator.validate(dto);
 
-    if (error) {
-      return badRequest(error);
-    }
+    // if (error) {
+    //   return badRequest(error);
+    // }
 
     const result = await this.deleteUser.execute(dto);
 

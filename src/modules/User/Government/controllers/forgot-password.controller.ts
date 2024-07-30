@@ -26,13 +26,13 @@ export class ForgotPasswordController
     try {
       const { email } = request;
 
-      const { error } = await this.validator.validate({
-        email,
-      });
+      // const { error } = await this.validator.validate({
+      //   email,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const createdOrError = await this.forgotPassword.execute(email);
 

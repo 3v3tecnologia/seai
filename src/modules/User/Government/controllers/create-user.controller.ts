@@ -32,11 +32,11 @@ export class CreateUserController {
         type,
       };
 
-      const { error } = await this.validator.validate(dto);
+      // const { error } = await this.validator.validate(dto);
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const createdOrError = await this.createUser.create(dto);
 

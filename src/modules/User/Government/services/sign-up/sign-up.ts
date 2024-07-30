@@ -1,13 +1,7 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserModulesNotFound } from "../../../core/model/errors/invalid-modules";
-import { LoginAlreadyExists } from "../../../core/model/errors/login-aready-exists";
-import { UserNotFoundError } from "../../../core/model/errors/user-not-found-error";
-import {
-  UnmatchedPasswordError,
-  WrongPasswordError,
-} from "../../../core/model/errors/wrong-password";
+
 import { User, UserType, UserTypes } from "../../../core/model/user";
 
 import {
@@ -16,6 +10,13 @@ import {
 } from "../authentication/ports/authentication-service";
 
 import { SignUpDTO } from "./ports/sign-up";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
+import {
+  UnmatchedPasswordError,
+  WrongPasswordError,
+} from "../../../core/errors/wrong-password";
+import { LoginAlreadyExists } from "../../../core/errors/login-aready-exists";
+import { UserModulesNotFound } from "../../../core/errors/invalid-modules";
 
 export class SignUp {
   private readonly accountRepository: UserRepositoryProtocol;

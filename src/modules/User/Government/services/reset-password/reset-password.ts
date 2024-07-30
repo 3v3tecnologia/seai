@@ -2,10 +2,10 @@ import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/enc
 import { Either, left, right } from "../../../../../shared/Either";
 import { base64Decode } from "../../../../../shared/utils/base64Encoder";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserNotFoundError } from "../../../core/model/errors/user-not-found-error";
 import { UserTypes } from "../../../core/model/user";
 import { UserPassword } from "../../../core/model/userPassword";
 import { ResetPasswordProtocol } from "./protocol";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
 
 export class ResetPassword implements ResetPasswordProtocol {
   private readonly accountRepository: UserRepositoryProtocol;

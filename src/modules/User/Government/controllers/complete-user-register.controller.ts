@@ -31,11 +31,11 @@ export class CompleteUserRegisterController {
         password,
       };
 
-      const { error } = await this.validator.validate(dto);
+      // const { error } = await this.validator.validate(dto);
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const updateOrError = await this.updateUser.execute(dto);
 

@@ -6,8 +6,8 @@ import { UserLogin } from "../../core/model/login";
 import { UserName } from "../../core/model/name";
 import { UserTypes } from "../../core/model/user";
 import { UserPassword } from "../../core/model/userPassword";
-import { LoginAlreadyExists } from "../../core/model/errors/login-aready-exists";
-import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
 
 export class UpdateUserProfile implements IUpdateUserProfileUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

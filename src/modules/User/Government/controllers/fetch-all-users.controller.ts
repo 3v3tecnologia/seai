@@ -30,17 +30,17 @@ export class FetchAllUsersController
     try {
       const { limit, name, offset, pageNumber, type } = request;
 
-      const { error } = await this.validator.validate({
-        limit,
-        name,
-        offset,
-        pageNumber,
-        type,
-      });
+      // const { error } = await this.validator.validate({
+      //   limit,
+      //   name,
+      //   offset,
+      //   pageNumber,
+      //   type,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const result = await this.fetchUser.execute({
         name: name,

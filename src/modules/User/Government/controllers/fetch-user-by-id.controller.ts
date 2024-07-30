@@ -26,14 +26,14 @@ export class FetchUserByIdController
     try {
       const { accountId, id } = request;
 
-      const { error } = await this.validator.validate({
-        accountId,
-        id,
-      });
+      // const { error } = await this.validator.validate({
+      //   accountId,
+      //   id,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const result = await this.loadUser.execute({
         userId: request.id || request.accountId,

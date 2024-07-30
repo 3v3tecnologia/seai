@@ -7,11 +7,10 @@ import { UserLogin } from "../../core/model/login";
 import { UserName } from "../../core/model/name";
 import { UserTypes } from "../../core/model/user";
 import { UserPassword } from "../../core/model/userPassword";
-
-import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
-import { LoginAlreadyExists } from "../../core/model/errors/login-aready-exists";
-import { UserModulesNotFound } from "../../core/model/errors/invalid-modules";
-import { WrongPasswordError } from "../../core/model/errors/wrong-password";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/errors/wrong-password";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserModulesNotFound } from "../../core/errors/invalid-modules";
 
 export class CompleteUserRegister implements ICompleteUserRegisterUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

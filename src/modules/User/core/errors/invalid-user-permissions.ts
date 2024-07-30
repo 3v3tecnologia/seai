@@ -1,4 +1,4 @@
-import { DomainError } from "../../../../../shared/errors/domain-error";
+import { DomainError } from "../../../../shared/errors/domain-error";
 
 export namespace UserModuleAccessErrors {
   export class InvalidUserPermissionError extends Error implements DomainError {

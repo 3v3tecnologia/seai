@@ -23,16 +23,16 @@ export class UpdateUserProfileController {
     try {
       const { accountId, email, login, name } = request;
 
-      const { error } = await this.validator.validate({
-        accountId,
-        email,
-        login,
-        name,
-      });
+      // const { error } = await this.validator.validate({
+      //   accountId,
+      //   email,
+      //   login,
+      //   name,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const dto = {
         id: accountId,

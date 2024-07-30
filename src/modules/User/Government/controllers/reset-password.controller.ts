@@ -23,15 +23,15 @@ export class ResetPasswordController {
     try {
       const { code, confirmPassword, password } = request;
 
-      const { error } = await this.validator.validate({
-        code,
-        confirmPassword,
-        password,
-      });
+      // const { error } = await this.validator.validate({
+      //   code,
+      //   confirmPassword,
+      //   password,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const createdOrError = await this.resetPassword.execute({
         code,

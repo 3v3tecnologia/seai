@@ -1,6 +1,6 @@
 import { NewsletterSubscriberUseCasesFactory } from "../../../../../server/http/factories";
 import { UserRepository } from "../../../Government/infra/database/repository/user-repository";
-import { IrrigantPreferencesRepository } from "../../repositories/user-preferences.repository";
+import { IrrigantPreferencesRepository } from "../../infra/repositories/user-preferences.repository";
 import { UserSettingsServices } from "../user-settings.service";
 
 export const makeUserSettingsService = () =>

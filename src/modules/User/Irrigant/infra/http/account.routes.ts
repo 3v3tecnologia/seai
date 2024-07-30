@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
-import { sendHTTPResponse } from "../../../../server/http/adapters/express-route.adapter";
-import { makeIrrigantAccountController } from "../controllers/factories/account";
-import { authorization } from "../../../../server/http/http-middlewares";
+import { makeIrrigantAccountController } from "../../controllers/factories/account";
+import { sendHTTPResponse } from "../../../../../server/http/adapters/express-route.adapter";
+import { authorization } from "../../../../../server/http/http-middlewares";
 
 export const setupUserIrrigantAccountRoutes = (router: Router): void => {
   const controllers = makeIrrigantAccountController();

@@ -6,9 +6,9 @@ import {
 import {
   UserModuleIdNotFound,
   UserModulesNotFound,
-} from "./errors/invalid-modules";
+} from "../errors/invalid-modules";
+import { UserModuleAccessErrors } from "../errors/invalid-user-permissions";
 
-import { UserModuleAccessErrors } from "./errors/invalid-user-permissions";
 import { UserType } from "./user";
 
 export type SystemModulesPermissions = {

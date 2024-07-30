@@ -21,17 +21,17 @@ export class SignUpController {
     try {
       const { password, accountId, confirmPassword, login, name } = request;
 
-      const { error } = await this.validator.validate({
-        password,
-        accountId,
-        confirmPassword,
-        login,
-        name,
-      });
+      // const { error } = await this.validator.validate({
+      //   password,
+      //   accountId,
+      //   confirmPassword,
+      //   login,
+      //   name,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const result = await this.signUp.create(request);
 

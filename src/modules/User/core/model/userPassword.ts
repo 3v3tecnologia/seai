@@ -1,6 +1,6 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { PasswordErrors } from "./errors/invalid-password";
-import { UnmatchedPasswordError } from "./errors/wrong-password";
+import { PasswordErrors } from "../errors/invalid-password";
+import { UnmatchedPasswordError } from "../errors/wrong-password";
 
 interface IUserPasswordProps {
   value: string;

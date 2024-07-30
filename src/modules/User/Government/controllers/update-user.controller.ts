@@ -35,20 +35,20 @@ export class UpdateUserController {
         password,
       } = request;
 
-      const { error } = await this.validator.validate({
-        id,
-        email,
-        modules,
-        login,
-        name,
-        type,
-        confirmPassword,
-        password,
-      });
+      // const { error } = await this.validator.validate({
+      //   id,
+      //   email,
+      //   modules,
+      //   login,
+      //   name,
+      //   type,
+      //   confirmPassword,
+      //   password,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
       const updateOrError = await this.updateUser.execute({
         id: Number(id),
         name: Reflect.has(request, "name") ? (request.name as string) : null,

@@ -30,19 +30,19 @@ export class FetchUserController
     try {
       const { accountId, id, limit, name, offset, pageNumber, type } = request;
 
-      const { error } = await this.validator.validate({
-        accountId,
-        id,
-        limit,
-        name,
-        offset,
-        pageNumber,
-        type,
-      });
+      // const { error } = await this.validator.validate({
+      //   accountId,
+      //   id,
+      //   limit,
+      //   name,
+      //   offset,
+      //   pageNumber,
+      //   type,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       if (id || accountId) {
         const result = await this.fetchUser.execute({

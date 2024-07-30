@@ -1,10 +1,10 @@
 import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserNotFoundError } from "../../../core/model/errors/user-not-found-error";
 import { UserTypes } from "../../../core/model/user";
 import { TASK_QUEUES } from "../../../../../infra/queueProvider/helpers/queues";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
 
 export class ForgotPassword {
   private readonly accountRepository: UserRepositoryProtocol;

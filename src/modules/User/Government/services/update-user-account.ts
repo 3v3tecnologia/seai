@@ -6,10 +6,9 @@ import {
   SystemModules,
   SystemModulesProps,
 } from "../../core/model/user-modules-access";
-
-import { LoginAlreadyExists } from "../../core/model/errors/login-aready-exists";
-import { UserNotFoundError } from "../../core/model/errors/user-not-found-error";
-import { WrongPasswordError } from "../../core/model/errors/wrong-password";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/errors/wrong-password";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
 
 export class UpdateUser implements IUpdateUserUseCase {
   private readonly accountRepository: UserRepositoryProtocol;
@@ -23,13 +22,7 @@ export class UpdateUser implements IUpdateUserUseCase {
   async execute(
     request: UpdateUserDTO.Params
   ): Promise<
-    Either<
-      | UserNotFoundError
-      | UserNotFoundError
-      | WrongPasswordError
-      | LoginAlreadyExists,
-      string
-    >
+    Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   > {
     const existingAccount = await this.accountRepository.getById(request.id);
 

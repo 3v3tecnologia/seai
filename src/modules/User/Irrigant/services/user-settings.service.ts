@@ -4,7 +4,7 @@ import {
   SubscribeToNewsUseCaseProtocol,
 } from "../../../Newsletter/services";
 import { UserRepositoryProtocol } from "../../Government/infra/database/repository/protocol/user-repository";
-import { IUserPreferencesRepository } from "../repositories/protocol/preferences.repository";
+import { IUserPreferencesRepository } from "../infra/repositories/protocol/preferences.repository";
 
 import {
   GetUserNotificationsPreferencesOutputDTO,

@@ -1,8 +1,8 @@
 import { MailServiceError } from "../../../../../domain/use-cases/errors/mail-service-error";
 import { Either } from "../../../../../shared/Either";
+import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
 import { UserType } from "../../../core/model/user";
 import { SystemModulesProps } from "../../../core/model/user-modules-access";
-import { UserAlreadyExistsError } from "../../../core/model/errors/user-already-exists";
 
 export interface CreateUserProtocol {
   create(

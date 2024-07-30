@@ -26,15 +26,15 @@ export class SignInController
     try {
       const { password, email, login } = request;
 
-      const { error } = await this.validator.validate({
-        password,
-        email,
-        login,
-      });
+      // const { error } = await this.validator.validate({
+      //   password,
+      //   email,
+      //   login,
+      // });
 
-      if (error) {
-        return badRequest(error);
-      }
+      // if (error) {
+      //   return badRequest(error);
+      // }
 
       const result = await this.signIn.execute(request);
 

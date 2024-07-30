@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { InvalidLoginError } from "./errors/invalid-login";
+import { InvalidLoginError } from "../errors/invalid-login";
 
 export class UserLogin {
   static maxLength: number = 60;

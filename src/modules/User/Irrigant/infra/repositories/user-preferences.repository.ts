@@ -1,4 +1,4 @@
-import { governmentDb } from "../../../../infra/database/postgres/connection/knexfile";
+import { governmentDb } from "../../../../../infra/database/postgres/connection/knexfile";
 import { IUserPreferencesRepository } from "./protocol/preferences.repository";
 
 export class IrrigantPreferencesRepository

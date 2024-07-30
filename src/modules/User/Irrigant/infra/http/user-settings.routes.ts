@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
-import { sendHTTPResponse } from "../../../../server/http/adapters/express-route.adapter";
-import { authorization } from "../../../../server/http/http-middlewares";
-import { makeUserIrrigantPreferencesControllers } from "../controllers/factories/preferences";
+import { makeUserIrrigantPreferencesControllers } from "../../controllers/factories/preferences";
+import { authorization } from "../../../../../server/http/http-middlewares";
+import { sendHTTPResponse } from "../../../../../server/http/adapters/express-route.adapter";
 
 export const setupUserIrrigantSettingsV2Routes = (router: Router): void => {
   const controllers = makeUserIrrigantPreferencesControllers();
