@@ -1,4 +1,4 @@
-import { UserOperation } from "../../../../../core/model/user-operations";
+import { UserOperation } from "../../model/user-operations";
 
 export interface UserOperationsRepositoryProtocol {
   save(input: {

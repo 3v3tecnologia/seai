@@ -1,15 +1,12 @@
-import { DbLogOperationsRepository } from "../../../modules/User/Government/infra/database/repository/user-operations.repository";
+import { UserOperationsLoggerProtocol } from "../../../modules/UserOperations/protocols/logger";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { Controller } from "../../../presentation/controllers/ports/controllers";
 
 export class LogControllerDecorator implements Controller {
   private readonly controller: Controller;
-  private readonly logErrorRepository: DbLogOperationsRepository;
+  private readonly logErrorRepository: UserOperationsLoggerProtocol;
 
-  constructor(
-    controller: Controller,
-    logErrorRepository: DbLogOperationsRepository
-  ) {
+  constructor(controller: Controller, logErrorRepository: any) {
     this.controller = controller;
     this.logErrorRepository = logErrorRepository;
   }

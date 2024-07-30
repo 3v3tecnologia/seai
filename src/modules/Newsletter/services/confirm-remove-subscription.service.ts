@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
+import { CommandProps } from "../../UserOperations/protocols/logger";
 import { NewsletterSubscriberRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 
 export class ConfirmUnsubscribeByCode

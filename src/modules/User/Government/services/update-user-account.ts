@@ -9,15 +9,17 @@ import {
 import { UserNotFoundError } from "../../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../../core/errors/wrong-password";
 import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import {
+  CommandProps,
+  UserOperationsLoggerProtocol,
+} from "../../../UserOperations/protocols/logger";
 
 export class UpdateUser implements IUpdateUserUseCase {
-  private readonly accountRepository: UserRepositoryProtocol;
-  private readonly encoder: Encoder;
-
-  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
-    this.accountRepository = accountRepository;
-    this.encoder = encoder;
-  }
+  constructor(
+    private readonly accountRepository: UserRepositoryProtocol,
+    private readonly encoder: Encoder,
+    private readonly operationsLogger: UserOperationsLoggerProtocol
+  ) {}
 
   async execute(
     request: UpdateUserDTO.Params
@@ -113,6 +115,8 @@ export class UpdateUser implements IUpdateUserUseCase {
     // TODO: deve passar todos os campos do 'account'
     await this.accountRepository.update(userToPersistency);
 
+    await this.operationsLogger.save(request.accountId, request.description);
+
     return right(`Usuário atualizado com sucesso.`);
   }
 }
@@ -127,7 +131,7 @@ export namespace UpdateUserDTO {
     password?: string | null;
     confirmPassword?: string | null;
     modules?: SystemModulesProps;
-  };
+  } & CommandProps;
   export type Result = string;
 }
 

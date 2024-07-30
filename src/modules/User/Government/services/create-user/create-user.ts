@@ -11,14 +11,14 @@ import {
 } from "../../../core/model/user-modules-access";
 import { CreateUserDTO } from "./ports";
 import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
-import { UserOperationsRepositoryProtocol } from "../../infra/database/repository/protocol/log-repository";
+import { UserOperationsLoggerProtocol } from "../../../../UserOperations/protocols/logger";
 
 export class CreateUser {
   constructor(
     private readonly accountRepository: UserRepositoryProtocol,
     private readonly queueProvider: TaskSchedulerProviderProtocol,
     private readonly encoder: Encoder,
-    private readonly operationsRepository: UserOperationsRepositoryProtocol
+    private readonly operationsLogger: UserOperationsLoggerProtocol
   ) {}
 
   async create(
@@ -78,12 +78,7 @@ export class CreateUser {
       code: userCode as string,
     });
 
-    await this.operationsRepository.save({
-      user_id: 1,
-      description: "",
-      operation: "",
-      resource: "",
-    });
+    await this.operationsLogger.save(request.accountId, request.description);
 
     if (user_id) {
       const base64Code = Buffer.from(userEmail).toString("base64");

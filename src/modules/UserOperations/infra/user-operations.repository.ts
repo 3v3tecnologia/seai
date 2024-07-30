@@ -1,9 +1,6 @@
+import { logsDb } from "../../../infra/database/postgres/connection/knexfile";
+import { toDomain, UserOperation } from "../model/user-operations";
 import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
-import { logsDb } from "../../../../../../infra/database/postgres/connection/knexfile";
-import {
-  toDomain,
-  UserOperation,
-} from "../../../../core/model/user-operations";
 
 export class UserOperationsRepository
   implements UserOperationsRepositoryProtocol

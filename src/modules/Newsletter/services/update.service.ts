@@ -1,16 +1,18 @@
 import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
+import {
+  CommandProps,
+  UserOperationsLoggerProtocol,
+} from "../../UserOperations/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
 export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
-  private repository: NewsRepositoryProtocol;
-  private readonly queueProvider: TaskSchedulerProviderProtocol;
-
   constructor(
-    repository: NewsRepositoryProtocol,
-    queueProvider: TaskSchedulerProviderProtocol
+    private readonly repository: NewsRepositoryProtocol,
+    private readonly queueProvider: TaskSchedulerProviderProtocol,
+    private readonly operationsLogger: UserOperationsLoggerProtocol
   ) {
     this.repository = repository;
     this.queueProvider = queueProvider;
@@ -49,6 +51,8 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
 
     await this.repository.update(request);
 
+    await this.operationsLogger.save(request.accountId, request.description);
+
     const successLog = `Notícia atualizada com sucessso.`;
 
     await this.queueProvider.removeByKey(String(request.Id));
@@ -79,7 +83,7 @@ export namespace UpdateNewsUseCaseProtocol {
     Data: any;
     LocationName?: string;
     SendDate: string;
-  };
+  } & CommandProps;
 
   export type Response = Promise<Either<Error, string>>;
 

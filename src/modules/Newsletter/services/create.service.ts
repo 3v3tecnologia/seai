@@ -1,20 +1,19 @@
 import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
+import {
+  CommandProps,
+  UserOperationsLoggerProtocol,
+} from "../../UserOperations/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
 export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
-  private repository: NewsRepositoryProtocol;
-  private readonly queueProvider: TaskSchedulerProviderProtocol;
-
   constructor(
-    repository: NewsRepositoryProtocol,
-    queueProvider: TaskSchedulerProviderProtocol
-  ) {
-    this.repository = repository;
-    this.queueProvider = queueProvider;
-  }
+    private repository: NewsRepositoryProtocol,
+    private readonly queueProvider: TaskSchedulerProviderProtocol,
+    private readonly operationsLogger: UserOperationsLoggerProtocol
+  ) {}
 
   async create(
     request: CreateNewsUseCaseProtocol.Request
@@ -50,6 +49,8 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
       }
     );
 
+    await this.operationsLogger.save(request.accountId, request.description);
+
     const successLog = `Notícia criada com sucessso.`;
 
     return right(successLog);
@@ -63,7 +64,7 @@ export namespace CreateNewsUseCaseProtocol {
     Data: any;
     SendDate: string;
     LocationName?: string;
-  };
+  } & CommandProps;
 
   export type Response = Promise<Either<Error, string>>;
 

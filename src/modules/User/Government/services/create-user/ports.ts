@@ -1,5 +1,6 @@
 import { MailServiceError } from "../../../../../domain/use-cases/errors/mail-service-error";
 import { Either } from "../../../../../shared/Either";
+import { CommandProps } from "../../../../UserOperations/protocols/logger";
 import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
 import { UserType } from "../../../core/model/user";
 import { SystemModulesProps } from "../../../core/model/user-modules-access";
@@ -13,11 +14,10 @@ export namespace CreateUserDTO {
   type system_modules_permissions = SystemModulesProps;
 
   export type Params = {
-    accountId: number;
     email: string;
     type: UserType;
     modules: system_modules_permissions;
-  };
+  } & CommandProps;
 
   export type Result = string;
 }
