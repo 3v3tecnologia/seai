@@ -1,5 +1,5 @@
 import { Either, right } from "../../../shared/Either";
-import { LogRepositoryProtocol } from "../_ports/repositories/log-repository";
+import { LogRepositoryProtocol } from "../../../modules/User/Government/infra/database/repository/protocol/log-repository";
 import { formatPaginationInput } from "../helpers/formatPaginationInput";
 
 export class FetchEquipmentLogs {

@@ -13,6 +13,7 @@ export namespace CreateUserDTO {
   type system_modules_permissions = SystemModulesProps;
 
   export type Params = {
+    accountId: number;
     email: string;
     type: UserType;
     modules: system_modules_permissions;

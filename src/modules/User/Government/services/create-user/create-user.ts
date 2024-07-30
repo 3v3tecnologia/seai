@@ -11,21 +11,16 @@ import {
 } from "../../../core/model/user-modules-access";
 import { CreateUserDTO } from "./ports";
 import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
+import { UserOperationsRepositoryProtocol } from "../../infra/database/repository/protocol/log-repository";
 
 export class CreateUser {
-  private readonly accountRepository: UserRepositoryProtocol;
-  private readonly queueProvider: TaskSchedulerProviderProtocol;
-  private readonly encoder: Encoder;
-
   constructor(
-    accountRepository: UserRepositoryProtocol,
-    queueProvider: TaskSchedulerProviderProtocol,
-    encoder: Encoder
-  ) {
-    this.accountRepository = accountRepository;
-    this.queueProvider = queueProvider;
-    this.encoder = encoder;
-  }
+    private readonly accountRepository: UserRepositoryProtocol,
+    private readonly queueProvider: TaskSchedulerProviderProtocol,
+    private readonly encoder: Encoder,
+    private readonly operationsRepository: UserOperationsRepositoryProtocol
+  ) {}
+
   async create(
     request: CreateUserDTO.Params
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
@@ -81,6 +76,13 @@ export class CreateUser {
       type: user.type,
       modules: user.access?.value as SystemModulesProps,
       code: userCode as string,
+    });
+
+    await this.operationsRepository.save({
+      user_id: 1,
+      description: "",
+      operation: "",
+      resource: "",
     });
 
     if (user_id) {

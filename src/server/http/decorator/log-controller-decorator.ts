@@ -1,4 +1,4 @@
-import { DbLogOperationsRepository } from "../../../infra/database/postgres/repositories/log-operations-repository";
+import { DbLogOperationsRepository } from "../../../modules/User/Government/infra/database/repository/user-operations.repository";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { Controller } from "../../../presentation/controllers/ports/controllers";
 

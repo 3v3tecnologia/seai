@@ -1,5 +1,5 @@
 import { Command } from "../_ports/core/command";
-import { LogRepositoryProtocol } from "../_ports/repositories/log-repository";
+import { LogRepositoryProtocol } from "../../../modules/User/Government/infra/database/repository/protocol/log-repository";
 
 export class RegisterUserLogs {
   private readonly logRepository: LogRepositoryProtocol;
