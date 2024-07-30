@@ -4,7 +4,6 @@ import {
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
-import { CommandController } from "../../../../presentation/controllers/ports/command-controller";
 import { ResetPassword } from "../services";
 
 export class ResetPasswordController {
