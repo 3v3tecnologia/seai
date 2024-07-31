@@ -6,6 +6,7 @@ export namespace CreateFaqDTO {
     answer: string;
     order: number;
     id_category: number;
+    accountId: number;
   };
 
   export type result = number;

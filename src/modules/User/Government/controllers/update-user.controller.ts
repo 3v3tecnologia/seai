@@ -1,3 +1,4 @@
+import { UserOperationControllerDTO } from "../../../../@types/login-user";
 import {
   badRequest,
   created,
@@ -11,29 +12,20 @@ import {
   Modules,
   SystemModulesPermissions,
 } from "../../core/model/user-modules-access";
-import { UpdateUser } from "../services";
+import { IUpdateUserUseCase, UpdateUser } from "../services";
 
 export class UpdateUserController {
-  private updateUser: UpdateUser;
+  private updateUser: IUpdateUserUseCase;
   private validator: ISchemaValidator;
 
-  constructor(updateUser: UpdateUser, validator: ISchemaValidator) {
+  constructor(updateUser: IUpdateUserUseCase, validator: ISchemaValidator) {
     this.updateUser = updateUser;
     this.validator = validator;
   }
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
-      const {
-        id,
-        email,
-        modules,
-        login,
-        name,
-        type,
-        confirmPassword,
-        password,
-      } = request;
+      const { id, email, modules } = request;
 
       // const { error } = await this.validator.validate({
       //   id,
@@ -49,20 +41,28 @@ export class UpdateUserController {
       // if (error) {
       //   return badRequest(error);
       // }
-      const updateOrError = await this.updateUser.execute({
-        id: Number(id),
-        name: Reflect.has(request, "name") ? (request.name as string) : null,
-        login: Reflect.has(request, "login") ? (request.login as string) : null,
-        email,
-        password: Reflect.has(request, "password")
-          ? (request.password as string)
-          : null,
-        confirmPassword: Reflect.has(request, "confirmPassword")
-          ? (request.confirmPassword as string)
-          : null,
-        modules,
-        type: request.type,
-      });
+      const updateOrError = await this.updateUser.execute(
+        {
+          id: Number(id),
+          name: Reflect.has(request, "name") ? (request.name as string) : null,
+          login: Reflect.has(request, "login")
+            ? (request.login as string)
+            : null,
+          email,
+          password: Reflect.has(request, "password")
+            ? (request.password as string)
+            : null,
+          confirmPassword: Reflect.has(request, "confirmPassword")
+            ? (request.confirmPassword as string)
+            : null,
+          modules,
+          type: request.type,
+        },
+        {
+          author: request.accountId,
+          operation: request.Operation,
+        }
+      );
 
       if (updateOrError.isLeft()) {
         return forbidden(updateOrError.value);
@@ -94,5 +94,5 @@ export namespace UpdateUserController {
       [Modules.STUDIES]: Required<SystemModulesPermissions>;
       [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
     };
-  };
+  } & UserOperationControllerDTO;
 }

@@ -4,18 +4,12 @@ import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-cate
 import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
 import { CommandController } from "../ports/command-controller";
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 
-export class DeleteFaqCategoryController extends CommandController<
-  DeleteFaqCategoryController.Request,
-  HttpResponse
-> {
+export class DeleteFaqCategoryController {
   private DeleteFaqCategory: DeleteFaqCategory;
 
-  constructor(
-    DeleteFaqCategory: DeleteFaqCategory,
-    userLogs: RegisterUserLogs
-  ) {
-    super(userLogs);
+  constructor(DeleteFaqCategory: DeleteFaqCategory) {
     this.DeleteFaqCategory = DeleteFaqCategory;
   }
 
@@ -26,14 +20,14 @@ export class DeleteFaqCategoryController extends CommandController<
       if (!request.id) {
         return badRequest(new Error("É necessário informar o ID da categoria"));
       }
-      const result = await this.DeleteFaqCategory.execute({
-        id_category: request.id,
+      const result = await this.DeleteFaqCategory.execute(request.id, {
+        author: request.accountId,
+        operation: request.Operation,
       });
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.DeleteFaqCategory);
 
       return ok(`Categoria ${request.id} deletada com sucesso`);
     } catch (error) {
@@ -45,7 +39,6 @@ export class DeleteFaqCategoryController extends CommandController<
 
 export namespace DeleteFaqCategoryController {
   export type Request = {
-    accountId: number;
     id: number;
-  };
+  } & UserOperationControllerDTO;
 }

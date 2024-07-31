@@ -1,3 +1,4 @@
+import { UserOperationControllerDTO } from "../../../../@types/login-user";
 import {
   badRequest,
   forbidden,
@@ -43,7 +44,10 @@ export class DeleteUserController {
     //   return badRequest(error);
     // }
 
-    const result = await this.deleteUser.execute(dto);
+    const result = await this.deleteUser.execute(dto, {
+      author: request.accountId,
+      operation: request.Operation,
+    });
 
     if (result.isLeft()) {
       return forbidden(result.value);
@@ -54,8 +58,7 @@ export class DeleteUserController {
 
 export namespace DeleteUserController {
   export type Request = {
-    accountId: number;
     id: number;
     email?: string;
-  };
+  } & UserOperationControllerDTO;
 }

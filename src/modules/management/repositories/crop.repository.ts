@@ -1,11 +1,18 @@
-import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
+import {
+  censusDb,
+  logsDb,
+} from "../../../infra/database/postgres/connection/knexfile";
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
 
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
 import { IManagementCropsRepository } from "./protocols/management-crop.repository";
+import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
 export class ManagementCropRepository implements IManagementCropsRepository {
-  async create(culture: ManagementCrop): Promise<number | null> {
+  async create(
+    culture: ManagementCrop,
+    author: number
+  ): Promise<number | null> {
     const insertedCrop = await governmentDb
       .withSchema("management")
       .insert({
@@ -16,10 +23,23 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .returning("Id")
       .into("Crop");
 
+    await logsDb
+      .insert({
+        User_Id: author,
+        Resource: "crop",
+        Operation: "create",
+        Description: "Criação da cultura",
+      })
+      .withSchema("users")
+      .into("Operations");
+
     return insertedCrop.length ? insertedCrop[0]?.Id : null;
   }
 
-  async update(culture: ManagementCrop): Promise<void> {
+  async update(
+    culture: ManagementCrop,
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb("Crop")
       .withSchema("management")
       .update({
@@ -30,30 +50,56 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .where({
         Id: culture.Id,
       });
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "crop",
+        Operation: "update",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
-  async delete(idCrop: number): Promise<void> {
+  async delete(
+    idCrop: number,
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb("Crop")
       .withSchema("management")
       .where({ Id: idCrop })
       .del();
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "crop",
+        Operation: "delete",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
   async createCropCycles(
-    idCrop: number,
-    cycles: Array<ManagementCropCycle>
+    data: {
+      idCrop: number;
+      cycles: Array<ManagementCropCycle>;
+    },
+    author: number
   ): Promise<void> {
     await governmentDb.transaction(async (trx) => {
       await trx("Crop_Cycle")
         .withSchema("management")
-        .where({ FK_Crop: idCrop })
+        .where({ FK_Crop: data.idCrop })
         .del();
 
       await trx.batchInsert(
         "management.Crop_Cycle",
-        cycles.map((cycle) => {
+        data.cycles.map((cycle) => {
           return {
-            FK_Crop: idCrop,
+            FK_Crop: data.idCrop,
             Stage_Title: cycle.Title,
             Start: cycle.Start,
             End: cycle.End,
@@ -63,6 +109,16 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         })
       );
     });
+
+    await logsDb
+      .insert({
+        User_Id: author,
+        Resource: "crop-cycles",
+        Operation: "create",
+        Description: "Criação do ciclo da cultura",
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
   async findCropsCycles(
@@ -93,11 +149,24 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     });
   }
 
-  async deleteCropCycles(idCrop: number): Promise<void> {
+  async deleteCropCycles(
+    idCrop: number,
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb("Crop_Cycle")
       .withSchema("management")
       .where({ FK_Crop: idCrop })
       .del();
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "crop-cycles",
+        Operation: "delete",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
   async nameExists(crop: string): Promise<boolean> {

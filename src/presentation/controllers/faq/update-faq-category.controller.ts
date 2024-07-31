@@ -1,21 +1,13 @@
 import { HttpResponse } from "../ports";
 
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 
-export class UpdateFaqCategoryController extends CommandController<
-  UpdateFaqCategoryController.Request,
-  HttpResponse
-> {
+export class UpdateFaqCategoryController {
   private UpdateFaqCategory: UpdateFaqCategory;
 
-  constructor(
-    UpdateFaqCategory: UpdateFaqCategory,
-    userLogs: RegisterUserLogs
-  ) {
-    super(userLogs);
+  constructor(UpdateFaqCategory: UpdateFaqCategory) {
     this.UpdateFaqCategory = UpdateFaqCategory;
   }
 
@@ -23,18 +15,21 @@ export class UpdateFaqCategoryController extends CommandController<
     request: UpdateFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
-      const dto = {
-        id: request.id,
-        title: request.title,
-        description: request.description,
-      };
-      const result = await this.UpdateFaqCategory.execute(dto);
+      const result = await this.UpdateFaqCategory.execute(
+        {
+          id: request.id,
+          title: request.title,
+          description: request.description,
+        },
+        {
+          author: request.accountId,
+          operation: request.Operation,
+        }
+      );
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-
-      await this.userLogs.log(request.accountId, this.UpdateFaqCategory);
 
       return ok(result.value);
     } catch (error) {
@@ -46,9 +41,8 @@ export class UpdateFaqCategoryController extends CommandController<
 
 export namespace UpdateFaqCategoryController {
   export type Request = {
-    accountId: number;
     id: number;
     title: string;
     description: string;
-  };
+  } & UserOperationControllerDTO;
 }

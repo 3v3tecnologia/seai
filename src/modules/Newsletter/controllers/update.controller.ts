@@ -1,3 +1,4 @@
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import {
   badRequest,
   ok,
@@ -9,13 +10,10 @@ import { ISchemaValidator } from "../../../shared/validation/validator";
 import { UpdateNewsUseCaseProtocol } from "../services";
 
 export class UpdateController {
-  private useCase: UpdateNewsUseCaseProtocol.UseCase;
+  private useCase: UpdateNewsUseCaseProtocol;
   private validator: ISchemaValidator;
 
-  constructor(
-    useCase: UpdateNewsUseCaseProtocol.UseCase,
-    validator: ISchemaValidator
-  ) {
+  constructor(useCase: UpdateNewsUseCaseProtocol, validator: ISchemaValidator) {
     this.useCase = useCase;
     this.validator = validator;
   }
@@ -37,13 +35,19 @@ export class UpdateController {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.execute({
-        Id: request.id,
-        Data: request.Data,
-        Description: request.Description,
-        Title: request.Title,
-        SendDate: request.SendDate,
-      });
+      const createdOrError = await this.useCase.execute(
+        {
+          Id: request.id,
+          Data: request.Data,
+          Description: request.Description,
+          Title: request.Title,
+          SendDate: request.SendDate,
+        },
+        {
+          author: request.accountId,
+          operation: request.Operation,
+        }
+      );
 
       if (createdOrError.isLeft()) {
         return badRequest(createdOrError.value);
@@ -66,5 +70,5 @@ export namespace UpdateController {
     Data: any;
     LocationName?: string;
     SendDate: string;
-  };
+  } & UserOperationControllerDTO;
 }

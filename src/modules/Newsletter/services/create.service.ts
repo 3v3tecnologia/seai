@@ -1,30 +1,37 @@
 import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
-import {
-  CommandProps,
-  UserOperationsLoggerProtocol,
-} from "../../UserOperations/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
-export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
+export class CreateNews implements CreateNewsUseCaseProtocol {
   constructor(
     private repository: NewsRepositoryProtocol,
-    private readonly queueProvider: TaskSchedulerProviderProtocol,
-    private readonly operationsLogger: UserOperationsLoggerProtocol
+    private readonly queueProvider: TaskSchedulerProviderProtocol
   ) {}
 
-  async create(
-    request: CreateNewsUseCaseProtocol.Request
-  ): CreateNewsUseCaseProtocol.Response {
-    const hasValidContentSizeOrError = validateContentSize(request.Data);
+  async execute({
+    Data,
+    Description,
+    SendDate,
+    Title,
+    accountId,
+    LocationName,
+  }: {
+    Title: string;
+    Description: string | null;
+    Data: any;
+    SendDate: string;
+    LocationName?: string;
+    accountId: number;
+  }): Promise<Either<Error, string>> {
+    const hasValidContentSizeOrError = validateContentSize(Data);
 
     if (hasValidContentSizeOrError.isLeft()) {
       return left(hasValidContentSizeOrError.value);
     }
 
-    const sendDate = new Date(request.SendDate);
+    const sendDate = new Date(SendDate);
 
     // const hasValidSendDateOrError = validateSendDate(sendDate);
 
@@ -32,7 +39,16 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
     //   return left(hasValidSendDateOrError.value);
     // }
 
-    const newsId = await this.repository.create(request);
+    const newsId = await this.repository.create(
+      {
+        Data,
+        Description,
+        SendDate,
+        Title,
+        LocationName,
+      },
+      accountId
+    );
 
     // E se o sistema de jobs estiver indisponível? Como o sistema deve se comportar?
     await this.queueProvider.send(
@@ -49,26 +65,19 @@ export class CreateNews implements CreateNewsUseCaseProtocol.UseCase {
       }
     );
 
-    await this.operationsLogger.save(request.accountId, request.description);
-
     const successLog = `Notícia criada com sucessso.`;
 
     return right(successLog);
   }
 }
 
-export namespace CreateNewsUseCaseProtocol {
-  export type Request = {
+export interface CreateNewsUseCaseProtocol {
+  execute(request: {
     Title: string;
     Description: string | null;
     Data: any;
     SendDate: string;
     LocationName?: string;
-  } & CommandProps;
-
-  export type Response = Promise<Either<Error, string>>;
-
-  export interface UseCase {
-    create(request: Request): Response;
-  }
+    accountId: number;
+  }): Promise<Either<Error, string>>;
 }

@@ -10,34 +10,27 @@ import {
   UpdateMeteorologicalOrganController,
 } from "../../../../presentation/controllers/equipments";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import {
-  EquipmentsUseCasesFactory,
-  SystemLogsUseCaseFactory,
-} from "../use-cases";
+import { EquipmentsUseCasesFactory } from "../use-cases";
 
 export class EquipmentsControllerFactory {
   static makeCreateEquipments(): Controller {
     return new CreateEquipmentsController(
-      EquipmentsUseCasesFactory.makeCreateEquipment(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeCreateEquipment()
     );
   }
   static makeCreateMeteorologicalOrgan(): Controller {
     return new CreateMeteorologicalOrganController(
-      EquipmentsUseCasesFactory.makeCreateMeteorologicalOrgan(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeCreateMeteorologicalOrgan()
     );
   }
   static makeDeleteEquipment(): Controller {
     return new DeleteEquipmentController(
-      EquipmentsUseCasesFactory.makeDeleteEquipment(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeDeleteEquipment()
     );
   }
   static makeDeleteMeteorologicalOrgan(): Controller {
     return new DeleteMeteorologicalOrganController(
-      EquipmentsUseCasesFactory.makeDeleteMeteorologicalOrgan(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeDeleteMeteorologicalOrgan()
     );
   }
   static makeFetchEquipments(): Controller {
@@ -54,14 +47,12 @@ export class EquipmentsControllerFactory {
 
   static makeUpdateEquipment(): Controller {
     return new UpdateEquipmentsController(
-      EquipmentsUseCasesFactory.makeUpdateEquipment(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeUpdateEquipment()
     );
   }
   static makeUpdateMeteorologicalOrgan(): Controller {
     return new UpdateMeteorologicalOrganController(
-      EquipmentsUseCasesFactory.makeUpdateMeteorologicalOrgan(),
-      SystemLogsUseCaseFactory.makeRegisterUserLogs()
+      EquipmentsUseCasesFactory.makeUpdateMeteorologicalOrgan()
     );
   }
 
@@ -70,9 +61,4 @@ export class EquipmentsControllerFactory {
       EquipmentsUseCasesFactory.makeFetchEquipmentsWithYesterdayMeasurements()
     );
   }
-  // static makeFetchPluviometersWithYesterdayMeasurementsController(): Controller {
-  //   return new FetchPluviometersWithYesterdayMeasurementsController(
-  //     EquipmentsUseCasesFactory.makeFetchPluviometersWithYesterdayMeasurements()
-  //   );
-  // }
 }

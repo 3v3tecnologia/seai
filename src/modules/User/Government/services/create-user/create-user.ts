@@ -1,28 +1,31 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
+import { MailServiceError } from "../../../../../domain/use-cases/errors/mail-service-error";
 import { TASK_QUEUES } from "../../../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
 import { Either, left, right } from "../../../../../shared/Either";
-import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { User, UserTypes } from "../../../core/model/user";
+import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
+import { User, UserType, UserTypes } from "../../../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
 } from "../../../core/model/user-modules-access";
-import { CreateUserDTO } from "./ports";
-import { UserAlreadyExistsError } from "../../../core/errors/user-already-exists";
-import { UserOperationsLoggerProtocol } from "../../../../UserOperations/protocols/logger";
+import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
 
 export class CreateUser {
   constructor(
     private readonly accountRepository: UserRepositoryProtocol,
     private readonly queueProvider: TaskSchedulerProviderProtocol,
-    private readonly encoder: Encoder,
-    private readonly operationsLogger: UserOperationsLoggerProtocol
+    private readonly encoder: Encoder
   ) {}
 
   async create(
-    request: CreateUserDTO.Params
+    request: {
+      email: string;
+      type: UserType;
+      modules: SystemModulesProps;
+    },
+    author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
     const existingUser = await this.accountRepository.getByEmail(
@@ -71,14 +74,15 @@ export class CreateUser {
       "sha512"
     );
 
-    const user_id = await this.accountRepository.add({
-      email: userEmail,
-      type: user.type,
-      modules: user.access?.value as SystemModulesProps,
-      code: userCode as string,
-    });
-
-    await this.operationsLogger.save(request.accountId, request.description);
+    const user_id = await this.accountRepository.add(
+      {
+        email: userEmail,
+        type: user.type,
+        modules: user.access?.value as SystemModulesProps,
+        code: userCode as string,
+      },
+      author
+    );
 
     if (user_id) {
       const base64Code = Buffer.from(userEmail).toString("base64");
@@ -93,4 +97,15 @@ export class CreateUser {
       `Usuário criado com sucessso, aguardando confirmação do cadastro.`
     );
   }
+}
+
+export interface CreateUserProtocol {
+  create(
+    user: {
+      email: string;
+      type: UserType;
+      modules: SystemModulesProps;
+    },
+    author: number
+  ): Promise<Either<UserAlreadyExistsError | MailServiceError, string>>;
 }

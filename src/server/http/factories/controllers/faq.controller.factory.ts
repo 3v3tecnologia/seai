@@ -10,76 +10,45 @@ import {
   UpdateFaqController,
 } from "../../../../presentation/controllers/faq";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import { makeLogControllerDecorator } from "../decorators";
-import { FaqUseCasesFactory, SystemLogsUseCaseFactory } from "../use-cases";
+import { FaqUseCasesFactory } from "../use-cases";
 
 export class FaqControllersFactory {
   static makeCreateFaqCategory(): Controller {
-    return makeLogControllerDecorator(
-      new CreateFaqCategoryController(
-        FaqUseCasesFactory.makeCreateFaqCategory(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
+    return new CreateFaqCategoryController(
+      FaqUseCasesFactory.makeCreateFaqCategory()
     );
   }
   static makeCreateFaq(): Controller {
-    return makeLogControllerDecorator(
-      new CreateFaqController(
-        FaqUseCasesFactory.makeCreateFaq(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
+    return new CreateFaqController(FaqUseCasesFactory.makeCreateFaq());
   }
   static makeDeleteFaqCategory(): Controller {
-    return makeLogControllerDecorator(
-      new DeleteFaqCategoryController(
-        FaqUseCasesFactory.makeDeleteFaqCategory(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
+    return new DeleteFaqCategoryController(
+      FaqUseCasesFactory.makeDeleteFaqCategory()
     );
   }
   static makeDeleteFaq(): Controller {
-    return makeLogControllerDecorator(
-      new DeleteFaqController(
-        FaqUseCasesFactory.makeDeleteFaq(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
+    return new DeleteFaqController(FaqUseCasesFactory.makeDeleteFaq());
   }
 
   static makeFetchFaqsWithCategory(): Controller {
-    return makeLogControllerDecorator(
-      new FetchFaqWithCategoriesController(
-        FaqUseCasesFactory.makeFetchFaqsWithCategories()
-      )
+    return new FetchFaqWithCategoriesController(
+      FaqUseCasesFactory.makeFetchFaqsWithCategories()
     );
   }
   static makeFetchFaqById(): Controller {
-    return makeLogControllerDecorator(
-      new FetchFaqByIdController(FaqUseCasesFactory.makeFetchFaqById())
-    );
+    return new FetchFaqByIdController(FaqUseCasesFactory.makeFetchFaqById());
   }
   static makeFetchFaqCategories(): Controller {
-    return makeLogControllerDecorator(
-      new FetchFaqCategoriesController(
-        FaqUseCasesFactory.makeFetchFaqCategories()
-      )
+    return new FetchFaqCategoriesController(
+      FaqUseCasesFactory.makeFetchFaqCategories()
     );
   }
   static makeUpdateFaqCategory(): Controller {
-    return makeLogControllerDecorator(
-      new UpdateFaqCategoryController(
-        FaqUseCasesFactory.makeUpdateFaqCategory(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
+    return new UpdateFaqCategoryController(
+      FaqUseCasesFactory.makeUpdateFaqCategory()
     );
   }
   static makeUpdateFaq(): Controller {
-    return makeLogControllerDecorator(
-      new UpdateFaqController(
-        FaqUseCasesFactory.makeUpdateFaq(),
-        SystemLogsUseCaseFactory.makeRegisterUserLogs()
-      )
-    );
+    return new UpdateFaqController(FaqUseCasesFactory.makeUpdateFaq());
   }
 }

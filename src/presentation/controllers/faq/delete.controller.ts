@@ -1,18 +1,13 @@
 import { HttpResponse } from "../ports";
 
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { DeleteFaq } from "../../../domain/use-cases/faq/delete-faq";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 
-export class DeleteFaqController extends CommandController<
-  DeleteFaqController.Request,
-  HttpResponse
-> {
+export class DeleteFaqController {
   private DeleteFaq: DeleteFaq;
 
-  constructor(DeleteFaq: DeleteFaq, userLogs: RegisterUserLogs) {
-    super(userLogs);
+  constructor(DeleteFaq: DeleteFaq) {
     this.DeleteFaq = DeleteFaq;
   }
 
@@ -21,12 +16,14 @@ export class DeleteFaqController extends CommandController<
       if (request.id === null || request.id === undefined) {
         return badRequest(new Error("É necessário informar o id do faq."));
       }
-      const result = await this.DeleteFaq.execute(request);
+      const result = await this.DeleteFaq.execute(request.id, {
+        author: request.accountId,
+        operation: request.Operation,
+      });
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.DeleteFaq);
 
       return ok(`Faq deletado com sucesso`);
     } catch (error) {
@@ -38,7 +35,6 @@ export class DeleteFaqController extends CommandController<
 
 export namespace DeleteFaqController {
   export type Request = {
-    accountId: number;
     id: number;
-  };
+  } & UserOperationControllerDTO;
 }

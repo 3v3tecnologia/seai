@@ -1,24 +1,19 @@
 import { Either, left, right } from "../../../shared/Either";
 import { Category } from "../../entities/faq/category";
-import { Command } from "../_ports/core/command";
 import { FaqRepositoryProtocol } from "../_ports/repositories/faq-repository";
 import { CreateFaqCategoryErrors } from "./errors/category-already-exists";
-import { CreateFaqCategoryDTO, CreateFaqCategoryProtocol } from "./protocols/create-category";
+import { CreateFaqCategoryProtocol } from "./protocols/create-category";
 
-export class CreateFaqCategory
-  extends Command
-  implements CreateFaqCategoryProtocol {
-  private readonly faqRepository: FaqRepositoryProtocol;
-
-  constructor(faqRepository: FaqRepositoryProtocol) {
-    super();
-    this.faqRepository = faqRepository;
-  }
+export class CreateFaqCategory implements CreateFaqCategoryProtocol {
+  constructor(private readonly faqRepository: FaqRepositoryProtocol) {}
 
   async create(
-    request: CreateFaqCategoryDTO.params
-  ): Promise<Either<Error, CreateFaqCategoryDTO.result>> {
-    this.resetLog();
+    request: {
+      title: string;
+      description: string;
+    },
+    accountId: number
+  ): Promise<Either<Error, number>> {
     const categoryOrError = Category.create({
       props: {
         title: request.title,
@@ -42,14 +37,9 @@ export class CreateFaqCategory
 
     const id = await this.faqRepository.addCategory(
       category.title as string,
-      category.description as string
+      category.description as string,
+      accountId
     );
-
-    this.addLog({
-      action: "create",
-      table: "Category",
-      description: `Categoria ${request.title} criada com sucesso`,
-    });
 
     return right(id);
   }

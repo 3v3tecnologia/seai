@@ -1,3 +1,4 @@
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import {
   badRequest,
   created,
@@ -7,13 +8,13 @@ import {
 import { HttpResponse } from "../../../presentation/controllers/ports";
 
 import { ISchemaValidator } from "../../../shared/validation/validator";
-import { DeleteNews } from "../services";
+import { DeleteNewsUseCaseProtocol } from "../services";
 
 export class DeleteNewsController {
-  private useCase: DeleteNews;
+  private useCase: DeleteNewsUseCaseProtocol;
   private validator: ISchemaValidator;
 
-  constructor(useCase: DeleteNews, validator: ISchemaValidator) {
+  constructor(useCase: DeleteNewsUseCaseProtocol, validator: ISchemaValidator) {
     this.useCase = useCase;
     this.validator = validator;
   }
@@ -30,8 +31,9 @@ export class DeleteNewsController {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.create({
-        Id: request.id,
+      const createdOrError = await this.useCase.execute(request.id, {
+        author: request.accountId,
+        operation: request.Operation,
       });
 
       if (createdOrError.isLeft()) {
@@ -48,7 +50,6 @@ export class DeleteNewsController {
 
 export namespace DeleteNewsController {
   export type Request = {
-    accountId: number;
     id: number;
-  };
+  } & UserOperationControllerDTO;
 }

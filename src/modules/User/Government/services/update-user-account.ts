@@ -1,28 +1,34 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
-import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
+import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/errors/wrong-password";
 import { User, UserType, UserTypes } from "../../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
 } from "../../core/model/user-modules-access";
-import { UserNotFoundError } from "../../core/errors/user-not-found-error";
-import { WrongPasswordError } from "../../core/errors/wrong-password";
-import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
-import {
-  CommandProps,
-  UserOperationsLoggerProtocol,
-} from "../../../UserOperations/protocols/logger";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 
 export class UpdateUser implements IUpdateUserUseCase {
   constructor(
     private readonly accountRepository: UserRepositoryProtocol,
-    private readonly encoder: Encoder,
-    private readonly operationsLogger: UserOperationsLoggerProtocol
+    private readonly encoder: Encoder
   ) {}
 
   async execute(
-    request: UpdateUserDTO.Params
+    request: {
+      id: number;
+      email: string;
+      type: UserType;
+      name: string | null;
+      login: string | null;
+      password?: string | null;
+      confirmPassword?: string | null;
+      modules?: SystemModulesProps;
+    },
+    operation: UserCommandOperationProps
   ): Promise<
     Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   > {
@@ -113,31 +119,25 @@ export class UpdateUser implements IUpdateUserUseCase {
       });
     }
     // TODO: deve passar todos os campos do 'account'
-    await this.accountRepository.update(userToPersistency);
-
-    await this.operationsLogger.save(request.accountId, request.description);
+    await this.accountRepository.update(userToPersistency, operation);
 
     return right(`Usuário atualizado com sucesso.`);
   }
 }
 
-export namespace UpdateUserDTO {
-  export type Params = {
-    id: number;
-    email: string;
-    type: UserType;
-    name: string | null;
-    login: string | null;
-    password?: string | null;
-    confirmPassword?: string | null;
-    modules?: SystemModulesProps;
-  } & CommandProps;
-  export type Result = string;
-}
-
 export interface IUpdateUserUseCase {
   execute(
-    user: UpdateUserDTO.Params
+    user: {
+      id: number;
+      email: string;
+      type: UserType;
+      name: string | null;
+      login: string | null;
+      password?: string | null;
+      confirmPassword?: string | null;
+      modules?: SystemModulesProps;
+    },
+    operation: UserCommandOperationProps
   ): Promise<
     Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   >;

@@ -18,9 +18,14 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
     this.encoder = encoder;
   }
 
-  async execute(
-    request: UpdateUserProfileDTO.Params
-  ): Promise<Either<LoginAlreadyExists, string>> {
+  async execute(request: {
+    id: number;
+    email?: string;
+    login: string;
+    name: string;
+    password?: string;
+    confirmPassword?: string;
+  }): Promise<Either<UserNotFoundError | LoginAlreadyExists, string>> {
     const userAccount = await this.accountRepository.getById(request.id);
 
     if (userAccount == null) {
@@ -103,20 +108,13 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
   }
 }
 
-export namespace UpdateUserProfileDTO {
-  export type Params = {
+export interface IUpdateUserProfileUseCase {
+  execute(user: {
     id: number;
     email?: string;
     login: string;
     name: string;
     password?: string;
     confirmPassword?: string;
-  };
-  export type Result = Either<UserNotFoundError | LoginAlreadyExists, string>;
-}
-
-export interface IUpdateUserProfileUseCase {
-  execute(
-    user: UpdateUserProfileDTO.Params
-  ): Promise<UpdateUserProfileDTO.Result>;
+  }): Promise<Either<UserNotFoundError | LoginAlreadyExists, string>>;
 }

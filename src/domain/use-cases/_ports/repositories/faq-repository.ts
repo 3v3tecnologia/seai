@@ -1,27 +1,41 @@
-import { IOutputWithPagination, IPaginationInput } from "../../helpers/pagination";
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import {
+  IOutputWithPagination,
+  IPaginationInput,
+} from "../../helpers/pagination";
 import { FaqCategoriesData, FaqWithCategoriesData } from "./models/faqData";
 
-
 export interface FaqRepositoryProtocol {
-  addFaq(data: {
-    question: string;
-    answer: string;
-    order: number;
-    category_id: number;
-  }): Promise<number | null>;
+  addFaq(
+    data: {
+      question: string;
+      answer: string;
+      order: number;
+      category_id: number;
+    },
+    accountId: number
+  ): Promise<number | null>;
 
-  deleteFaqById(id_faq: number): Promise<number | null>;
+  deleteFaqById(
+    id_faq: number,
+    operation: UserCommandOperationProps
+  ): Promise<number | null>;
 
-  updateFaq(data: {
-    id: number;
-    question: string;
-    answer: string;
-    order: number;
-    category_id: number;
-  }): Promise<void>;
-  getFaqs(params: {
-    question?: string
-  } & IPaginationInput): Promise<IOutputWithPagination<FaqWithCategoriesData>>;
+  updateFaq(
+    data: {
+      id: number;
+      question: string;
+      answer: string;
+      order: number;
+      category_id: number;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
+  getFaqs(
+    params: {
+      question?: string;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<FaqWithCategoriesData>>;
 
   getFagsByCategory(
     params: {
@@ -29,22 +43,29 @@ export interface FaqRepositoryProtocol {
     } & IPaginationInput
   ): Promise<IOutputWithPagination<FaqWithCategoriesData>>;
 
-
-  getFaqById(
-    id_faq: number
-  ): Promise<FaqWithCategoriesData | null>;
+  getFaqById(id_faq: number): Promise<FaqWithCategoriesData | null>;
 
   checkIfFaqAlreadyExists(id: number): Promise<boolean>;
 
   checkIfQuestionAlreadyExists(question: string): Promise<boolean>;
-  checkIfCategoryIsAlreadyAssociated(category_id: number): Promise<boolean>
-  addCategory(title: string, description: string): Promise<number>
-  updateCategory(
-    id_category: number,
+  checkIfCategoryIsAlreadyAssociated(category_id: number): Promise<boolean>;
+  addCategory(
     title: string,
-    description: string
-  ): Promise<void>
-  deleteCategoryById(id_category: number): Promise<number | null>
+    description: string,
+    accountId: number
+  ): Promise<number>;
+  updateCategory(
+    category: {
+      id_category: number;
+      title: string;
+      description: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
+  deleteCategoryById(
+    id_category: number,
+    operation: UserCommandOperationProps
+  ): Promise<number | null>;
   getCategories(): Promise<Array<FaqCategoriesData> | null>;
   getCategoryById(id_category: number): Promise<FaqCategoriesData | null>;
   getCategoryByTitle(title: string): Promise<FaqCategoriesData | null>;

@@ -5,7 +5,6 @@ import {
   UpdatePluviometerMeasures,
   UpdateStationMeasurements,
 } from "../../../../domain/use-cases/equipments";
-import { UpdateEt0 } from "../../../../domain/use-cases/equipments/update-et0";
 import { EquipmentsMeasurementsRepository } from "../../../../infra/database/postgres/repositories/equipments-measurements.repository";
 import { EquipmentsUseCasesFactory } from "./equipments.factory";
 
@@ -29,8 +28,5 @@ export class EquipmentsMeasurementsUseCasesFactory {
   }
   static makeFetchPluviometersMeasurements(): FetchPluviometersReads {
     return new FetchPluviometersReads(this.repository);
-  }
-  static makeUpdateEt0(): UpdateEt0 {
-    return new UpdateEt0(this.repository);
   }
 }

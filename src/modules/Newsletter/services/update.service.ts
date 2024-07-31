@@ -1,33 +1,37 @@
 import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
-import {
-  CommandProps,
-  UserOperationsLoggerProtocol,
-} from "../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 
-export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
+export class UpdateNews implements UpdateNewsUseCaseProtocol {
   constructor(
     private readonly repository: NewsRepositoryProtocol,
-    private readonly queueProvider: TaskSchedulerProviderProtocol,
-    private readonly operationsLogger: UserOperationsLoggerProtocol
+    private readonly queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.repository = repository;
     this.queueProvider = queueProvider;
   }
 
   async execute(
-    request: UpdateNewsUseCaseProtocol.Request
-  ): UpdateNewsUseCaseProtocol.Response {
-    const hasValidContentSizeOrError = validateContentSize(request.Data);
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
+    const hasValidContentSizeOrError = validateContentSize(news.Data);
 
     if (hasValidContentSizeOrError.isLeft()) {
       return left(hasValidContentSizeOrError.value);
     }
 
-    const sendDate = new Date(request.SendDate);
+    const sendDate = new Date(news.SendDate);
 
     // const hasValidSendDateOrError = validateSendDate(sendDate);
 
@@ -35,9 +39,7 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
     //   return left(hasValidSendDateOrError.value);
     // }
 
-    const alreadyExistsNews = await this.repository.getById({
-      Id: request.Id,
-    });
+    const alreadyExistsNews = await this.repository.getById(news.Id);
 
     if (alreadyExistsNews == null) {
       return left(new Error(`Notícia não encontrada.`));
@@ -49,25 +51,23 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
       );
     }
 
-    await this.repository.update(request);
-
-    await this.operationsLogger.save(request.accountId, request.description);
+    await this.repository.update(news, operation);
 
     const successLog = `Notícia atualizada com sucessso.`;
 
-    await this.queueProvider.removeByKey(String(request.Id));
+    await this.queueProvider.removeByKey(String(news.Id));
 
     await this.queueProvider.send(
       TASK_QUEUES.NEWSLETTER,
       {
-        id: request.Id,
+        id: news.Id,
       },
       {
         priority: 1,
         retryDelay: 60,
         retryLimit: 3,
-        startAfter: new Date(request.SendDate),
-        singletonkey: String(request.Id),
+        startAfter: new Date(news.SendDate),
+        singletonkey: String(news.Id),
       }
     );
 
@@ -75,19 +75,16 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
   }
 }
 
-export namespace UpdateNewsUseCaseProtocol {
-  export type Request = {
-    Id: number;
-    Title: string;
-    Description: string | null;
-    Data: any;
-    LocationName?: string;
-    SendDate: string;
-  } & CommandProps;
-
-  export type Response = Promise<Either<Error, string>>;
-
-  export interface UseCase {
-    execute(request: Request): Response;
-  }
+export interface UpdateNewsUseCaseProtocol {
+  execute(
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>>;
 }

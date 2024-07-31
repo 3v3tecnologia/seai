@@ -5,7 +5,8 @@ import {
   IEquipmentsMeasuresRepository,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-measurements.repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
-import { governmentDb } from "../connection/knexfile";
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { governmentDb, logsDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 function mapStationMeasurementsWithUnitsToDomain(row: any): StationReadEntity {
@@ -537,57 +538,72 @@ export class EquipmentsMeasurementsRepository
     return !!measure;
   }
   async updateStationMeasures(
-    request: IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Params
-  ): IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Result {
+    measurements: {
+      IdRead: number;
+      TotalRadiation: number | null;
+      AverageRelativeHumidity: number | null;
+      MinRelativeHumidity: number | null;
+      MaxRelativeHumidity: number | null;
+      AverageAtmosphericTemperature: number | null;
+      MaxAtmosphericTemperature: number | null;
+      MinAtmosphericTemperature: number | null;
+      AtmosphericPressure: number | null;
+      Et0: number | null;
+      WindVelocity: number | null;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb.transaction(async (trx) => {
       await trx("ReadStations")
         .withSchema("equipments")
         .update({
-          TotalRadiation: request.TotalRadiation,
-          AverageRelativeHumidity: request.AverageRelativeHumidity,
-          MinRelativeHumidity: request.MinRelativeHumidity,
-          MaxRelativeHumidity: request.MaxRelativeHumidity,
-          AverageAtmosphericTemperature: request.AverageAtmosphericTemperature,
-          MaxAtmosphericTemperature: request.MaxAtmosphericTemperature,
-          MinAtmosphericTemperature: request.MinAtmosphericTemperature,
-          AtmosphericPressure: request.AtmosphericPressure,
-          WindVelocity: request.WindVelocity,
-          Et0: request.Et0,
+          TotalRadiation: measurements.TotalRadiation,
+          AverageRelativeHumidity: measurements.AverageRelativeHumidity,
+          MinRelativeHumidity: measurements.MinRelativeHumidity,
+          MaxRelativeHumidity: measurements.MaxRelativeHumidity,
+          AverageAtmosphericTemperature:
+            measurements.AverageAtmosphericTemperature,
+          MaxAtmosphericTemperature: measurements.MaxAtmosphericTemperature,
+          MinAtmosphericTemperature: measurements.MinAtmosphericTemperature,
+          AtmosphericPressure: measurements.AtmosphericPressure,
+          WindVelocity: measurements.WindVelocity,
+          Et0: measurements.Et0,
         })
-        .where("IdRead", request.IdRead);
+        .where("IdRead", measurements.IdRead);
     });
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "equipment-measurements",
+        Operation: "update",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
   async updatePluviometerMeasures(
-    request: IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Params
-  ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result {
+    measurements: {
+      IdRead: number;
+      Precipitation: number | null;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb("ReadPluviometers")
       .withSchema("equipments")
       .update({
-        Value: request.Precipitation,
+        Value: measurements.Precipitation,
       })
-      .where("IdRead", request.IdRead);
-  }
-  async bulkUpdateEt0(
-    measurements: IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Params
-  ): IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Result {
-    const trx = await governmentDb.transaction();
-    try {
-      await Promise.all(
-        measurements.map((read) => {
-          return governmentDb("ReadStations")
-            .withSchema("equipments")
-            .where("IdRead", read.IdRead)
-            .update({
-              Et0: read.Et0,
-            })
-            .transacting(trx); // This makes every update be in the same transaction
-        })
-      );
+      .where("IdRead", measurements.IdRead);
 
-      await trx.commit();
-    } catch (error) {
-      console.error(error);
-      await trx.rollback();
-    }
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "equipment-measurements",
+        Operation: "update",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 }

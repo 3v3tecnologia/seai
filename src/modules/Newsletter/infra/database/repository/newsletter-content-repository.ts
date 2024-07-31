@@ -1,28 +1,50 @@
-import { toPaginatedOutput } from "../../../../../domain/use-cases/helpers/pagination";
-import { newsletterDb } from "../../../../../infra/database/postgres/connection/knexfile";
+import {
+  IOutputWithPagination,
+  IPaginationInput,
+  toPaginatedOutput,
+} from "../../../../../domain/use-cases/helpers/pagination";
+import {
+  logsDb,
+  newsletterDb,
+} from "../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../infra/database/postgres/repositories/utils/paginate";
+import { UserCommandOperationProps } from "../../../../UserOperations/protocols/logger";
 import { Content } from "../../../model/content";
 import { NewsMapper } from "../../../model/mapper/newsletter";
-import {
-  ContentRepositoryDTO,
-  NewsRepositoryProtocol,
-} from "./protocol/newsletter-repository";
+import { NewsRepositoryProtocol } from "./protocol/newsletter-repository";
 
 export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   async create(
-    request: ContentRepositoryDTO.Create.Request
-  ): ContentRepositoryDTO.Create.Response {
+    news: {
+      Title: string;
+      Description: string | null;
+      Data: any;
+      SendDate?: string;
+      LocationName?: string;
+    },
+    accountId: number
+  ): Promise<number> {
     const result = await newsletterDb
       .insert({
-        Title: request.Title,
-        Description: request.Description,
-        SendDate: request.SendDate,
-        Content: request.Data,
+        Title: news.Title,
+        Description: news.Description,
+        SendDate: news.SendDate,
+        Content: news.Data,
       })
       .returning("Id")
       .into("News");
 
     const id = result.length && result[0].Id;
+
+    await logsDb
+      .insert({
+        User_Id: accountId,
+        Resource: "newsletter",
+        Operation: "create",
+        Description: "Criação de notícia",
+      })
+      .withSchema("users")
+      .into("Operations");
 
     return id;
   }
@@ -86,29 +108,56 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async update(
-    request: ContentRepositoryDTO.Update.Request
-  ): ContentRepositoryDTO.Update.Response {
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate?: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await newsletterDb("News")
       .where({
-        Id: request.Id,
+        Id: news.Id,
       })
       .update({
-        Title: request.Title,
-        Description: request.Description,
-        SendDate: request.SendDate,
-        Content: request.Data,
+        Title: news.Title,
+        Description: news.Description,
+        SendDate: news.SendDate,
+        Content: news.Data,
       });
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "newsletter",
+        Operation: "update",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
   async delete(
-    request: ContentRepositoryDTO.Delete.Request
-  ): ContentRepositoryDTO.Delete.Response {
-    await newsletterDb("News").where({ Id: request.Id }).delete();
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<void> {
+    await newsletterDb("News").where({ Id: id }).delete();
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "newsletter",
+        Operation: "delete",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
-  async getById(
-    request: ContentRepositoryDTO.GetById.Request
-  ): ContentRepositoryDTO.GetById.Response {
+  async getById(id: number): Promise<Content | null> {
     const result = await newsletterDb.raw(
       `
       SELECT
@@ -123,7 +172,7 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       FROM "News" n
       WHERE n."Id" = ?
     `,
-      [request.Id]
+      [id]
     );
 
     if (!result.rows.length) {
@@ -134,8 +183,12 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async getAll(
-    params: ContentRepositoryDTO.GetAll.Request
-  ): ContentRepositoryDTO.GetAll.Response {
+    params: {
+      only_sent: boolean;
+      title?: string;
+      sendDate?: string;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<Required<Content>> | null> {
     const { pageNumber, limit, offset, title, sendDate } = params;
 
     const binding = [];

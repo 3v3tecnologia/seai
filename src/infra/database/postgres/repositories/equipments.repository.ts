@@ -9,7 +9,8 @@ import {
   MeteorologicalOrganRepositoryProtocol,
 } from "../../../../domain/use-cases/_ports/repositories/equipments-repository";
 import { toPaginatedOutput } from "../../../../domain/use-cases/helpers/pagination";
-import { governmentDb } from "../connection/knexfile";
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { governmentDb, logsDb } from "../connection/knexfile";
 import { countTotalRows } from "./utils/paginate";
 
 /*
@@ -177,10 +178,13 @@ export class DbEquipmentsRepository
     return type;
   }
 
-  async updateEquipment(equipment: {
-    IdEquipment: number;
-    Enable: boolean;
-  }): Promise<void> {
+  async enableEquipment(
+    equipment: {
+      IdEquipment: number;
+      Enable: boolean;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void> {
     await governmentDb.transaction(async (trx) => {
       await trx("MetereologicalEquipment")
         .withSchema("equipments")
@@ -191,6 +195,16 @@ export class DbEquipmentsRepository
         .returning("IdEquipment")
         .where("IdEquipment", equipment.IdEquipment);
     });
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "equipment",
+        Operation: "update",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
   }
 
   async checkIfOrganExists(
@@ -322,10 +336,6 @@ export class DbEquipmentsRepository
       .first();
 
     return exists ? true : false;
-  }
-
-  private typeIsPluviometer(id_type: number) {
-    return id_type === 2;
   }
 
   private typeIsStation(id_type: number) {

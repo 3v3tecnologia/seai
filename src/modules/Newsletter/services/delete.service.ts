@@ -1,41 +1,31 @@
-import {
-  CommandProps,
-  UserOperationsLoggerProtocol,
-} from "./../../UserOperations/protocols/logger";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
+import { UserCommandOperationProps } from "./../../UserOperations/protocols/logger";
 
-export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
+export class DeleteNews implements DeleteNewsUseCaseProtocol {
   constructor(
     private readonly repository: NewsRepositoryProtocol,
-    private readonly queueProvider: TaskSchedulerProviderProtocol,
-    private readonly operationsLogger: UserOperationsLoggerProtocol
+    private readonly queueProvider: TaskSchedulerProviderProtocol
   ) {}
-  async create(
-    request: DeleteNewsUseCaseProtocol.Request
-  ): DeleteNewsUseCaseProtocol.Response {
-    await this.repository.delete(request);
-
-    await this.operationsLogger.save(request.accountId, request.description);
+  async execute(
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
+    await this.repository.delete(id, operation);
 
     const successLog = `Notícia deletada com sucessso.`;
 
     // delete all jobs related to the news (purge by news id)
-    await this.queueProvider.removeByKey(String(request.Id));
+    await this.queueProvider.removeByKey(String(id));
 
     return right(successLog);
   }
 }
 
-export namespace DeleteNewsUseCaseProtocol {
-  export type Request = {
-    Id: number;
-  } & CommandProps;
-
-  export type Response = Promise<Either<Error, string>>;
-
-  export interface UseCase {
-    create(request: Request): Response;
-  }
+export interface DeleteNewsUseCaseProtocol {
+  execute(
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>>;
 }

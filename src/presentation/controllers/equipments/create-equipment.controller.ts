@@ -3,19 +3,16 @@ import { Controller } from "../ports/controllers";
 
 import { CreateEquipments } from "../../../domain/use-cases/equipments/create-equipment";
 
-import { ok, badRequest, serverError } from "../helpers";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
+import { badRequest, ok, serverError } from "../helpers";
 
 export class CreateEquipmentsController
   implements
     Controller<CreateEquipmentsControllerProtocol.Request, HttpResponse>
 {
   private createEquipments: CreateEquipments;
-  private userLogs: RegisterUserLogs;
 
-  constructor(createEquipments: CreateEquipments, userLogs: RegisterUserLogs) {
+  constructor(createEquipments: CreateEquipments) {
     this.createEquipments = createEquipments;
-    this.userLogs = userLogs;
   }
 
   async handle(
@@ -35,8 +32,6 @@ export class CreateEquipmentsController
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
       }
-
-      await this.userLogs.log(request.accountId, this.createEquipments);
 
       return ok(resultOrError.value);
     } catch (error) {

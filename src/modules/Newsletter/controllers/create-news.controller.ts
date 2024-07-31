@@ -7,20 +7,21 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { ISchemaValidator } from "../../../shared/validation/validator";
-import { CreateNews } from "../services";
+import { CreateNewsUseCaseProtocol } from "../services";
 
 export class CreateNewsController {
-  private useCase: CreateNews;
+  private useCase: CreateNewsUseCaseProtocol;
   private validator: ISchemaValidator;
 
-  constructor(useCase: CreateNews, validator: ISchemaValidator) {
+  constructor(useCase: CreateNewsUseCaseProtocol, validator: ISchemaValidator) {
     this.useCase = useCase;
     this.validator = validator;
   }
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
-      const { Data, Description, SendDate, Title, LocationName } = request;
+      const { Data, Description, SendDate, Title, LocationName, accountId } =
+        request;
 
       const { error } = await this.validator.validate({
         Data,
@@ -34,11 +35,12 @@ export class CreateNewsController {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.create({
+      const createdOrError = await this.useCase.execute({
         Data: request.Data,
         Description: request.Description,
         Title: request.Title,
         SendDate: request.SendDate,
+        accountId,
       });
 
       if (createdOrError.isLeft()) {

@@ -8,7 +8,6 @@ import {
   EquipmentsControllerFactory,
   EquipmentsMeasurementsControllerFactory,
 } from "../factories/controllers";
-import { SystemLogsControllersFactory } from "../factories/controllers";
 
 export const equipmentsRouter = (): Router => {
   const router = Router();
@@ -89,11 +88,6 @@ export const equipmentsRouter = (): Router => {
     )
   );
 
-  router.put(
-    "/measurements/et0",
-    adaptRoute(EquipmentsMeasurementsControllerFactory.makeUpdateEt0())
-  );
-
   router.get(
     "/:id/measurements",
     authorization,
@@ -101,13 +95,6 @@ export const equipmentsRouter = (): Router => {
     adaptRoute(
       EquipmentsMeasurementsControllerFactory.makeFetchLatestEquipmentMeasurementsController()
     )
-  );
-
-  router.get(
-    "/logs/:id",
-    authorization,
-    equipmentsPermissions.read,
-    adaptRoute(SystemLogsControllersFactory.makeFetchEquipmentMeasuresLogs())
   );
 
   return router;

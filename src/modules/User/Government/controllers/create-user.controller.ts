@@ -1,3 +1,4 @@
+import { LoginUserAccount } from "../../../../@types/login-user";
 import {
   badRequest,
   created,
@@ -38,7 +39,10 @@ export class CreateUserController {
       //   return badRequest(error);
       // }
 
-      const createdOrError = await this.createUser.create(dto);
+      const createdOrError = await this.createUser.create(
+        dto,
+        request.accountId
+      );
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -54,7 +58,6 @@ export class CreateUserController {
 
 export namespace CreateUserController {
   export type Request = {
-    accountId: number;
     email: string;
     type: UserType;
     modules: {
@@ -66,5 +69,5 @@ export namespace CreateUserController {
       [Modules.STUDIES]: Required<SystemModulesPermissions>;
       [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
     };
-  };
+  } & LoginUserAccount;
 }

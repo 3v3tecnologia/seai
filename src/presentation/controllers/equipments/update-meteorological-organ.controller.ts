@@ -3,7 +3,6 @@ import { Controller } from "../ports/controllers";
 
 import { MeteorologicalOrganEntity } from "../../../domain/entities/equipments/MetereologicalOrgan";
 import { UpdateMeteorologicalOrgan } from "../../../domain/use-cases/equipments/update-meteorological-organ";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { Notification } from "../../../shared/notification/notification";
 import { badRequest, ok, serverError } from "../helpers";
 
@@ -15,14 +14,9 @@ export class UpdateMeteorologicalOrganController
     >
 {
   private updateMeteorologicalOrgan: UpdateMeteorologicalOrgan;
-  private userLogs: RegisterUserLogs;
 
-  constructor(
-    updateMeteorologicalOrgan: UpdateMeteorologicalOrgan,
-    userLogs: RegisterUserLogs
-  ) {
+  constructor(updateMeteorologicalOrgan: UpdateMeteorologicalOrgan) {
     this.updateMeteorologicalOrgan = updateMeteorologicalOrgan;
-    this.userLogs = userLogs;
   }
 
   async handle(
@@ -56,11 +50,6 @@ export class UpdateMeteorologicalOrganController
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
       }
-
-      await this.userLogs.log(
-        request.accountId,
-        this.updateMeteorologicalOrgan
-      );
 
       return ok(resultOrError.value);
     } catch (error) {

@@ -8,6 +8,7 @@ import {
   StationWithLastMeasurement,
 } from "../../../entities/equipments/Equipment";
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
 
 export namespace MeteorologicalOrganRepositoryDTOProtocol {
   export namespace Get {
@@ -122,9 +123,13 @@ export interface EquipmentsRepositoryProtocol
   createEquipment(
     equipment: EquipmentRepositoryDTOProtocol.Create.Params
   ): EquipmentRepositoryDTOProtocol.Create.Result;
-  updateEquipment(
-    equipment: EquipmentRepositoryDTOProtocol.Update.Params
-  ): EquipmentRepositoryDTOProtocol.Update.Result;
+  enableEquipment(
+    equipment: {
+      IdEquipment: number;
+      Enable: boolean;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
   deleteEquipment(
     idEquipment: EquipmentRepositoryDTOProtocol.Delete.Params
   ): EquipmentRepositoryDTOProtocol.Delete.Result;

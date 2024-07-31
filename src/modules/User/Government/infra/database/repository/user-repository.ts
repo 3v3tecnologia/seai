@@ -3,8 +3,12 @@ import {
   IPaginationInput,
   toPaginatedOutput,
 } from "../../../../../../domain/use-cases/helpers/pagination";
-import { governmentDb } from "../../../../../../infra/database/postgres/connection/knexfile";
+import {
+  governmentDb,
+  logsDb,
+} from "../../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../../infra/database/postgres/repositories/utils/paginate";
+import { UserCommandOperationProps } from "../../../../../UserOperations/protocols/logger";
 import { UserAccountProps } from "../../../../core/model/account";
 import { UserType, UserTypes } from "../../../../core/model/user";
 import { SystemModulesProps } from "../../../../core/model/user-modules-access";
@@ -25,16 +29,19 @@ function mapUserModulePermissionsToPersistence(
 }
 
 export class UserRepository implements UserRepositoryProtocol {
-  async add(user: {
-    type: UserType;
-    code: string;
-    status?: string;
-    email: string;
-    login?: string;
-    name?: string;
-    password?: string;
-    modules?: SystemModulesProps;
-  }): Promise<number | null> {
+  async add(
+    user: {
+      type: UserType;
+      code: string;
+      status?: string;
+      email: string;
+      login?: string;
+      name?: string;
+      password?: string;
+      modules?: SystemModulesProps;
+    },
+    author?: number
+  ): Promise<number | null> {
     let id_user = null;
     await governmentDb.transaction(async (trx) => {
       const toInsert = {
@@ -85,6 +92,18 @@ export class UserRepository implements UserRepositoryProtocol {
 
       id_user = user_id;
     });
+
+    if (author) {
+      await logsDb
+        .insert({
+          User_Id: author,
+          Resource: "user",
+          Operation: "create",
+          Description: "Criação de usuário",
+        })
+        .withSchema("users")
+        .into("Operations");
+    }
 
     return id_user;
   }
@@ -354,16 +373,19 @@ export class UserRepository implements UserRepositoryProtocol {
       });
   }
 
-  async update(user: {
-    id?: number;
-    code?: string;
-    email?: string | null;
-    name: string | null;
-    login: string | null;
-    type?: string | null;
-    password?: string | null;
-    modules?: SystemModulesProps | null;
-  }): Promise<boolean> {
+  async update(
+    user: {
+      id?: number;
+      code?: string;
+      email?: string | null;
+      name: string | null;
+      login: string | null;
+      type?: string | null;
+      password?: string | null;
+      modules?: SystemModulesProps | null;
+    },
+    operation?: UserCommandOperationProps
+  ): Promise<boolean> {
     let result = false;
     await governmentDb.transaction(async (trx) => {
       const userToUpdate = {
@@ -423,6 +445,18 @@ export class UserRepository implements UserRepositoryProtocol {
 
       result = updatedUserRows > 0 ? true : false;
     });
+
+    if (operation) {
+      await logsDb
+        .insert({
+          User_Id: operation.author,
+          Resource: "user",
+          Operation: "update",
+          Description: operation.operation,
+        })
+        .withSchema("users")
+        .into("Operations");
+    }
 
     return result;
   }
@@ -553,13 +587,43 @@ export class UserRepository implements UserRepositoryProtocol {
     return user;
   }
 
-  async deleteById(id_user: number): Promise<boolean> {
+  async deleteById(
+    id_user: number,
+    operation?: UserCommandOperationProps
+  ): Promise<boolean> {
     await governmentDb("User").withSchema("users").where("Id", id_user).del();
+
+    if (operation) {
+      await logsDb
+        .insert({
+          User_Id: operation.author,
+          Resource: "user",
+          Operation: "delete",
+          Description: operation.operation,
+        })
+        .withSchema("users")
+        .into("Operations");
+    }
+
     return true;
   }
 
-  async deleteByEmail(email: string): Promise<boolean> {
+  async deleteByEmail(
+    email: string,
+    operation: UserCommandOperationProps
+  ): Promise<boolean> {
     await governmentDb("User").withSchema("users").where("Email", email).del();
+
+    await logsDb
+      .insert({
+        User_Id: operation.author,
+        Resource: "user",
+        Operation: "delete",
+        Description: operation.operation,
+      })
+      .withSchema("users")
+      .into("Operations");
+
     return true;
   }
 
