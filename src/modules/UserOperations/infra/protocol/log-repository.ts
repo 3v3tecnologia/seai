@@ -1,13 +1,6 @@
 import { UserOperation } from "../../model/user-operations";
 
 export interface UserOperationsRepositoryProtocol {
-  save(input: {
-    user_id: number;
-    resource: string;
-    operation: string;
-    description: string;
-  }): Promise<void>;
-
   getAll(input: {
     user_id?: string;
     resource?: string;

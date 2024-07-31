@@ -5,28 +5,6 @@ import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
 export class UserOperationsRepository
   implements UserOperationsRepositoryProtocol
 {
-  async save({
-    user_id,
-    description,
-    operation,
-    resource,
-  }: {
-    user_id: number;
-    resource: string;
-    operation: string;
-    description: string;
-  }): Promise<void> {
-    return await logsDb
-      .insert({
-        User_Id: user_id,
-        Resource: resource,
-        Operation: operation,
-        Description: description,
-      })
-      .withSchema("users")
-      .into("Operations");
-  }
-
   async getAll(params: {
     user_id?: string;
     resource?: string;

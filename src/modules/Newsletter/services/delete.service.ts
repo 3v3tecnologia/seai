@@ -1,5 +1,5 @@
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
-import { Either, right } from "../../../shared/Either";
+import { Either, left, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { UserCommandOperationProps } from "./../../UserOperations/protocols/logger";
 
@@ -12,6 +12,12 @@ export class DeleteNews implements DeleteNewsUseCaseProtocol {
     id: number,
     operation: UserCommandOperationProps
   ): Promise<Either<Error, string>> {
+    const item = await this.repository.getById(id);
+
+    if (item == null) {
+      return left(new Error(`Notícia não encontrada.`));
+    }
+
     await this.repository.delete(id, operation);
 
     const successLog = `Notícia deletada com sucessso.`;

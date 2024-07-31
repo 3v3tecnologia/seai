@@ -13,9 +13,7 @@ export class UpdateSendAtNews
   async execute(
     request: UpdateNewsletterSendAtUseCaseProtocol.Request
   ): UpdateNewsletterSendAtUseCaseProtocol.Response {
-    const alreadyExistsNews = await this.repository.getById({
-      Id: request.Id,
-    });
+    const alreadyExistsNews = await this.repository.getById(request.Id);
 
     if (alreadyExistsNews == null) {
       return left(new Error(`Notícia não encontrada.`));

@@ -24,7 +24,7 @@ export class CreateNews implements CreateNewsUseCaseProtocol {
     SendDate: string;
     LocationName?: string;
     accountId: number;
-  }): Promise<Either<Error, string>> {
+  }): Promise<Either<Error, number>> {
     const hasValidContentSizeOrError = validateContentSize(Data);
 
     if (hasValidContentSizeOrError.isLeft()) {
@@ -65,9 +65,7 @@ export class CreateNews implements CreateNewsUseCaseProtocol {
       }
     );
 
-    const successLog = `Notícia criada com sucessso.`;
-
-    return right(successLog);
+    return right(newsId);
   }
 }
 
@@ -79,5 +77,5 @@ export interface CreateNewsUseCaseProtocol {
     SendDate: string;
     LocationName?: string;
     accountId: number;
-  }): Promise<Either<Error, string>>;
+  }): Promise<Either<Error, number>>;
 }

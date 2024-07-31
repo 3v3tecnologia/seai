@@ -37,13 +37,13 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
     const id = result.length && result[0].Id;
 
     await logsDb
+      .withSchema("users")
       .insert({
         User_Id: accountId,
         Resource: "newsletter",
         Operation: "create",
         Description: "Criação de notícia",
       })
-      .withSchema("users")
       .into("Operations");
 
     return id;
