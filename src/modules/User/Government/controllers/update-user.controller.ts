@@ -25,42 +25,36 @@ export class UpdateUserController {
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
-      const { id, email, modules } = request;
+      const { id, email, login, name, modules, type, Operation, accountId } =
+        request;
 
-      // const { error } = await this.validator.validate({
-      //   id,
-      //   email,
-      //   modules,
-      //   login,
-      //   name,
-      //   type,
-      //   confirmPassword,
-      //   password,
-      // });
+      const { error } = await this.validator.validate({
+        id,
+        email,
+        modules,
+        type,
+        name,
+        login,
+        accountId,
+        Operation,
+      });
 
-      // if (error) {
-      //   return badRequest(error);
-      // }
+      if (error) {
+        return badRequest(error);
+      }
+
       const updateOrError = await this.updateUser.execute(
         {
           id: Number(id),
-          name: Reflect.has(request, "name") ? (request.name as string) : null,
-          login: Reflect.has(request, "login")
-            ? (request.login as string)
-            : null,
           email,
-          password: Reflect.has(request, "password")
-            ? (request.password as string)
-            : null,
-          confirmPassword: Reflect.has(request, "confirmPassword")
-            ? (request.confirmPassword as string)
-            : null,
           modules,
-          type: request.type,
+          type,
+          name,
+          login,
         },
         {
-          author: request.accountId,
-          operation: request.Operation,
+          author: accountId,
+          operation: Operation,
         }
       );
 
@@ -80,12 +74,10 @@ export namespace UpdateUserController {
   export type Request = {
     id: number;
     email: string;
+    name: string;
+    login: string;
     type: UserType;
-    name: string | null;
-    login: string | null;
-    password?: string | null;
-    confirmPassword?: string | null;
-    modules?: {
+    modules: {
       [Modules.USER]: Required<SystemModulesPermissions>;
       [Modules.EQUIPMENTS]: Required<SystemModulesPermissions>;
       [Modules.CROP]: Required<SystemModulesPermissions>;

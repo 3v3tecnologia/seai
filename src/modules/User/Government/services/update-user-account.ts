@@ -22,10 +22,8 @@ export class UpdateUser implements IUpdateUserUseCase {
       id: number;
       email: string;
       type: UserType;
-      name: string | null;
-      login: string | null;
-      password?: string | null;
-      confirmPassword?: string | null;
+      name: string;
+      login: string;
       modules?: SystemModulesProps;
     },
     operation: UserCommandOperationProps
@@ -87,12 +85,12 @@ export class UpdateUser implements IUpdateUserUseCase {
     }
 
     // TODO: add validation in controller
-    if (Reflect.has(request, "password") && request.password !== null) {
-      Object.assign(createUserDTO, {
-        password: request.password,
-        confirmPassword: request.confirmPassword,
-      });
-    }
+    // if (Reflect.has(request, "password") && request.password !== null) {
+    //   Object.assign(createUserDTO, {
+    //     password: request.password,
+    //     confirmPassword: request.confirmPassword,
+    //   });
+    // }
 
     const userAccountOrError = User.create(createUserDTO, request.id);
 
@@ -131,10 +129,8 @@ export interface IUpdateUserUseCase {
       id: number;
       email: string;
       type: UserType;
-      name: string | null;
-      login: string | null;
-      password?: string | null;
-      confirmPassword?: string | null;
+      name: string;
+      login: string;
       modules?: SystemModulesProps;
     },
     operation: UserCommandOperationProps

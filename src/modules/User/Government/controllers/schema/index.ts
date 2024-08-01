@@ -1,11 +1,14 @@
-import { paginationSchema } from "./../../../../../presentation/utils/schemas";
 import Joi from "joi";
+import {
+  paginationSchema,
+  UserOperationDescriptionSchema,
+} from "./../../../../../presentation/utils/schemas";
 
-import { SchemaValidator } from "../../../../../shared/validation/validator";
 import {
   idSchema,
   userAccountSchema,
 } from "../../../../../presentation/utils/schemas";
+import { SchemaValidator } from "../../../../../shared/validation/validator";
 import { Modules } from "../../../core/model/user-modules-access";
 
 const systemModulesPermissionsSchema = Joi.object({
@@ -36,11 +39,10 @@ export const loginValidator = new SchemaValidator(
 
 export const createUserValidator = new SchemaValidator(
   Joi.object({
-    ...userAccountSchema,
     email: Joi.string().email().required(),
     type: userTypes.required(),
     modules: userModulesAccess.required(),
-  })
+  }).append(userAccountSchema)
 );
 
 export const updateUserValidator = new SchemaValidator(
@@ -48,12 +50,10 @@ export const updateUserValidator = new SchemaValidator(
     ...idSchema,
     type: userTypes.required(),
     email: Joi.string().email().required(),
-    name: Joi.string().default(null),
-    login: Joi.string().default(null),
-    password: Joi.string().optional(),
-    confirmPassword: Joi.string().valid(Joi.ref("password")).optional(),
     modules: userModulesAccess.optional(),
-  })
+    name: Joi.string().required(),
+    login: Joi.string().required(),
+  }).append(UserOperationDescriptionSchema)
 );
 
 export const completeUserRegistrationValidator = new SchemaValidator(
@@ -68,10 +68,10 @@ export const completeUserRegistrationValidator = new SchemaValidator(
 
 export const deleteUserValidator = new SchemaValidator(
   Joi.object({
-    ...userAccountSchema,
-    ...idSchema,
     email: Joi.string().email().optional(),
   })
+    .append(UserOperationDescriptionSchema)
+    .append(idSchema)
 );
 
 export const fetchAllUsersValidator = new SchemaValidator(
@@ -123,19 +123,17 @@ export const signInValidator = new SchemaValidator(
 
 export const signUpValidator = new SchemaValidator(
   Joi.object({
-    ...userAccountSchema,
     name: Joi.string().required(),
     login: Joi.string().required(),
     password: Joi.string().required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
-  })
+  }).append(userAccountSchema)
 );
 
 export const updateProfilerValidator = new SchemaValidator(
   Joi.object({
-    ...userAccountSchema,
     name: Joi.string().required(),
     email: Joi.string().email().optional(),
     login: Joi.string().required(),
-  })
+  }).append(userAccountSchema)
 );

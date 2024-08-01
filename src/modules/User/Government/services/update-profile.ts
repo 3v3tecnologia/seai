@@ -32,6 +32,19 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
       return left(new UserNotFoundError());
     }
 
+    if (request.login) {
+      const existingAccount = await this.accountRepository.getByLogin(
+        request.login,
+        [UserTypes.ADMIN, UserTypes.STANDARD]
+      );
+
+      if (existingAccount) {
+        if (existingAccount.id !== request.id) {
+          return left(new Error(`Usuário com login já existe.`));
+        }
+      }
+    }
+
     if (userAccount.type === "pending") {
       return left(new Error("Necessário confirmar a conta"));
     }

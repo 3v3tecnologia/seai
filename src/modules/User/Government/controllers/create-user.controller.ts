@@ -25,22 +25,25 @@ export class CreateUserController {
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      const { email, modules, type } = request;
+      const { email, modules, type, accountId } = request;
 
-      const dto = {
+      const { error } = await this.validator.validate({
         email,
         modules,
         type,
-      };
+        accountId,
+      });
 
-      // const { error } = await this.validator.validate(dto);
-
-      // if (error) {
-      //   return badRequest(error);
-      // }
+      if (error) {
+        return badRequest(error);
+      }
 
       const createdOrError = await this.createUser.create(
-        dto,
+        {
+          email,
+          modules,
+          type,
+        },
         request.accountId
       );
 
