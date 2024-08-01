@@ -32,11 +32,12 @@ export class ManagementCropControllers {
     } & LoginUserAccount
   ): Promise<HttpResponse> {
     try {
-      const { LocationName, Name } = params;
+      const { LocationName, Name, accountId } = params;
 
       const { error } = await createCropValidator.validate({
         LocationName,
         Name,
+        accountId,
       });
 
       if (error) {
@@ -70,10 +71,12 @@ export class ManagementCropControllers {
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {
     try {
-      const { id } = params;
+      const { id, Operation, accountId } = params;
 
       const { error } = await deleteCropValidator.validate({
         id,
+        Operation,
+        accountId,
       });
 
       if (error) {
@@ -81,15 +84,13 @@ export class ManagementCropControllers {
       }
 
       const deletedOrError = await this.managementCropServices.deleteCrop(id, {
-        author: params.accountId,
-        operation: params.Operation,
+        author: accountId,
+        operation: Operation,
       });
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao deletar cultura");
     } catch (error) {
@@ -166,12 +167,14 @@ export class ManagementCropControllers {
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {
     try {
-      const { LocationName, Name, id } = params;
+      const { LocationName, Name, id, Operation, accountId } = params;
 
       const { error } = await updateCropValidator.validate({
         LocationName,
         Name,
         id,
+        Operation,
+        accountId,
       });
 
       if (error) {
@@ -185,16 +188,14 @@ export class ManagementCropControllers {
           LocationName: LocationName,
         },
         {
-          author: params.accountId,
-          operation: params.Operation,
+          author: accountId,
+          operation: Operation,
         }
       );
 
       if (updatedOrError.isLeft()) {
         return forbidden(updatedOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao atualizar cultura");
     } catch (error) {
@@ -217,11 +218,12 @@ export class ManagementCropControllers {
     } & LoginUserAccount
   ): Promise<HttpResponse> {
     try {
-      const { id, data } = params;
+      const { id, data, accountId } = params;
 
       const { error } = await createCropCycleValidator.validate({
         id,
         data,
+        accountId,
       });
 
       if (error) {
@@ -239,8 +241,6 @@ export class ManagementCropControllers {
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao criar cultura");
     } catch (error) {
