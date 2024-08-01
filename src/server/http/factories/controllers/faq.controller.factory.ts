@@ -9,25 +9,43 @@ import {
   UpdateFaqCategoryController,
   UpdateFaqController,
 } from "../../../../presentation/controllers/faq";
+import {
+  createFaqCategoryValidator,
+  deleteFaqCategoryValidator,
+  updateFaqCategoryValidator,
+} from "../../../../presentation/controllers/faq/schemas/category-validator";
+import {
+  createFaqValidator,
+  deleteFaqValidator,
+  updateFaqValidator,
+} from "../../../../presentation/controllers/faq/schemas/faq-validator";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { FaqUseCasesFactory } from "../use-cases";
 
 export class FaqControllersFactory {
   static makeCreateFaqCategory(): Controller {
     return new CreateFaqCategoryController(
-      FaqUseCasesFactory.makeCreateFaqCategory()
+      FaqUseCasesFactory.makeCreateFaqCategory(),
+      createFaqCategoryValidator
     );
   }
   static makeCreateFaq(): Controller {
-    return new CreateFaqController(FaqUseCasesFactory.makeCreateFaq());
+    return new CreateFaqController(
+      FaqUseCasesFactory.makeCreateFaq(),
+      createFaqValidator
+    );
   }
   static makeDeleteFaqCategory(): Controller {
     return new DeleteFaqCategoryController(
-      FaqUseCasesFactory.makeDeleteFaqCategory()
+      FaqUseCasesFactory.makeDeleteFaqCategory(),
+      deleteFaqCategoryValidator
     );
   }
   static makeDeleteFaq(): Controller {
-    return new DeleteFaqController(FaqUseCasesFactory.makeDeleteFaq());
+    return new DeleteFaqController(
+      FaqUseCasesFactory.makeDeleteFaq(),
+      deleteFaqValidator
+    );
   }
 
   static makeFetchFaqsWithCategory(): Controller {
@@ -45,10 +63,14 @@ export class FaqControllersFactory {
   }
   static makeUpdateFaqCategory(): Controller {
     return new UpdateFaqCategoryController(
-      FaqUseCasesFactory.makeUpdateFaqCategory()
+      FaqUseCasesFactory.makeUpdateFaqCategory(),
+      updateFaqCategoryValidator
     );
   }
   static makeUpdateFaq(): Controller {
-    return new UpdateFaqController(FaqUseCasesFactory.makeUpdateFaq());
+    return new UpdateFaqController(
+      FaqUseCasesFactory.makeUpdateFaq(),
+      updateFaqValidator
+    );
   }
 }

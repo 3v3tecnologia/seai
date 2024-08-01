@@ -7,7 +7,6 @@ export interface UpdateFaqProtocol {
       id: number;
       question: string;
       answer: string;
-      order: number;
       id_category: number;
     },
     operation: UserCommandOperationProps

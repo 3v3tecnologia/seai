@@ -1,15 +1,17 @@
 import { HttpResponse } from "../ports";
 
-import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 import { UserOperationControllerDTO } from "../../../@types/login-user";
+import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category";
+import { ISchemaValidator } from "../../../shared/validation/validator";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
 
 export class DeleteFaqCategoryController {
   private DeleteFaqCategory: DeleteFaqCategory;
 
-  constructor(DeleteFaqCategory: DeleteFaqCategory) {
+  constructor(
+    DeleteFaqCategory: DeleteFaqCategory,
+    private validator: ISchemaValidator
+  ) {
     this.DeleteFaqCategory = DeleteFaqCategory;
   }
 
@@ -17,12 +19,21 @@ export class DeleteFaqCategoryController {
     request: DeleteFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
-      if (!request.id) {
-        return badRequest(new Error("É necessário informar o ID da categoria"));
+      const { Operation, accountId, id } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
       }
-      const result = await this.DeleteFaqCategory.execute(request.id, {
-        author: request.accountId,
-        operation: request.Operation,
+
+      const result = await this.DeleteFaqCategory.execute(id, {
+        author: accountId,
+        operation: Operation,
       });
 
       if (result.isLeft()) {

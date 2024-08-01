@@ -16,12 +16,11 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
     data: {
       question: string;
       answer: string;
-      order: number;
       category_id: number;
     },
     accountId: number
   ): Promise<number | null> {
-    const { question, answer, order, category_id } = data;
+    const { question, answer, category_id } = data;
 
     let faq_id: number | null = null;
 
@@ -31,7 +30,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
         .insert({
           Question: question,
           Answer: answer,
-          Order: order,
           Fk_Category: category_id,
           CreatedAt: governmentDb.fn.now(),
         })
@@ -95,7 +93,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
         id: row.Id,
         question: row.Question,
         answer: row.Answer,
-        order: row.Order,
         created_at: row.CreatedAt,
         updated_at: row.UpdatedAt,
         category: {
@@ -119,12 +116,11 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
       id: number;
       question: string;
       answer: string;
-      order: number;
       category_id: number;
     },
     operation: UserCommandOperationProps
   ): Promise<void> {
-    const { id, question, answer, order, category_id } = data;
+    const { id, question, answer, category_id } = data;
 
     await governmentDb("FAQ")
       .withSchema("faq")
@@ -132,7 +128,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
         {
           Question: question,
           Answer: answer,
-          Order: order,
           Fk_Category: category_id,
           UpdatedAt: governmentDb.fn.now(),
         },
@@ -209,7 +204,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
       id: faqDbResult.Id,
       question: faqDbResult.Question,
       answer: faqDbResult.Answer,
-      order: faqDbResult.Order,
       created_at: faqDbResult.CreatedAt,
       updated_at: faqDbResult.UpdatedAt,
       category: {
@@ -277,7 +271,6 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
         id: faqDbResult.Id,
         question: faqDbResult.Question,
         answer: faqDbResult.Answer,
-        order: faqDbResult.Order,
         created_at: faqDbResult.CreatedAt,
         updated_at: faqDbResult.UpdatedAt,
         category: {

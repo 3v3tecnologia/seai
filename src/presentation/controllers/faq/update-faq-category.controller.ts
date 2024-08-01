@@ -2,28 +2,42 @@ import { HttpResponse } from "../ports";
 
 import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category";
-import { forbidden, ok, serverError } from "../helpers";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class UpdateFaqCategoryController {
-  private UpdateFaqCategory: UpdateFaqCategory;
-
-  constructor(UpdateFaqCategory: UpdateFaqCategory) {
-    this.UpdateFaqCategory = UpdateFaqCategory;
-  }
+  constructor(
+    private UpdateFaqCategory: UpdateFaqCategory,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: UpdateFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
+      const { Operation, accountId, id, description, title } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+        description,
+        title,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const result = await this.UpdateFaqCategory.execute(
         {
-          id: request.id,
-          title: request.title,
-          description: request.description,
+          id,
+          title,
+          description,
         },
         {
-          author: request.accountId,
-          operation: request.Operation,
+          author: accountId,
+          operation: Operation,
         }
       );
 

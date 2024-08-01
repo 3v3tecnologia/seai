@@ -47,7 +47,6 @@ export class CreateFaq implements CreateFaqProtocol {
     const faqOrError = Faq.create({
       answer: request.answer,
       question: request.question,
-      order: request.order,
       category: categoryProps.value as Category,
     });
 
@@ -61,7 +60,6 @@ export class CreateFaq implements CreateFaqProtocol {
       {
         answer: faq.answer.value,
         question: faq.question.value,
-        order: faq.order as number,
         category_id: faq.category.id as number,
       },
       request.accountId

@@ -18,7 +18,6 @@ export class UpdateFaq implements UpdateFaqProtocol {
       id: number;
       question: string;
       answer: string;
-      order: number;
       id_category: number;
     },
     operation: UserCommandOperationProps
@@ -55,7 +54,6 @@ export class UpdateFaq implements UpdateFaqProtocol {
       {
         answer: request.answer,
         question: request.question,
-        order: request.order,
         category: categoryProps.value as Category,
       },
       request.id
@@ -72,7 +70,6 @@ export class UpdateFaq implements UpdateFaqProtocol {
         id: faq.id as number,
         answer: faq.answer.value,
         question: faq.question.value,
-        order: faq.order as number,
         category_id: faq.category.id as number,
       },
       operation

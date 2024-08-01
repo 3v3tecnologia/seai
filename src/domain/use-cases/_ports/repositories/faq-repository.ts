@@ -10,7 +10,6 @@ export interface FaqRepositoryProtocol {
     data: {
       question: string;
       answer: string;
-      order: number;
       category_id: number;
     },
     accountId: number
@@ -26,7 +25,6 @@ export interface FaqRepositoryProtocol {
       id: number;
       question: string;
       answer: string;
-      order: number;
       category_id: number;
     },
     operation: UserCommandOperationProps

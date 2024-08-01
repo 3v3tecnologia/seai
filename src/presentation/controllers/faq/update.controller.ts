@@ -2,28 +2,43 @@ import { HttpResponse } from "../ports";
 
 import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { UpdateFaq } from "../../../domain/use-cases/faq/update-faq";
-import { forbidden, ok, serverError } from "../helpers";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class UpdateFaqController {
-  private UpdateFaq: UpdateFaq;
-
-  constructor(UpdateFaq: UpdateFaq) {
-    this.UpdateFaq = UpdateFaq;
-  }
+  constructor(
+    private UpdateFaq: UpdateFaq,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(request: UpdateFaqController.Request): Promise<HttpResponse> {
     try {
+      const { answer, question, id_category, accountId, Operation, id } =
+        request;
+
+      const { error } = await this.validator.validate({
+        answer,
+        question,
+        id_category,
+        accountId,
+        Operation,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const result = await this.UpdateFaq.execute(
         {
-          id: request.id,
-          answer: request.answer,
-          question: request.question,
-          order: request.order,
-          id_category: request.id_category,
+          id,
+          answer,
+          question,
+          id_category,
         },
         {
-          author: request.accountId,
-          operation: request.Operation,
+          author: accountId,
+          operation: Operation,
         }
       );
 
@@ -44,7 +59,6 @@ export namespace UpdateFaqController {
     id: number;
     question: string;
     answer: string;
-    order: number;
     id_category: number;
   } & UserOperationControllerDTO;
 }

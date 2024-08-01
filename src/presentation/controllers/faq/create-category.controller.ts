@@ -3,24 +3,38 @@ import { HttpResponse } from "../ports";
 import { LoginUserAccount } from "../../../@types/login-user";
 import { CreateFaqCategory } from "../../../domain/use-cases/faq/create-category";
 import { badRequest, created, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class CreateFaqCategoryController {
-  private CreateFaqCategory: CreateFaqCategory;
-
-  constructor(CreateFaqCategory: CreateFaqCategory) {
-    this.CreateFaqCategory = CreateFaqCategory;
-  }
+  constructor(
+    private CreateFaqCategory: CreateFaqCategory,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: CreateFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
+      const { description, title, accountId } = request;
+
+      const dto = {
+        description,
+        title,
+        accountId,
+      };
+
+      const { error } = await this.validator.validate(dto);
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const result = await this.CreateFaqCategory.create(
         {
-          title: request.title,
-          description: request.description,
+          title: title,
+          description: description,
         },
-        request.accountId
+        accountId
       );
 
       if (result.isLeft()) {

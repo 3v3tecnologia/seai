@@ -3,22 +3,31 @@ import { HttpResponse } from "../ports";
 import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { DeleteFaq } from "../../../domain/use-cases/faq/delete-faq";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class DeleteFaqController {
-  private DeleteFaq: DeleteFaq;
-
-  constructor(DeleteFaq: DeleteFaq) {
-    this.DeleteFaq = DeleteFaq;
-  }
+  constructor(
+    private DeleteFaq: DeleteFaq,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(request: DeleteFaqController.Request): Promise<HttpResponse> {
     try {
-      if (request.id === null || request.id === undefined) {
-        return badRequest(new Error("É necessário informar o id do faq."));
+      const { Operation, accountId, id } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
       }
-      const result = await this.DeleteFaq.execute(request.id, {
-        author: request.accountId,
-        operation: request.Operation,
+
+      const result = await this.DeleteFaq.execute(id, {
+        author: accountId,
+        operation: Operation,
       });
 
       if (result.isLeft()) {
