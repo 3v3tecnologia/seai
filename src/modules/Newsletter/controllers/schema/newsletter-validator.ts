@@ -3,6 +3,8 @@ import { SchemaValidator } from "../../../../shared/validation/validator";
 import {
   idSchema,
   paginationSchema,
+  userAccountSchema,
+  UserOperationDescriptionSchema,
 } from "../../../../presentation/utils/schemas";
 
 const newsletterSchema = Joi.object({
@@ -10,14 +12,20 @@ const newsletterSchema = Joi.object({
   Description: Joi.string().allow(null),
   Data: Joi.any(),
   SendDate: Joi.string().required(),
-  LocationName: Joi.string().optional(),
+  // LocationName: Joi.string().optional(),
 });
 
-const createNews = new SchemaValidator(newsletterSchema);
+const createNews = new SchemaValidator(
+  newsletterSchema.append(userAccountSchema)
+);
 
-const updateNews = new SchemaValidator(newsletterSchema.append(idSchema));
+const updateNews = new SchemaValidator(
+  newsletterSchema.append(idSchema).append(UserOperationDescriptionSchema)
+);
 
-const deleteNews = new SchemaValidator(Joi.object(idSchema));
+const deleteNews = new SchemaValidator(
+  Joi.object(idSchema).append(UserOperationDescriptionSchema)
+);
 
 const fetchNewsById = new SchemaValidator(Joi.object(idSchema));
 

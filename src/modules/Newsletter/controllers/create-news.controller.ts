@@ -20,28 +20,23 @@ export class CreateNewsController {
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
-      const { Data, Description, SendDate, Title, LocationName, accountId } =
-        request;
+      const { Data, Description, SendDate, Title, accountId } = request;
 
-      const { error } = await this.validator.validate({
+      const dto = {
         Data,
         Description,
         SendDate,
         Title,
-        LocationName,
-      });
+        accountId,
+      };
+
+      const { error } = await this.validator.validate(dto);
 
       if (error) {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.execute({
-        Data: request.Data,
-        Description: request.Description,
-        Title: request.Title,
-        SendDate: request.SendDate,
-        accountId,
-      });
+      const createdOrError = await this.useCase.execute(dto);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -62,6 +57,5 @@ export namespace CreateNewsController {
     Description: string | null;
     Data: any;
     SendDate: string;
-    LocationName?: string;
   };
 }

@@ -21,10 +21,12 @@ export class DeleteNewsController {
 
   async handle(request: DeleteNewsController.Request): Promise<HttpResponse> {
     try {
-      const { id } = request;
+      const { id, Operation, accountId } = request;
 
       const { error } = await this.validator.validate({
         id,
+        Operation,
+        accountId,
       });
 
       if (error) {
@@ -32,8 +34,8 @@ export class DeleteNewsController {
       }
 
       const createdOrError = await this.useCase.execute(request.id, {
-        author: request.accountId,
-        operation: request.Operation,
+        author: accountId,
+        operation: Operation,
       });
 
       if (createdOrError.isLeft()) {
