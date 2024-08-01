@@ -3,21 +3,25 @@ import {
   IPaginationInput,
 } from "../../../../../../../domain/use-cases/helpers/pagination";
 import { Optional } from "../../../../../../../shared/optional";
-import { UserAccountProps } from "../../../../model/account";
-import { UserType, UserTypes } from "../../../../model/user";
-import { SystemModulesProps } from "../../../../model/user-modules-access";
+import { UserCommandOperationProps } from "../../../../../../UserOperations/protocols/logger";
+import { UserAccountProps } from "../../../../../core/model/account";
+import { UserType, UserTypes } from "../../../../../core/model/user";
+import { SystemModulesProps } from "../../../../../core/model/user-modules-access";
 
 export interface UserRepositoryProtocol {
-  add(data: {
-    email: string;
-    login?: string;
-    name?: string;
-    type: UserType;
-    password?: string;
-    modules?: SystemModulesProps;
-    status?: string;
-    code: string;
-  }): Promise<number | null>;
+  add(
+    user: {
+      type: UserType;
+      code: string;
+      status?: string;
+      email: string;
+      login?: string;
+      name?: string;
+      password?: string;
+      modules?: SystemModulesProps;
+    },
+    author?: number
+  ): Promise<number | null>;
   list(
     params: {
       name?: string;
@@ -29,19 +33,28 @@ export interface UserRepositoryProtocol {
     >
   >;
   updateUserStatus(user_id: number, status: string): Promise<void>;
-  update(data: {
-    id?: number;
-    code?: string;
-    email?: string | null;
-    name: string | null;
-    login: string | null;
-    type?: string | null;
-    password?: string | null;
-    modules?: SystemModulesProps | null;
-  }): Promise<boolean>;
+  update(
+    user: {
+      id?: number;
+      code?: string;
+      email?: string | null;
+      name: string | null;
+      login: string | null;
+      type?: string | null;
+      password?: string | null;
+      modules?: SystemModulesProps | null;
+    },
+    operation?: UserCommandOperationProps
+  ): Promise<boolean>;
   updateUserPassword(user_id: number, password: string): Promise<void>;
-  deleteById(id_user: number): Promise<boolean>;
-  deleteByEmail(email: string): Promise<boolean>;
+  deleteById(
+    id_user: number,
+    operation?: UserCommandOperationProps
+  ): Promise<boolean>;
+  deleteByEmail(
+    email: string,
+    operation: UserCommandOperationProps
+  ): Promise<boolean>;
   getById(
     id_user: number
   ): Promise<Required<

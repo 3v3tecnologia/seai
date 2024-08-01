@@ -1,56 +1,64 @@
 import { Either } from "../../../../shared/Either";
+import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
 import { ManagementCropErrors } from "../../core/errors/crop-errors";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
-import { ManagementCropDTO } from "../dto/crop";
 
 export interface IManagementCropsServices {
   createCrop(
-    params: ManagementCropDTO.CreateCrop.Input
-  ): Promise<
-    Either<
-      ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.CreateCrop.Output
-    >
-  >;
+    data: {
+      Name: string;
+      LocationName: string | null;
+      CreatedAt?: string;
+      UpdatedAt?: string;
+    },
+    author: number
+  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>;
   deleteCrop(
-    id: ManagementCropDTO.DeleteCrop.Input
-  ): Promise<
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, boolean>>;
+  getCropById(id: number): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.DeleteCrop.Output
+      {
+        Id: number;
+        Name: string;
+        LocationName: string | null;
+      } | null
     >
   >;
-  getCropById(
-    id: ManagementCropDTO.GetCrop.Input
-  ): Promise<
+  getAllCrops(params: { Name?: string }): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.GetCrop.Output
-    >
-  >;
-  getAllCrops(
-    params: ManagementCropDTO.GetAllCrops.Input
-  ): Promise<
-    Either<
-      ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.GetAllCrops.Output
+      Array<{
+        Id: number;
+        Name: string;
+        LocationName: string | null;
+      }> | null
     >
   >;
   updateCrop(
-    params: ManagementCropDTO.UpdateCrop.Input
-  ): Promise<
-    Either<
-      ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCropDTO.UpdateCrop.Output
-    >
-  >;
+    data: {
+      Id: number;
+      Name: string;
+      LocationName: string | null;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>;
   insertCropCycles(
-    idCrop: number,
-    cycles: Array<ManagementCropCycle>
+    {
+      cycles,
+      idCrop,
+    }: {
+      idCrop: number;
+      cycles: Array<ManagementCropCycle>;
+    },
+    author: number
   ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
 
   deleteCropCyclesByCropId(
-    idCrop: number
+    idCrop: number,
+    operation: UserCommandOperationProps
   ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
 
   findCropCyclesByCropId(

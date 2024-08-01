@@ -4,8 +4,8 @@ export namespace CreateFaqDTO {
   export type params = {
     question: string;
     answer: string;
-    order: number;
     id_category: number;
+    accountId: number;
   };
 
   export type result = number;

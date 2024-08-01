@@ -1,35 +1,34 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
-import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { User, UserType, UserTypes } from "../model/user";
+import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/errors/wrong-password";
+import { User, UserType, UserTypes } from "../../core/model/user";
 import {
   SystemModules,
   SystemModulesProps,
-} from "../model/user-modules-access";
-
-import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
-import { UserNotFoundError } from "../model/errors/user-not-found-error";
-import { WrongPasswordError } from "../model/errors/wrong-password";
+} from "../../core/model/user-modules-access";
+import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 
 export class UpdateUser implements IUpdateUserUseCase {
-  private readonly accountRepository: UserRepositoryProtocol;
-  private readonly encoder: Encoder;
-
-  constructor(accountRepository: UserRepositoryProtocol, encoder: Encoder) {
-    this.accountRepository = accountRepository;
-    this.encoder = encoder;
-  }
+  constructor(
+    private readonly accountRepository: UserRepositoryProtocol,
+    private readonly encoder: Encoder
+  ) {}
 
   async execute(
-    request: UpdateUserDTO.Params
+    request: {
+      id: number;
+      email: string;
+      type: UserType;
+      name: string;
+      login: string;
+      modules?: SystemModulesProps;
+    },
+    operation: UserCommandOperationProps
   ): Promise<
-    Either<
-      | UserNotFoundError
-      | UserNotFoundError
-      | WrongPasswordError
-      | LoginAlreadyExists,
-      string
-    >
+    Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   > {
     const existingAccount = await this.accountRepository.getById(request.id);
 
@@ -86,12 +85,12 @@ export class UpdateUser implements IUpdateUserUseCase {
     }
 
     // TODO: add validation in controller
-    if (Reflect.has(request, "password") && request.password !== null) {
-      Object.assign(createUserDTO, {
-        password: request.password,
-        confirmPassword: request.confirmPassword,
-      });
-    }
+    // if (Reflect.has(request, "password") && request.password !== null) {
+    //   Object.assign(createUserDTO, {
+    //     password: request.password,
+    //     confirmPassword: request.confirmPassword,
+    //   });
+    // }
 
     const userAccountOrError = User.create(createUserDTO, request.id);
 
@@ -118,29 +117,23 @@ export class UpdateUser implements IUpdateUserUseCase {
       });
     }
     // TODO: deve passar todos os campos do 'account'
-    await this.accountRepository.update(userToPersistency);
+    await this.accountRepository.update(userToPersistency, operation);
 
     return right(`Usuário atualizado com sucesso.`);
   }
 }
 
-export namespace UpdateUserDTO {
-  export type Params = {
-    id: number;
-    email: string;
-    type: UserType;
-    name: string | null;
-    login: string | null;
-    password?: string | null;
-    confirmPassword?: string | null;
-    modules?: SystemModulesProps;
-  };
-  export type Result = string;
-}
-
 export interface IUpdateUserUseCase {
   execute(
-    user: UpdateUserDTO.Params
+    user: {
+      id: number;
+      email: string;
+      type: UserType;
+      name: string;
+      login: string;
+      modules?: SystemModulesProps;
+    },
+    operation: UserCommandOperationProps
   ): Promise<
     Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   >;

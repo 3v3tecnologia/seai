@@ -15,24 +15,21 @@ import {
 } from "../";
 
 import { BcryptAdapter } from "../../../../infra/cryptography/bcrypt-adapter";
-import { JobsUseCasesFactory } from "../../../../server/http/factories/use-cases/jobs.useCase.factory";
+import { PgBossAdapter } from "../../../../infra/queueProvider/pg-boss";
 import { DbNewsLetterContentRepository } from "../../infra/database/repository/newsletter-content-repository";
 import { DbNewsLetterSubscriberRepository } from "../../infra/database/repository/newsletter-subscriber-repository";
-import { ConfirmSubscriberByCode } from "../confirm-user-subscription.service";
 import { ConfirmUnsubscribeByCode } from "../confirm-remove-subscription.service";
+import { ConfirmSubscriberByCode } from "../confirm-user-subscription.service";
 
 export class NewsletterUseCasesFactory {
   private static repository = new DbNewsLetterContentRepository();
 
   static makeCreateNewsletterController(): CreateNews {
-    return new CreateNews(this.repository, JobsUseCasesFactory.makeCreateJob());
+    return new CreateNews(this.repository, new PgBossAdapter());
   }
 
   static makeDeleteNewsletter(): DeleteNews {
-    return new DeleteNews(
-      this.repository,
-      JobsUseCasesFactory.makeDeleteJobByKey()
-    );
+    return new DeleteNews(this.repository, new PgBossAdapter());
   }
 
   static makeFetchAllNewsletter(): FetchAllNews {
@@ -48,11 +45,7 @@ export class NewsletterUseCasesFactory {
   }
 
   static makeUpdateNewsletter(): UpdateNews {
-    return new UpdateNews(
-      this.repository,
-      JobsUseCasesFactory.makeCreateJob(),
-      JobsUseCasesFactory.makeDeleteJobByKey()
-    );
+    return new UpdateNews(this.repository, new PgBossAdapter());
   }
   static makeUpdateSendAt(): UpdateSendAtNews {
     return new UpdateSendAtNews(this.repository);
@@ -65,7 +58,7 @@ export class NewsletterSubscriberUseCasesFactory {
   static makeSubscribeToNewsletter(): SubscribeToNews {
     return new SubscribeToNews(
       this.repository,
-      JobsUseCasesFactory.makeCreateJob(),
+      new PgBossAdapter(),
       new BcryptAdapter(env.hashSalt)
     );
   }

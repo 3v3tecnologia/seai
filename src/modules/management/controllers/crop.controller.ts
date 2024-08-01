@@ -1,4 +1,8 @@
 import {
+  LoginUserAccount,
+  UserOperationControllerDTO,
+} from "../../../@types/login-user";
+import {
   badRequest,
   created,
   forbidden,
@@ -6,6 +10,7 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
+import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
 import { IManagementCropsServices } from "../services/protocols/management-crops";
 import {
   createCropCycleValidator,
@@ -20,26 +25,32 @@ import {
 export class ManagementCropControllers {
   constructor(private managementCropServices: IManagementCropsServices) {}
 
-  async createCrop(params: {
-    Name: string;
-    LocationName: string | null;
-  }): Promise<HttpResponse> {
+  async createCrop(
+    params: {
+      Name: string;
+      LocationName: string | null;
+    } & LoginUserAccount
+  ): Promise<HttpResponse> {
     try {
-      const { LocationName, Name } = params;
+      const { LocationName, Name, accountId } = params;
 
       const { error } = await createCropValidator.validate({
         LocationName,
         Name,
+        accountId,
       });
 
       if (error) {
         return badRequest(error);
       }
 
-      const createdOrError = await this.managementCropServices.createCrop({
-        Name,
-        LocationName,
-      });
+      const createdOrError = await this.managementCropServices.createCrop(
+        {
+          Name,
+          LocationName,
+        },
+        params.accountId
+      );
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -54,25 +65,32 @@ export class ManagementCropControllers {
     }
   }
 
-  async deleteCrop(params: { id: number }): Promise<HttpResponse> {
+  async deleteCrop(
+    params: {
+      id: number;
+    } & UserOperationControllerDTO
+  ): Promise<HttpResponse> {
     try {
-      const { id } = params;
+      const { id, Operation, accountId } = params;
 
       const { error } = await deleteCropValidator.validate({
         id,
+        Operation,
+        accountId,
       });
 
       if (error) {
         return badRequest(error);
       }
 
-      const deletedOrError = await this.managementCropServices.deleteCrop(id);
+      const deletedOrError = await this.managementCropServices.deleteCrop(id, {
+        author: accountId,
+        operation: Operation,
+      });
 
       if (deletedOrError.isLeft()) {
         return forbidden(deletedOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao deletar cultura");
     } catch (error) {
@@ -141,35 +159,43 @@ export class ManagementCropControllers {
     }
   }
 
-  async updateCrop(params: {
-    id: number;
-    Name: string;
-    LocationName: string | null;
-  }): Promise<HttpResponse> {
+  async updateCrop(
+    params: {
+      id: number;
+      Name: string;
+      LocationName: string | null;
+    } & UserOperationControllerDTO
+  ): Promise<HttpResponse> {
     try {
-      const { LocationName, Name, id } = params;
+      const { LocationName, Name, id, Operation, accountId } = params;
 
       const { error } = await updateCropValidator.validate({
         LocationName,
         Name,
         id,
+        Operation,
+        accountId,
       });
 
       if (error) {
         return badRequest(error);
       }
 
-      const updatedOrError = await this.managementCropServices.updateCrop({
-        Id: Number(id),
-        Name: Name,
-        LocationName: LocationName,
-      });
+      const updatedOrError = await this.managementCropServices.updateCrop(
+        {
+          Id: Number(id),
+          Name: Name,
+          LocationName: LocationName,
+        },
+        {
+          author: accountId,
+          operation: Operation,
+        }
+      );
 
       if (updatedOrError.isLeft()) {
         return forbidden(updatedOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao atualizar cultura");
     } catch (error) {
@@ -178,23 +204,26 @@ export class ManagementCropControllers {
     }
   }
 
-  async createCropCycles(params: {
-    id: number;
-    data: Array<{
-      Title: string;
-      // DurationInDays: number;
-      Start: number;
-      End: number;
-      KC: number;
-      Increment: number;
-    }>;
-  }): Promise<HttpResponse> {
+  async createCropCycles(
+    params: {
+      id: number;
+      data: Array<{
+        Title: string;
+        // DurationInDays: number;
+        Start: number;
+        End: number;
+        KC: number;
+        Increment: number;
+      }>;
+    } & LoginUserAccount
+  ): Promise<HttpResponse> {
     try {
-      const { id, data } = params;
+      const { id, data, accountId } = params;
 
       const { error } = await createCropCycleValidator.validate({
         id,
         data,
+        accountId,
       });
 
       if (error) {
@@ -202,15 +231,16 @@ export class ManagementCropControllers {
       }
 
       const createdOrError = await this.managementCropServices.insertCropCycles(
-        id,
-        data
+        {
+          idCrop: id,
+          cycles: data,
+        },
+        params.accountId
       );
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
-
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created("Sucesso ao criar cultura");
     } catch (error) {

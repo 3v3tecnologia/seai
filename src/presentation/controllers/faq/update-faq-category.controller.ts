@@ -1,40 +1,49 @@
 import { HttpResponse } from "../ports";
 
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { UpdateFaqCategory } from "../../../domain/use-cases/faq/update-faq-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
-import { forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
+import { badRequest, forbidden, ok, serverError } from "../helpers";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
-export class UpdateFaqCategoryController extends CommandController<
-  UpdateFaqCategoryController.Request,
-  HttpResponse
-> {
-  private UpdateFaqCategory: UpdateFaqCategory;
-
+export class UpdateFaqCategoryController {
   constructor(
-    UpdateFaqCategory: UpdateFaqCategory,
-    userLogs: RegisterUserLogs
-  ) {
-    super(userLogs);
-    this.UpdateFaqCategory = UpdateFaqCategory;
-  }
+    private UpdateFaqCategory: UpdateFaqCategory,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: UpdateFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
-      const dto = {
-        id: request.id,
-        title: request.title,
-        description: request.description,
-      };
-      const result = await this.UpdateFaqCategory.execute(dto);
+      const { Operation, accountId, id, description, title } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+        description,
+        title,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const result = await this.UpdateFaqCategory.execute(
+        {
+          id,
+          title,
+          description,
+        },
+        {
+          author: accountId,
+          operation: Operation,
+        }
+      );
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-
-      await this.userLogs.log(request.accountId, this.UpdateFaqCategory);
 
       return ok(result.value);
     } catch (error) {
@@ -46,9 +55,8 @@ export class UpdateFaqCategoryController extends CommandController<
 
 export namespace UpdateFaqCategoryController {
   export type Request = {
-    accountId: number;
     id: number;
     title: string;
     description: string;
-  };
+  } & UserOperationControllerDTO;
 }

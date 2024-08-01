@@ -3,50 +3,46 @@ import { Either, left, right } from "../../../../shared/Either";
 import { Logger } from "../../../../shared/logger/logger";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { UserRepositoryProtocol } from "../../Government/infra/database/repository/protocol/user-repository";
-import { Email } from "../../Government/model/email";
-import { UserLogin } from "../../Government/model/login";
-import { UserName } from "../../Government/model/name";
-import { User, UserTypes } from "../../Government/model/user";
-import { UserPassword } from "../../Government/model/userPassword";
-import {
-  AvailablesEmailServices,
-  ScheduleUserAccountNotification,
-} from "../../Government/services";
+import { Email } from "../../core/model/email";
+import { UserLogin } from "../../core/model/login";
+import { UserName } from "../../core/model/name";
+import { User, UserTypes } from "../../core/model/user";
+import { UserPassword } from "../../core/model/userPassword";
 
-import { AuthenticationService } from "../../Government/services/authentication/ports/authentication-service";
 import { TokenProvider } from "../../Government/services/authentication/ports/token-provider";
-import { UserAlreadyExistsError } from "../../Government/model/errors/user-already-exists";
-import { UserNotFoundError } from "../../Government/model/errors/user-not-found-error";
+
+import { TASK_QUEUES } from "../../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 
 import { CreateIrrigantAccountDTO } from "./dto/user-account";
 import { IUserIrrigantServices } from "./protocols/account";
 import { IUserPreferencesServices } from "./protocols/user-settings";
+import { PUBLIC_ASSETS_BASE_URL } from "../../../../server/http/config/url";
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
-} from "../../Government/model/errors/wrong-password";
+} from "../../core/errors/wrong-password";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { UserAlreadyExistsError } from "../../core/errors/user-already-exists";
 
 export class UserIrrigantServices implements IUserIrrigantServices {
   private readonly accountRepository: UserRepositoryProtocol;
   private readonly encoder: Encoder;
-  private readonly authentication: AuthenticationService;
   private readonly tokenProvider: TokenProvider;
-  private readonly userNotification: ScheduleUserAccountNotification;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
   private readonly userPreferencesServices: IUserPreferencesServices;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    authentication: AuthenticationService,
     encoder: Encoder,
     tokenProvider: TokenProvider,
-    userNotification: ScheduleUserAccountNotification,
+    queueProvider: TaskSchedulerProviderProtocol,
     userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
-    this.authentication = authentication;
     this.tokenProvider = tokenProvider;
-    this.userNotification = userNotification;
+    this.queueProvider = queueProvider;
     this.userPreferencesServices = userPreferencesServices;
   }
 
@@ -127,17 +123,13 @@ export class UserIrrigantServices implements IUserIrrigantServices {
 
     // Send confirmation email
     if (user_id) {
-      const notificationSuccessOrError = await this.userNotification.schedule({
-        user: {
-          email: dto.email,
-          base64Code: Buffer.from(dto.email).toString("base64"),
-        },
-        templateName: AvailablesEmailServices.CREATE_IRRIGANT,
+      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+        email: dto.email,
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/irrigant/activate/${Buffer.from(
+          dto.email
+        ).toString("base64")}`,
+        action: "create-user-account",
       });
-
-      if (notificationSuccessOrError.isRight()) {
-        Logger.info(notificationSuccessOrError.value);
-      }
     }
 
     return right(
@@ -228,18 +220,14 @@ export class UserIrrigantServices implements IUserIrrigantServices {
     if (account == null || account.type == "pending") {
       return left(new UserNotFoundError());
     }
-    // TO-DO: change to a specific queue
-    const notificationSuccessOrError = await this.userNotification.schedule({
-      user: {
-        email: account.email,
-        base64Code: Buffer.from(account.email).toString("base64"),
-      },
-      templateName: AvailablesEmailServices.FORGOT_PASSWORD,
-    });
 
-    if (notificationSuccessOrError.isRight()) {
-      Logger.info(notificationSuccessOrError.value);
-    }
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      email: account.email,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${Buffer.from(
+        account.email
+      ).toString("base64")}`,
+      action: "forgot-user-account",
+    });
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
   }

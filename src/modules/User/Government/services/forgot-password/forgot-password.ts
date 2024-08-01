@@ -1,22 +1,21 @@
+import { TaskSchedulerProviderProtocol } from "../../../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../../../shared/Either";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserTypes } from "../../model/user";
-import { UserNotFoundError } from "../../model/errors/user-not-found-error";
-import {
-  AvailablesEmailServices,
-  ScheduleUserAccountNotification,
-} from "../send-notification-to-user/send-notification-to-user";
+import { UserTypes } from "../../../core/model/user";
+import { TASK_QUEUES } from "../../../../../infra/queueProvider/helpers/queues";
+import { PUBLIC_ASSETS_BASE_URL } from "../../../../../server/http/config/url";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
 
 export class ForgotPassword {
   private readonly accountRepository: UserRepositoryProtocol;
-  private readonly scheduleUserAccountNotification: ScheduleUserAccountNotification;
+  private readonly queueProvider: TaskSchedulerProviderProtocol;
 
   constructor(
     accountRepository: UserRepositoryProtocol,
-    scheduleUserAccountNotification: ScheduleUserAccountNotification
+    queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.accountRepository = accountRepository;
-    this.scheduleUserAccountNotification = scheduleUserAccountNotification;
+    this.queueProvider = queueProvider;
   }
   async execute(email: string): Promise<Either<UserNotFoundError, string>> {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
@@ -26,13 +25,12 @@ export class ForgotPassword {
       return left(new UserNotFoundError());
     }
 
-    // TO-DO: change to a specific queue
-    await this.scheduleUserAccountNotification.schedule({
-      user: {
-        email: account.email,
-        base64Code: Buffer.from(account.email).toString("base64"),
-      },
-      templateName: AvailablesEmailServices.FORGOT_PASSWORD,
+    const base64Code = Buffer.from(account.email).toString("base64");
+
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      email: account.email,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${base64Code}`,
+      action: "forgot-user-account",
     });
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);

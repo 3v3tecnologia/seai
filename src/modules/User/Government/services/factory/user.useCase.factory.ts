@@ -6,18 +6,17 @@ import {
   FetchUsersUseCase,
   ForgotPassword,
   ResetPassword,
-  ScheduleUserAccountNotification,
   SignIn,
   SignUp,
   UpdateUser,
   UpdateUserProfile,
   UserAuthentication,
 } from "../";
+import { PgBossAdapter } from "../../../../../infra/queueProvider/pg-boss";
 import env from "../../../../../server/http/env";
 import { UserRepository } from "../../infra/database/repository/user-repository";
 import { BcryptAdapter } from "./../../../../../infra/cryptography/bcrypt-adapter";
 import { JwtAdapter } from "./../../../../../infra/cryptography/jwt-adapter";
-import { JobsUseCasesFactory } from "./../../../../../server/http/factories/use-cases/jobs.useCase.factory";
 
 export class UserUseCasesFactory {
   private static repository = new UserRepository();
@@ -29,11 +28,7 @@ export class UserUseCasesFactory {
   }
 
   static makeCreateUser(): CreateUser {
-    return new CreateUser(
-      this.repository,
-      this.makeSendNotificationToUser(),
-      this.encoder
-    );
+    return new CreateUser(this.repository, new PgBossAdapter(), this.encoder);
   }
 
   static makeDeleteUser(): DeleteUser {
@@ -41,10 +36,7 @@ export class UserUseCasesFactory {
   }
 
   static makeForgotPasswordUser(): ForgotPassword {
-    return new ForgotPassword(
-      this.repository,
-      this.makeSendNotificationToUser()
-    );
+    return new ForgotPassword(this.repository, new PgBossAdapter());
   }
 
   static makeGetUsers(): FetchUsersUseCase {
@@ -57,12 +49,6 @@ export class UserUseCasesFactory {
 
   static makeResetUserPassword(): ResetPassword {
     return new ResetPassword(this.repository, this.encoder);
-  }
-
-  static makeSendNotificationToUser(): ScheduleUserAccountNotification {
-    return new ScheduleUserAccountNotification(
-      JobsUseCasesFactory.makeCreateJob()
-    );
   }
 
   static makeUserSignIn(): SignIn {

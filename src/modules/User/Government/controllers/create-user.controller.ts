@@ -1,34 +1,51 @@
+import { LoginUserAccount } from "../../../../@types/login-user";
 import {
+  badRequest,
   created,
   forbidden,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
-import { UserType } from "../model/user";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
+import { UserType } from "../../core/model/user";
 import {
   Modules,
   SystemModulesPermissions,
-} from "../model/user-modules-access";
+} from "../../core/model/user-modules-access";
 import { CreateUser } from "../services";
 
 export class CreateUserController {
   private createUser: CreateUser;
+  private validator: ISchemaValidator;
 
-  constructor(createUser: CreateUser) {
+  constructor(createUser: CreateUser, validator: ISchemaValidator) {
     this.createUser = createUser;
+    this.validator = validator;
   }
 
   async handle(request: CreateUserController.Request): Promise<HttpResponse> {
     try {
-      const { email, modules, type } = request;
+      const { email, modules, type, accountId } = request;
 
-      const dto = {
+      const { error } = await this.validator.validate({
         email,
         modules,
         type,
-      };
+        accountId,
+      });
 
-      const createdOrError = await this.createUser.create(dto);
+      if (error) {
+        return badRequest(error);
+      }
+
+      const createdOrError = await this.createUser.create(
+        {
+          email,
+          modules,
+          type,
+        },
+        request.accountId
+      );
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -44,10 +61,8 @@ export class CreateUserController {
 
 export namespace CreateUserController {
   export type Request = {
-    accountId: number;
     email: string;
     type: UserType;
-    code: string;
     modules: {
       [Modules.USER]: Required<SystemModulesPermissions>;
       [Modules.EQUIPMENTS]: Required<SystemModulesPermissions>;
@@ -57,5 +72,5 @@ export namespace CreateUserController {
       [Modules.STUDIES]: Required<SystemModulesPermissions>;
       [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
     };
-  };
+  } & LoginUserAccount;
 }

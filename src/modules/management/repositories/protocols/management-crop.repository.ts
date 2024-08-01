@@ -1,16 +1,20 @@
+import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
 import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
 export interface IManagementCropsRepository {
-  create(culture: ManagementCrop): Promise<number | null>;
+  create(culture: ManagementCrop, author: number): Promise<number | null>;
 
-  update(culture: ManagementCrop): Promise<void>;
+  update(
+    culture: ManagementCrop,
+    operation: UserCommandOperationProps
+  ): Promise<void>;
 
   nameExists(crop: string | number): Promise<boolean>;
 
   idExists(crop: string | number): Promise<boolean>;
 
-  delete(idCulture: number): Promise<void>;
+  delete(idCrop: number, operation: UserCommandOperationProps): Promise<void>;
 
   findByBasin(id: number): Promise<Array<string> | null>;
 
@@ -26,11 +30,17 @@ export interface IManagementCropsRepository {
     LocationName: string | null;
   }> | null>;
 
-  deleteCropCycles(idCrop: number): Promise<void>;
+  deleteCropCycles(
+    idCrop: number,
+    operation: UserCommandOperationProps
+  ): Promise<void>;
 
   createCropCycles(
-    idCrop: number,
-    cycles: Array<ManagementCropCycle>
+    data: {
+      idCrop: number;
+      cycles: Array<ManagementCropCycle>;
+    },
+    author: number
   ): Promise<void>;
 
   find(): Promise<Array<{

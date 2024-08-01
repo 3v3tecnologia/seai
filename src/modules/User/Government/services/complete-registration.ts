@@ -3,15 +3,14 @@ import { UserAlreadyRegisteredError } from "../../../../domain/use-cases/errors/
 import { Either, left, right } from "../../../../shared/Either";
 import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { UserLogin } from "../model/login";
-import { UserName } from "../model/name";
-import { UserTypes } from "../model/user";
-import { UserPassword } from "../model/userPassword";
-
-import { UserNotFoundError } from "../model/errors/user-not-found-error";
-import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
-import { UserModulesNotFound } from "../model/errors/invalid-modules";
-import { WrongPasswordError } from "../model/errors/wrong-password";
+import { UserLogin } from "../../core/model/login";
+import { UserName } from "../../core/model/name";
+import { UserTypes } from "../../core/model/user";
+import { UserPassword } from "../../core/model/userPassword";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../core/errors/wrong-password";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserModulesNotFound } from "../../core/errors/invalid-modules";
 
 export class CompleteUserRegister implements ICompleteUserRegisterUseCase {
   private readonly accountRepository: UserRepositoryProtocol;

@@ -1,7 +1,11 @@
-import { IPaginationInput, IOutputWithPagination } from './../../helpers/pagination';
+import {
+  IPaginationInput,
+  IOutputWithPagination,
+} from "./../../helpers/pagination";
 
 import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../../entities/equipments/StationRead";
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
 // import { IOuputWithPagination } from "./dto/output";
 export namespace IEquipsMeasurementsRepoDTO {
   export namespace GetStations {
@@ -64,39 +68,6 @@ export namespace IEquipsMeasurementsRepoDTO {
     export type Result = Promise<IOutputWithPagination<PluviometerReadEntity>>;
   }
 
-  export namespace UpdateStationMeasures {
-    export type Params = {
-      IdRead: number;
-      TotalRadiation: number | null;
-      AverageRelativeHumidity: number | null;
-      MinRelativeHumidity: number | null;
-      MaxRelativeHumidity: number | null;
-      AverageAtmosphericTemperature: number | null;
-      MaxAtmosphericTemperature: number | null;
-      MinAtmosphericTemperature: number | null;
-      AtmosphericPressure: number | null;
-      Et0: number | null;
-      WindVelocity: number | null;
-    };
-
-    export type Result = Promise<void>;
-  }
-  export namespace UpdatePluviometerMeasures {
-    export type Params = {
-      IdRead: number;
-      // Time: string;
-      // Hour: number | null;
-      Precipitation: number | null;
-    };
-
-    export type Result = Promise<void>;
-  }
-
-  export namespace BulkUpdateEt0 {
-    export type Params = Array<{ IdRead: number; Et0: number | null }>;
-    export type Result = Promise<void>;
-  }
-
   export namespace GetStationMeasurementsById {
     export type Params = number;
     export type Result = Promise<{
@@ -154,14 +125,28 @@ export interface IEquipmentsMeasuresRepository {
     params: IEquipsMeasurementsRepoDTO.GetPluviometers.Params
   ): IEquipsMeasurementsRepoDTO.GetPluviometers.Result;
   updateStationMeasures(
-    request: IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Params
-  ): IEquipsMeasurementsRepoDTO.UpdateStationMeasures.Result;
+    measurements: {
+      IdRead: number;
+      TotalRadiation: number | null;
+      AverageRelativeHumidity: number | null;
+      MinRelativeHumidity: number | null;
+      MaxRelativeHumidity: number | null;
+      AverageAtmosphericTemperature: number | null;
+      MaxAtmosphericTemperature: number | null;
+      MinAtmosphericTemperature: number | null;
+      AtmosphericPressure: number | null;
+      Et0: number | null;
+      WindVelocity: number | null;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
   updatePluviometerMeasures(
-    request: IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Params
-  ): IEquipsMeasurementsRepoDTO.UpdatePluviometerMeasures.Result;
-  bulkUpdateEt0(
-    measurements: IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Params
-  ): IEquipsMeasurementsRepoDTO.BulkUpdateEt0.Result;
+    measurements: {
+      IdRead: number;
+      Precipitation: number | null;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
   getStationsMeasurementsByIds(
     ids: IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Params
   ): IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Result;
@@ -171,8 +156,8 @@ export interface IEquipmentsMeasuresRepository {
   ): IEquipsMeasurementsRepoDTO.GetStations.Result;
   checkIfPluviometerMeasurementsExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Params
-  ): IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Result
+  ): IEquipsMeasurementsRepoDTO.CheckIfMeasurementsExists.Result;
   getStationMeasurementsById(
     id: IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Params
-  ): IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Result
+  ): IEquipsMeasurementsRepoDTO.GetStationMeasurementsById.Result;
 }

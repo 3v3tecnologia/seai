@@ -1,37 +1,51 @@
 import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
-import { ok, badRequest, serverError } from "../helpers";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { UpdateEquipment } from "../../../domain/use-cases/equipments/update-equipment";
+import { badRequest, ok, serverError } from "../helpers";
+import { UserOperationControllerDTO } from "../../../@types/login-user";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class UpdateEquipmentsController
   implements
-  Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse> {
-  private updateEquipment: UpdateEquipment;
-  private userLogs: RegisterUserLogs;
-
-  constructor(updateEquipment: UpdateEquipment, userLogs: RegisterUserLogs) {
-    this.updateEquipment = updateEquipment;
-    this.userLogs = userLogs;
-  }
+    Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse>
+{
+  constructor(
+    private updateEquipment: UpdateEquipment,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: UpdateEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      const dto = {
-        IdEquipment: request.id,
-        Enable: request.Enable,
-      };
+      const { Enable, accountId, Operation, id } = request;
 
-      const resultOrError = await this.updateEquipment.execute(dto);
+      const { error } = await this.validator.validate({
+        Enable,
+        accountId,
+        Operation,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const resultOrError = await this.updateEquipment.execute(
+        {
+          IdEquipment: id,
+          Enable,
+        },
+        {
+          author: accountId,
+          operation: Operation,
+        }
+      );
 
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
       }
-
-      await this.userLogs.log(request.accountId, this.updateEquipment);
 
       return ok(resultOrError.value);
     } catch (error) {
@@ -43,8 +57,7 @@ export class UpdateEquipmentsController
 
 export namespace UpdateEquipmentsControllerProtocol {
   export type Request = {
-    accountId: number;
     id: number;
     Enable: boolean;
-  };
+  } & UserOperationControllerDTO;
 }

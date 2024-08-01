@@ -12,4 +12,3 @@ export * from "./update-pluviometer-measures";
 export * from "./update-station-measures";
 export * from "./fetch-equipments-with-yesterday-measurements";
 export * from "./fetch-latest-equipment-measurements";
-export * from "./update-et0";

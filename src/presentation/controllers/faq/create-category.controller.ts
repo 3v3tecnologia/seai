@@ -1,39 +1,45 @@
 import { HttpResponse } from "../ports";
 
+import { LoginUserAccount } from "../../../@types/login-user";
 import { CreateFaqCategory } from "../../../domain/use-cases/faq/create-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, created, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
-export class CreateFaqCategoryController extends CommandController<
-  CreateFaqCategoryController.Request,
-  HttpResponse
-> {
-  private CreateFaqCategory: CreateFaqCategory;
-
+export class CreateFaqCategoryController {
   constructor(
-    CreateFaqCategory: CreateFaqCategory,
-    userLogs: RegisterUserLogs
-  ) {
-    super(userLogs);
-    this.CreateFaqCategory = CreateFaqCategory;
-  }
+    private CreateFaqCategory: CreateFaqCategory,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: CreateFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
+      const { description, title, accountId } = request;
+
       const dto = {
-        title: request.title,
-        description: request.description,
+        description,
+        title,
+        accountId,
       };
 
-      const result = await this.CreateFaqCategory.create(dto);
+      const { error } = await this.validator.validate(dto);
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const result = await this.CreateFaqCategory.create(
+        {
+          title: title,
+          description: description,
+        },
+        accountId
+      );
 
       if (result.isLeft()) {
         return badRequest(result.value);
       }
-      await this.userLogs.log(request.accountId, this.CreateFaqCategory);
 
       return created(result.value);
     } catch (error) {
@@ -45,8 +51,7 @@ export class CreateFaqCategoryController extends CommandController<
 
 export namespace CreateFaqCategoryController {
   export type Request = {
-    accountId: number;
     title: string;
     description: string;
-  };
+  } & LoginUserAccount;
 }

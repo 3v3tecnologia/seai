@@ -1,4 +1,4 @@
-import { Actions } from "../repositories/log-repository";
+import { Actions } from "../../../../modules/User/Government/infra/database/repository/protocol/log-repository";
 
 export abstract class Command {
   private _logs: Array<Actions> = [];

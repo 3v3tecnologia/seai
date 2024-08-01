@@ -1,27 +1,25 @@
+import { UserCommandOperationProps } from "../../../modules/UserOperations/protocols/logger";
 import { Either, left, right } from "../../../shared/Either";
 import { Category } from "../../entities/faq/category";
-import { Command } from "../_ports/core/command";
 import { FaqRepositoryProtocol } from "../_ports/repositories/faq-repository";
-import {
-  UpdateFaqCategoryDTO,
-  UpdateFaqCategoryProtocol,
-} from "./protocols/update-faq-category";
-import { UpdateFaqCategoryErrors } from "./errors/update-faq-category-errors";
 import { CreateFaqCategoryErrors } from "./errors/category-already-exists";
+import { UpdateFaqCategoryErrors } from "./errors/update-faq-category-errors";
+import { UpdateFaqCategoryProtocol } from "./protocols/update-faq-category";
 
-export class UpdateFaqCategory
-  extends Command
-  implements UpdateFaqCategoryProtocol {
+export class UpdateFaqCategory implements UpdateFaqCategoryProtocol {
   private readonly faqRepository: FaqRepositoryProtocol;
 
   constructor(faqRepository: FaqRepositoryProtocol) {
-    super();
     this.faqRepository = faqRepository;
   }
   async execute(
-    request: UpdateFaqCategoryDTO.params
-  ): Promise<Either<Error, UpdateFaqCategoryDTO.result>> {
-    this.resetLog();
+    request: {
+      id: number;
+      title: string;
+      description: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
     const exists = await this.faqRepository.getCategoryById(
       request.id as number
     );
@@ -53,16 +51,13 @@ export class UpdateFaqCategory
     }
 
     await this.faqRepository.updateCategory(
-      category.id as number,
-      category.title as string,
-      category.description as string
+      {
+        id_category: category.id as number,
+        title: category.title as string,
+        description: category.description as string,
+      },
+      operation
     );
-
-    this.addLog({
-      action: "update",
-      table: "Category",
-      description: `Categoria ${category.title} atualizada com sucesso`,
-    });
 
     return right("Categoria atualizada sucesso");
   }

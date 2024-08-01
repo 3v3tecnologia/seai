@@ -13,3 +13,8 @@ export const idSchema = {
 export const userAccountSchema = {
   accountId: Joi.number().integer().required(),
 };
+
+export const UserOperationDescriptionSchema = {
+  Operation: Joi.string().min(6).required(),
+  ...userAccountSchema,
+};

@@ -1,21 +1,17 @@
 import { HttpResponse } from "../ports";
 
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { DeleteFaqCategory } from "../../../domain/use-cases/faq/delete-faq-category";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
 
-export class DeleteFaqCategoryController extends CommandController<
-  DeleteFaqCategoryController.Request,
-  HttpResponse
-> {
+export class DeleteFaqCategoryController {
   private DeleteFaqCategory: DeleteFaqCategory;
 
   constructor(
     DeleteFaqCategory: DeleteFaqCategory,
-    userLogs: RegisterUserLogs
+    private validator: ISchemaValidator
   ) {
-    super(userLogs);
     this.DeleteFaqCategory = DeleteFaqCategory;
   }
 
@@ -23,17 +19,26 @@ export class DeleteFaqCategoryController extends CommandController<
     request: DeleteFaqCategoryController.Request
   ): Promise<HttpResponse> {
     try {
-      if (!request.id) {
-        return badRequest(new Error("É necessário informar o ID da categoria"));
+      const { Operation, accountId, id } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
       }
-      const result = await this.DeleteFaqCategory.execute({
-        id_category: request.id,
+
+      const result = await this.DeleteFaqCategory.execute(id, {
+        author: accountId,
+        operation: Operation,
       });
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.DeleteFaqCategory);
 
       return ok(`Categoria ${request.id} deletada com sucesso`);
     } catch (error) {
@@ -45,7 +50,6 @@ export class DeleteFaqCategoryController extends CommandController<
 
 export namespace DeleteFaqCategoryController {
   export type Request = {
-    accountId: number;
     id: number;
-  };
+  } & UserOperationControllerDTO;
 }

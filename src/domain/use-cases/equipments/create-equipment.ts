@@ -1,13 +1,11 @@
 import { Either, left, right } from "../../../shared/Either";
-import { Command } from "../_ports/core/command";
 
 import { EquipmentsRepositoryProtocol } from "../_ports/repositories/equipments-repository";
 
-export class CreateEquipments extends Command {
+export class CreateEquipments {
   private readonly equipmentsRepository: EquipmentsRepositoryProtocol;
 
   constructor(equipmentsRepository: EquipmentsRepositoryProtocol) {
-    super();
     this.equipmentsRepository = equipmentsRepository;
   }
   async execute(
@@ -37,23 +35,6 @@ export class CreateEquipments extends Command {
     if (isEquipmentTypeAlreadyExists === false) {
       return left(new Error(`Tipo de equipamento não existe.`));
     }
-
-    /*const equipmentId = await this.equipmentsRepository.createEquipment({
-      Fk_Organ: request.Fk_Organ,
-      IdEquipmentExternal: request.IdEquipmentExternal,
-      Fk_Type: request.Fk_Type,
-      Location: request.Location,
-      Altitude: request.Altitude,
-      Name: request.Name,
-      Enable: request.Enable,
-    });*/
-
-    // TO-DO : add actions and table name as global constants
-    /*this.addLog({
-      action: "create",
-      table: "MetereologicalEquipment",
-      description: `Sucesso ao criar equipamento ${equipmentId}.`,
-    });*/
 
     return right();
   }

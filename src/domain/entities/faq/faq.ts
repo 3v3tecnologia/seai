@@ -7,14 +7,12 @@ import {
 import { Notification } from "../../../shared/notification/notification";
 import { NullOrUndefinedError } from "../../../shared/validation/errors/null-or-undefined";
 import { Answer } from "./answer";
-import { Categories } from "./categories";
 import { Category } from "./category";
 import { Question } from "./question";
 
 interface FaqProps {
   question: Question;
   answer: Answer;
-  order?: number | null;
   category: Category;
 }
 
@@ -22,14 +20,12 @@ export class Faq {
   private readonly _id?: number | null;
   private _question: Question;
   private _answer: Answer;
-  private _order?: number | null;
   private _category: Category;
 
   constructor(props: FaqProps, id?: number) {
     this._id = id || null;
     this._question = props.question;
     this._answer = props.answer;
-    this._order = props.order || null;
     this._category = props.category;
   }
 
@@ -42,10 +38,6 @@ export class Faq {
 
   get question() {
     return this._question;
-  }
-
-  get order() {
-    return this._order;
   }
 
   get category() {
@@ -73,7 +65,7 @@ export class Faq {
   }
 
   public addCategory(category: Category): Either<Error, void> {
-    this._category = category
+    this._category = category;
     return right();
   }
 
@@ -81,7 +73,6 @@ export class Faq {
     props: {
       question: string;
       answer: string;
-      order?: number;
       category: Category;
     },
     id?: number
@@ -94,10 +85,6 @@ export class Faq {
       { argument: props.category, argumentName: "categoria" },
     ];
 
-    if (props.order) {
-      args.push({ argument: props.order, argumentName: "ordem" });
-    }
-
     const guardArgs = againstNullOrUndefinedBulk(args);
 
     if (guardArgs.isLeft()) {
@@ -105,9 +92,7 @@ export class Faq {
     }
 
     if (props.category === null || props.category === undefined) {
-      errors.addError(
-        new Error("é necessário informar a categoria")
-      );
+      errors.addError(new Error("é necessário informar a categoria"));
     }
 
     const questionOrError = Question.create(props.question);
@@ -132,7 +117,6 @@ export class Faq {
           answer: answerOrError.value as Answer,
           question: questionOrError.value as Question,
           category: props.category,
-          order: props.order || null,
         },
         id
       )

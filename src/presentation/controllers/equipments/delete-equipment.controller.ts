@@ -2,7 +2,6 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { DeleteEquipment } from "../../../domain/use-cases/equipments/delete-equipment";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, ok, serverError } from "../helpers";
 
 export class DeleteEquipmentController
@@ -10,11 +9,9 @@ export class DeleteEquipmentController
     Controller<DeleteEquipmentsControllerProtocol.Request, HttpResponse>
 {
   private deleteEquipment: DeleteEquipment;
-  private userLogs: RegisterUserLogs;
 
-  constructor(deleteEquipment: DeleteEquipment, userLogs: RegisterUserLogs) {
+  constructor(deleteEquipment: DeleteEquipment) {
     this.deleteEquipment = deleteEquipment;
-    this.userLogs = userLogs;
   }
 
   async handle(
@@ -28,8 +25,6 @@ export class DeleteEquipmentController
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
       }
-
-      await this.userLogs.log(request.accountId, this.deleteEquipment);
 
       return ok(resultOrError.value);
     } catch (error) {

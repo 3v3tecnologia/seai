@@ -1,18 +1,20 @@
 import { Either, left, right } from "../../../../../shared/Either";
+import { UserCommandOperationProps } from "../../../../UserOperations/protocols/logger";
+import { FailToDeleteUserError } from "../../../core/errors/fail-to-delete-user-error";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { FailToDeleteUserError } from "../../model/errors/fail-to-delete-user-error";
-import { UserNotFoundError } from "../../model/errors/user-not-found-error";
 
-export class DeleteUser implements DeleteUserProtocol.UseCase {
-  private readonly accountRepository: UserRepositoryProtocol;
-
-  constructor(accountRepository: UserRepositoryProtocol) {
+export class DeleteUser implements DeleteUserProtocol {
+  constructor(private readonly accountRepository: UserRepositoryProtocol) {
     this.accountRepository = accountRepository;
   }
   async execute(
-    request: DeleteUserProtocol.Request
+    request: {
+      id?: number;
+      email?: string;
+    },
+    operation: UserCommandOperationProps
   ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>> {
-    console.log("request :: ", request);
     let account = null;
 
     if (request.email) {
@@ -26,7 +28,11 @@ export class DeleteUser implements DeleteUserProtocol.UseCase {
     }
 
     const result = await this.accountRepository.deleteById(
-      account.id as number
+      account.id as number,
+      {
+        author: operation.author,
+        operation: operation.operation,
+      }
     );
 
     if (result === false) {
@@ -37,15 +43,12 @@ export class DeleteUser implements DeleteUserProtocol.UseCase {
   }
 }
 
-export namespace DeleteUserProtocol {
-  export type Request = {
-    id?: number;
-    email?: string;
-  };
-
-  export interface UseCase {
-    execute(
-      request: Request
-    ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>>;
-  }
+export interface DeleteUserProtocol {
+  execute(
+    request: {
+      id?: number;
+      email?: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<UserNotFoundError | FailToDeleteUserError, string>>;
 }

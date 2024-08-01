@@ -7,39 +7,36 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { ISchemaValidator } from "../../../shared/validation/validator";
-import { CreateNews } from "../services";
+import { CreateNewsUseCaseProtocol } from "../services";
 
 export class CreateNewsController {
-  private useCase: CreateNews;
+  private useCase: CreateNewsUseCaseProtocol;
   private validator: ISchemaValidator;
 
-  constructor(useCase: CreateNews, validator: ISchemaValidator) {
+  constructor(useCase: CreateNewsUseCaseProtocol, validator: ISchemaValidator) {
     this.useCase = useCase;
     this.validator = validator;
   }
 
   async handle(request: CreateNewsController.Request): Promise<HttpResponse> {
     try {
-      const { Data, Description, SendDate, Title, LocationName } = request;
+      const { Data, Description, SendDate, Title, accountId } = request;
 
-      const { error } = await this.validator.validate({
+      const dto = {
         Data,
         Description,
         SendDate,
         Title,
-        LocationName,
-      });
+        accountId,
+      };
+
+      const { error } = await this.validator.validate(dto);
 
       if (error) {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.create({
-        Data: request.Data,
-        Description: request.Description,
-        Title: request.Title,
-        SendDate: request.SendDate,
-      });
+      const createdOrError = await this.useCase.execute(dto);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -60,6 +57,5 @@ export namespace CreateNewsController {
     Description: string | null;
     Data: any;
     SendDate: string;
-    LocationName?: string;
   };
 }

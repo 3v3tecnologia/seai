@@ -39,7 +39,6 @@ export class IrrigantAccountControllers {
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      // await this.userLogs.log(request.accountId, this.signUp.useCaseLogs());
       return ok(result.value);
     } catch (error) {
       console.error(error);
@@ -69,7 +68,6 @@ export class IrrigantAccountControllers {
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      // await this.userLogs.log(request.accountId, this.signUp.useCaseLogs());
       return ok(result.value);
     } catch (error) {
       console.error(error);

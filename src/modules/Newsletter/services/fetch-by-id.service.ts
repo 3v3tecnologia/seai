@@ -10,7 +10,7 @@ export class FetchByIdNews implements FetchNewsByIdUseCaseProtocol.UseCase {
   async execute(
     request: FetchNewsByIdUseCaseProtocol.Request
   ): FetchNewsByIdUseCaseProtocol.Response {
-    const data = await this.repository.getById(request);
+    const data = await this.repository.getById(request.Id);
 
     if (data === null) {
       return right(null);

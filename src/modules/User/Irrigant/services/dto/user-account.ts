@@ -1,8 +1,8 @@
 import { Either } from "../../../../../shared/Either";
-import { UserModulesNotFound } from "../../../Government/model/errors/invalid-modules";
-import { LoginAlreadyExists } from "../../../Government/model/errors/login-aready-exists";
-import { UserNotFoundError } from "../../../Government/model/errors/user-not-found-error";
-import { WrongPasswordError } from "../../../Government/model/errors/wrong-password";
+import { UserModulesNotFound } from "../../../core/errors/invalid-modules";
+import { LoginAlreadyExists } from "../../../core/errors/login-aready-exists";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../../core/errors/wrong-password";
 
 export namespace CreateIrrigantAccountDTO {
   export type Input = {

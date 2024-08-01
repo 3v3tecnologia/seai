@@ -2,7 +2,6 @@ import { HttpResponse } from "../ports";
 import { Controller } from "../ports/controllers";
 
 import { DeleteMeteorologicalOrgan } from "../../../domain/use-cases/equipments/delete-meteorological-organ";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, ok, serverError } from "../helpers";
 
 export class DeleteMeteorologicalOrganController
@@ -13,14 +12,9 @@ export class DeleteMeteorologicalOrganController
     >
 {
   private deleteMetereologicalOrgan: DeleteMeteorologicalOrgan;
-  private userLogs: RegisterUserLogs;
 
-  constructor(
-    deleteMetereologicalOrgan: DeleteMeteorologicalOrgan,
-    userLogs: RegisterUserLogs
-  ) {
+  constructor(deleteMetereologicalOrgan: DeleteMeteorologicalOrgan) {
     this.deleteMetereologicalOrgan = deleteMetereologicalOrgan;
-    this.userLogs = userLogs;
   }
 
   async handle(
@@ -39,11 +33,6 @@ export class DeleteMeteorologicalOrganController
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
       }
-
-      await this.userLogs.log(
-        request.accountId,
-        this.deleteMetereologicalOrgan
-      );
 
       return ok(resultOrError.value);
     } catch (error) {

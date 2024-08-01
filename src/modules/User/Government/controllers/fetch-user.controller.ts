@@ -2,43 +2,64 @@ import {
   IPaginationInput,
   parsePaginationInput,
 } from "../../../../domain/use-cases/helpers/pagination";
-import { ok, serverError } from "../../../../presentation/controllers/helpers";
+import {
+  badRequest,
+  ok,
+  serverError,
+} from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
-import { UserTypes } from "../model/user";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
+import { UserTypes } from "../../core/model/user";
 import { IFetchUsersUseCase } from "../services";
 
 export class FetchUserController
   implements Controller<FetchUserControllerProtocol.Request, HttpResponse>
 {
   private fetchUser: IFetchUsersUseCase;
+  private validator: ISchemaValidator;
 
-  constructor(fetchUser: IFetchUsersUseCase) {
+  constructor(fetchUser: IFetchUsersUseCase, validator: ISchemaValidator) {
     this.fetchUser = fetchUser;
+    this.validator = validator;
   }
 
   async handle(
     request: FetchUserControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
-      if (request.id || request.accountId) {
+      const { accountId, id, limit, name, offset, pageNumber, type } = request;
+
+      // const { error } = await this.validator.validate({
+      //   accountId,
+      //   id,
+      //   limit,
+      //   name,
+      //   offset,
+      //   pageNumber,
+      //   type,
+      // });
+
+      // if (error) {
+      //   return badRequest(error);
+      // }
+
+      if (id || accountId) {
         const result = await this.fetchUser.execute({
-          id: request.id || request.accountId,
+          id: id || accountId,
         });
 
         return ok(result.value);
       }
 
-      const dto = {
-        name: request.name,
-        type: request.type,
+      const result = await this.fetchUser.execute({
+        name,
+        type,
         ...parsePaginationInput({
-          page: request.pageNumber,
-          limit: request.limit,
+          page: pageNumber,
+          limit: limit,
         }),
-      };
-
-      const result = await this.fetchUser.execute(dto);
+      });
 
       return ok(result.value);
     } catch (error) {

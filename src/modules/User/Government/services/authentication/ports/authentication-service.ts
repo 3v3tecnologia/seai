@@ -1,6 +1,6 @@
 import { Either } from "../../../../../../shared/Either";
-import { UserNotFoundError } from "../../../model/errors/user-not-found-error";
-import { WrongPasswordError } from "../../../model/errors/wrong-password";
+import { UserNotFoundError } from "../../../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../../../core/errors/wrong-password";
 
 export namespace AuthenticationDTO {
   export type params = { login?: string; email?: string; password: string };

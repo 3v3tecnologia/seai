@@ -1,71 +1,37 @@
-import {
-  CreateJobUseCaseProtocol,
-  DeleteJobByKeyUseCaseProtocol,
-} from "../../../domain/use-cases/jobs";
+import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
-import { isDateInThePast } from "../../../shared/utils/date";
+import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
-import { validateContentSize, validateSendDate } from "../model/content";
+import { validateContentSize } from "../model/content";
 
-export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
-  private repository: NewsRepositoryProtocol;
-  private createJob: CreateJobUseCaseProtocol.UseCase;
-  private readonly deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase;
-
+export class UpdateNews implements UpdateNewsUseCaseProtocol {
   constructor(
-    repository: NewsRepositoryProtocol,
-    createJob: CreateJobUseCaseProtocol.UseCase,
-    deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase
+    private readonly repository: NewsRepositoryProtocol,
+    private readonly queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.repository = repository;
-    this.createJob = createJob;
-    this.deleteJobByKey = deleteJobByKey;
-  }
-
-  private async createNewsletterJob(
-    request: UpdateNewsUseCaseProtocol.Request
-  ) {
-    try {
-      // delete all jobs related to the news
-      await this.deleteJobByKey.execute({
-        key: String(request.Id),
-      });
-
-      const jobOrError = await this.createJob.execute({
-        name: "send-newsletter",
-        data: {
-          id: request.Id,
-        },
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        startAfter: new Date(request.SendDate),
-        singletonkey: String(request.Id),
-      });
-
-      if (jobOrError.isLeft()) {
-        return left(jobOrError.value);
-      }
-
-      const job = jobOrError.value;
-
-      return right("Job de notícia agendado com sucesso!");
-    } catch (error) {
-      console.error(error);
-      return left(new Error("Falha ao criar job de notícias"));
-    }
+    this.queueProvider = queueProvider;
   }
 
   async execute(
-    request: UpdateNewsUseCaseProtocol.Request
-  ): UpdateNewsUseCaseProtocol.Response {
-    const hasValidContentSizeOrError = validateContentSize(request.Data);
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
+    const hasValidContentSizeOrError = validateContentSize(news.Data);
 
     if (hasValidContentSizeOrError.isLeft()) {
       return left(hasValidContentSizeOrError.value);
     }
 
-    const sendDate = new Date(request.SendDate);
+    const sendDate = new Date(news.SendDate);
 
     // const hasValidSendDateOrError = validateSendDate(sendDate);
 
@@ -73,9 +39,7 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
     //   return left(hasValidSendDateOrError.value);
     // }
 
-    const alreadyExistsNews = await this.repository.getById({
-      Id: request.Id,
-    });
+    const alreadyExistsNews = await this.repository.getById(news.Id);
 
     if (alreadyExistsNews == null) {
       return left(new Error(`Notícia não encontrada.`));
@@ -87,34 +51,40 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol.UseCase {
       );
     }
 
-    await this.repository.update(request);
+    await this.repository.update(news, operation);
 
     const successLog = `Notícia atualizada com sucessso.`;
 
-    const scheduleJobOrError = await this.createNewsletterJob(request);
+    await this.queueProvider.removeByKey(String(news.Id));
 
-    if (scheduleJobOrError.isLeft()) {
-      console.error("Falha ao reagendar ou criar jobs");
-      console.error(scheduleJobOrError.value);
-    }
+    await this.queueProvider.send(
+      TASK_QUEUES.NEWSLETTER,
+      {
+        id: news.Id,
+      },
+      {
+        priority: 1,
+        retryDelay: 60,
+        retryLimit: 3,
+        startAfter: new Date(news.SendDate),
+        singletonkey: String(news.Id),
+      }
+    );
 
     return right(successLog);
   }
 }
 
-export namespace UpdateNewsUseCaseProtocol {
-  export type Request = {
-    Id: number;
-    Title: string;
-    Description: string | null;
-    Data: any;
-    LocationName?: string;
-    SendDate: string;
-  };
-
-  export type Response = Promise<Either<Error, string>>;
-
-  export interface UseCase {
-    execute(request: Request): Response;
-  }
+export interface UpdateNewsUseCaseProtocol {
+  execute(
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>>;
 }

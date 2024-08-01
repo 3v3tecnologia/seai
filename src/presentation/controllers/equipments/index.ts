@@ -11,4 +11,3 @@ export * from "./update-equipment.controller";
 export * from "./update-meteorological-organ.controller";
 export * from "./fetch-equipments-with-yesterday-measurements.controller";
 export * from "./fetch-latest-equipment-measurements.controller";
-export * from "./update-et0.controller";

@@ -1,8 +1,9 @@
 import { Encoder } from "../../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../../shared/Either";
+import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../../../core/errors/wrong-password";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserNotFoundError } from "../../model/errors/user-not-found-error";
-import { WrongPasswordError } from "../../model/errors/wrong-password";
+
 import {
   AuthenticationDTO,
   AuthenticationService,

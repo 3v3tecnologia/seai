@@ -1,26 +1,42 @@
 import {
+  badRequest,
   created,
   forbidden,
   serverError,
 } from "../../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../../presentation/controllers/ports";
+import { ISchemaValidator } from "../../../../shared/validation/validator";
 import { ResetPassword } from "../services";
 
 export class ResetPasswordController {
   private resetPassword: ResetPassword;
+  private validator: ISchemaValidator;
 
-  constructor(resetPassword: ResetPassword) {
+  constructor(resetPassword: ResetPassword, validator: ISchemaValidator) {
     this.resetPassword = resetPassword;
+    this.validator = validator;
   }
 
   async handle(
     request: ResetPasswordController.Request
   ): Promise<HttpResponse> {
     try {
+      const { code, confirmPassword, password } = request;
+
+      // const { error } = await this.validator.validate({
+      //   code,
+      //   confirmPassword,
+      //   password,
+      // });
+
+      // if (error) {
+      //   return badRequest(error);
+      // }
+
       const createdOrError = await this.resetPassword.execute({
-        code: request.code,
-        password: request.password,
-        confirmPassword: request.confirmPassword,
+        code,
+        password,
+        confirmPassword,
       });
 
       if (createdOrError.isLeft()) {

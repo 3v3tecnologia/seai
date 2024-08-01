@@ -1,13 +1,13 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
-import { Email } from "../model/email";
-import { UserLogin } from "../model/login";
-import { UserName } from "../model/name";
-import { UserTypes } from "../model/user";
-import { UserPassword } from "../model/userPassword";
-import { LoginAlreadyExists } from "../model/errors/login-aready-exists";
-import { UserNotFoundError } from "../model/errors/user-not-found-error";
+import { Email } from "../../core/model/email";
+import { UserLogin } from "../../core/model/login";
+import { UserName } from "../../core/model/name";
+import { UserTypes } from "../../core/model/user";
+import { UserPassword } from "../../core/model/userPassword";
+import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
+import { UserNotFoundError } from "../../core/errors/user-not-found-error";
 
 export class UpdateUserProfile implements IUpdateUserProfileUseCase {
   private readonly accountRepository: UserRepositoryProtocol;
@@ -18,13 +18,31 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
     this.encoder = encoder;
   }
 
-  async execute(
-    request: UpdateUserProfileDTO.Params
-  ): Promise<Either<LoginAlreadyExists, string>> {
+  async execute(request: {
+    id: number;
+    email?: string;
+    login: string;
+    name: string;
+    password?: string;
+    confirmPassword?: string;
+  }): Promise<Either<UserNotFoundError | LoginAlreadyExists, string>> {
     const userAccount = await this.accountRepository.getById(request.id);
 
     if (userAccount == null) {
       return left(new UserNotFoundError());
+    }
+
+    if (request.login) {
+      const existingAccount = await this.accountRepository.getByLogin(
+        request.login,
+        [UserTypes.ADMIN, UserTypes.STANDARD]
+      );
+
+      if (existingAccount) {
+        if (existingAccount.id !== request.id) {
+          return left(new Error(`Usuário com login já existe.`));
+        }
+      }
     }
 
     if (userAccount.type === "pending") {
@@ -103,20 +121,13 @@ export class UpdateUserProfile implements IUpdateUserProfileUseCase {
   }
 }
 
-export namespace UpdateUserProfileDTO {
-  export type Params = {
+export interface IUpdateUserProfileUseCase {
+  execute(user: {
     id: number;
     email?: string;
     login: string;
     name: string;
     password?: string;
     confirmPassword?: string;
-  };
-  export type Result = Either<UserNotFoundError | LoginAlreadyExists, string>;
-}
-
-export interface IUpdateUserProfileUseCase {
-  execute(
-    user: UpdateUserProfileDTO.Params
-  ): Promise<UpdateUserProfileDTO.Result>;
+  }): Promise<Either<UserNotFoundError | LoginAlreadyExists, string>>;
 }

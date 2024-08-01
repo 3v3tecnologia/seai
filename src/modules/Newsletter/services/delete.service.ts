@@ -1,42 +1,37 @@
-import { DeleteJobByKeyUseCaseProtocol } from "../../../domain/use-cases/jobs";
-import { Either, right } from "../../../shared/Either";
+import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
+import { Either, left, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
+import { UserCommandOperationProps } from "./../../UserOperations/protocols/logger";
 
-export class DeleteNews implements DeleteNewsUseCaseProtocol.UseCase {
-  private repository: NewsRepositoryProtocol;
-  private readonly deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase;
-
+export class DeleteNews implements DeleteNewsUseCaseProtocol {
   constructor(
-    repository: NewsRepositoryProtocol,
-    deleteJobByKey: DeleteJobByKeyUseCaseProtocol.UseCase
-  ) {
-    this.repository = repository;
-    this.deleteJobByKey = deleteJobByKey;
-  }
-  async create(
-    request: DeleteNewsUseCaseProtocol.Request
-  ): DeleteNewsUseCaseProtocol.Response {
-    await this.repository.delete(request);
+    private readonly repository: NewsRepositoryProtocol,
+    private readonly queueProvider: TaskSchedulerProviderProtocol
+  ) {}
+  async execute(
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
+    const item = await this.repository.getById(id);
+
+    if (item == null) {
+      return left(new Error(`Notícia não encontrada.`));
+    }
+
+    await this.repository.delete(id, operation);
 
     const successLog = `Notícia deletada com sucessso.`;
 
     // delete all jobs related to the news (purge by news id)
-    await this.deleteJobByKey.execute({
-      key: String(request.Id),
-    });
+    await this.queueProvider.removeByKey(String(id));
 
     return right(successLog);
   }
 }
 
-export namespace DeleteNewsUseCaseProtocol {
-  export type Request = {
-    Id: number;
-  };
-
-  export type Response = Promise<Either<Error, string>>;
-
-  export interface UseCase {
-    create(request: Request): Response;
-  }
+export interface DeleteNewsUseCaseProtocol {
+  execute(
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>>;
 }

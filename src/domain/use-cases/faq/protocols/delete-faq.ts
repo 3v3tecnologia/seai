@@ -1,13 +1,9 @@
+import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
 import { Either } from "../../../../shared/Either";
-
-export namespace DeleteFaqDTO {
-  export type params = { id: number };
-
-  export type result = string;
-}
 
 export interface DeleteFaqProtocol {
   execute(
-    request: DeleteFaqDTO.params
-  ): Promise<Either<Error, DeleteFaqDTO.result>>;
+    id: number,
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>>;
 }

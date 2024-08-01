@@ -1,23 +1,27 @@
+import { UserCommandOperationProps } from "../../../modules/UserOperations/protocols/logger";
 import { Either, left, right } from "../../../shared/Either";
 import { Category } from "../../entities/faq/category";
 import { Faq } from "../../entities/faq/faq";
-import { Command } from "../_ports/core/command";
 import { FaqRepositoryProtocol } from "../_ports/repositories/faq-repository";
 
 import { FaqNotExistsError } from "./errors/faq-not-exists";
-import { UpdateFaqDTO, UpdateFaqProtocol } from "./protocols/update-faq";
+import { UpdateFaqProtocol } from "./protocols/update-faq";
 
-export class UpdateFaq extends Command implements UpdateFaqProtocol {
+export class UpdateFaq implements UpdateFaqProtocol {
   private readonly faqRepository: FaqRepositoryProtocol;
 
   constructor(faqRepository: FaqRepositoryProtocol) {
-    super();
     this.faqRepository = faqRepository;
   }
   async execute(
-    request: UpdateFaqDTO.params
-  ): Promise<Either<Error, UpdateFaqDTO.result>> {
-    this.resetLog();
+    request: {
+      id: number;
+      question: string;
+      answer: string;
+      id_category: number;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<Either<Error, string>> {
     const exists = await this.faqRepository.checkIfFaqAlreadyExists(request.id);
 
     if (exists === false) {
@@ -38,19 +42,18 @@ export class UpdateFaq extends Command implements UpdateFaqProtocol {
         title: category.title,
         description: category.description,
         created_at: category.created_at,
-        updated_at: category.updated_at
-      }
+        updated_at: category.updated_at,
+      },
     });
 
     if (categoryProps.isLeft()) {
-      return left(categoryProps.value)
+      return left(categoryProps.value);
     }
 
     const faqOrError = Faq.create(
       {
         answer: request.answer,
         question: request.question,
-        order: request.order,
         category: categoryProps.value as Category,
       },
       request.id
@@ -62,22 +65,15 @@ export class UpdateFaq extends Command implements UpdateFaqProtocol {
 
     const faq = faqOrError.value as Faq;
 
-    const mappedToPersistence = {
-      id: faq.id as number,
-      answer: faq.answer.value,
-      question: faq.question.value,
-      order: faq.order as number,
-      category_id: faq.category.id as number,
-    };
-
-    await this.faqRepository.updateFaq(mappedToPersistence);
-
-    this.addLog({
-      action: "update",
-      table: "FAQ",
-      description: `FAQ "${faq.question.value.substring(0, 20) + "..."
-        }" atualizado com sucesso`,
-    });
+    await this.faqRepository.updateFaq(
+      {
+        id: faq.id as number,
+        answer: faq.answer.value,
+        question: faq.question.value,
+        category_id: faq.category.id as number,
+      },
+      operation
+    );
 
     return right("FAQ atualizado com sucesso");
   }

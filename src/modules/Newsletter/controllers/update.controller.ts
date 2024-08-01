@@ -1,3 +1,4 @@
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import {
   badRequest,
   ok,
@@ -9,20 +10,18 @@ import { ISchemaValidator } from "../../../shared/validation/validator";
 import { UpdateNewsUseCaseProtocol } from "../services";
 
 export class UpdateController {
-  private useCase: UpdateNewsUseCaseProtocol.UseCase;
+  private useCase: UpdateNewsUseCaseProtocol;
   private validator: ISchemaValidator;
 
-  constructor(
-    useCase: UpdateNewsUseCaseProtocol.UseCase,
-    validator: ISchemaValidator
-  ) {
+  constructor(useCase: UpdateNewsUseCaseProtocol, validator: ISchemaValidator) {
     this.useCase = useCase;
     this.validator = validator;
   }
 
   async handle(request: UpdateController.Request): Promise<HttpResponse> {
     try {
-      const { id, Data, Description, SendDate, Title, LocationName } = request;
+      const { id, Data, Description, SendDate, Title, Operation, accountId } =
+        request;
 
       const { error } = await this.validator.validate({
         id,
@@ -30,20 +29,27 @@ export class UpdateController {
         Description,
         SendDate,
         Title,
-        LocationName,
+        Operation,
+        accountId,
       });
 
       if (error) {
         return badRequest(error);
       }
 
-      const createdOrError = await this.useCase.execute({
-        Id: request.id,
-        Data: request.Data,
-        Description: request.Description,
-        Title: request.Title,
-        SendDate: request.SendDate,
-      });
+      const createdOrError = await this.useCase.execute(
+        {
+          Id: request.id,
+          Data: request.Data,
+          Description: request.Description,
+          Title: request.Title,
+          SendDate: request.SendDate,
+        },
+        {
+          author: accountId,
+          operation: Operation,
+        }
+      );
 
       if (createdOrError.isLeft()) {
         return badRequest(createdOrError.value);
@@ -64,7 +70,6 @@ export namespace UpdateController {
     Title: string;
     Description: string | null;
     Data: any;
-    LocationName?: string;
     SendDate: string;
-  };
+  } & UserOperationControllerDTO;
 }

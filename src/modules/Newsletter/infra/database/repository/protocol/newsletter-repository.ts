@@ -2,6 +2,7 @@ import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../../domain/use-cases/helpers/pagination";
+import { UserCommandOperationProps } from "../../../../../UserOperations/protocols/logger";
 import { Content } from "../../../../model/content";
 import { Sender } from "../../../../model/sender";
 import { Subscriber } from "../../../../model/subscriber";
@@ -41,60 +42,6 @@ export namespace NewsletterSenderRepositoryDTO {
   export namespace GetAll {
     export type Request = IPaginationInput;
     export type Response = Promise<IOutputWithPagination<Required<Sender>>>;
-  }
-}
-
-export namespace ContentRepositoryDTO {
-  export namespace GetAll {
-    export type Request = {
-      only_sent: boolean;
-      title?: string;
-      sendDate?: string;
-    } & IPaginationInput;
-
-    export type Response = Promise<IOutputWithPagination<
-      Required<Content>
-    > | null>;
-  }
-
-  export namespace Create {
-    export type Request = {
-      Title: string;
-      Description: string | null;
-      Data: any;
-      SendDate?: string;
-      LocationName?: string;
-    };
-
-    export type Response = Promise<number>;
-  }
-
-  export namespace Delete {
-    export type Request = {
-      Id: number;
-    };
-    export type Response = Promise<void>;
-  }
-
-  export namespace Update {
-    export type Request = {
-      Id: number;
-      Title: string;
-      Description: string | null;
-      Data: any;
-      LocationName?: string;
-      SendDate?: string;
-    };
-
-    export type Response = Promise<void>;
-  }
-
-  export namespace GetById {
-    export type Request = {
-      Id: number;
-    };
-
-    export type Response = Promise<Content | null>;
   }
 }
 
@@ -181,20 +128,35 @@ export interface NewsletterSubscriberRepositoryProtocol {
 
 export interface NewsRepositoryProtocol {
   create(
-    request: ContentRepositoryDTO.Create.Request
-  ): ContentRepositoryDTO.Create.Response;
+    news: {
+      Title: string;
+      Description: string | null;
+      Data: any;
+      SendDate?: string;
+      LocationName?: string;
+    },
+    accountId: number
+  ): Promise<number>;
   update(
-    request: ContentRepositoryDTO.Update.Request
-  ): ContentRepositoryDTO.Update.Response;
-  delete(
-    request: ContentRepositoryDTO.Delete.Request
-  ): ContentRepositoryDTO.Delete.Response;
-  getById(
-    request: ContentRepositoryDTO.GetById.Request
-  ): ContentRepositoryDTO.GetById.Response;
+    news: {
+      Id: number;
+      Title: string;
+      Description: string | null;
+      Data: any;
+      LocationName?: string;
+      SendDate?: string;
+    },
+    operation: UserCommandOperationProps
+  ): Promise<void>;
+  delete(id: number, operation: UserCommandOperationProps): Promise<void>;
+  getById(id: number): Promise<Content | null>;
   getAll(
-    request: ContentRepositoryDTO.GetAll.Request
-  ): ContentRepositoryDTO.GetAll.Response;
+    params: {
+      only_sent: boolean;
+      title?: string;
+      sendDate?: string;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<Required<Content>> | null>;
   getNewsById(id: number): Promise<{
     Id: number;
     Title: string;

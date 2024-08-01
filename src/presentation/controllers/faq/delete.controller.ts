@@ -1,32 +1,38 @@
 import { HttpResponse } from "../ports";
 
+import { UserOperationControllerDTO } from "../../../@types/login-user";
 import { DeleteFaq } from "../../../domain/use-cases/faq/delete-faq";
-import { RegisterUserLogs } from "../../../domain/use-cases/system-logs/register-user-logs";
 import { badRequest, forbidden, ok, serverError } from "../helpers";
-import { CommandController } from "../ports/command-controller";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
-export class DeleteFaqController extends CommandController<
-  DeleteFaqController.Request,
-  HttpResponse
-> {
-  private DeleteFaq: DeleteFaq;
-
-  constructor(DeleteFaq: DeleteFaq, userLogs: RegisterUserLogs) {
-    super(userLogs);
-    this.DeleteFaq = DeleteFaq;
-  }
+export class DeleteFaqController {
+  constructor(
+    private DeleteFaq: DeleteFaq,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(request: DeleteFaqController.Request): Promise<HttpResponse> {
     try {
-      if (request.id === null || request.id === undefined) {
-        return badRequest(new Error("É necessário informar o id do faq."));
+      const { Operation, accountId, id } = request;
+
+      const { error } = await this.validator.validate({
+        Operation,
+        accountId,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
       }
-      const result = await this.DeleteFaq.execute(request);
+
+      const result = await this.DeleteFaq.execute(id, {
+        author: accountId,
+        operation: Operation,
+      });
 
       if (result.isLeft()) {
         return forbidden(result.value);
       }
-      await this.userLogs.log(request.accountId, this.DeleteFaq);
 
       return ok(`Faq deletado com sucesso`);
     } catch (error) {
@@ -38,7 +44,6 @@ export class DeleteFaqController extends CommandController<
 
 export namespace DeleteFaqController {
   export type Request = {
-    accountId: number;
     id: number;
-  };
+  } & UserOperationControllerDTO;
 }

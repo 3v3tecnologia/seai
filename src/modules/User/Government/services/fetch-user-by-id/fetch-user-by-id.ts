@@ -1,7 +1,7 @@
 import { Either, right } from "../../../../../shared/Either";
 import { Optional } from "../../../../../shared/optional";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";
-import { UserAccountProps } from "../../model/account";
+import { UserAccountProps } from "../../../core/model/account";
 
 export class FetchUserById {
   private readonly accountRepository: UserRepositoryProtocol;
