@@ -10,7 +10,7 @@ export class UserOperationsRepository
     resource?: string;
     operation?: string;
   }): Promise<Array<UserOperation> | null> {
-    const result = await logsDb
+    const query = logsDb
       .withSchema("users")
       .select(
         "u.Id",
@@ -21,7 +21,24 @@ export class UserOperationsRepository
         "Operations.Description"
       )
       .from("Operations")
-      .innerJoin('users."User" as u', "u.Id", "Operations.User_Id");
+      .innerJoin("User as u", "u.Id", "Operations.User_Id");
+
+    if (params.user_id)
+      query.where({
+        User_Id: params.user_id,
+      });
+
+    if (params.resource)
+      query.where({
+        Resource: params.resource,
+      });
+
+    if (params.operation)
+      query.where({
+        Operation: params.operation,
+      });
+
+    const result = await query;
 
     return result.map(toDomain);
   }

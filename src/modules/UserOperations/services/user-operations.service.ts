@@ -1,6 +1,6 @@
-import { UserOperationsRepositoryProtocol } from "./infra/protocol/log-repository";
-import { UserOperation } from "./model/user-operations";
-import { UserOperationServiceProtocol } from "./protocols/user-operations.protocol";
+import { UserOperationsRepositoryProtocol } from "../infra/protocol/log-repository";
+import { UserOperation } from "../model/user-operations";
+import { UserOperationServiceProtocol } from "../protocols/user-operations.protocol";
 
 export class UserOperationsService implements UserOperationServiceProtocol {
   constructor(private readonly repository: UserOperationsRepositoryProtocol) {}
