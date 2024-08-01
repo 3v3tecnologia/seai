@@ -1,6 +1,10 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 
 const TAGS = ["Management"];
 
@@ -217,6 +221,7 @@ export const MANAGEMENT = {
               example: {
                 Name: "LIMÃO",
                 LocationName: "ESTADOS",
+                ...UserOperationExample,
               },
             },
           },
@@ -260,6 +265,21 @@ export const MANAGEMENT = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           content: {

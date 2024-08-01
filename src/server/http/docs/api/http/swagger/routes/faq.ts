@@ -1,6 +1,10 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 import { PaginationSchema } from "../commons/withPagination";
 
 const TAGS = {
@@ -127,6 +131,21 @@ const CATEGORY = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "Category created successfully",
@@ -172,11 +191,13 @@ const CATEGORY = {
                 description: {
                   type: "string",
                 },
+                ...UserOperationSchema,
               },
               example: {
                 id: 1,
                 title: "categoria 1",
                 description: "descrição da categoria 1",
+                ...UserOperationExample,
               },
             },
           },
@@ -240,7 +261,7 @@ const FAQ = {
                 question: "O que é TDD?",
                 answer: "Test-Driven Development",
                 // order: 1,
-                id_category: 7
+                id_category: 7,
               },
             },
           },
@@ -307,8 +328,7 @@ const FAQ = {
         {
           name: "question",
           in: "query",
-          description:
-            "Textual filter by question",
+          description: "Textual filter by question",
           required: false,
           schema: {
             type: "string",
@@ -354,9 +374,8 @@ const FAQ = {
                             },
                           },
                         },
-
                       },
-                      ...PaginationSchema
+                      ...PaginationSchema,
                     },
                   },
                 },
@@ -372,16 +391,16 @@ const FAQ = {
                         category: {
                           id: 3,
                           title: "categoria 1",
-                          description: "descrição da categoria 1"
-                        }
+                          description: "descrição da categoria 1",
+                        },
                       },
                     ],
                     TotalItems: 1,
                     Page: 1,
                     PageSize: 10,
-                    TotalPages: 1
-                  }
-                }
+                    TotalPages: 1,
+                  },
+                },
               },
             },
           },
@@ -418,7 +437,7 @@ const FAQ = {
                   type: "object",
                   properties: {
                     data: {
-                      type: "object"
+                      type: "object",
                     },
                   },
                 },
@@ -471,6 +490,21 @@ const FAQ = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "Category created successfully",
@@ -522,12 +556,14 @@ const FAQ = {
                 id_category: {
                   type: "number",
                 },
+                ...UserOperationSchema,
               },
               example: {
                 question: "O que é TDD?",
                 answer: "Test-Driven Development",
                 order: 1,
                 id_category: 4,
+                ...UserOperationExample,
               },
             },
           },

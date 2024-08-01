@@ -1,6 +1,10 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 
 const TAGS = ["User"];
 
@@ -400,6 +404,21 @@ export const USER = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "User deleted",
@@ -560,6 +579,7 @@ export const USER = {
                 name: {
                   type: "string",
                 },
+                ...UserOperationSchema,
               },
               example: {
                 type: "admin",
@@ -603,6 +623,7 @@ export const USER = {
                     write: true,
                   },
                 },
+                ...UserOperationExample,
               },
             },
           },
@@ -647,6 +668,21 @@ export const USER = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "User deleted",
@@ -1031,12 +1067,14 @@ export const USER = {
                 login: {
                   type: "string",
                 },
+                ...UserOperationSchema,
               },
               example: {
                 name: "tester",
                 login: "tester",
                 password: "1234567",
                 confirmPassword: "1234567",
+                ...UserOperationExample,
               },
             },
           },
@@ -1091,11 +1129,13 @@ export const USER = {
                   type: "string",
                   required: true,
                 },
+                ...UserOperationSchema,
               },
               example: {
                 email: "test@gmail.com",
                 name: "tester",
                 login: "tester",
+                ...UserOperationExample,
               },
             },
           },
@@ -1273,6 +1313,21 @@ export const USER = {
       tags: TAGS,
       security: [BEARER_AUTH],
       summary: "Delete user account profile",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "User deleted",
