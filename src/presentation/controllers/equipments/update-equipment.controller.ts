@@ -4,29 +4,42 @@ import { Controller } from "../ports/controllers";
 import { UpdateEquipment } from "../../../domain/use-cases/equipments/update-equipment";
 import { badRequest, ok, serverError } from "../helpers";
 import { UserOperationControllerDTO } from "../../../@types/login-user";
+import { ISchemaValidator } from "../../../shared/validation/validator";
 
 export class UpdateEquipmentsController
   implements
     Controller<UpdateEquipmentsControllerProtocol.Request, HttpResponse>
 {
-  private updateEquipment: UpdateEquipment;
-
-  constructor(updateEquipment: UpdateEquipment) {
-    this.updateEquipment = updateEquipment;
-  }
+  constructor(
+    private updateEquipment: UpdateEquipment,
+    private validator: ISchemaValidator
+  ) {}
 
   async handle(
     request: UpdateEquipmentsControllerProtocol.Request
   ): Promise<HttpResponse> {
     try {
+      const { Enable, accountId, Operation, id } = request;
+
+      const { error } = await this.validator.validate({
+        Enable,
+        accountId,
+        Operation,
+        id,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
       const resultOrError = await this.updateEquipment.execute(
         {
-          IdEquipment: request.id,
-          Enable: request.Enable,
+          IdEquipment: id,
+          Enable,
         },
         {
-          author: request.accountId,
-          operation: request.Operation,
+          author: accountId,
+          operation: Operation,
         }
       );
 

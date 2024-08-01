@@ -9,6 +9,7 @@ import {
   UpdateEquipmentsController,
   UpdateMeteorologicalOrganController,
 } from "../../../../presentation/controllers/equipments";
+import { updateEquipment } from "../../../../presentation/controllers/equipments/schemas/equipment-validator";
 import { Controller } from "../../../../presentation/controllers/ports/controllers";
 import { EquipmentsUseCasesFactory } from "../use-cases";
 
@@ -47,7 +48,8 @@ export class EquipmentsControllerFactory {
 
   static makeUpdateEquipment(): Controller {
     return new UpdateEquipmentsController(
-      EquipmentsUseCasesFactory.makeUpdateEquipment()
+      EquipmentsUseCasesFactory.makeUpdateEquipment(),
+      updateEquipment
     );
   }
   static makeUpdateMeteorologicalOrgan(): Controller {

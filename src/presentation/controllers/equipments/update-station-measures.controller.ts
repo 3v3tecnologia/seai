@@ -49,6 +49,8 @@ export class UpdateStationMeasuresController
       };
       const { error } = await this.validator.validate({
         id,
+        accountId,
+        Operation,
         ...measurements,
       });
 

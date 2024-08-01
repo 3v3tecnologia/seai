@@ -31,6 +31,8 @@ export class UpdatePluviometerController
       const { error } = await this.validator.validate({
         id: id,
         Precipitation: Precipitation,
+        accountId,
+        Operation,
       });
 
       if (error) {
