@@ -8,7 +8,7 @@ import {
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { ISchemaValidator } from "../../../shared/validation/validator";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import { ICalculateIndicatorsWeightsService, IGetIndicatorsWeightsByBasinService, InsertIndicatorsWeightsService } from "../services/indicators-weights";
+import { ICalculateIndicatorsWeightsService, IGetIndicatorsWeightsByBasinService, IGetWaterCutService, InsertIndicatorsWeightsService } from "../services/indicators-weights";
 
 
 export interface IInsertIndicatorsWeightsController {
@@ -162,6 +162,38 @@ export class CalculateIndicatorWeightsController implements ICalculateIndicatorW
         crops_names,
         users_registered_count
       });
+
+
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
+
+      return ok(resultOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+}
+
+export interface ICalculateWaterCutController {
+  handle(request:{basin_ids: Array<number>}): Promise<HttpResponse>
+}
+
+export class CalculateWatercutController implements ICalculateWaterCutController {
+  constructor(private readonly indicatorsWeightsService: IGetWaterCutService, private readonly validator: ISchemaValidator) { }
+
+  async handle({basin_ids}:{basin_ids: Array<number>}): Promise<HttpResponse> {
+    try {
+
+      const { error } = await this.validator.validate({
+        basin_ids
+      });
+
+      if (error) {
+        return badRequest(error)
+      }
+
+      const resultOrError = await this.indicatorsWeightsService.getWaterCut(basin_ids);
 
 
       if (resultOrError.isLeft()) {

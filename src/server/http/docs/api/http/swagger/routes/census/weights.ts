@@ -163,5 +163,205 @@ export const WEIGHTS = {
                 ...DEFAULT_RESPONSES,
             },
         },
+    },
+    [`${BASE_URL.V2}/census/water-cut`]: {
+        get: {
+            tags: TAGS,
+            security: [BEARER_AUTH],
+            summary: "Calculate water cut",
+            requestBody: {
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            example: {
+                                basin_ids: [1, 2],
+                                year: 2023,
+                            }
+                        },
+                    },
+                },
+            },
+            responses: {
+                200: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        data: {
+                                            type: "array",
+                                        },
+                                    },
+                                },
+                                example: {
+                                    data: [
+                                        {
+                                            "crop": "CEBOLINHA",
+                                            "water_cut": -31.25
+                                        },
+                                        {
+                                            "crop": "PALMA",
+                                            "water_cut": -31.25
+                                        },
+                                        {
+                                            "crop": "COENTRO",
+                                            "water_cut": -37.5
+                                        },
+                                        {
+                                            "crop": "TOMATE",
+                                            "water_cut": -40.625
+                                        },
+                                        {
+                                            "crop": "ABÓBORA",
+                                            "water_cut": -43.75
+                                        },
+                                        {
+                                            "crop": "MILHO",
+                                            "water_cut": -43.75
+                                        },
+                                        {
+                                            "crop": "FEIJÃO",
+                                            "water_cut": -43.75
+                                        },
+                                        {
+                                            "crop": "CAPIM",
+                                            "water_cut": -43.75
+                                        },
+                                        {
+                                            "crop": "MACAXEIRA",
+                                            "water_cut": -46.875
+                                        },
+                                        {
+                                            "crop": "CANA-DE-AÇÚCAR",
+                                            "water_cut": -50
+                                        },
+                                        {
+                                            "crop": "MAMÃO",
+                                            "water_cut": -50
+                                        },
+                                        {
+                                            "crop": "BANANA",
+                                            "water_cut": -50
+                                        },
+                                        {
+                                            "crop": "CEBOLA",
+                                            "water_cut": -50
+                                        },
+                                        {
+                                            "crop": "ACEROLA",
+                                            "water_cut": -50
+                                        },
+                                        {
+                                            "crop": "PIMENTÃO",
+                                            "water_cut": -53.125
+                                        },
+                                        {
+                                            "crop": "MELANCIA",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "MARACUJÁ",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "SIRIGUELA",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "SORGO",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "ARROZ",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "ABACAXI",
+                                            "water_cut": -56.25
+                                        },
+                                        {
+                                            "crop": "AMENDOIM",
+                                            "water_cut": -59.375
+                                        },
+                                        {
+                                            "crop": "UVA",
+                                            "water_cut": -59.375
+                                        },
+                                        {
+                                            "crop": "GOIABA",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "CAJU",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "COCO",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "ABACATE",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "GRAVIOLA",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "LARANJA",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "MANGA",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "OUTROS",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "PIMENTA",
+                                            "water_cut": -62.5
+                                        },
+                                        {
+                                            "crop": "ALFACE",
+                                            "water_cut": -65.625
+                                        },
+                                        {
+                                            "crop": "COUVE",
+                                            "water_cut": -68.75
+                                        },
+                                        {
+                                            "crop": "BATATA DOCE",
+                                            "water_cut": -68.75
+                                        },
+                                        {
+                                            "crop": "BATATA",
+                                            "water_cut": -68.75
+                                        },
+                                        {
+                                            "crop": "TANGERINA",
+                                            "water_cut": -68.75
+                                        },
+                                        {
+                                            "crop": "URUCUM",
+                                            "water_cut": -71.875
+                                        },
+                                        {
+                                            "crop": "HORTELÃ",
+                                            "water_cut": -75
+                                        }
+                                    ]
+                                },
+                            },
+                        },
+                    },
+                },
+                ...DEFAULT_RESPONSES,
+            },
+        },
     }
 };

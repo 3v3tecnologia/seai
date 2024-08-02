@@ -1,6 +1,7 @@
 import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
 import { CultureWeightsMapper } from "../core/weights-mapper";
+import { WaterCutMapper } from "./mappers/water-cut";
 import { IIndicatorsWeightsRepository } from "./protocol/weights-repository";
 
 class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
@@ -320,6 +321,27 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
       CultureWeightsMapper.toDomain(row)
     );
 
+  }
+
+  async getWaterCutByBasin(mask:number, year?: number):Promise<Array<any>>{
+    const response =  await censusDb('pesos')
+      .select('bacia_mascara', 'cultura',censusDb.raw(`
+        - 100 * (1 - (
+          COALESCE(peso_produtividade_ha, 0) +
+          COALESCE(peso_produtividade_m3, 0) +
+          COALESCE(peso_rentabilidade_ha, 0) +
+          COALESCE(peso_rentabilidade_m3, 0) +
+          COALESCE(peso_empregos_ha, 0) +
+          COALESCE(peso_empregos_1000m3, 0) +
+          COALESCE(peso_consumo_hidrico, 0) +
+          COALESCE(peso_ciclo_cultura, 0)
+        ) / 8) as corte_hidrico
+      `))
+      .where('bacia_mascara', '=', mask)
+      // .andWhere('year', '=', year)
+      .orderBy('corte_hidrico', 'desc')
+
+    return response.map(WaterCutMapper.toDomain)
   }
 }
 

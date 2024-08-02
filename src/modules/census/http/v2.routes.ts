@@ -39,4 +39,11 @@ export const setupCensusV2Routes = (router: Router): void => {
     weightsPermissions.read,
     adaptRoute(MakeIndicatorsWeightsControllers.getIndicatorWeightsByBasin())
   );
+
+  router.get(
+    "/census/water-cut/basin",
+    authorization,
+    weightsPermissions.read,
+    adaptRoute(MakeIndicatorsWeightsControllers.getWaterCut())
+  );
 };

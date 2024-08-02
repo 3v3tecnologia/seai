@@ -15,4 +15,5 @@ export interface IIndicatorsWeightsRepository {
       crops_names?: Array<string>
     }
   ): Promise<Array<CensusCultureWeights> | null>;
+  getWaterCutByBasin(mask:number, year?: number):Promise<Array<any>>
 }

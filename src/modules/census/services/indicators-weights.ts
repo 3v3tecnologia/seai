@@ -96,3 +96,18 @@ export class CalculateIndicatorsWeightsService implements ICalculateIndicatorsWe
 
   }
 }
+export interface IGetWaterCutService {
+  getWaterCut(basin_ids: Array<number>): Promise<Either<Error, any | null>>
+}
+export class GetWaterCutService  implements IGetWaterCutService {
+  constructor(private readonly indicatorsWeightsRepository: IIndicatorsWeightsRepository) { }
+
+  async getWaterCut(basin_ids: Array<number>,year?:number): Promise<Either<Error, any | null>> {
+    const basin_mask = convertBasinsIDsToMask(basin_ids)
+
+    const weights = await this.indicatorsWeightsRepository.getWaterCutByBasin(basin_mask,year)
+
+    return right(weights);
+
+  }
+}
