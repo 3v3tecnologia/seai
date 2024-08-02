@@ -8,7 +8,7 @@ export const USER_OPERATIONS_LOGS = {
   [`${BASE_URL.V1}/logs`]: {
     get: {
       tags: TAGS,
-      summary: "Get Equipment measurement logs",
+      summary: "Get user operations logs",
       security: [BEARER_AUTH],
       parameters: [
         {
