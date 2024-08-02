@@ -7,7 +7,7 @@ import { UserOperation } from "../../model/user-operations";
 export interface UserOperationsRepositoryProtocol {
   getAll(
     params: {
-      user_id?: string;
+      user_id?: number;
       resource?: string;
       operation?: string;
     } & IPaginationInput

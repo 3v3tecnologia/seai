@@ -16,7 +16,7 @@ export class UserOperationsController {
 
   async getAll(
     input: {
-      user_id?: string;
+      user_id?: number;
       resource?: string;
       operation?: string;
     } & IPaginationInput

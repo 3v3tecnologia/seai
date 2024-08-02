@@ -12,7 +12,7 @@ export class UserOperationsRepository
 {
   async getAll(
     params: {
-      user_id?: string;
+      user_id?: number;
       resource?: string;
       operation?: string;
     } & IPaginationInput
