@@ -1,6 +1,10 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 
 const TAGS = ["Irrigant"];
 
@@ -336,6 +340,7 @@ export const IRRIGANT = {
                     Precipitation: 1,
                   },
                 },
+                ...UserOperationExample,
               },
             },
           },
@@ -370,6 +375,21 @@ export const IRRIGANT = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         204: {
           description: "Deleted successfully",
@@ -585,6 +605,7 @@ export const IRRIGANT = {
               example: {
                 StationId: 10,
                 PluviometerId: 200,
+                UserOperationExample,
               },
             },
           },
@@ -600,6 +621,21 @@ export const IRRIGANT = {
     delete: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         204: {
           description: "Deleted successfully",
@@ -687,6 +723,7 @@ export const IRRIGANT = {
               type: "object",
               example: {
                 Enabled: true,
+                UserOperationExample,
               },
             },
           },

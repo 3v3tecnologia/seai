@@ -1,11 +1,17 @@
+import {
+  IOutputWithPagination,
+  IPaginationInput,
+} from "../../../../domain/use-cases/helpers/pagination";
 import { UserOperation } from "../../model/user-operations";
 
 export interface UserOperationsRepositoryProtocol {
-  getAll(input: {
-    user_id?: string;
-    resource?: string;
-    operation?: string;
-  }): Promise<Array<UserOperation> | null>;
+  getAll(
+    params: {
+      user_id?: string;
+      resource?: string;
+      operation?: string;
+    } & IPaginationInput
+  ): Promise<IOutputWithPagination<UserOperation>>;
 
   getById(id: number): Promise<UserOperation | null>;
 }

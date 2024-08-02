@@ -1,6 +1,10 @@
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 import { BASE_URL } from "../commons/baseURL";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 
 const TAGS = ["News"];
 
@@ -391,12 +395,14 @@ export const NEWSLETTER = {
                 Description: "string",
                 SendDate: "string",
                 Data: "string",
+                ...UserOperationSchema,
               },
               example: {
                 Title: "TESTINHO",
                 Description: "Testinho",
                 Data: '<h1>Lorem Ipsum</h1><h4><em>"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."</em></h4><h5>"There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..."</h5><p class="ql-align-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis enim blandit leo euismod, a porta sapien pretium. Donec a nisi nec lectus vestibulum condimentum nec sed risus. Curabitur quis elementum nisi. Vestibulum facilisis, dolor quis tristique porttitor, arcu turpis posuere turpis, vel rhoncus arcu urna quis libero. Fusce cursus quam non tortor finibus porta. Vestibulum condimentum ante et ex euismod vulputate. Mauris sed enim ultrices, accumsan eros sit amet, mollis justo. Duis tincidunt, libero et accumsan dictum, elit nunc vehicula tortor, placerat fringilla urna orci eu lorem. Duis mollis venenatis orci, nec efficitur dui auctor et. Phasellus hendrerit mauris at elit vulputate fringilla vel sit amet diam.</p><p><br></p>',
                 SendDate: "2024-06-17T16:46:36.832Z",
+                ...UserOperationExample,
               },
             },
           },
@@ -442,6 +448,21 @@ export const NEWSLETTER = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           content: {

@@ -2,6 +2,10 @@ import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 import { BASE_URL } from "../commons/baseURL";
 import { PaginationSchema } from "../commons/withPagination";
+import {
+  UserOperationSchema,
+  UserOperationExample,
+} from "../commons/user-operation";
 
 const TAGS = ["Equipments"];
 
@@ -248,9 +252,11 @@ export const EQUIPMENTS = {
               type: "object",
               properties: {
                 Enable: "boolean",
+                ...UserOperationSchema,
               },
               example: {
                 Enable: true,
+                ...UserOperationExample,
               },
             },
           },

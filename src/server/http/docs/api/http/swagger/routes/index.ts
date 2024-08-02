@@ -4,7 +4,7 @@ export * from "./faq";
 export * from "./equipments-measurements";
 export * from "./meteorologicalOrgan";
 export * from "./user";
-export * from "./system-logs";
+export * from "./user-operatios-logs";
 export * from "./newsletter";
 export * from "./management";
 export * from "./irrigant";

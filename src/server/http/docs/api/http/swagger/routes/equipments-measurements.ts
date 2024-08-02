@@ -1,6 +1,10 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
 
 const TAGS = ["Equipments Measures"];
 
@@ -150,10 +154,10 @@ export const MEASURES = {
                       Hour: null,
                       Precipitation: {
                         Unit: "mm",
-                        Value: 0
-                      }
-                    }
-                  }
+                        Value: 0,
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -192,7 +196,8 @@ export const MEASURES = {
                 AverageAtmosphericTemperature: "number",
                 MaxAtmosphericTemperature: "number",
                 MinAtmosphericTemperature: "number",
-                AtmosphericPressure: "number"
+                AtmosphericPressure: "number",
+                ...UserOperationSchema,
               },
               example: {
                 TotalRadiation: 2,
@@ -203,7 +208,8 @@ export const MEASURES = {
                 MaxAtmosphericTemperature: 2,
                 MinAtmosphericTemperature: 2,
                 AtmosphericPressure: 2,
-                WindVelocity: 2
+                WindVelocity: 2,
+                ...UserOperationExample,
               },
             },
           },
@@ -256,10 +262,12 @@ export const MEASURES = {
             schema: {
               type: "object",
               properties: {
-                Precipitation: "number"
+                Precipitation: "number",
+                ...UserOperationSchema,
               },
               example: {
-                Precipitation: 1
+                Precipitation: 1,
+                ...UserOperationExample,
               },
             },
           },
