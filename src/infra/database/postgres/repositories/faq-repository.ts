@@ -8,7 +8,7 @@ import {
   IPaginationInput,
   toPaginatedOutput,
 } from "../../../../domain/use-cases/helpers/pagination";
-import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../modules/Logs/protocols/logger";
 import { governmentDb, logsDb } from "../connection/knexfile";
 
 export class DbFaqRepository implements FaqRepositoryProtocol {

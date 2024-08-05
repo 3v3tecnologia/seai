@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
-import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 import { ManagementCrop } from "../core/model/crop";
 import {
@@ -10,9 +10,7 @@ import { IManagementCropsRepository } from "../repositories/protocols/management
 import { IManagementCropsServices } from "./protocols/management-crops";
 
 export class ManagementCropsServices implements IManagementCropsServices {
-  constructor(
-    private cropRepository: IManagementCropsRepository,
-  ) {}
+  constructor(private cropRepository: IManagementCropsRepository) {}
 
   async createCrop(
     data: {

@@ -1,5 +1,5 @@
 import { Either } from "../../../../shared/Either";
-import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { ManagementCropErrors } from "../../core/errors/crop-errors";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 

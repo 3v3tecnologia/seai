@@ -5,7 +5,7 @@ import {
 
 import { PluviometerReadEntity } from "../../../entities/equipments/PluviometerRead";
 import { StationReadEntity } from "../../../entities/equipments/StationRead";
-import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../modules/Logs/protocols/logger";
 // import { IOuputWithPagination } from "./dto/output";
 export namespace IEquipsMeasurementsRepoDTO {
   export namespace GetStations {

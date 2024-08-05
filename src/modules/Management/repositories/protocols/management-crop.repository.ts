@@ -1,4 +1,4 @@
-import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 

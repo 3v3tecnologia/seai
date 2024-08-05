@@ -1,4 +1,4 @@
-import { UserOperationsLoggerProtocol } from "../../../modules/UserOperations/protocols/logger";
+import { UserOperationsLoggerProtocol } from "../../../modules/Logs/protocols/logger";
 import { HttpResponse } from "../../../presentation/controllers/ports";
 import { Controller } from "../../../presentation/controllers/ports/controllers";
 

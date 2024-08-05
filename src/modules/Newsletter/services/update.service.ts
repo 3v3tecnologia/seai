@@ -1,7 +1,7 @@
 import { TASK_QUEUES } from "../../../infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
-import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { validateContentSize } from "../model/content";
 

@@ -10,7 +10,7 @@ import {
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { IManagementCropsServices } from "../services/protocols/management-crops";
 import {
   createCropCycleValidator,

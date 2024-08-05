@@ -2,7 +2,7 @@ import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../../domain/use-cases/helpers/pagination";
-import { UserCommandOperationProps } from "../../../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
 import { Content } from "../../../../model/content";
 import { Sender } from "../../../../model/sender";
 import { Subscriber } from "../../../../model/subscriber";

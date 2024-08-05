@@ -7,7 +7,7 @@ import { ManagementCropCycle } from "../core/model/crop-cycles";
 
 import { governmentDb } from "../../../infra/database/postgres/connection/knexfile";
 import { IManagementCropsRepository } from "./protocols/management-crop.repository";
-import { UserCommandOperationProps } from "../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 export class ManagementCropRepository implements IManagementCropsRepository {
   async create(
     culture: ManagementCrop,
