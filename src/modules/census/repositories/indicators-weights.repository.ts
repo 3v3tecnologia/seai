@@ -59,7 +59,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                 indicadores.bacia_mascara,
                 indicadores.quantidade_platancoes,
                 indicadores.area_irrigada,
-                "year" as ano,
+                "year",
                 case
                   when produtividade_ha is null then null
                   when produtividade_ha/max_produtividade_ha = 1 then 1
