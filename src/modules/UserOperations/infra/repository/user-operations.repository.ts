@@ -2,9 +2,9 @@ import {
   IOutputWithPagination,
   IPaginationInput,
   toPaginatedOutput,
-} from "../../../domain/use-cases/helpers/pagination";
-import { logsDb } from "../../../infra/database/postgres/connection/knexfile";
-import { toDomain, UserOperation } from "../model/user-operations";
+} from "../../../../domain/use-cases/helpers/pagination";
+import { logsDb } from "../../../../infra/database/postgres/connection/knexfile";
+import { toDomain, UserOperation } from "../../model/user-operations";
 import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
 
 export class UserOperationsRepository

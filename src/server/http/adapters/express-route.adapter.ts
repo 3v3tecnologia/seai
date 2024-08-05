@@ -16,7 +16,7 @@ export function sendHTTPResponse(res: HttpResponse, response: Response) {
   });
 }
 
-export const adaptRouteV2 = (callback: any) => {
+export const adaptHTTPHandler = (callback: any) => {
   return async (request: Request, response: Response) => {
     const req = {
       ...(request.body || {}),

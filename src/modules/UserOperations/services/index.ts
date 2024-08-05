@@ -1,6 +1,6 @@
-import { UserOperationsRepository } from "../infra/user-operations.repository";
+import { UserOperationsRepository } from "../infra/repository/user-operations.repository";
 import { UserOperationsService } from "./user-operations.service";
 
-export const makeUserOperationLogs = () => {
-  return new UserOperationsService(new UserOperationsRepository());
-};
+export const userOperationLogsService = new UserOperationsService(
+  new UserOperationsRepository()
+);

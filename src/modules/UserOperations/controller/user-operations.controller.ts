@@ -1,49 +1,28 @@
-import {
-  IPaginationInput,
-  parsePaginationInput,
-} from "../../../domain/use-cases/helpers/pagination";
+import { parsePaginationInput } from "../../../domain/use-cases/helpers/pagination";
 import {
   badRequest,
   ok,
   serverError,
 } from "../../../presentation/controllers/helpers";
 import { HttpResponse } from "../../../presentation/controllers/ports";
-import { UserOperationServiceProtocol } from "../protocols/user-operations.protocol";
+import { userOperationLogsService } from "../services";
 import { fetchUserOperationsValidator } from "./schema";
+import { GetAllInput } from "./schema/request";
 
 export class UserOperationsController {
-  constructor(private readonly service: UserOperationServiceProtocol) {}
-
-  async getAll(
-    input: {
-      user_id?: number;
-      resource?: string;
-      operation?: string;
-    } & IPaginationInput
-  ): Promise<HttpResponse> {
+  static async getAll(request: GetAllInput): Promise<HttpResponse> {
     try {
-      const { operation, resource, user_id, limit, offset, pageNumber } = input;
-
-      const { error } = await fetchUserOperationsValidator.validate({
-        operation,
-        resource,
-        user_id,
-        limit,
-        offset,
-        pageNumber,
-      });
+      const { error } = await fetchUserOperationsValidator.validate(request);
 
       if (error) {
         return badRequest(error);
       }
 
-      const data = await this.service.getAll({
-        operation,
-        resource,
-        user_id,
+      const data = await userOperationLogsService.getAll({
+        ...request,
         ...parsePaginationInput({
-          page: pageNumber,
-          limit: limit,
+          page: request.pageNumber,
+          limit: request.limit,
         }),
       });
 

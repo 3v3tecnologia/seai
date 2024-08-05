@@ -2,7 +2,7 @@ import express from "express";
 import { equipmentsRouter, faqRouter } from "../http-routes";
 import { newsRouter } from "../../../modules/Newsletter/infra/http/newsletter.routes";
 import { userRouter } from "../../../modules/User/Government/infra/http/user.routes";
-import { userOperationsRouter } from "../../../modules/UserOperations/http/user-operations.routes";
+import { userOperationsRouter } from "../../../modules/UserOperations/infra/http/user-operations.routes";
 
 const v1Router = express.Router();
 
