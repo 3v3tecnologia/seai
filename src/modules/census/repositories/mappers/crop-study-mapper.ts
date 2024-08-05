@@ -1,4 +1,4 @@
-import { CropStudies } from "./model/crop-studies";
+import { CropStudies } from "../../core/model/crop-studies";
 
 export class CropStudiesMapper {
   static toDomain(row: any): CropStudies {

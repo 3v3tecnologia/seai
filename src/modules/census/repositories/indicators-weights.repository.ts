@@ -1,19 +1,18 @@
 import { censusDb } from "../../../infra/database/postgres/connection/knexfile";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import { CultureWeightsMapper } from "../core/weights-mapper";
+import { CultureWeightsMapper } from "./mappers/weights-mapper";
 import { WaterCutMapper } from "./mappers/water-cut";
 import { IIndicatorsWeightsRepository } from "./protocol/weights-repository";
 
 class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
   async save(weights: Array<CensusCultureWeights>): Promise<void> {
-    await censusDb
-      .batchInsert("pesos", weights.map((w) => CultureWeightsMapper.toPersistence(w)))
-
+    await censusDb.batchInsert(
+      "pesos",
+      weights.map((w) => CultureWeightsMapper.toPersistence(w))
+    );
   }
 
-  async delete(
-    mask: number
-  ): Promise<void> {
+  async delete(mask: number): Promise<void> {
     await censusDb("pesos")
       .where({
         bacia_mascara: mask,
@@ -22,74 +21,167 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
   }
 
   async checkBasinsIds(ids: Array<number>): Promise<Array<number> | null> {
-    const response = await censusDb('bacia')
-      .select("id")
-      .whereIn("id", ids)
+    const response = await censusDb("bacia").select("id").whereIn("id", ids);
 
+    const idsAlreadyRecorded = new Set(response.map((data) => data.id));
 
-    const idsAlreadyRecorded = new Set(response.map(data => data.id))
+    const invalidIds = ids.filter((id) => !idsAlreadyRecorded.has(id));
 
-    const invalidIds = ids.filter((id) => !idsAlreadyRecorded.has(id))
-
-    return invalidIds.length ? invalidIds : null
+    return invalidIds.length ? invalidIds : null;
   }
-
 
   async checkIfAlreadyExists(mask: number, year: number): Promise<boolean> {
     const basin_mask = await censusDb
       .select("bacia_mascara")
-      .from('pesos')
+      .from("pesos")
       .where("bacia_mascara", mask)
-      .andWhere("year", year)
+      .andWhere("year", year);
 
-    return !!basin_mask
+    return !!basin_mask;
   }
 
   async getByMask(mask: number, year: number): Promise<CensusCultureWeights[]> {
     const response = await censusDb
       .select("*")
-      .from('pesos')
+      .from("pesos")
       .where("bacia_mascara", mask)
-      .andWhere("year", year)
+      .andWhere("year", year);
 
-    return response.map((row) => CultureWeightsMapper.toDomain(row))
+    return response.map((row) => CultureWeightsMapper.toDomain(row));
   }
 
-  async calculate(
-    params: {
-      basin_ids: Array<number>;
-      area?: number;
-      users_registered_count?: number;
-      crops_names?: Array<string>
-    }
+  async calculateByBasinMask(
+    basin_mask: number
   ): Promise<Array<CensusCultureWeights> | null> {
+    const query = censusDb.raw(
+      `
+            select cultura,
+                indicadores.bacia_mascara,
+                indicadores.quantidade_platancoes,
+                indicadores.area_irrigada,
+                "year" as ano,
+                case
+                  when produtividade_ha is null then null
+                  when produtividade_ha/max_produtividade_ha = 1 then 1
+                  when produtividade_ha/max_produtividade_ha > 0.7 then 0.75
+                  else 0.5
+                end peso_produtividade_ha,
+                case
+                  when produtividade_m3 is null then null
+                  when produtividade_m3/max_produtividade_m3 = 1 then 1
+                  when produtividade_m3/max_produtividade_m3 > 0.7 then 0.75
+                  else 0.5
+                end peso_produtividade_m3,
+                case
+                  when rentabilidade_ha is null then null
+                  when rentabilidade_ha/max_rentabilidade_ha = 1 then 1
+                  when rentabilidade_ha/max_rentabilidade_ha > 0.7 then 0.75
+                  else 0.5
+                end peso_rentabilidade_ha,
+                case
+                  when rentabilidade_m3 is null then null
+                  when rentabilidade_m3/max_rentabilidade_m3 = 1 then 1
+                  when rentabilidade_m3/max_rentabilidade_m3 > 0.7 then 0.75
+                  else 0.5
+                end peso_rentabilidade_m3,
+                case
+                  when empregos_ha is null then null
+                  when empregos_ha/max_empregos_ha = 1 then 1
+                  when empregos_ha/max_empregos_ha > 0.7 then 0.75
+                  else 0.5
+                end peso_empregos_ha,
+                case
+                  when empregos_1000m3 is null then null
+                  when empregos_1000m3/max_empregos_1000m3 = 1 then 1
+                  when empregos_1000m3/max_empregos_1000m3 > 0.7 then 0.75
+                  else 0.5
+                end peso_empregos_1000m3,
+                case
+                  when consumo_hidrico_ha is null then null
+                  when consumo_hidrico_ha/min_consumo_hidrico_ha >= 1.3 then 0.5
+                  when consumo_hidrico_ha/min_consumo_hidrico_ha > 1 then 0.75
+                  else 1
+                end peso_consumo_hidrico,
+                case
+                  when ciclo_cultura = 'Perene' then 0.5
+                  when ciclo_cultura is null then null
+                  when ciclo_cultura::int4 >= 180 then 0.75
+                  else 1
+                end peso_ciclo_cultura
+          from
+          (select
+                bacia_mascara,
+                max(produtividade_ha) max_produtividade_ha,
+                max(produtividade_m3) max_produtividade_m3,
+                max(rentabilidade_ha) max_rentabilidade_ha,
+                max(rentabilidade_m3) max_rentabilidade_m3,
+                max(empregos_ha) max_empregos_ha,
+                max(empregos_1000m3) max_empregos_1000m3,
+                min(consumo_hidrico_ha) min_consumo_hidrico_ha,
+                max(ciclo_cultura) max_safra_m3
+          from indicadores
+          /*Inserir aqui o valor correspondente a seleção de multiplas bacias*/
+          where bacia_mascara = ?
+          group by bacia_mascara) max_values
+          inner join
+          indicadores
+          on max_values.bacia_mascara = indicadores.bacia_mascara
+    `,
+      basin_mask
+    );
+
+    const result = await query;
+
+    if (!result.rowCount) {
+      return null;
+    }
+
+    return result.rows.map((row: any) => CultureWeightsMapper.toDomain(row));
+  }
+
+  async calculate(params: {
+    basin_ids: Array<number>;
+    area?: number;
+    users_registered_count?: number;
+    crops_names?: Array<string>;
+  }): Promise<Array<CensusCultureWeights> | null> {
     /*Remover determinados resultados do cálculo de peso, exemplo, número mínimo de recenseados, ou determinadas culturas*/
-    const filtersSQL = new Map()
-    let bindings: Array<any> = params.basin_ids
+    const filtersSQL = new Map();
+    let bindings: Array<any> = params.basin_ids;
 
-
-    filtersSQL.set('ids', `where bacia_id in (${params.basin_ids.map(_ => '?').join(',')})`)
+    filtersSQL.set(
+      "ids",
+      `where bacia_id in (${params.basin_ids.map((_) => "?").join(",")})`
+    );
 
     if (params.users_registered_count) {
-      filtersSQL.set('users_registered_count', `having sum(recenseados) > ?`)
-      bindings.push(params.users_registered_count)
+      filtersSQL.set("users_registered_count", `having sum(recenseados) > ?`);
+      bindings.push(params.users_registered_count);
     }
 
     if (params.crops_names) {
-      filtersSQL.set('crops', `${filtersSQL.has('users_registered_count') ? 'and' : 'having'}  cultura not in (${params.crops_names.map(_ => '?').join(',')})`)
-      bindings = bindings.concat(params.crops_names)
-
-
+      filtersSQL.set(
+        "crops",
+        `${
+          filtersSQL.has("users_registered_count") ? "and" : "having"
+        }  cultura not in (${params.crops_names.map((_) => "?").join(",")})`
+      );
+      bindings = bindings.concat(params.crops_names);
     }
 
     if (params.area) {
       // having sum(areairrigada_total) > 30
-      filtersSQL.set('area', `${filtersSQL.has('crops') ? 'and' : 'having'} sum(areairrigada_total) > ?`)
-      bindings.push(params.area)
+      filtersSQL.set(
+        "area",
+        `${
+          filtersSQL.has("crops") ? "and" : "having"
+        } sum(areairrigada_total) > ?`
+      );
+      bindings.push(params.area);
     }
 
-
-    const query = censusDb.raw(`
+    const query = censusDb.raw(
+      `
             with pre_calc as
         (select all_data.cadastro_id, all_data.bacia_id, all_data.cultura, areairrigada, periodocultivo, factor_area_periodo, factor_area,
                     case
@@ -105,7 +197,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                         else (factor_area * trabalhadores * factor_area) / (areairrigada)
                     end as trabalhadores_ajustado
                 from
-                  (select cult.cadastro_id, cult.bacia_id, cult.cultura, cult.municipio_id, areairrigada, periodocultivo, sum_area, sum_prod_area_periodo, 
+                  (select cult.cadastro_id, cult.bacia_id, cult.cultura, cult.municipio_id, areairrigada, periodocultivo, sum_area, sum_prod_area_periodo,
                       volume, rentabilidade, trabalhadores,
                       case
                         when sum_prod_area_periodo = '0' then 0
@@ -119,7 +211,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                     (select c.cadastro_id, cultura, areairrigada, periodocultivo, bacia_id, municipio_id from culturas c
                     inner join recursohidrico r
                     on r.cadastro_id = c.cadastro_id
-                    inner join municipios m 
+                    inner join municipios m
                     on m.id = r.municipio_id
                     /*Filtrar por determinadas bacias ou municípios
                     * Selecionar a bacia a seguir (uma ou mais):
@@ -132,7 +224,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                     ${filtersSQL.get("ids")}) cult
                     -- where bacia_id in ('1', '4')) cult
                   inner join
-                    (select cadastro_id, avg(periodocultivo) periodo_cultivo_medio, sum(areairrigada) sum_area, sum(areairrigada * periodocultivo) sum_prod_area_periodo from culturas 
+                    (select cadastro_id, avg(periodocultivo) periodo_cultivo_medio, sum(areairrigada) sum_area, sum(areairrigada * periodocultivo) sum_prod_area_periodo from culturas
                     group by cadastro_id) compiled_cult
                   on cult.cadastro_id = compiled_cult.cadastro_id
                   inner join
@@ -146,16 +238,16 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                     on s.captacao_id = c.id)) volumes
                     group by cadastro_id) volumes
                   on cult.cadastro_id = volumes.cadastro_id
-                  inner join 
-                  irrigacao i 
+                  inner join
+                  irrigacao i
                   on volumes.cadastro_id = i.cadastro_id
-                  inner join 
-                    (select cadastro_id, 
+                  inner join
+                    (select cadastro_id,
                     sum(
-                      case 
+                      case
                         when trabalhadores is null then 0
                       else trabalhadores
-                      end) trabalhadores 
+                      end) trabalhadores
                     from
                     ((select pf.cadastro_id, numtrabalhadores trabalhadores from pessoafisica pf)
                     union
@@ -195,39 +287,39 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
                   sum(pre_calc.areairrigada) areairrigada_total,
                   avg(pre_calc.periodocultivo) periodocultivo_medio,
                   sum(
-                  case 
+                  case
                       when pre_calc.volume_ajustado > 0 then pre_calc.volume_ajustado
                       else null
-                  end) / 
+                  end) /
                   sum(
-                  case 
+                  case
                       when pre_calc.volume_ajustado > 0 then pre_calc.factor_area_periodo
                       else null
                   end) indicador_volume,
-                  sum(  
-                  case 
+                  sum(
+                  case
                       when pre_calc.rentabilidade_ajustado > 0 then pre_calc.rentabilidade_ajustado
                       else null
-                  end) / 
+                  end) /
                   sum(
-                  case 
+                  case
                       when pre_calc.rentabilidade_ajustado > 0 then factor_area_periodo
                       else null
                   end) indicador_rentabilidade,
                   sum(
-                  case 
+                  case
                       when pre_calc.trabalhadores_ajustado > 0 then pre_calc.trabalhadores_ajustado
                       else null
-                  end) / 
+                  end) /
                   sum(
-                  case 
+                  case
                       when pre_calc.trabalhadores_ajustado > 0 then pre_calc.factor_area
                       else null
                   end) indicador_emprego
               from
                 pre_calc
               group by pre_calc.cultura, pre_calc.bacia_id) indicadores
-          inner join 
+          inner join
             (select cultura, bacia_id, safra_meses, cultivo_dias, produtividade/consumohidrico kg_m3_factor, "year" from estudos
             where "year" = 2023) estudos_calc
           on indicadores.cultura = estudos_calc.cultura and indicadores.bacia_id = estudos_calc.bacia_id) indicadores_comp
@@ -236,16 +328,16 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
           -- having sum(recenseados) > 30
           -- having sum(areairrigada_total) > 30
           -- having cultura not in ('SIRIGUELA')
-          ${filtersSQL.get("users_registered_count") || ''}
-          ${filtersSQL.get("crops") || ''}
-          ${filtersSQL.get("areas") || ''}
+          ${filtersSQL.get("users_registered_count") || ""}
+          ${filtersSQL.get("crops") || ""}
+          ${filtersSQL.get("areas") || ""}
           )
         select cultura,
             bacia_mascara,
             recenseados,
             areairrigada,
             "year" as ano,
-            case 
+            case
             when produtividade_ha is null then null
               when produtividade_ha/max_produtividade_ha = 1 then 1
               when produtividade_ha/max_produtividade_ha > 0.7 then 0.75
@@ -257,7 +349,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
               when produtividade_m3/max_produtividade_m3 > 0.7 then 0.75
               else 0.5
             end peso_produtividade_m3,
-            case 
+            case
             when rentabilidade_ha is null then null
               when rentabilidade_ha/max_rentabilidade_ha = 1 then 1
               when rentabilidade_ha/max_rentabilidade_ha > 0.7 then 0.75
@@ -269,33 +361,33 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
               when rentabilidade_m3/max_rentabilidade_m3 > 0.7 then 0.75
               else 0.5
             end peso_rentabilidade_m3,
-            case 
+            case
             when empregos_ha is null then null
               when empregos_ha/max_empregos_ha = 1 then 1
               when empregos_ha/max_empregos_ha > 0.7 then 0.75
               else 0.5
             end peso_empregos_ha,
-            case 
+            case
             when empregos_1000m3 is null then null
               when empregos_1000m3/max_empregos_1000m3 = 1 then 1
               when empregos_1000m3/max_empregos_1000m3 > 0.7 then 0.75
               else 0.5
             end peso_empregos_1000m3,
-            case 
+            case
             when consumo_hidrico_ha is null then null
               when consumo_hidrico_ha/min_consumo_hidrico_ha >= 1.3 then 0.5
               when consumo_hidrico_ha/min_consumo_hidrico_ha > 1 then 0.75
               else 1
             end peso_consumo_hidrico,
-            case 
+            case
             when safra_m3 is null then null
               when safra_m3 = 0 then 0.5
               when safra_m3 >= 180 then 0.75
               else 1
             end peso_ciclo_cultura
-        from 
-        (select 
-            max(produtividade_ha) max_produtividade_ha, 
+        from
+        (select
+            max(produtividade_ha) max_produtividade_ha,
             max(produtividade_m3) max_produtividade_m3,
             max(rentabilidade_ha) max_rentabilidade_ha,
             max(rentabilidade_m3) max_rentabilidade_m3,
@@ -308,8 +400,9 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
         indicadores
         cross join
         (select sum(distinct 2^(bacia_id-1)) bacia_mascara from pre_calc) mascara
-    `, bindings)
-
+    `,
+      bindings
+    );
 
     const result = await query;
 
@@ -317,15 +410,15 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
       return null;
     }
 
-    return result.rows.map((row: any) =>
-      CultureWeightsMapper.toDomain(row)
-    );
-
+    return result.rows.map((row: any) => CultureWeightsMapper.toDomain(row));
   }
 
-  async getWaterCutByBasin(mask:number, year?: number):Promise<Array<any>>{
-    const response =  await censusDb('pesos')
-      .select('bacia_mascara', 'cultura',censusDb.raw(`
+  async getWaterCutByBasin(mask: number, year?: number): Promise<Array<any>> {
+    const response = await censusDb("pesos")
+      .select(
+        "bacia_mascara",
+        "cultura",
+        censusDb.raw(`
         - 100 * (1 - (
           COALESCE(peso_produtividade_ha, 0) +
           COALESCE(peso_produtividade_m3, 0) +
@@ -336,13 +429,15 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
           COALESCE(peso_consumo_hidrico, 0) +
           COALESCE(peso_ciclo_cultura, 0)
         ) / 8) as corte_hidrico
-      `))
-      .where('bacia_mascara', '=', mask)
+      `)
+      )
+      .where("bacia_mascara", "=", mask)
       // .andWhere('year', '=', year)
-      .orderBy('corte_hidrico', 'desc')
+      .orderBy("corte_hidrico", "desc");
 
-    return response.map(WaterCutMapper.toDomain)
+    return response.map(WaterCutMapper.toDomain);
   }
 }
 
-export const makeIndicatorsWeightsRepository = () => new IndicatorsWeightsRepository()
+export const makeIndicatorsWeightsRepository = () =>
+  new IndicatorsWeightsRepository();
