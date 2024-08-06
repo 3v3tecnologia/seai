@@ -1,4 +1,4 @@
-import { NewsletterSubscriberUseCasesFactory } from "../../../../../server/http/factories";
+import { NewsletterSubscriberUseCasesFactory } from "../../../../Newsletter/services/factory/newsletter.useCase.factory";
 import { UserRepository } from "../../../Government/infra/database/repository/user-repository";
 import { IrrigantPreferencesRepository } from "../../infra/repositories/user-preferences.repository";
 import { UserSettingsServices } from "../user-settings.service";
