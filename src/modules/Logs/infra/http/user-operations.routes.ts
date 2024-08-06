@@ -1,8 +1,7 @@
-import { Request, Router } from "express";
-import { UserOperationsController } from "../../controller/user-operations.controller";
-import { GetAllInput } from "../../controller/schema/request";
+import { Router } from "express";
+import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 import { authorization } from "../../../../server/http/http-middlewares";
-import { sendHTTPResponse } from "../../../../server/http/adapters/express-route.adapter";
+import { UserOperationsController } from "../../controller/user-operations.controller";
 
 export const userOperationsRouter = (): Router => {
   const router = Router();
@@ -10,12 +9,7 @@ export const userOperationsRouter = (): Router => {
   router.get(
     "/",
     authorization,
-    async (request: Request<any, any, any, GetAllInput, any>, response) => {
-      sendHTTPResponse(
-        await UserOperationsController.getAll(request.query),
-        response
-      );
-    }
+    adaptHTTPHandler(UserOperationsController.getAll)
   );
 
   return router;
