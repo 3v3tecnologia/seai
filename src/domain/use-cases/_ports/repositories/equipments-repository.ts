@@ -8,7 +8,7 @@ import {
   StationWithLastMeasurement,
 } from "../../../entities/equipments/Equipment";
 import { MeteorologicalOrganEntity } from "../../../entities/equipments/MetereologicalOrgan";
-import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../modules/Logs/protocols/logger";
 
 export namespace MeteorologicalOrganRepositoryDTOProtocol {
   export namespace Get {

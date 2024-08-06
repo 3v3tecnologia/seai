@@ -8,7 +8,7 @@ import {
   logsDb,
 } from "../../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../../infra/database/postgres/repositories/utils/paginate";
-import { UserCommandOperationProps } from "../../../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
 import { UserAccountProps } from "../../../../core/model/account";
 import { UserType, UserTypes } from "../../../../core/model/user";
 import { SystemModulesProps } from "../../../../core/model/user-modules-access";

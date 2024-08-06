@@ -1,6 +1,6 @@
 import { Encoder } from "../../../../domain/use-cases/_ports/cryptography/encoder";
 import { Either, left, right } from "../../../../shared/Either";
-import { UserCommandOperationProps } from "../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
 import { UserNotFoundError } from "../../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../../core/errors/wrong-password";

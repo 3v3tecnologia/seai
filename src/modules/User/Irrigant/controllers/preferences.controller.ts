@@ -10,7 +10,7 @@ import {
   GetEquipmentsRequest,
   SaveEquipmentsRequest,
   UpdateEquipmentsRequest,
-} from "../../../management/controllers/dto/user-settings";
+} from "../../../Management/controllers/dto/user-settings";
 import { IUserPreferencesServices } from "../services/protocols/user-settings";
 import {
   GetUserNotificationsPreferences,

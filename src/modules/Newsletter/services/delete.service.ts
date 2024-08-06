@@ -1,7 +1,7 @@
 import { TaskSchedulerProviderProtocol } from "../../../infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Either, left, right } from "../../../shared/Either";
 import { NewsRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
-import { UserCommandOperationProps } from "./../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 
 export class DeleteNews implements DeleteNewsUseCaseProtocol {
   constructor(

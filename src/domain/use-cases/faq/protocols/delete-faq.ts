@@ -1,4 +1,4 @@
-import { UserCommandOperationProps } from "../../../../modules/UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../modules/Logs/protocols/logger";
 import { Either } from "../../../../shared/Either";
 
 export interface DeleteFaqProtocol {

@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../../shared/Either";
-import { UserCommandOperationProps } from "../../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
 import { FailToDeleteUserError } from "../../../core/errors/fail-to-delete-user-error";
 import { UserNotFoundError } from "../../../core/errors/user-not-found-error";
 import { UserRepositoryProtocol } from "../../infra/database/repository/protocol/user-repository";

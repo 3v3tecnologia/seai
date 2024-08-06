@@ -3,7 +3,7 @@ import {
   IPaginationInput,
 } from "../../../../../../../domain/use-cases/helpers/pagination";
 import { Optional } from "../../../../../../../shared/optional";
-import { UserCommandOperationProps } from "../../../../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../../../Logs/protocols/logger";
 import { UserAccountProps } from "../../../../../core/model/account";
 import { UserType, UserTypes } from "../../../../../core/model/user";
 import { SystemModulesProps } from "../../../../../core/model/user-modules-access";

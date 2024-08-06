@@ -8,7 +8,7 @@ import {
   newsletterDb,
 } from "../../../../../infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../infra/database/postgres/repositories/utils/paginate";
-import { UserCommandOperationProps } from "../../../../UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
 import { Content } from "../../../model/content";
 import { NewsMapper } from "../../../model/mapper/newsletter";
 import { NewsRepositoryProtocol } from "./protocol/newsletter-repository";

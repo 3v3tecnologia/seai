@@ -1,4 +1,4 @@
-import { UserCommandOperationProps } from "../../../modules/UserOperations/protocols/logger";
+import { UserCommandOperationProps } from "../../../modules/Logs/protocols/logger";
 import { Either, left, right } from "../../../shared/Either";
 import { FaqRepositoryProtocol } from "../_ports/repositories/faq-repository";
 import { DeleteFaqCategoryProtocol } from "./protocols/delete-faq-category";
