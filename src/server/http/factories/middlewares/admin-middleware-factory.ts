@@ -1,6 +1,6 @@
-import { UserRepository } from "../../../../modules/User/Government/infra/database/repository/user-repository";
-import { AdminMiddleware } from "../../../../presentation/middlewares/admin-middleware";
-import { Middleware } from "../../../../presentation/middlewares/ports";
+import { UserRepository } from "../../../../domain/User/Government/infra/database/repository/user-repository";
+import { AdminMiddleware } from "../../../../domain/User/Government/middlewares/admin";
+import { Middleware } from "../../../../shared/middlewares/middleware";
 
 export const makeUserPermissionMiddleware = (
   module: string,
