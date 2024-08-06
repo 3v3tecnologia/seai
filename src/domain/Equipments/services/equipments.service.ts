@@ -8,6 +8,7 @@ import { EquipmentEntity } from "../core/models/Equipment";
 import { MeteorologicalOrganEntity } from "../core/models/MetereologicalOrgan";
 import { IEquipmentsRepository } from "../repositories/protocols/equipment";
 import { IEquipmentsServices } from "./protocol/equipments";
+import { EquipmentsTypes } from "../core/models/equipments-types";
 
 export class EquipmentsServices implements IEquipmentsServices {
   constructor(private equipmentRepository: IEquipmentsRepository) {}
@@ -79,7 +80,7 @@ export class EquipmentsServices implements IEquipmentsServices {
   }
 
   async getByType(
-    type: "station" | "pluviometer"
+    type: `${EquipmentsTypes}`
   ): Promise<Either<Error, Array<any> | null>> {
     return right(await this.equipmentRepository.getByType(type));
   }
@@ -146,7 +147,7 @@ export class EquipmentsServices implements IEquipmentsServices {
 
   async fetchWithYesterDayMeasurements(
     request: {
-      type: "station" | "pluviometer";
+      type: `${EquipmentsTypes}`;
     } & {
       latitude?: number;
       longitude?: number;

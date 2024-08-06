@@ -10,6 +10,7 @@ import {
 } from "../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { IEquipmentsMeasurementsServices } from "./protocol/measurements";
+import { EquipmentsTypes } from "../core/models/equipments-types";
 
 export class EquipmentsMeasurementsServices
   implements IEquipmentsMeasurementsServices
@@ -20,7 +21,7 @@ export class EquipmentsMeasurementsServices
   ) {}
 
   async getByEquipmentsCodesAndDate(
-    eqpType: "station" | "pluviometer",
+    eqpType: `${EquipmentsTypes}`,
     codes: Array<string>,
     date: string
   ): Promise<Either<Error, Array<string>>> {
@@ -49,7 +50,7 @@ export class EquipmentsMeasurementsServices
   }
 
   async bulkInsert(params: {
-    type: "station" | "pluviometer";
+    type: `${EquipmentsTypes}`;
     date: string;
     items: Array<any>;
     id_organ: number;
@@ -117,7 +118,7 @@ export class EquipmentsMeasurementsServices
 
   async fetchLatest(request: {
     id: number;
-    type: "station" | "pluviometer";
+    type: `${EquipmentsTypes}`;
   }): Promise<Either<Error, StationReadEntity | PluviometerReadEntity | null>> {
     switch (request.type) {
       case "station":

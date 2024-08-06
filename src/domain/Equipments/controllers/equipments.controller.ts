@@ -14,6 +14,15 @@ import {
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
+import {
+  bulkInsertRequest,
+  createEquipmentRequest,
+  fetchAllRequest,
+  fetchEquipmentsWithYesterDayMeasurementsRequest,
+  getAllEquipmentsRequest,
+  getMeteorologicalOrganAccessCredentialRequest,
+  updateEquipmentRequest,
+} from "./request/equipments";
 
 export class EquipmentsControllers {
   static async getDateOfLastMeasurementTaken(): Promise<HttpResponse> {
@@ -27,9 +36,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async getAll(request: {
-    type: "station" | "pluviometer";
-  }): Promise<HttpResponse> {
+  static async getAll(request: getAllEquipmentsRequest): Promise<HttpResponse> {
     try {
       const equipmentsOrError = await equipmentsService.getByType(request.type);
 
@@ -43,21 +50,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async bulkInsert(request: {
-    id_organ: number;
-    items: Array<{
-      IdEquipmentExternal: string;
-      Name: string;
-      Altitude: number | null;
-      Location: {
-        Latitude: number;
-        Longitude: number;
-      } | null;
-      FK_Organ: number;
-      FK_Type: number;
-      Enabled: number;
-    }>;
-  }): Promise<HttpResponse> {
+  static async bulkInsert(request: bulkInsertRequest): Promise<HttpResponse> {
     try {
       const successOrError = await equipmentsService.bulkInsert(
         request.items,
@@ -88,9 +81,9 @@ export class EquipmentsControllers {
     }
   }
 
-  static async getMeteorologicalOrganAccessCredentials(request: {
-    organName: string;
-  }): Promise<HttpResponse> {
+  static async getMeteorologicalOrganAccessCredentials(
+    request: getMeteorologicalOrganAccessCredentialRequest
+  ): Promise<HttpResponse> {
     try {
       const credentialsOrError =
         await equipmentsService.getMeteorologicalOrganCredentials(
@@ -107,19 +100,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async create(request: {
-    accountId: number;
-    IdEquipmentExternal: string;
-    Name: string;
-    Altitude: number;
-    Location: {
-      Name: string;
-      Coordinates: Array<number>;
-    };
-    Fk_Organ: number;
-    Fk_Type: number;
-    Enable: boolean;
-  }) {
+  static async create(request: createEquipmentRequest) {
     try {
       const resultOrError = await equipmentsService.insert({
         Name: request.Name,
@@ -143,13 +124,7 @@ export class EquipmentsControllers {
   }
 
   static async fetchEquipmentsWithYesterDayMeasurements(
-    request: {
-      type: "station" | "pluviometer";
-    } & {
-      latitude?: number;
-      longitude?: number;
-      distance?: number;
-    }
+    request: fetchEquipmentsWithYesterDayMeasurementsRequest
   ) {
     try {
       const errors = new Notification();
@@ -175,16 +150,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async fetchAll(
-    request: {
-      equipmentId?: number;
-      idOrgan?: number;
-      idType?: number;
-      name?: string;
-      enabled?: boolean;
-      only_with_measurements?: string;
-    } & IPaginationInput
-  ) {
+  static async fetchAll(request: fetchAllRequest) {
     try {
       console.log(request);
       const dto = {
@@ -243,12 +209,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async update(
-    request: {
-      id: number;
-      Enable: boolean;
-    } & UserOperationControllerDTO
-  ) {
+  static async update(request: updateEquipmentRequest) {
     try {
       const { Enable, accountId, Operation, id } = request;
 

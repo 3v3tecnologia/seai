@@ -1,15 +1,6 @@
-import { UserOperationControllerDTO } from "../../../@types/login-user";
-import {
-  IPaginationInput,
-  parsePaginationInput,
-} from "../../../shared/utils/pagination";
+import { parsePaginationInput } from "../../../shared/utils/pagination";
 
 import { Notification } from "../../../shared/notification/notification";
-import { equipmentsMeasurementsService } from "../services";
-import {
-  updatePluviometerMeasurements,
-  updateStationMeasurements,
-} from "./schemas/measurements";
 import { HttpResponse } from "../../../shared/ports/http-response";
 import {
   badRequest,
@@ -17,13 +8,25 @@ import {
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
+import { equipmentsMeasurementsService } from "../services";
+import {
+  bulkInsertEquipmentsRequest,
+  fetchByPluviometerRequest,
+  fetchByStationRequest,
+  fetchLatestRequest,
+  getByEquipmentsCodesAndDateRequest,
+  updateByPluviometerRequest,
+  updateByStationRequest,
+} from "./request/eqp-measurements";
+import {
+  updatePluviometerMeasurements,
+  updateStationMeasurements,
+} from "./schemas/measurements";
 
 export class EquipmentsMeasurementsControllers {
-  static async getByEquipmentsCodesAndDate(request: {
-    codes: Array<string>;
-    date: string;
-    type: "station" | "pluviometer";
-  }): Promise<HttpResponse> {
+  static async getByEquipmentsCodesAndDate(
+    request: getByEquipmentsCodesAndDateRequest
+  ): Promise<HttpResponse> {
     try {
       const codesOrError =
         await equipmentsMeasurementsService.getByEquipmentsCodesAndDate(
@@ -42,12 +45,9 @@ export class EquipmentsMeasurementsControllers {
     }
   }
 
-  static async bulkInsert(request: {
-    type: "station" | "pluviometer";
-    items: Array<any>;
-    id_organ: number;
-    date: string;
-  }): Promise<HttpResponse> {
+  static async bulkInsert(
+    request: bulkInsertEquipmentsRequest
+  ): Promise<HttpResponse> {
     try {
       const successOrError = await equipmentsMeasurementsService.bulkInsert(
         request
@@ -64,11 +64,7 @@ export class EquipmentsMeasurementsControllers {
     }
   }
 
-  // FetchLatestEquipmentMeasurementsController
-  static async fetchLatest(request: {
-    id: number;
-    type: "station" | "pluviometer";
-  }) {
+  static async fetchLatest(request: fetchLatestRequest) {
     try {
       const errors = new Notification();
 
@@ -104,13 +100,7 @@ export class EquipmentsMeasurementsControllers {
     }
   }
 
-  static async fetchByPluviometer(
-    request: {
-      idEquipment: number;
-      start?: string;
-      end?: string | null;
-    } & IPaginationInput
-  ) {
+  static async fetchByPluviometer(request: fetchByPluviometerRequest) {
     try {
       const errors = new Notification();
 
@@ -154,13 +144,7 @@ export class EquipmentsMeasurementsControllers {
     }
   }
 
-  static async fetchByStation(
-    request: {
-      idEquipment: number;
-      start?: string;
-      end?: string | null;
-    } & IPaginationInput
-  ) {
+  static async fetchByStation(request: fetchByStationRequest) {
     try {
       const errors = new Notification();
 
@@ -215,18 +199,7 @@ export class EquipmentsMeasurementsControllers {
     MinRelativeHumidity,
     TotalRadiation,
     WindVelocity,
-  }: {
-    id: number;
-    TotalRadiation: number | null;
-    AverageRelativeHumidity: number | null;
-    MinRelativeHumidity: number | null;
-    MaxRelativeHumidity: number | null;
-    AverageAtmosphericTemperature: number | null;
-    MaxAtmosphericTemperature: number | null;
-    MinAtmosphericTemperature: number | null;
-    AtmosphericPressure: number | null;
-    WindVelocity: number | null;
-  } & UserOperationControllerDTO) {
+  }: updateByStationRequest) {
     try {
       const measurements = {
         AtmosphericPressure,
@@ -278,10 +251,7 @@ export class EquipmentsMeasurementsControllers {
     accountId,
     Operation,
     Precipitation,
-  }: {
-    id: number;
-    Precipitation: number | null;
-  } & UserOperationControllerDTO) {
+  }: updateByPluviometerRequest) {
     try {
       const { error } = await updatePluviometerMeasurements.validate({
         id: id,
