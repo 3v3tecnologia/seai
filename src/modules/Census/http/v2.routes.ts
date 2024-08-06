@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { adaptRoute } from "../../../server/http/adapters/express-route.adapter";
-import { authorization, studiesPermissions, weightsPermissions } from "../../../server/http/http-middlewares";
-import { MakeIndicatorsWeightsControllers } from '../controllers/factories/indicators-weights-controller-factory';
+import {
+  authorization,
+  studiesPermissions,
+  weightsPermissions,
+} from "../../../server/http/http-middlewares";
+import { MakeIndicatorsWeightsControllers } from "../controllers/factories/indicators-weights-controller-factory";
 import { MakeCropStudiesControllers } from "../controllers/factories/crop-studies-controllers.factory";
 
 export const setupCensusV2Routes = (router: Router): void => {
@@ -40,7 +44,7 @@ export const setupCensusV2Routes = (router: Router): void => {
     adaptRoute(MakeIndicatorsWeightsControllers.getIndicatorWeightsByBasin())
   );
 
-  router.get(
+  router.post(
     "/census/water-cut",
     authorization,
     weightsPermissions.read,
