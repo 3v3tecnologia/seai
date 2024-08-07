@@ -35,7 +35,7 @@ export class UpdateFaqCategoryController {
 
       const result = await this.UpdateFaqCategory.execute(
         {
-          id,
+          id: +id,
           title,
           description,
         },

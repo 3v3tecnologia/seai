@@ -42,11 +42,11 @@ export class UpdateFaqCategory implements UpdateFaqCategoryProtocol {
 
     const category = categoryOrError.value as Category;
 
-    const alreadyExists = await this.faqRepository.getCategoryByTitle(
+    const existingCategory = await this.faqRepository.getCategoryByTitle(
       category.title as string
     );
 
-    if (alreadyExists) {
+    if (existingCategory && existingCategory.id !== category.id) {
       return left(new CreateFaqCategoryErrors.CategoryAlreadyExists());
     }
 
