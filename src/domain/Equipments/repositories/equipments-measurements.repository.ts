@@ -763,7 +763,7 @@ export class EquipmentsMeasurementsRepository
                 FK_Organ: eqp.FK_Organ,
                 Time: eqp.Time,
                 Hour: eqp.Hour,
-                Value: eqp.Pluviometry,
+                Value: eqp.Precipitation,
               };
             })
           );
@@ -1000,7 +1000,7 @@ async function updatePluviometerMeasurements(
         FK_Organ: eqp.FK_Organ,
         Time: eqp.Time,
         Hour: eqp.Hour,
-        Value: eqp.Value,
+        Value: eqp.Precipitation,
       };
     });
 
