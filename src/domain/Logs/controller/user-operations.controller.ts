@@ -13,19 +13,43 @@ import { GetAllInput } from "./schema/request";
 export class UserOperationsController {
   static async getAll(request: GetAllInput): Promise<HttpResponse> {
     try {
-      const { error } = await fetchUserOperationsValidator.validate(request);
+      const {
+        limit,
+        operation,
+        pageNumber,
+        resource,
+        user_id,
+        end_date,
+        start_date,
+      } = request;
+
+      const { error } = await fetchUserOperationsValidator.validate({
+        user_id,
+        resource,
+        operation,
+        limit,
+        pageNumber,
+        end_date,
+        start_date,
+      });
+
+      const dto = {
+        operation,
+        resource,
+        user_id,
+        end_date,
+        start_date,
+        ...parsePaginationInput({
+          page: pageNumber,
+          limit: limit,
+        }),
+      };
 
       if (error) {
         return badRequest(error);
       }
 
-      const data = await userOperationLogsService.getAll({
-        ...request,
-        ...parsePaginationInput({
-          page: request.pageNumber,
-          limit: request.limit,
-        }),
-      });
+      const data = await userOperationLogsService.getAll(dto);
 
       return ok(data);
     } catch (error) {

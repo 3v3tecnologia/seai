@@ -1,3 +1,4 @@
+import { Knex } from "knex";
 import { logsDb } from "../../../../shared/infra/database/postgres/connection/knexfile";
 import {
   IOutputWithPagination,
@@ -7,6 +8,22 @@ import {
 import { toDomain, UserOperation } from "../../model/user-operations";
 import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
 
+async function getPaginatedResult(
+  query: Knex.QueryBuilder,
+  limit: number,
+  offset: number
+) {
+  const count = query.clone().count().clearSelect();
+  const [rows, countResponse] = await Promise.all([
+    query.limit(limit).offset(offset),
+    count,
+  ]);
+
+  return {
+    rows,
+    count: countResponse.length,
+  };
+}
 export class UserOperationsRepository
   implements UserOperationsRepositoryProtocol
 {
@@ -15,6 +32,8 @@ export class UserOperationsRepository
       user_id?: number;
       resource?: string;
       operation?: string;
+      start_date?: string;
+      end_date?: string;
     } & IPaginationInput
   ): Promise<IOutputWithPagination<UserOperation>> {
     const query = logsDb
@@ -37,34 +56,32 @@ export class UserOperationsRepository
         Operation: params.operation,
       });
 
-    const [rows, countResponse] = await Promise.all([
-      query
-        .select(
-          "u.Id",
-          "u.Name",
-          "Operations.Time",
-          "Operations.Resource",
-          "Operations.Operation",
-          "Operations.Description",
-          "Operations.User_Id"
-        )
-        .limit(params.limit)
-        .offset(params.offset),
-      logsDb
-        .withSchema("users")
-        .from("Operations")
-        .innerJoin("User as u", "u.Id", "Operations.User_Id")
-        .count(),
-    ]);
+    if (params.start_date)
+      query.whereRaw('"Operations"."Time"::date >= ?', params.start_date);
 
-    const totalCount = Number(countResponse[0].count);
+    if (params.end_date)
+      query.whereRaw('"Operations"."Time"::date <= ?', params.end_date);
+
+    const { count, rows } = await getPaginatedResult(
+      query.select(
+        "u.Id",
+        "u.Name",
+        "Operations.Time",
+        "Operations.Resource",
+        "Operations.Operation",
+        "Operations.Description",
+        "Operations.User_Id"
+      ),
+      params.limit,
+      params.offset
+    );
 
     const logs = rows.map(toDomain);
 
     return toPaginatedOutput({
       data: logs,
       page: params.pageNumber,
-      count: totalCount,
+      count,
       limit: params.limit,
     });
   }

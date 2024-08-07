@@ -54,6 +54,24 @@ export const USER_OPERATIONS_LOGS = {
             type: "string",
           },
         },
+        {
+          name: "start_date",
+          in: "query",
+          description: "start date to fetch data",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+        {
+          name: "end_date",
+          in: "query",
+          description: "end date to fetch data",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
       ],
       responses: {
         200: {
