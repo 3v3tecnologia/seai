@@ -384,17 +384,13 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
       .select("*")
       .from("Category");
 
-    if (categories.length) {
-      return categories.map((category) => ({
-        id: category.Id,
-        title: category.Title,
-        description: category.Description,
-        created_at: category.CreatedAt,
-        updated_at: category.UpdatedAt,
-      }));
-    }
-
-    return null;
+    return categories.map((category) => ({
+      id: category.Id,
+      title: category.Title,
+      description: category.Description,
+      created_at: category.CreatedAt,
+      updated_at: category.UpdatedAt,
+    }));
   }
 
   async checkIfCategoryIsAlreadyAssociated(

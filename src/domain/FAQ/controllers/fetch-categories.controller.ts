@@ -18,7 +18,6 @@ export class FetchFaqCategoriesController
 
   async handle(): Promise<HttpResponse> {
     try {
-      console.log("kkk");
       const result = await this.FetchFaq.execute();
 
       if (result.isLeft()) {
