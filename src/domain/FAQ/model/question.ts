@@ -3,7 +3,7 @@ import { NullOrUndefinedError } from "../../../shared/errors/null-or-undefined";
 import { AgainstNullOrUndefined } from "../../../shared/utils/against-null-or-undefined";
 
 export class Question {
-  static questionMaxLength = 60;
+  static questionMaxLength = 300;
   private question: string;
 
   private constructor(question: string) {
