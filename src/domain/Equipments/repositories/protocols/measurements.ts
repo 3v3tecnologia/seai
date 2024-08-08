@@ -168,11 +168,11 @@ export interface IEquipmentsMeasurementsRepository {
     equipmentsCodes: Array<string>,
     time: string
   ): Promise<Array<string>>;
-  getMeasurementsIdsByTime(
-    time: string,
-    type: "station" | "pluviometer",
-    id_organ: number
-  ): Promise<Map<number, number>>;
+  // getMeasurementsIdsByTime(
+  //   time: string,
+  //   type: "station" | "pluviometer",
+  //   id_organ: number
+  // ): Promise<Map<number, number>>;
 
   checkIfStationMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Params
@@ -189,6 +189,34 @@ export interface IEquipmentsMeasurementsRepository {
   getPluviometersReads(
     params: IEquipsMeasurementsRepoDTO.GetPluviometers.Params
   ): IEquipsMeasurementsRepoDTO.GetPluviometers.Result;
+
+  getStationMeasurementsByTime(
+    time: string,
+    id_organ: number
+  ): Promise<
+    Map<
+      number,
+      {
+        IdRead: number;
+        TotalRadiation: number | null;
+        MaxRelativeHumidity: number | null;
+        MinRelativeHumidity: number | null;
+        AverageRelativeHumidity: number | null;
+        MaxAtmosphericTemperature: number | null;
+        MinAtmosphericTemperature: number | null;
+        AverageAtmosphericTemperature: number | null;
+        AtmosphericPressure: number | null;
+        WindVelocity: number | null;
+        Et0?: number | null;
+      }
+    >
+  >;
+
+  getPluviometerMeasurementsByTime(
+    time: string,
+    id_organ: number
+  ): Promise<Map<number, { IdRead: number; Value: number | null }>>;
+
   updateStationMeasures(
     measurements: {
       IdRead: number;
@@ -212,9 +240,11 @@ export interface IEquipmentsMeasurementsRepository {
     },
     operation: UserCommandOperationProps
   ): Promise<void>;
+
   getStationsMeasurementsByIds(
     ids: IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Params
   ): IEquipsMeasurementsRepoDTO.GetStationsMeasurementsByIds.Result;
+
   checkIfStationMeasurementsAlreadyExists(idRead: number): Promise<boolean>;
   getStationsReads(
     params: IEquipsMeasurementsRepoDTO.GetStations.Params

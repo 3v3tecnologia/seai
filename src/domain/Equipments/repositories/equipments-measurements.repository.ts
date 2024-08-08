@@ -855,41 +855,132 @@ export class EquipmentsMeasurementsRepository
     return equipmentsWithMeasures;
   }
 
-  async getMeasurementsIdsByTime(
+  async getStationMeasurementsByTime(
     time: string,
-    type: "station" | "pluviometer",
     id_organ: number
-  ): Promise<Map<number, number>> {
+  ): Promise<
+    Map<
+      number,
+      {
+        IdRead: number;
+        TotalRadiation: number | null;
+        MaxRelativeHumidity: number | null;
+        MinRelativeHumidity: number | null;
+        AverageRelativeHumidity: number | null;
+        MaxAtmosphericTemperature: number | null;
+        MinAtmosphericTemperature: number | null;
+        AverageAtmosphericTemperature: number | null;
+        AtmosphericPressure: number | null;
+        WindVelocity: number | null;
+        Et0?: number | null;
+      }
+    >
+  > {
     const sqlQuery = governmentDb
       .withSchema("equipments")
-      .select("IdRead", "FK_Equipment")
+      .column([
+        "IdRead",
+        "FK_Equipment",
+        "TotalRadiation",
+        "MaxRelativeHumidity",
+        "MinRelativeHumidity",
+        "AverageRelativeHumidity",
+        "MaxAtmosphericTemperature",
+        "MinAtmosphericTemperature",
+        "AverageAtmosphericTemperature",
+        "AtmosphericPressure",
+        "WindVelocity",
+        "Et0",
+      ])
+      .select()
       .where({ Time: time })
-      .andWhere({ FK_Organ: id_organ });
-
-    switch (type) {
-      case "station":
-        sqlQuery.from("ReadStations");
-        break;
-      case "pluviometer":
-        sqlQuery.from("ReadPluviometers");
-        break;
-      default:
-        throw new Error("Necessário informar um tipo de equipamento válido");
-    }
+      .andWhere({ FK_Organ: id_organ })
+      .from("ReadStations");
 
     const response = await sqlQuery;
 
-    const ids: Map<number, number> = new Map();
+    const measurements: Map<
+      number,
+      {
+        IdRead: number;
+        TotalRadiation: number | null;
+        MaxRelativeHumidity: number | null;
+        MinRelativeHumidity: number | null;
+        AverageRelativeHumidity: number | null;
+        MaxAtmosphericTemperature: number | null;
+        MinAtmosphericTemperature: number | null;
+        AverageAtmosphericTemperature: number | null;
+        AtmosphericPressure: number | null;
+        WindVelocity: number | null;
+        Et0?: number | null;
+      }
+    > = new Map();
 
     if (response.length) {
-      response.forEach((m: any) => {
-        const { IdRead, FK_Equipment } = m;
+      response.forEach((item: any) => {
+        const {
+          IdRead,
+          FK_Equipment,
+          TotalRadiation,
+          MaxRelativeHumidity,
+          MinRelativeHumidity,
+          AverageRelativeHumidity,
+          MaxAtmosphericTemperature,
+          MinAtmosphericTemperature,
+          AverageAtmosphericTemperature,
+          AtmosphericPressure,
+          WindVelocity,
+          Et0,
+        } = item;
 
-        ids.set(FK_Equipment, IdRead);
+        measurements.set(FK_Equipment, {
+          IdRead,
+          TotalRadiation,
+          MaxRelativeHumidity,
+          MinRelativeHumidity,
+          AverageRelativeHumidity,
+          MaxAtmosphericTemperature,
+          MinAtmosphericTemperature,
+          AverageAtmosphericTemperature,
+          AtmosphericPressure,
+          WindVelocity,
+          Et0,
+        });
       });
     }
 
-    return ids;
+    return measurements;
+  }
+
+  async getPluviometerMeasurementsByTime(
+    time: string,
+    id_organ: number
+  ): Promise<Map<number, { IdRead: number; Value: number | null }>> {
+    const sqlQuery = governmentDb
+      .withSchema("equipments")
+      .column(["IdRead", "FK_Equipment", "Value"])
+      .select()
+      .where({ Time: time })
+      .andWhere({ FK_Organ: id_organ })
+      .from("ReadPluviometers");
+
+    const response = await sqlQuery;
+
+    const measurements: Map<number, { IdRead: number; Value: number | null }> =
+      new Map();
+
+    if (response.length) {
+      response.forEach((item: any) => {
+        const { IdRead, FK_Equipment, Value } = item;
+
+        measurements.set(FK_Equipment, {
+          IdRead,
+          Value,
+        });
+      });
+    }
+
+    return measurements;
   }
 }
 

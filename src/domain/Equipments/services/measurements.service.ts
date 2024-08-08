@@ -49,56 +49,76 @@ export class EquipmentsMeasurementsServices
     return right(data);
   }
 
-  async bulkInsert(params: {
-    type: `${EquipmentsTypes}`;
-    date: string;
-    items: Array<any>;
-    id_organ: number;
-  }): Promise<Either<Error, string>> {
-    const { date, id_organ, items, type } = params;
-
-    if (items.length === 0 || !items) {
-      return left(new Error("Necessário informar medições"));
-    }
-
-    const alreadyExistsCodes =
-      await this.equipmentsMeasurementsRepository.getMeasurementsIdsByTime(
+  private async bulkInsertStationMeasurements(
+    measurements: Array<any>,
+    date: string,
+    id_organ: number
+  ) {
+    const existingMeasurements =
+      await this.equipmentsMeasurementsRepository.getStationMeasurementsByTime(
         date,
-        type,
         id_organ
       );
 
-    const toInsert = [];
-    const toUpdate = [];
+    const toInsert: Array<any> = [];
+    const toUpdate: Array<any> = [];
 
-    items.forEach((item) => {
-      if (type === "station") {
-        const Et0 = CalcEto({
-          date: new Date(item.Time),
-          location: {
-            altitude: item.Altitude as number,
-            latitude: item.Latitude as number,
-            longitude: item.Longitude as number,
-          },
-          measures: {
-            atmosphericPressure: item.AtmosphericPressure as number,
-            averageAtmosphericTemperature:
-              item.AverageAtmosphericTemperature as number,
-            averageRelativeHumidity: item.AverageRelativeHumidity as number,
-            maxAtmosphericTemperature: item.MaxAtmosphericTemperature as number,
-            maxRelativeHumidity: item.MaxRelativeHumidity as number,
-            minAtmosphericTemperature: item.MinAtmosphericTemperature as number,
-            minRelativeHumidity: item.MinRelativeHumidity as number,
-            totalRadiation: item.TotalRadiation as number,
-            windVelocity: item.WindVelocity as number,
-          },
-        });
+    measurements.forEach((item) => {
+      const Et0 = CalcEto({
+        date: new Date(item.Time),
+        location: {
+          altitude: item.Altitude as number,
+          latitude: item.Latitude as number,
+          longitude: item.Longitude as number,
+        },
+        measures: {
+          atmosphericPressure: item.AtmosphericPressure as number,
+          averageAtmosphericTemperature:
+            item.AverageAtmosphericTemperature as number,
+          averageRelativeHumidity: item.AverageRelativeHumidity as number,
+          maxAtmosphericTemperature: item.MaxAtmosphericTemperature as number,
+          maxRelativeHumidity: item.MaxRelativeHumidity as number,
+          minAtmosphericTemperature: item.MinAtmosphericTemperature as number,
+          minRelativeHumidity: item.MinRelativeHumidity as number,
+          totalRadiation: item.TotalRadiation as number,
+          windVelocity: item.WindVelocity as number,
+        },
+      });
 
-        item.Et0 = Et0;
-      }
+      item.Et0 = Et0;
 
-      if (alreadyExistsCodes.has(item.FK_Equipment)) {
-        toUpdate.push(item);
+      const oldMeasurements = existingMeasurements.get(item.FK_Equipment);
+
+      if (oldMeasurements) {
+        const {
+          AtmosphericPressure,
+          AverageAtmosphericTemperature,
+          AverageRelativeHumidity,
+          MaxAtmosphericTemperature,
+          MaxRelativeHumidity,
+          MinAtmosphericTemperature,
+          MinRelativeHumidity,
+          TotalRadiation,
+          WindVelocity,
+          Et0,
+        } = oldMeasurements;
+
+        /* Update only measurements for which there is no recorded data*/
+        if (
+          [
+            AtmosphericPressure,
+            AverageAtmosphericTemperature,
+            AverageRelativeHumidity,
+            MaxAtmosphericTemperature,
+            MaxRelativeHumidity,
+            MinAtmosphericTemperature,
+            MinRelativeHumidity,
+            TotalRadiation,
+            WindVelocity,
+          ].every((item) => item === null)
+        )
+          toUpdate.push(item);
+
         return;
       }
 
@@ -106,10 +126,79 @@ export class EquipmentsMeasurementsServices
     });
 
     if (toInsert.length)
-      await this.equipmentsMeasurementsRepository.bulkInsert(items, type);
+      await this.equipmentsMeasurementsRepository.bulkInsert(
+        toInsert,
+        "station"
+      );
 
     if (toUpdate.length)
-      await this.equipmentsMeasurementsRepository.bulkUpdate(items, type);
+      await this.equipmentsMeasurementsRepository.bulkUpdate(
+        toUpdate,
+        "station"
+      );
+  }
+
+  private async bulkInsertPluviometerMeasurements(
+    measurements: Array<any>,
+    date: string,
+    id_organ: number
+  ) {
+    const existingMeasurements =
+      await this.equipmentsMeasurementsRepository.getPluviometerMeasurementsByTime(
+        date,
+        id_organ
+      );
+
+    const toInsert: Array<any> = [];
+    const toUpdate: Array<any> = [];
+
+    measurements.forEach((item) => {
+      const oldMeasurements = existingMeasurements.get(item.FK_Equipment);
+      // Update only pluviometer measurements that there is no recorded data
+      if (oldMeasurements) {
+        // console.log("atualizando ", oldMeasurements);
+        if (oldMeasurements.Value === null) {
+          toUpdate.push(item);
+        }
+
+        return;
+      }
+
+      toInsert.push(item);
+    });
+
+    if (toInsert.length)
+      await this.equipmentsMeasurementsRepository.bulkInsert(
+        toInsert,
+        "pluviometer"
+      );
+
+    if (toUpdate.length)
+      await this.equipmentsMeasurementsRepository.bulkUpdate(
+        toUpdate,
+        "pluviometer"
+      );
+  }
+
+  async bulkInsert(params: {
+    type: `${EquipmentsTypes}`;
+    date: string;
+    items: Array<any>;
+    id_organ: number;
+  }): Promise<Either<Error, string>> {
+    const { date, id_organ, items, type } = params;
+    if (items.length === 0 || !items) {
+      return left(new Error("Necessário informar medições"));
+    }
+
+    switch (type) {
+      case "station":
+        await this.bulkInsertStationMeasurements(items, date, id_organ);
+        break;
+      case "pluviometer":
+        await this.bulkInsertPluviometerMeasurements(items, date, id_organ);
+        break;
+    }
 
     await this.equipmentsRepository.insertLastUpdatedAtByOrgan(id_organ);
 
