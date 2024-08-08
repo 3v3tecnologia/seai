@@ -983,7 +983,9 @@ export class EquipmentsMeasurementsRepository
     return measurements;
   }
 }
-
+/**
+ * TO-DO: improve removing the temporary table
+ */
 async function updateStationsMeasurements(
   measurements: Array<StationMeasurementsToPersist>
 ): Promise<Array<number>> {
@@ -1066,6 +1068,9 @@ async function updateStationsMeasurements(
 
   return updatedIds;
 }
+/**
+ * TO-DO: improve removing the temporary table
+ */
 async function updatePluviometerMeasurements(
   measurements: Array<PluviometerMeasurementsToPersist>
 ) {

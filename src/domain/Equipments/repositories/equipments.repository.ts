@@ -155,8 +155,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     params: { latitude: number; longitude: number; distance?: number } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
     // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
-    const timeZone = 3;
-    const withoutLocalTimezone = `(DATE_TRUNC('day', NOW()::date) - INTERVAL '${timeZone} hours')::date`;
 
     // TODO: Need to refactor to bind params
     const query = `
@@ -230,9 +228,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
   ): Promise<Array<StationWithLastMeasurement> | null> {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
-
-    const timeZone = 3;
-    const withoutLocalTimezone = `(DATE_TRUNC('day', NOW()::date) - INTERVAL '${timeZone} hours')::date`;
 
     // TODO: Need to refactor to bind params
     const coordinateFilter = [params?.latitude, params?.longitude].every(
