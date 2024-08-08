@@ -1,6 +1,6 @@
-import { JwtAdapter } from "../../../../infra/cryptography/jwt-adapter";
-import { AuthMiddleware } from "../../../../presentation/middlewares/auth-middleware";
-import { Middleware } from "../../../../presentation/middlewares/ports";
+import { JwtAdapter } from "../../../../shared/infra/cryptography/jwt-adapter";
+import { AuthMiddleware } from "../../../../shared/middlewares/auth-middleware";
+import { Middleware } from "../../../../shared/middlewares/middleware";
 import env from "../../env";
 
 export const makeAuthMiddleware = (): Middleware => {

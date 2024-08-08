@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Controller } from "../../../presentation/controllers/ports/controllers";
-import { HttpResponse } from "../../../presentation/controllers/ports";
+import { Controller } from "../../../shared/ports/controllers";
+import { HttpResponse } from "../../../shared/ports/http-response";
 
 export function sendHTTPResponse(res: HttpResponse, response: Response) {
   if (res.statusCode >= 200 && res.statusCode < 300) {

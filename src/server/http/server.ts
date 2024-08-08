@@ -6,13 +6,13 @@ import { setupApp } from "./app";
 import { terminate } from "./gracefull-shutdown";
 
 import env from "./env";
-import { Logger } from "../../shared/logger/logger";
+import { Logger } from "../../shared/utils/logger";
 
 (async () => {
   const app = await setupApp();
 
   const server = app.listen(env.port, () => {
-    Logger.info(`Server listening in port ${env.port}`)
+    Logger.info(`Server listening in port ${env.port}`);
   });
 
   const exitHandler = terminate(server, {

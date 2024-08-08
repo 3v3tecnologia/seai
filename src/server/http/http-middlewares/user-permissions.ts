@@ -1,4 +1,4 @@
-import { Modules } from "../../../modules/User/core/model/user-modules-access";
+import { Modules } from "../../../domain/User/core/model/user-modules-access";
 import { adaptMiddleware } from "../adapters/express-middleware-adapter";
 import { makeUserPermissionMiddleware } from "../factories/middlewares/admin-middleware-factory";
 
