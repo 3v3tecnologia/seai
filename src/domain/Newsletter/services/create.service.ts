@@ -55,6 +55,9 @@ export class CreateNews implements CreateNewsUseCaseProtocol {
       TASK_QUEUES.NEWSLETTER,
       {
         id: newsId,
+        title: Title,
+        description: Description,
+        content: Data,
       },
       {
         priority: 1,

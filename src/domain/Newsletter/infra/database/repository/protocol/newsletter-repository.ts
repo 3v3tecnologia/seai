@@ -115,7 +115,7 @@ export interface NewsletterSubscriberRepositoryProtocol {
   getByEmail(
     request: SubscriberRepositoryDTO.GetByEmail.Request
   ): SubscriberRepositoryDTO.GetByEmail.Response;
-  getReceiversEmails(): Promise<Array<string> | null>;
+  getReceiversEmails(): Promise<null | Array<{ Email: string; Code: string }>>;
   getAll(
     request: SubscriberRepositoryDTO.GetAll.Request
   ): SubscriberRepositoryDTO.GetAll.Response;

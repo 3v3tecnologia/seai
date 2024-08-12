@@ -61,6 +61,9 @@ export class UpdateNews implements UpdateNewsUseCaseProtocol {
       TASK_QUEUES.NEWSLETTER,
       {
         id: news.Id,
+        title: news.Title,
+        description: news.Description,
+        content: news.Data,
       },
       {
         priority: 1,
