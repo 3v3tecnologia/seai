@@ -12,10 +12,11 @@ export enum UserTypes {
   STANDARD = "standard",
   IRRIGANT = "irrigant",
 }
-export type UserType =
+export type UserType = `${
   | UserTypes.ADMIN
   | UserTypes.STANDARD
-  | UserTypes.IRRIGANT;
+  | UserTypes.IRRIGANT}`;
+
 interface UserProps {
   name?: UserName | null;
   login?: UserLogin | null;
@@ -102,9 +103,11 @@ export class User {
 
     if (
       !props.type ||
-      ![UserTypes.ADMIN, UserTypes.IRRIGANT, UserTypes.STANDARD].includes(
-        props.type
-      )
+      ![
+        `${UserTypes.ADMIN}`,
+        `${UserTypes.IRRIGANT}`,
+        `${UserTypes.STANDARD}`,
+      ].includes(props.type)
     ) {
       errors.addError(new Error("Necessário informar o tipo do usuário"));
     }

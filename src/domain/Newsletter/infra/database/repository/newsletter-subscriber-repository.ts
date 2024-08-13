@@ -111,9 +111,12 @@ export class DbNewsLetterSubscriberRepository
     return NewsSubscriberMapper.toDomain(result);
   }
 
-  async getReceiversEmails(): Promise<null | Array<string>> {
+  async getReceiversEmails(): Promise<null | Array<{
+    Email: string;
+    Code: string;
+  }>> {
     const result = await newsletterDb
-      .select("Email")
+      .select("Email", "Code")
       .where({
         Confirmation_Status: "confirmed",
       })
@@ -123,7 +126,12 @@ export class DbNewsLetterSubscriberRepository
       return null;
     }
 
-    return result.map((row: any) => row.Email);
+    return result.map(({ Email, Code }: any) => {
+      return {
+        Email,
+        Code,
+      };
+    });
   }
 
   async getAll(

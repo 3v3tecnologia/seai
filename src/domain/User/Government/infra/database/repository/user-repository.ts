@@ -588,6 +588,31 @@ export class UserRepository implements UserRepositoryProtocol {
     return user;
   }
 
+  async checkIfNameAlreadyExists(
+    name: string,
+    user_type?: UserType | Array<UserType>
+  ): Promise<boolean> {
+    const query = governmentDb
+      .withSchema("users")
+      .select("*")
+      .from("User")
+      .first();
+
+    if (user_type) {
+      if (typeof user_type === "string") {
+        query.andWhere("Type", user_type);
+      } else {
+        query.whereIn("Type", user_type);
+      }
+    }
+
+    query.where("Name", name);
+
+    const result = await query;
+
+    return !!result;
+  }
+
   async deleteById(
     id_user: number,
     operation?: UserCommandOperationProps

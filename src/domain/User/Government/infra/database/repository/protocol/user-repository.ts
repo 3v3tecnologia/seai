@@ -32,6 +32,10 @@ export interface UserRepositoryProtocol {
       Optional<UserAccountProps, "id" | "name" | "code" | "status" | "login">
     >
   >;
+  checkIfNameAlreadyExists(
+    name: string,
+    user_type?: UserType | Array<UserType>
+  ): Promise<boolean>;
   updateUserStatus(user_id: number, status: string): Promise<void>;
   update(
     user: {

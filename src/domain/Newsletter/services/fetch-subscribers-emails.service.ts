@@ -20,7 +20,7 @@ export class FetchSubscribersEmails
 export namespace FetchSubscribersEmailUseCaseProtocol {
   export type Request = void;
 
-  export type Response = Array<string> | null;
+  export type Response = Array<{ Email: string; Code: string }> | null;
 
   export interface UseCase {
     execute(request: Request): Promise<Either<Error, any | null>>;
