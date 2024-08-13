@@ -48,6 +48,16 @@ export class UserIrrigantServices implements IUserIrrigantServices {
   async create(
     dto: CreateIrrigantAccountDTO.Input
   ): Promise<CreateIrrigantAccountDTO.Output> {
+    const existingNameAccount =
+      await this.accountRepository.checkIfNameAlreadyExists(
+        dto.name,
+        "irrigant"
+      );
+
+    if (existingNameAccount) {
+      return left(new Error("Nome do usuário já existe"));
+    }
+
     const emailAlreadyExists = await this.accountRepository.getByEmail(
       dto.email,
       UserTypes.IRRIGANT
