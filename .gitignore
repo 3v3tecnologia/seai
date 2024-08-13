@@ -78,7 +78,6 @@ dist
 # vuepress v2.x temp and cache directory
 .temp
 
-
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
@@ -86,3 +85,4 @@ env_file
 db-data
 node_modules
 /db
+.docker/
