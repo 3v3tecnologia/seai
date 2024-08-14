@@ -321,7 +321,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
   > | null> {
     const data = await governmentDb
       .withSchema("equipments")
-      .select("IdOrgan", "Name", "Host", "User")
+      .select("IdOrgan", "Name")
       .from("MetereologicalOrgan");
 
     if (data.length === 0) {
@@ -329,13 +329,11 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     }
 
     return data.map((raw) => {
-      const { IdOrgan, Name, Host, User } = raw;
+      const { IdOrgan, Name } = raw;
 
       return {
         Id: Number(IdOrgan),
         Name,
-        Host,
-        User,
       };
     });
   }
@@ -419,13 +417,10 @@ export class EquipmentsRepository implements IEquipmentsRepository {
   }
   async getOrganByName(organName: string): Promise<{
     Id: number;
-    Host: string | null;
-    User: string | null;
-    Password: string | null;
   } | null> {
     const response = await governmentDb
       .withSchema("equipments")
-      .select("IdOrgan", "Host", "User", "Password")
+      .select("IdOrgan")
       .from("MetereologicalOrgan")
       .where({ Name: organName })
       .first();
@@ -433,9 +428,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     if (response) {
       return {
         Id: response.IdOrgan,
-        Host: response.Host,
-        User: response.User,
-        Password: response.Password,
       };
     }
 

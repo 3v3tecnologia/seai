@@ -33,9 +33,6 @@ export interface IEquipmentsRepository
   >;
   getOrganByName(organName: string): Promise<{
     Id: number;
-    Host: string | null;
-    User: string | null;
-    Password: string | null;
   } | null>;
   getByType(type: string): Promise<
     Array<{
