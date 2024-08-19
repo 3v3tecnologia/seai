@@ -1,9 +1,9 @@
-import { Either, left, right } from "../../../../../shared/Either";
-import { Notification } from "../../../../../shared/notification/notification";
-import { Email } from "../../../lib/model/email";
-import { UserLogin } from "../../../lib/model/login";
-import { UserName } from "../../../lib/model/name";
-import { UserPassword } from "../../../lib/model/userPassword";
+import { Either, left, right } from "../../../../shared/Either";
+import { Notification } from "../../../../shared/notification/notification";
+import { Email } from "../../lib/model/email";
+import { UserLogin } from "../../lib/model/login";
+import { UserName } from "../../lib/model/name";
+import { UserPassword } from "../../lib/model/userPassword";
 
 export const IRRIGATION_USER_TYPE = "irrigant";
 

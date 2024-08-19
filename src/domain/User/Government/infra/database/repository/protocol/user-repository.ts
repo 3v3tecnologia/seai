@@ -6,12 +6,13 @@ import { Optional } from "../../../../../../../shared/optional";
 import { UserCommandOperationProps } from "../../../../../../Logs/protocols/logger";
 import { SystemModulesProps } from "../../../../model/user-modules-access";
 import { UserType, UserTypes } from "../../../../model/user";
+import { UserStatus } from "../../../../../lib/model/status";
 
 export type UserAccountProps = {
   id: number;
   name: string;
   code: string;
-  status: "pending" | "registered";
+  status: UserStatus;
   login: string;
   email: string;
   type: string;
@@ -78,11 +79,11 @@ export interface UserRepositoryProtocol {
   > | null>;
   getByEmail(
     email: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null>;
   getByLogin(
     login: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null>;
   getUserById(
     id_user: number

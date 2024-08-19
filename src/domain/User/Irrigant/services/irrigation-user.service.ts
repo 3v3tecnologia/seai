@@ -18,7 +18,7 @@ import {
   UnmatchedPasswordError,
   WrongPasswordError,
 } from "../../lib/errors/wrong-password";
-import { IrrigationUser } from "../core/model/user";
+import { IrrigationUser } from "../model/user";
 import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigation-user";
@@ -149,8 +149,11 @@ export class IrrigationUserService implements IIrrigationUserService {
     >
   > {
     const account = user.login
-      ? await this.accountRepository.getByLogin(user.login)
-      : await this.accountRepository.getByEmail(user.email as string);
+      ? await this.accountRepository.getByLogin(user.login, "registered")
+      : await this.accountRepository.getByEmail(
+          user.email as string,
+          "registered"
+        );
 
     if (!account) {
       return left(new UserNotFoundError());
@@ -195,7 +198,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     }
 
     if (account.status === "registered") {
-      return left(new UserAlreadyExistsError());
+      return left(new Error("Operação inválida"));
     }
 
     await this.accountRepository.updateUserStatus(
@@ -207,7 +210,10 @@ export class IrrigationUserService implements IIrrigationUserService {
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    const account = await this.accountRepository.getByEmail(email);
+    const account = await this.accountRepository.getByEmail(
+      email,
+      "registered"
+    );
 
     if (account == null || account.type == "pending") {
       return left(new UserNotFoundError());
@@ -237,7 +243,10 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getByEmail(
+      userEmailToString,
+      "registered"
+    );
 
     if (account === null) {
       return left(new UserNotFoundError());

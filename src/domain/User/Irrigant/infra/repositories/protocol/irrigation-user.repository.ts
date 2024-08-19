@@ -1,4 +1,5 @@
 import { Optional } from "../../../../../../shared/optional";
+import { UserStatus } from "../../../../lib/model/status";
 
 export type IrrigationUserProps = {
   id: number;
@@ -40,8 +41,14 @@ export interface IrrigationUserRepositoryProtocol {
   ): Promise<Required<
     Optional<IrrigationUserProps, "id" | "name" | "code" | "status" | "login">
   > | null>;
-  getByEmail(email: string): Promise<IrrigationUserProps | null>;
-  getByLogin(login: string): Promise<IrrigationUserProps | null>;
+  getByEmail(
+    email: string,
+    status?: UserStatus
+  ): Promise<IrrigationUserProps | null>;
+  getByLogin(
+    login: string,
+    status?: UserStatus
+  ): Promise<IrrigationUserProps | null>;
   getUserById(
     id_user: number
   ): Promise<Optional<

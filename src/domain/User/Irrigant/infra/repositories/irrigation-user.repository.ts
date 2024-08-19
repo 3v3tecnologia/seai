@@ -1,4 +1,5 @@
 import { governmentDb } from "../../../../../shared/infra/database/postgres/connection/knexfile";
+import { UserStatus } from "../../../lib/model/status";
 import {
   IrrigationUserProps,
   IrrigationUserRepositoryProtocol,
@@ -206,7 +207,10 @@ export class IrrigationUserRepository
     return result;
   }
 
-  async getByEmail(email: string): Promise<IrrigationUserProps | null> {
+  async getByEmail(
+    email: string,
+    status?: UserStatus
+  ): Promise<IrrigationUserProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
@@ -214,6 +218,12 @@ export class IrrigationUserRepository
       .where("Email", email)
       .andWhere("Type", "irrigant")
       .first();
+
+    if (status) {
+      query.andWhere({
+        Status: status,
+      });
+    }
 
     const result = await query;
 
@@ -235,7 +245,10 @@ export class IrrigationUserRepository
     };
   }
 
-  async getByLogin(login: string): Promise<IrrigationUserProps | null> {
+  async getByLogin(
+    login: string,
+    status?: UserStatus
+  ): Promise<IrrigationUserProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
@@ -243,6 +256,12 @@ export class IrrigationUserRepository
       .where("Login", login)
       .andWhere("Type", "irrigant")
       .first();
+
+    if (status) {
+      query.andWhere({
+        Status: status,
+      });
+    }
 
     const result = await query;
 

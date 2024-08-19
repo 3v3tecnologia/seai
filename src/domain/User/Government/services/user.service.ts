@@ -61,10 +61,7 @@ export class GovernmentUserService implements IUserService {
     author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const existingUser = await this.accountRepository.getByEmail(
-      request.email,
-      [UserTypes.ADMIN, UserTypes.STANDARD]
-    );
+    const existingUser = await this.accountRepository.getByEmail(request.email);
 
     if (existingUser) {
       return left(new UserAlreadyExistsError());
@@ -150,7 +147,7 @@ export class GovernmentUserService implements IUserService {
   > {
     const account = login
       ? await this.accountRepository.getByLogin(login)
-      : await this.accountRepository.getByEmail(email as string);
+      : await this.accountRepository.getByEmail(email as string, "registered");
 
     if (!account) {
       return left(new UserNotFoundError());
@@ -198,10 +195,7 @@ export class GovernmentUserService implements IUserService {
     // Decode user code to base64
     const userEmailToString = base64Decode(user.code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString, [
-      UserTypes.ADMIN,
-      UserTypes.STANDARD,
-    ]);
+    const account = await this.accountRepository.getByEmail(userEmailToString);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -234,10 +228,7 @@ export class GovernmentUserService implements IUserService {
 
     const login = userLoginOrError.value?.value as string;
 
-    const existingUser = await this.accountRepository.getByLogin(login, [
-      UserTypes.ADMIN,
-      UserTypes.STANDARD,
-    ]);
+    const existingUser = await this.accountRepository.getByLogin(login);
 
     if (existingUser) {
       return left(new LoginAlreadyExists());
@@ -264,7 +255,10 @@ export class GovernmentUserService implements IUserService {
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
     // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
-    const account = await this.accountRepository.getByEmail(email);
+    const account = await this.accountRepository.getByEmail(
+      email,
+      "registered"
+    );
 
     if (account == null || account.type === "irrigant") {
       return left(new UserNotFoundError());
@@ -294,10 +288,7 @@ export class GovernmentUserService implements IUserService {
 
     const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString, [
-      UserTypes.ADMIN,
-      UserTypes.STANDARD,
-    ]);
+    const account = await this.accountRepository.getByEmail(userEmailToString);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -396,8 +387,7 @@ export class GovernmentUserService implements IUserService {
 
     if (request.login) {
       const existingAccount = await this.accountRepository.getByLogin(
-        request.login,
-        [UserTypes.ADMIN, UserTypes.STANDARD]
+        request.login
       );
 
       if (existingAccount) {
@@ -452,8 +442,7 @@ export class GovernmentUserService implements IUserService {
 
     if (request.email) {
       const existingAccount = await this.accountRepository.getByEmail(
-        request.email,
-        [UserTypes.ADMIN, UserTypes.STANDARD]
+        request.email
       );
 
       if (existingAccount) {
@@ -536,8 +525,7 @@ export class GovernmentUserService implements IUserService {
 
     if (request.email) {
       const existingAccount = await this.accountRepository.getByEmail(
-        request.email,
-        [UserTypes.ADMIN, UserTypes.STANDARD]
+        request.email
       );
 
       if (existingAccount) {

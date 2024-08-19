@@ -10,8 +10,8 @@ const v1Router = express.Router();
 
 v1Router.use("/faq", faqRouter());
 
-v1Router.use("/user", userRouter());
 v1Router.use("/user/irrigant", irrigationUserRoutes());
+v1Router.use("/user", userRouter());
 
 setEquipmentsV1Router(v1Router);
 v1Router.use("/news", newsRouter());

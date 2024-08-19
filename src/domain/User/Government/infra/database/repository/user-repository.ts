@@ -10,6 +10,7 @@ import {
 } from "../../../../../../shared/utils/pagination";
 
 import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
+import { UserStatus } from "../../../../lib/model/status";
 import { UserType, UserTypes } from "../../../model/user";
 import { SystemModulesProps } from "../../../model/user-modules-access";
 
@@ -466,23 +467,24 @@ export class UserRepository implements UserRepositoryProtocol {
 
   async getByEmail(
     email: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null> {
+    console.log(email);
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
+      .where("Email", email)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
 
-    if (user_type) {
-      if (typeof user_type === "string") {
-        query.andWhere("Type", user_type);
-      } else {
-        query.whereIn("Type", user_type);
-      }
+    if (status) {
+      query.andWhere({
+        Status: status,
+      });
     }
 
-    query.where("Email", email);
     const result = await query;
 
     if (!result) {
@@ -529,22 +531,22 @@ export class UserRepository implements UserRepositoryProtocol {
 
   async getByLogin(
     login: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
+      .where("Login", login)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
 
-    if (user_type) {
-      if (typeof user_type === "string") {
-        query.andWhere("Type", user_type);
-      } else {
-        query.whereIn("Type", user_type);
-      }
+    if (status) {
+      query.andWhere({
+        Status: status,
+      });
     }
-    query.where("Login", login);
 
     const result = await query;
 
@@ -590,25 +592,15 @@ export class UserRepository implements UserRepositoryProtocol {
     return user;
   }
 
-  async checkIfNameAlreadyExists(
-    name: string,
-    user_type?: UserType | Array<UserType>
-  ): Promise<boolean> {
+  async checkIfNameAlreadyExists(name: string): Promise<boolean> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
+      .where("Name", name)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
-
-    if (user_type) {
-      if (typeof user_type === "string") {
-        query.andWhere("Type", user_type);
-      } else {
-        query.whereIn("Type", user_type);
-      }
-    }
-
-    query.where("Name", name);
 
     const result = await query;
 
@@ -640,7 +632,12 @@ export class UserRepository implements UserRepositoryProtocol {
     email: string,
     operation: UserCommandOperationProps
   ): Promise<boolean> {
-    await governmentDb("User").withSchema("users").where("Email", email).del();
+    await governmentDb("User")
+      .withSchema("users")
+      .where("Email", email)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
+      .del();
 
     await logsDb
       .insert({
@@ -661,6 +658,8 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where({ Id: id_user })
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
 
     if (!result) {
@@ -715,6 +714,8 @@ export class UserRepository implements UserRepositoryProtocol {
         )
       )
       .where("Login", login)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
 
     return response ? response.result : false;
@@ -726,6 +727,8 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Email", email)
+      .andWhere("Type", UserTypes.ADMIN)
+      .orWhere("Type", UserTypes.STANDARD)
       .first();
 
     return user ? true : false;
