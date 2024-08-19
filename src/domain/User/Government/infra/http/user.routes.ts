@@ -1,99 +1,105 @@
 import { Router } from "express";
-import { UserControllersFactory } from "../../controllers/factory/user.controller.factory";
+import { makeGovernmentUserController } from "../../controllers";
 import {
   authorization,
   userPermissions,
 } from "../../../../../server/http/http-middlewares";
-import { adaptRoute } from "../../../../../server/http/adapters/express-route.adapter";
-import { setupUserIrrigantAccountRoutes } from "../../../Irrigant/infra/http/account.routes";
+
+// import { setupUserIrrigantAccountRoutes } from "../../../Irrigant/infra/http/irrigation-user.routes";
+import { adaptHTTPHandler } from "../../../../../server/http/adapters/express-route.adapter";
 
 export const userRouter = (): Router => {
   const router = Router();
 
-  setupUserIrrigantAccountRoutes(router);
+  // setupUserIrrigantAccountRoutes(router);
+
+  const controllers = makeGovernmentUserController();
 
   router.get(
     "/system/modules",
     authorization,
     userPermissions.read,
-    adaptRoute(UserControllersFactory.makeFetchSystemModules())
+    adaptHTTPHandler(controllers.getProfile.bind(controllers))
   );
 
   router.get(
     "/profile",
     authorization,
-    adaptRoute(UserControllersFactory.makeFetchUserById())
+    adaptHTTPHandler(controllers.getUserById.bind(controllers))
   );
 
   router.delete(
     "/profile",
     authorization,
-    adaptRoute(UserControllersFactory.makeDeleteUser())
+    adaptHTTPHandler(controllers.deleteUser.bind(controllers))
   );
 
   router.patch(
     "/profile",
     authorization,
-    adaptRoute(UserControllersFactory.makeUpdateUserProfile())
+    adaptHTTPHandler(controllers.updateProfile.bind(controllers))
   );
 
   router.post(
     "/",
     authorization,
     userPermissions.write,
-    adaptRoute(UserControllersFactory.makeCreateUser())
+    adaptHTTPHandler(controllers.create.bind(controllers))
   );
 
   router.patch(
     "/:id",
     authorization,
     userPermissions.write,
-    adaptRoute(UserControllersFactory.makeUpdateUser())
+    adaptHTTPHandler(controllers.updateUser.bind(controllers))
   );
 
   router.get(
     "/",
     authorization,
     userPermissions.read,
-    adaptRoute(UserControllersFactory.makeGetUsers())
+    adaptHTTPHandler(controllers.getUsers.bind(controllers))
   );
 
   router.get(
     "/:id",
     authorization,
     userPermissions.read,
-    adaptRoute(UserControllersFactory.makeFetchUserById())
+    adaptHTTPHandler(controllers.getUserById.bind(controllers))
   );
 
   router.delete(
     "/:id",
     authorization,
     userPermissions.write,
-    adaptRoute(UserControllersFactory.makeDeleteUser())
+    adaptHTTPHandler(controllers.deleteUser.bind(controllers))
   );
 
   // Delete by email
   router.delete(
     "/",
     authorization,
-    adaptRoute(UserControllersFactory.makeDeleteUser())
+    adaptHTTPHandler(controllers.deleteUser.bind(controllers))
   );
 
-  router.post("/sign-in", adaptRoute(UserControllersFactory.makeSignIn()));
+  router.post(
+    "/sign-in",
+    adaptHTTPHandler(controllers.login.bind(controllers))
+  );
 
   router.patch(
     "/complete-registration/:code",
-    adaptRoute(UserControllersFactory.makeCompleteUserRegister())
+    adaptHTTPHandler(controllers.completeRegister.bind(controllers))
   );
 
   router.post(
     "/password/reset/:code",
-    adaptRoute(UserControllersFactory.makeResetUser())
+    adaptHTTPHandler(controllers.resetPassword.bind(controllers))
   );
 
   router.post(
     "/password/forgot",
-    adaptRoute(UserControllersFactory.makeForgotPassword())
+    adaptHTTPHandler(controllers.forgotPassword.bind(controllers))
   );
 
   return router;

@@ -10,10 +10,13 @@ import {
 } from "../../../../../../shared/utils/pagination";
 
 import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
-import { UserAccountProps } from "../../../../core/model/account";
-import { UserType, UserTypes } from "../../../../core/model/user";
-import { SystemModulesProps } from "../../../../core/model/user-modules-access";
-import { UserRepositoryProtocol } from "./protocol/user-repository";
+import { UserType, UserTypes } from "../../../model/user";
+import { SystemModulesProps } from "../../../model/user-modules-access";
+
+import {
+  UserAccountProps,
+  UserRepositoryProtocol,
+} from "./protocol/user-repository";
 
 function mapUserModulePermissionsToPersistence(
   user_id: number,
@@ -109,18 +112,17 @@ export class UserRepository implements UserRepositoryProtocol {
     return id_user;
   }
 
-  async getModules(): Promise<Array<{
-    id: number;
-    name: string;
-  }> | null> {
+  async getModules(): Promise<
+    Array<{
+      id: number;
+      name: string;
+    }>
+  > {
     const modules = await governmentDb
       .withSchema("users")
       .select("*")
       .from("Module");
 
-    if (!modules) {
-      return null;
-    }
     return modules.map((module) => {
       return {
         id: module.Id,
