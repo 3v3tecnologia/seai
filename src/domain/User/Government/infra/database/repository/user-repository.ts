@@ -469,14 +469,16 @@ export class UserRepository implements UserRepositoryProtocol {
     email: string,
     status?: UserStatus
   ): Promise<UserAccountProps | null> {
-    console.log(email);
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
       .where("Email", email)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     if (status) {
@@ -538,8 +540,11 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Login", login)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     if (status) {
@@ -598,8 +603,11 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Name", name)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     const result = await query;
@@ -635,8 +643,11 @@ export class UserRepository implements UserRepositoryProtocol {
     await governmentDb("User")
       .withSchema("users")
       .where("Email", email)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .del();
 
     await logsDb
@@ -658,8 +669,11 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where({ Id: id_user })
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     if (!result) {
@@ -714,8 +728,11 @@ export class UserRepository implements UserRepositoryProtocol {
         )
       )
       .where("Login", login)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     return response ? response.result : false;
@@ -727,8 +744,11 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Email", email)
-      .andWhere("Type", UserTypes.ADMIN)
-      .orWhere("Type", UserTypes.STANDARD)
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     return user ? true : false;
