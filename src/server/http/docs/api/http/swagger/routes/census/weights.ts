@@ -113,8 +113,6 @@ export const WEIGHTS = {
               },
               example: {
                 basin_ids: [1, 2],
-                users_registered_count: 90,
-                crops_names: ["MILHO", "BANANA"],
               },
             },
           },
