@@ -110,23 +110,6 @@ export const WEIGHTS = {
                   },
                   description: "An array of basin IDs",
                 },
-                area: {
-                  type: "number",
-                  format: "float",
-                  description: "The area in square units",
-                },
-                users_registered_count: {
-                  type: "number",
-                  format: "int32",
-                  description: "The count of registered users",
-                },
-                crops_names: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                  description: "An array of names of crops",
-                },
               },
               example: {
                 basin_ids: [1, 2],
