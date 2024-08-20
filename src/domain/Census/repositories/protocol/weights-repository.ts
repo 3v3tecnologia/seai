@@ -1,8 +1,9 @@
 import { CensusCultureWeights } from "../../core/model/indicators-weights";
 
 export interface IIndicatorsWeightsRepository {
-  save(weights: Array<CensusCultureWeights>): Promise<void>;
+  save(weights: Array<CensusCultureWeights>, basin_mask: number): Promise<void>;
   delete(mask: number): Promise<void>;
+  getAllBasin(): Promise<Array<{ id: number; name: string }>>;
   checkBasinsIds(ids: Array<number>): Promise<Array<number> | null>;
   getByMask(mask: number, year: number): Promise<CensusCultureWeights[]>;
   checkIfAlreadyExists(mask: number, year: number): Promise<boolean>;

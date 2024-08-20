@@ -8,7 +8,7 @@ const createIndicatorsWeightsValidator = new SchemaValidator(
     data: Joi.array()
       .items(
         Joi.object({
-          basin_mask: Joi.number().required(),
+          basin_mask: Joi.number().optional(),
           crop: Joi.string().trim().required(),
           productivity_ha: Joi.number().precision(2).required(),
           productivity_m3: Joi.number().precision(2).required(),
@@ -29,7 +29,8 @@ const createIndicatorsWeightsValidator = new SchemaValidator(
 
 const getIndicatorsWeightsValidator = new SchemaValidator(
   Joi.object({
-    basin_ids: Joi.array().items(Joi.number().integer()).required(),
+    basin_ids: Joi.string().not().empty().required(),
+    // basin_ids: Joi.array().items(Joi.number().integer()).required(),
     year: Joi.number().required(),
   }).options({
     abortEarly: false,
@@ -39,9 +40,6 @@ const getIndicatorsWeightsValidator = new SchemaValidator(
 const calculateIndicatorsWeightsValidator = new SchemaValidator(
   Joi.object({
     basin_ids: Joi.array().items(Joi.number().integer()).required(),
-    area: Joi.number().optional(),
-    users_registered_count: Joi.number().integer().optional(),
-    crops_names: Joi.array().items(Joi.string()).optional(),
   })
 );
 
