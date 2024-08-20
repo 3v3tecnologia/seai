@@ -3,7 +3,7 @@ import {
   TokenPayload,
   TokenProvider,
   TokenResponse,
-} from "../../../domain/User/Government/services/authentication/ports/token-provider";
+} from "../../../domain/User/lib/infra/token-provider";
 
 export class JwtAdapter implements TokenProvider {
   private readonly secret: string;

@@ -3,7 +3,7 @@ import {
   DeleteNewsletterSubscriberUseCaseProtocol,
   SubscribeToNewsUseCaseProtocol,
 } from "../../../Newsletter/services";
-import { UserRepositoryProtocol } from "../../Government/infra/database/repository/protocol/user-repository";
+import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
 import { IUserPreferencesRepository } from "../infra/repositories/protocol/preferences.repository";
 
 import {
@@ -17,7 +17,7 @@ import { IUserPreferencesServices } from "./protocols/user-settings";
 export class UserSettingsServices implements IUserPreferencesServices {
   constructor(
     private repository: IUserPreferencesRepository,
-    private readonly accountRepository: UserRepositoryProtocol,
+    private readonly accountRepository: IrrigationUserRepositoryProtocol,
     private readonly subscribeToNewsletter: SubscribeToNewsUseCaseProtocol.UseCase,
     private readonly unsubscribeToNewsletter: DeleteNewsletterSubscriberUseCaseProtocol.UseCase
   ) {}

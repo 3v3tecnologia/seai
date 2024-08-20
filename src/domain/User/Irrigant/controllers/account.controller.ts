@@ -1,5 +1,4 @@
 import { IrrigantSignUpRequest } from "./requests/account";
-import { IUserIrrigantServices } from "../services/protocols/account";
 import { createUserValidator, loginValidator } from "./schema/account";
 import { HttpResponse } from "../../../../shared/ports/http-response";
 import {
@@ -9,12 +8,11 @@ import {
   ok,
   serverError,
 } from "../../../../shared/utils/http-responses";
+import { IIrrigationUserService } from "../services/protocols/irrigation-user";
 
 export class IrrigantAccountControllers {
-  private services: IUserIrrigantServices;
-
-  constructor(services: IUserIrrigantServices) {
-    this.services = services;
+  constructor(private userService: IIrrigationUserService) {
+    this.userService = userService;
   }
 
   async create(request: IrrigantSignUpRequest): Promise<HttpResponse> {
@@ -33,7 +31,7 @@ export class IrrigantAccountControllers {
         return badRequest(error);
       }
 
-      const result = await this.services.create(request);
+      const result = await this.userService.create(request);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -62,7 +60,7 @@ export class IrrigantAccountControllers {
       if (error) {
         return badRequest(error);
       }
-      const result = await this.services.login(request);
+      const result = await this.userService.login(request);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -78,7 +76,7 @@ export class IrrigantAccountControllers {
     try {
       const { code } = request;
 
-      const result = await this.services.completeRegister(code);
+      const result = await this.userService.completeRegister(code);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -95,7 +93,7 @@ export class IrrigantAccountControllers {
     try {
       const { email } = request;
 
-      const result = await this.services.forgotPassword(email);
+      const result = await this.userService.forgotPassword(email);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -116,7 +114,7 @@ export class IrrigantAccountControllers {
     try {
       const { code, password, confirmPassword } = request;
 
-      const result = await this.services.resetPassword({
+      const result = await this.userService.resetPassword({
         code,
         password,
         confirmPassword,
@@ -145,7 +143,7 @@ export class IrrigantAccountControllers {
       const { accountId, login, name, confirmPassword, email, password } =
         request;
 
-      const result = await this.services.updateProfile({
+      const result = await this.userService.updateProfile({
         id: accountId,
         login,
         name,
@@ -169,7 +167,7 @@ export class IrrigantAccountControllers {
     try {
       const { id } = request;
 
-      const result = await this.services.deleteAccount(id);
+      const result = await this.userService.deleteAccount(id);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -185,7 +183,7 @@ export class IrrigantAccountControllers {
     try {
       const { accountId } = request;
 
-      const result = await this.services.getProfile(accountId);
+      const result = await this.userService.getProfile(accountId);
 
       if (result.isLeft()) {
         return forbidden(result.value);

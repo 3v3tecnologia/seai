@@ -8,8 +8,8 @@ import {
   idSchema,
   userAccountSchema,
 } from "../../../../../shared/infra/validator/schemas";
-import { Modules } from "../../../core/model/user-modules-access";
 import { SchemaValidator } from "../../../../../shared/infra/validator/validator";
+import { Modules } from "../../model/user-modules-access";
 
 const systemModulesPermissionsSchema = Joi.object({
   id: Joi.number(),

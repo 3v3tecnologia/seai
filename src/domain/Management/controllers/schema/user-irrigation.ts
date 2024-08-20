@@ -1,9 +1,11 @@
 import Joi from "joi";
 import {
   drippingPropsSchema,
+  irrigationSystemPropsSchema,
   irrigationTypesNames,
   microSprinklingPropsSchema,
   pivotPropsSchema,
+  plantingDateSchema,
   sprinklingPropsSchema,
   sulcosPropsSchema,
 } from "./blade-suggestion";
@@ -16,27 +18,9 @@ import { SchemaValidator } from "../../../../shared/infra/validator/validator";
 const userIrrigationToPersist = Joi.object({
   CropId: Joi.number().integer().required(),
   Name: Joi.string().required(),
-  PlantingDate: Joi.string()
-    .pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/, "DD/MM/YYYY")
-    .required(),
+  PlantingDate: plantingDateSchema,
   IrrigationEfficiency: Joi.number().greater(0).optional(),
-  System: Joi.object({
-    Type: Joi.string()
-      .valid(...irrigationTypesNames)
-      .required(),
-    Measurements: Joi.alternatives()
-      .conditional("Type", {
-        switch: [
-          { is: "Sulcos", then: sulcosPropsSchema },
-          { is: "Pivô Central", then: pivotPropsSchema },
-          { is: "Gotejamento", then: drippingPropsSchema },
-          { is: "Microaspersão", then: microSprinklingPropsSchema },
-          { is: "Aspersão", then: sprinklingPropsSchema },
-        ],
-        otherwise: Joi.any().forbidden(),
-      })
-      .required(),
-  }).required(),
+  System: irrigationSystemPropsSchema,
 });
 
 export const createUserIrrigationValidator = new SchemaValidator(

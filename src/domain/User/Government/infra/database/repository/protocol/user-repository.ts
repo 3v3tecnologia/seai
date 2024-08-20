@@ -4,10 +4,23 @@ import {
 } from "../../../../../../../shared/utils/pagination";
 import { Optional } from "../../../../../../../shared/optional";
 import { UserCommandOperationProps } from "../../../../../../Logs/protocols/logger";
-import { UserAccountProps } from "../../../../../core/model/account";
-import { UserType, UserTypes } from "../../../../../core/model/user";
-import { SystemModulesProps } from "../../../../../core/model/user-modules-access";
+import { SystemModulesProps } from "../../../../model/user-modules-access";
+import { UserType, UserTypes } from "../../../../model/user";
+import { UserStatus } from "../../../../../lib/model/status";
 
+export type UserAccountProps = {
+  id: number;
+  name: string;
+  code: string;
+  status: UserStatus;
+  login: string;
+  email: string;
+  type: string;
+  password?: string;
+  modules?: SystemModulesProps | null;
+  updatedAt?: string;
+  createdAt?: string;
+};
 export interface UserRepositoryProtocol {
   add(
     user: {
@@ -66,11 +79,11 @@ export interface UserRepositoryProtocol {
   > | null>;
   getByEmail(
     email: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null>;
   getByLogin(
     login: string,
-    user_type?: UserType | Array<UserType>
+    status?: UserStatus
   ): Promise<UserAccountProps | null>;
   getUserById(
     id_user: number
@@ -81,10 +94,12 @@ export interface UserRepositoryProtocol {
   getUserByCode(code: string): Promise<UserAccountProps | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   checkIfLoginAlreadyExists(login: string): Promise<boolean>;
-  getModules(): Promise<Array<{
-    id: number;
-    name: string;
-  }> | null>;
+  getModules(): Promise<
+    Array<{
+      id: number;
+      name: string;
+    }>
+  >;
   getUserModulesByName(
     id_user: number,
     name: string

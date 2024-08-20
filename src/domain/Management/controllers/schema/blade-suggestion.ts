@@ -59,6 +59,10 @@ export const irrigationSystemPropsSchema = Joi.object({
     .required(),
 }).required();
 
+export const plantingDateSchema = Joi.string()
+  .pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/, "DD/MM/YYYY")
+  .required();
+
 export const irrigationParamsSchema = Joi.object({
   Station: Joi.object({
     Id: Joi.number().integer().optional(),
@@ -69,27 +73,9 @@ export const irrigationParamsSchema = Joi.object({
     Precipitation: Joi.number().optional(),
   }).optional(),
   CropId: Joi.number().integer().required(),
-  PlantingDate: Joi.string()
-    .pattern(/^(\d{2})\/(\d{2})\/(\d{4})$/, "DD/MM/YYYY")
-    .required(),
+  PlantingDate: plantingDateSchema,
   IrrigationEfficiency: Joi.number().greater(0).optional(),
-  System: Joi.object({
-    Type: Joi.string()
-      .valid(...irrigationTypesNames)
-      .required(),
-    Measurements: Joi.alternatives()
-      .conditional("Type", {
-        switch: [
-          { is: "Sulcos", then: sulcosPropsSchema },
-          { is: "Pivô Central", then: pivotPropsSchema },
-          { is: "Gotejamento", then: drippingPropsSchema },
-          { is: "Microaspersão", then: microSprinklingPropsSchema },
-          { is: "Aspersão", then: sprinklingPropsSchema },
-        ],
-        otherwise: Joi.any().forbidden(),
-      })
-      .required(),
-  }).required(),
+  System: irrigationSystemPropsSchema,
 }).options({
   abortEarly: false,
 });
