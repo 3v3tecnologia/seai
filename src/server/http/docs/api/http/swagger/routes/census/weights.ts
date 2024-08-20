@@ -28,7 +28,7 @@ export const WEIGHTS = {
       },
     },
   },
-  [`${BASE_URL.V2}/census/weights/basin/calculated`]: {
+  [`${BASE_URL.V2}/census/weights/basin/calculate`]: {
     post: {
       tags: TAGS,
       security: [BEARER_AUTH],
