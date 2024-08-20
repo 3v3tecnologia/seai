@@ -10,6 +10,7 @@ import {
 import { CensusCultureWeights } from "../core/model/indicators-weights";
 import {
   ICalculateIndicatorsWeightsService,
+  IGetBasinService,
   IGetIndicatorsWeightsByBasinService,
   IGetWaterCutService,
   InsertIndicatorsWeightsService,
@@ -198,6 +199,24 @@ export class CalculateWatercutController
       const resultOrError = await this.indicatorsWeightsService.getWaterCut(
         basin_ids
       );
+
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
+
+      return ok(resultOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+}
+
+export class GetBasinController {
+  constructor(private readonly indicatorsWeightsService: IGetBasinService) {}
+
+  async handle(): Promise<HttpResponse> {
+    try {
+      const resultOrError = await this.indicatorsWeightsService.getBasin();
 
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);

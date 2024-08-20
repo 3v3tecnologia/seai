@@ -139,3 +139,19 @@ export class GetWaterCutService implements IGetWaterCutService {
     return right(weights);
   }
 }
+export interface IGetBasinService {
+  getBasin(): Promise<Either<Error, Array<{ id: number; name: string }>>>;
+}
+export class GetBasinService implements IGetBasinService {
+  constructor(
+    private readonly indicatorsWeightsRepository: IIndicatorsWeightsRepository
+  ) {}
+
+  async getBasin(): Promise<
+    Either<Error, Array<{ id: number; name: string }>>
+  > {
+    const data = await this.indicatorsWeightsRepository.getAllBasin();
+
+    return right(data);
+  }
+}

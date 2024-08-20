@@ -30,6 +30,15 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
     return invalidIds.length ? invalidIds : null;
   }
 
+  async getAllBasin(): Promise<Array<{ id: number; name: string }>> {
+    const response = await censusDb("bacia").select("id", "name");
+
+    return response.map(({ id, name }) => ({
+      id,
+      name,
+    }));
+  }
+
   async checkIfAlreadyExists(mask: number, year: number): Promise<boolean> {
     const basin_mask = await censusDb
       .select("bacia_mascara")
