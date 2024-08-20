@@ -15,7 +15,7 @@ export const EQUIPMENTS = {
       tags: TAGS,
       summary: "Get last update date",
       description: "Get by meteorological organ",
-      security: [BEARER_AUTH],
+      // security: [BEARER_AUTH],
       responses: {
         200: {
           content: {
