@@ -48,7 +48,7 @@ export class InsertIndicatorsWeightsService
       await this.indicatorsWeightsRepository.delete(basin_mask);
     }
 
-    await this.indicatorsWeightsRepository.save(params.weights);
+    await this.indicatorsWeightsRepository.save(params.weights, basin_mask);
 
     return right(
       `Sucesso ao adicionar pesos dos indicatores da bacia ${params.basin_ids}`
@@ -74,15 +74,9 @@ export class GetIndicatorsWeightsByBasinService
   }): Promise<Either<Error, any | null>> {
     const basin_mask = convertBasinsIDsToMask(params.basin_ids);
 
-    const alreadyRecordedWeights =
-      await this.indicatorsWeightsRepository.getByMask(basin_mask, params.year);
-
-    if (alreadyRecordedWeights.length) {
-      return right(alreadyRecordedWeights);
-    }
-
-    const weights = await this.indicatorsWeightsRepository.calculateByBasinMask(
-      basin_mask
+    const weights = await this.indicatorsWeightsRepository.getByMask(
+      basin_mask,
+      params.year
     );
 
     return right(weights);
@@ -91,9 +85,6 @@ export class GetIndicatorsWeightsByBasinService
 export interface ICalculateIndicatorsWeightsService {
   calculate(params: {
     basin_ids: Array<number>;
-    area?: number;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
   }): Promise<Either<Error, any | null>>;
 }
 export class CalculateIndicatorsWeightsService
@@ -105,14 +96,14 @@ export class CalculateIndicatorsWeightsService
 
   async calculate(params: {
     basin_ids: Array<number>;
-    area?: number;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
   }): Promise<Either<Error, any | null>> {
+    const basin_mask = convertBasinsIDsToMask(params.basin_ids);
     // Utilitário para buscar dados filtrados, será executado após o sistema retornar pela primeira
     // vez os dados de pesos no primeiro acesso dando a possibilidade para o usuário guardar apenas
     // dados específicos.
-    const weights = await this.indicatorsWeightsRepository.calculate(params);
+    const weights = await this.indicatorsWeightsRepository.calculateByBasinMask(
+      basin_mask
+    );
 
     return right(weights);
   }

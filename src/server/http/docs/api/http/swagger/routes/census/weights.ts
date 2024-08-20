@@ -47,10 +47,31 @@ export const WEIGHTS = {
       },
     },
   },
-  [`${BASE_URL.V2}/census/weights/basin`]: {
+  [`${BASE_URL.V2}/census/weights/basin/{year}/{basin_ids}`]: {
     get: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "year",
+          in: "path",
+          description: "Census year",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "basin_ids",
+          in: "path",
+          description: "A string with comma-separated equipments ids",
+          required: true,
+          example: "1,2",
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       responses: {
         200: {
           description:

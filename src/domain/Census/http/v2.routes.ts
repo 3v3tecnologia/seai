@@ -24,7 +24,7 @@ export const setupCensusV2Routes = (router: Router): void => {
   );
 
   router.post(
-    "/census/weights/basin/calculated",
+    "/census/weights/basin/calculate",
     authorization,
     weightsPermissions.write,
     adaptRoute(MakeIndicatorsWeightsControllers.calcIndicatorWeights())
@@ -38,7 +38,7 @@ export const setupCensusV2Routes = (router: Router): void => {
   );
 
   router.get(
-    "/census/weights/basin",
+    "/census/weights/basin/:year/:basin_ids",
     authorization,
     weightsPermissions.read,
     adaptRoute(MakeIndicatorsWeightsControllers.getIndicatorWeightsByBasin())
