@@ -5,10 +5,13 @@ import { IIndicatorsWeightsRepository } from "./protocol/weights-repository";
 import { censusDb } from "../../../shared/infra/database/postgres/connection/knexfile";
 
 class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
-  async save(weights: Array<CensusCultureWeights>): Promise<void> {
+  async save(
+    weights: Array<CensusCultureWeights>,
+    basin_mask: number
+  ): Promise<void> {
     await censusDb.batchInsert(
       "pesos",
-      weights.map((w) => CultureWeightsMapper.toPersistence(w))
+      weights.map((w) => CultureWeightsMapper.toPersistence(w, basin_mask))
     );
   }
 
@@ -30,14 +33,23 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
     return invalidIds.length ? invalidIds : null;
   }
 
+  async getAllBasin(): Promise<Array<{ id: number; name: string }>> {
+    const response = await censusDb("bacia").select("id", "name");
+
+    return response.map(({ id, name }) => ({
+      id,
+      name,
+    }));
+  }
+
   async checkIfAlreadyExists(mask: number, year: number): Promise<boolean> {
-    const basin_mask = await censusDb
+    const result = await censusDb
       .select("bacia_mascara")
       .from("pesos")
       .where("bacia_mascara", mask)
       .andWhere("year", year);
 
-    return !!basin_mask;
+    return result.length > 0;
   }
 
   async getByMask(mask: number, year: number): Promise<CensusCultureWeights[]> {
@@ -52,7 +64,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
 
   async calculateByBasinMask(
     basin_mask: number
-  ): Promise<Array<CensusCultureWeights> | null> {
+  ): Promise<Array<CensusCultureWeights>> {
     const query = censusDb.raw(
       `
             select cultura,
@@ -132,9 +144,9 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
 
     const result = await query;
 
-    if (!result.rowCount) {
-      return null;
-    }
+    // if (!result.rowCount) {
+    //   return null;
+    // }
 
     return result.rows.map((row: any) => CultureWeightsMapper.toDomain(row));
   }

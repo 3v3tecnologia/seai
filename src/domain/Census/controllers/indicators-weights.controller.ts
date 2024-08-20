@@ -10,6 +10,7 @@ import {
 import { CensusCultureWeights } from "../core/model/indicators-weights";
 import {
   ICalculateIndicatorsWeightsService,
+  IGetBasinService,
   IGetIndicatorsWeightsByBasinService,
   IGetWaterCutService,
   InsertIndicatorsWeightsService,
@@ -58,8 +59,6 @@ export class InsertIndicatorsWeightsController
         return forbidden(deletedOrError.value);
       }
 
-      //   await this.userLogs.log(request.accountId, this.useCase);
-
       return created(deletedOrError.value);
     } catch (error) {
       return serverError(error as Error);
@@ -67,40 +66,31 @@ export class InsertIndicatorsWeightsController
   }
 }
 
-export interface IGetIndicatorWeightsByBasinsIdsController {
-  handle(request: {
-    basin_ids: Array<number>;
-    year: number;
-  }): Promise<HttpResponse>;
-}
-
-export class GetIndicatorWeightsByBasinsIdsController
-  implements IGetIndicatorWeightsByBasinsIdsController
-{
+export class GetIndicatorWeightsByBasinsIdsController {
   constructor(
     private readonly indicatorsWeightsService: IGetIndicatorsWeightsByBasinService,
     private readonly validator: ISchemaValidator
   ) {}
 
   async handle(request: {
-    basin_ids: Array<number>;
+    basin_ids: string;
     year: number;
   }): Promise<HttpResponse> {
     try {
-      const { basin_ids, year } = request;
-
       const { error } = await this.validator.validate({
-        basin_ids,
-        year,
+        basin_ids: request.basin_ids,
+        year: request.year,
       });
 
       if (error) {
         return badRequest(error);
       }
 
+      const ids = request.basin_ids.split(",").map((id) => Number(id));
+
       const resultOrError = await this.indicatorsWeightsService.getByBasinsIds({
-        basin_ids,
-        year,
+        basin_ids: ids,
+        year: request.year,
       });
 
       if (resultOrError.isLeft()) {
@@ -113,38 +103,18 @@ export class GetIndicatorWeightsByBasinsIdsController
     }
   }
 }
-
-export interface ICalculateIndicatorWeightsController {
-  handle(request: {
-    basin_ids: Array<number>;
-    area?: number;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
-  }): Promise<HttpResponse>;
-}
-
-export class CalculateIndicatorWeightsController
-  implements ICalculateIndicatorWeightsController
-{
+export class CalculateIndicatorWeightsController {
   constructor(
     private readonly indicatorsWeightsService: ICalculateIndicatorsWeightsService,
     private readonly validator: ISchemaValidator
   ) {}
 
-  async handle(request: {
-    basin_ids: Array<number>;
-    area?: number;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
-  }): Promise<HttpResponse> {
+  async handle(request: { basin_ids: Array<number> }): Promise<HttpResponse> {
     try {
-      const { basin_ids, area, crops_names, users_registered_count } = request;
+      const { basin_ids } = request;
 
       const { error } = await this.validator.validate({
         basin_ids,
-        area,
-        crops_names,
-        users_registered_count,
       });
 
       if (error) {
@@ -153,9 +123,6 @@ export class CalculateIndicatorWeightsController
 
       const resultOrError = await this.indicatorsWeightsService.calculate({
         basin_ids,
-        area,
-        crops_names,
-        users_registered_count,
       });
 
       if (resultOrError.isLeft()) {
@@ -198,6 +165,24 @@ export class CalculateWatercutController
       const resultOrError = await this.indicatorsWeightsService.getWaterCut(
         basin_ids
       );
+
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
+
+      return ok(resultOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+}
+
+export class GetBasinController {
+  constructor(private readonly indicatorsWeightsService: IGetBasinService) {}
+
+  async handle(): Promise<HttpResponse> {
+    try {
+      const resultOrError = await this.indicatorsWeightsService.getBasin();
 
       if (resultOrError.isLeft()) {
         return badRequest(resultOrError.value);
