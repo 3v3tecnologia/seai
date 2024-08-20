@@ -5,6 +5,48 @@ import { DEFAULT_RESPONSES } from "../../commons/status";
 const TAGS = ["Weights"];
 
 export const WEIGHTS = {
+  [`${BASE_URL.V2}/census/basin`]: {
+    get: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      responses: {
+        200: {
+          description: "Get recorded basin",
+          content: {
+            "application/json": {
+              schema: {
+                example: {
+                  data: [
+                    {
+                      id: 1,
+                      name: "Alto Jaguaribe",
+                    },
+                    {
+                      id: 2,
+                      name: "Médio Jaguaribe",
+                    },
+                    {
+                      id: 3,
+                      name: "Baixo Jaguaribe",
+                    },
+                    {
+                      id: 5,
+                      name: "Salgado",
+                    },
+                    {
+                      id: 4,
+                      name: "Banabuiú",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+  },
   [`${BASE_URL.V2}/census/weights/basin`]: {
     get: {
       tags: TAGS,
