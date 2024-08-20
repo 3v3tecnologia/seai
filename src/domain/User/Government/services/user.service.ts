@@ -268,7 +268,7 @@ export class GovernmentUserService implements IUserService {
 
     await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${base64Code}`,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/retrieve-account/${base64Code}`,
       action: "forgot-user-account",
     });
 

@@ -12,21 +12,20 @@ import { TokenProvider } from "../../lib/infra/token-provider";
 import { PUBLIC_ASSETS_BASE_URL } from "../../../../server/http/config/url";
 import { TASK_QUEUES } from "../../../../shared/infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
-import { UserAlreadyExistsError } from "../../lib/errors/user-already-exists";
+import { InactivatedAccount } from "../../lib/errors/account-not-activated";
+import { EmailAlreadyExists } from "../../lib/errors/email-already-exists";
+import { LoginAlreadyExists } from "../../lib/errors/login-aready-exists";
+import { UserNameAlreadyExists } from "../../lib/errors/name-already-exists";
 import { UserNotFoundError } from "../../lib/errors/user-not-found-error";
 import {
   UnmatchedPasswordError,
   WrongPasswordError,
 } from "../../lib/errors/wrong-password";
-import { IrrigationUser } from "../model/user";
 import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
+import { IrrigationUser } from "../model/user";
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigation-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
-import { LoginAlreadyExists } from "../../lib/errors/login-aready-exists";
-import { EmailAlreadyExists } from "../../lib/errors/email-already-exists";
-import { UserNameAlreadyExists } from "../../lib/errors/name-already-exists";
-import { InactivatedAccount } from "../../lib/errors/account-not-activated";
 
 export class IrrigationUserService implements IIrrigationUserService {
   constructor(
@@ -123,7 +122,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     if (user_id) {
       await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: dto.email,
-        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/irrigant/activate/${Buffer.from(
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/activate/${Buffer.from(
           dto.email
         ).toString("base64")}`,
         action: "create-user-account",
@@ -221,7 +220,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/account/reset-password/${Buffer.from(
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/reset-password/${Buffer.from(
         account.email
       ).toString("base64")}`,
       action: "forgot-user-account",
