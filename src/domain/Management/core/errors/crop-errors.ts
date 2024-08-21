@@ -5,6 +5,12 @@ export namespace ManagementCropErrors {
       this.name = "CropAlreadyExistsError";
     }
   }
+  export class AssociatedWithIrrigation extends Error {
+    constructor() {
+      super(`Cultura está associada com irrigação.`);
+      this.name = "CropAlreadyExistsError";
+    }
+  }
 
   export class CropNotExistsError extends Error {
     constructor() {

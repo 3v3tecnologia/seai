@@ -339,6 +339,18 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     return raw.rows.map((row: any) => row.Cultura);
   }
 
+  async checkIfThereIsIrrigation(id: number): Promise<boolean> {
+    const result = await governmentDb
+      .withSchema("management")
+      .count("*")
+      .from("Irrigation_Crops")
+      .where("crop_id", id);
+
+    const count = Number(result[0].count);
+
+    return count > 0;
+  }
+
   async checkIfCropNameAlreadyExists(
     name: string
   ): Promise<ManagementCropParams | null> {

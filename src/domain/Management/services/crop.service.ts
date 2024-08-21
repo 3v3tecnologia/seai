@@ -52,11 +52,19 @@ export class ManagementCropsServices implements IManagementCropsServices {
   async deleteCrop(
     id: number,
     operation: UserCommandOperationProps
-  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, boolean>> {
+  ): Promise<Either<Error, boolean>> {
     const notFound = (await this.cropRepository.idExists(id)) === false;
 
     if (notFound) {
       return left(new ManagementCropErrors.CropNotExistsError());
+    }
+
+    const withIrrigation = await this.cropRepository.checkIfThereIsIrrigation(
+      id
+    );
+
+    if (withIrrigation) {
+      return left(new ManagementCropErrors.AssociatedWithIrrigation());
     }
 
     await this.cropRepository.delete(id, operation);

@@ -53,6 +53,7 @@ export interface IManagementCropsRepository {
     name: string
   ): Promise<ManagementCropParams | null>;
 
+  checkIfThereIsIrrigation(id: number): Promise<boolean>;
   // findAllCrops(): Promise<Array<{
   //   Id: number;
   //   Name: string;
