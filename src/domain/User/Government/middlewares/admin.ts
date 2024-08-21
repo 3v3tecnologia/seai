@@ -8,41 +8,11 @@ import {
 } from "../../../../shared/utils/http-responses";
 import { UserRepositoryProtocol } from "../infra/database/repository/protocol/user-repository";
 
-function hasAnyKey(obj: any, matcher: any): boolean {
-  const ob1 = Object.entries(obj);
-  const ob2 = Object.entries(matcher);
-
-  for (const [key, value] of ob2) {
-    const result = ob1.some((item) => {
-      const [k, v] = item;
-
-      return k === key && value === v;
-    });
-
-    if (result === true) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export class AdminMiddleware implements Middleware {
   private readonly accountRepository: UserRepositoryProtocol;
-  private readonly module: string;
-  private readonly access: {
-    [key: string]: boolean;
-  };
 
-  constructor(
-    accountRepository: UserRepositoryProtocol,
-    module: string,
-    access: {
-      [key: string]: boolean;
-    }
-  ) {
+  constructor(accountRepository: UserRepositoryProtocol) {
     this.accountRepository = accountRepository;
-    this.module = module;
-    this.access = access;
   }
 
   async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
@@ -53,18 +23,12 @@ export class AdminMiddleware implements Middleware {
         return forbidden(new Error("Identificador do usuário inválido"));
       }
 
-      const module = await this.accountRepository.getUserModulesByName(
-        accountId,
-        this.module
-      );
+      const userAccount = await this.accountRepository.getById(accountId);
 
-      if (module) {
-        if (hasAnyKey(module, this.access)) {
-          return ok({ accountId });
-        }
-      }
+      if (userAccount == null || userAccount.type != "admin")
+        return unauthorized();
 
-      return unauthorized();
+      return ok({ accountId });
     } catch (error) {
       return serverError(new Error("Error ao verificar autorização."));
     }

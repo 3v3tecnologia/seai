@@ -1,5 +1,5 @@
 import { UserRepository } from "../../../../domain/User/Government/infra/database/repository/user-repository";
-import { AdminMiddleware } from "../../../../domain/User/Government/middlewares/admin";
+import { ModuleAccessPermissionMiddleware } from "../../../../domain/User/Government/middlewares/module-access";
 import { Middleware } from "../../../../shared/middlewares/middleware";
 
 export const makeUserPermissionMiddleware = (
@@ -9,5 +9,9 @@ export const makeUserPermissionMiddleware = (
   }
 ): Middleware => {
   const accountRepository = new UserRepository();
-  return new AdminMiddleware(accountRepository, module, access);
+  return new ModuleAccessPermissionMiddleware(
+    accountRepository,
+    module,
+    access
+  );
 };

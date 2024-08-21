@@ -1,6 +1,6 @@
 import { Modules } from "../../../domain/User/Government/model/user-modules-access";
 import { adaptMiddleware } from "../adapters/express-middleware-adapter";
-import { makeUserPermissionMiddleware } from "../factories/middlewares/admin-middleware-factory";
+import { makeUserPermissionMiddleware } from "../factories/middlewares/module-access-middleware-factory";
 
 export const newsletterPermissions = {
   read: adaptMiddleware(
