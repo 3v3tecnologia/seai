@@ -28,6 +28,7 @@ import {
 import { User, UserType, UserTypes } from "../model/user";
 import {
   SystemModules,
+  SystemModulesPermissions,
   SystemModulesProps,
 } from "../model/user-modules-access";
 import { IUserService } from "./user.service.procotol";
@@ -611,7 +612,28 @@ export class GovernmentUserService implements IUserService {
       > | null
     >
   > {
-    const access = await this.accountRepository.getUserById(userId);
-    return right(access);
+    const user = await this.accountRepository.getUserById(userId);
+
+    const modules = user?.modules;
+
+    if (modules) {
+      const logsPermissions: SystemModulesPermissions = {
+        write: false,
+        read: false,
+      };
+
+      if (user.type === "admin") {
+        Object.assign(logsPermissions, {
+          write: true,
+          read: true,
+        });
+      }
+
+      Object.assign(modules, {
+        logs: logsPermissions,
+      });
+    }
+
+    return right(user);
   }
 }
