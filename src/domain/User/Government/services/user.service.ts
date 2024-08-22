@@ -614,26 +614,6 @@ export class GovernmentUserService implements IUserService {
   > {
     const user = await this.accountRepository.getUserById(userId);
 
-    const modules = user?.modules;
-
-    if (modules) {
-      const logsPermissions: SystemModulesPermissions = {
-        write: false,
-        read: false,
-      };
-
-      if (user.type === "admin") {
-        Object.assign(logsPermissions, {
-          write: true,
-          read: true,
-        });
-      }
-
-      Object.assign(modules, {
-        logs: logsPermissions,
-      });
-    }
-
     return right(user);
   }
 }

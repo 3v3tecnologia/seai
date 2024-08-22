@@ -12,7 +12,10 @@ import {
 import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
 import { UserStatus } from "../../../../lib/model/status";
 import { UserType, UserTypes } from "../../../model/user";
-import { SystemModulesProps } from "../../../model/user-modules-access";
+import {
+  SystemModulesPermissions,
+  SystemModulesProps,
+} from "../../../model/user-modules-access";
 
 import {
   UserAccountProps,
@@ -211,6 +214,23 @@ export class UserRepository implements UserRepositoryProtocol {
     const modules = await this.getUserModules(id_user);
 
     if (modules) {
+      const logsPermissions: SystemModulesPermissions = {
+        write: false,
+        read: false,
+      };
+
+      // TO-DO: add logs permissions control to Database
+      if (user.type === "admin") {
+        Object.assign(logsPermissions, {
+          write: true,
+          read: true,
+        });
+      }
+
+      Object.assign(modules, {
+        logs: logsPermissions,
+      });
+
       Object.assign(user, {
         modules,
       });
