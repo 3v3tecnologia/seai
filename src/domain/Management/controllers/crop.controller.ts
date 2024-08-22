@@ -28,15 +28,16 @@ export class ManagementCropControllers {
   async createCrop(
     params: {
       Name: string;
-      IsPermanent?: boolean;
-      CycleRestartPoint?: number;
+      IsPermanent: boolean;
+      CycleRestartPoint: number;
     } & LoginUserAccount
   ): Promise<HttpResponse> {
     try {
       const { IsPermanent, CycleRestartPoint, Name, accountId } = params;
 
       const { error } = await createCropValidator.validate({
-        // LocationName,
+        IsPermanent,
+        CycleRestartPoint,
         Name,
         accountId,
       });
@@ -48,7 +49,8 @@ export class ManagementCropControllers {
       const createdOrError = await this.managementCropServices.createCrop(
         {
           Name,
-          // LocationName,
+          CycleRestartPoint,
+          IsPermanent,
         },
         params.accountId
       );
@@ -164,14 +166,17 @@ export class ManagementCropControllers {
     params: {
       id: number;
       Name: string;
-      LocationName: string | null;
+      IsPermanent: boolean;
+      CycleRestartPoint: number | null;
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {
     try {
-      const { LocationName, Name, id, Operation, accountId } = params;
+      const { CycleRestartPoint, IsPermanent, Name, id, Operation, accountId } =
+        params;
 
       const { error } = await updateCropValidator.validate({
-        LocationName,
+        CycleRestartPoint,
+        IsPermanent,
         Name,
         id,
         Operation,
@@ -186,7 +191,8 @@ export class ManagementCropControllers {
         {
           Id: Number(id),
           Name: Name,
-          LocationName: LocationName,
+          CycleRestartPoint,
+          IsPermanent,
         },
         {
           author: accountId,

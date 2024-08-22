@@ -27,7 +27,8 @@ export interface IManagementCropsRepository {
   findCropByName(name: string): Promise<Array<{
     Id: number;
     Name: string;
-    LocationName: string | null;
+    IsPermanent: boolean;
+    CycleRestartPoint: number | null;
   }> | null>;
 
   deleteCropCycles(
@@ -46,7 +47,8 @@ export interface IManagementCropsRepository {
   find(): Promise<Array<{
     Id: number;
     Name: string;
-    LocationName: string | null;
+    IsPermanent: boolean;
+    CycleRestartPoint: number | null;
   }> | null>;
 
   checkIfCropNameAlreadyExists(

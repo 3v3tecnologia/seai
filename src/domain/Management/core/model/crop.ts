@@ -1,25 +1,31 @@
 import { Either, right } from "../../../../shared/Either";
-import { dateDiffInDays, parseBrazilianDateTime } from "../../../../shared/utils/date";
+import {
+  dateDiffInDays,
+  parseBrazilianDateTime,
+} from "../../../../shared/utils/date";
 import { ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {
   Id?: number;
   Name: string;
-  LocationName: string | null;
+  IsPermanent: boolean;
+  CycleRestartPoint: number | null;
   Cycles?: Array<ManagementCropCycle>;
 };
 
 export class ManagementCrop {
   private _id: number | null;
   private readonly _name: string;
-  private readonly _locationName: string | null;
+  private readonly _isPermanent: boolean;
+  private readonly _cycleRestartPoint: number | null;
   private readonly _cycles: Array<ManagementCropCycle>;
 
   private constructor(props: ManagementCropParams) {
     this._id = props.Id || null;
     this._name = props.Name;
     this._cycles = props.Cycles || [];
-    this._locationName = props.LocationName;
+    this._cycleRestartPoint = props.CycleRestartPoint;
+    this._isPermanent = props.IsPermanent;
 
     Object.freeze(this);
   }
@@ -36,8 +42,12 @@ export class ManagementCrop {
     return this._name;
   }
 
-  get Location() {
-    return this._locationName;
+  get CycleRestartPoint() {
+    return this._cycleRestartPoint;
+  }
+
+  get IsPermanent() {
+    return this._isPermanent;
   }
 
   get Cycles() {

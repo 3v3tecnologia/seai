@@ -17,7 +17,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .withSchema("management")
       .insert({
         Name: culture.Name,
-        Location_Name: culture?.Location || null,
+        Cycle_Restart_Stage: culture.CycleRestartPoint,
+        Is_Permanent: culture.IsPermanent,
         CreatedAt: governmentDb.fn.now(),
       })
       .returning("Id")
@@ -44,7 +45,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .withSchema("management")
       .update({
         Name: culture.Name,
-        Location_Name: culture.Location,
+        Cycle_Restart_Stage: culture.CycleRestartPoint,
+        Is_Permanent: culture.IsPermanent,
         UpdatedAt: governmentDb.fn.now(),
       })
       .where({
@@ -233,7 +235,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
   async find(): Promise<Array<{
     Id: number;
     Name: string;
-    LocationName: string | null;
+    IsPermanent: boolean;
+    CycleRestartPoint: number | null;
   }> | null> {
     const data = await governmentDb
       .withSchema("management")
@@ -245,12 +248,14 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     }
 
     return data.map((raw: any) => {
-      const { Id, Name, Location_Name, CreatedAt, UpdatedAt } = raw;
+      const { Id, Name, IsPermanent, CycleRestartPoint, CreatedAt, UpdatedAt } =
+        raw;
 
       return {
         Id: Id as number,
         Name: Name as string,
-        LocationName: Location_Name as string,
+        IsPermanent,
+        CycleRestartPoint,
       };
     });
   }
@@ -258,7 +263,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
   async findCropByName(name: string): Promise<Array<{
     Id: number;
     Name: string;
-    LocationName: string | null;
+    IsPermanent: boolean;
+    CycleRestartPoint: number | null;
   }> | null> {
     const data = await governmentDb.raw(`
       SELECT
@@ -288,11 +294,12 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
     if (dbCrops.length) {
       return dbCrops.map((row: any) => {
-        const { Id, Name, Location_Name } = row;
+        const { Id, Name, IsPermanent, CycleRestartPoint } = row;
         return {
           Id: Number(Id),
           Name: Name as string,
-          LocationName: Location_Name as string,
+          IsPermanent,
+          CycleRestartPoint,
         };
       });
     }
@@ -362,12 +369,13 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .first();
 
     if (dbCrops) {
-      const { Id, Name, Location_Name } = dbCrops;
+      const { Id, Name, IsPermanent, CycleRestartPoint } = dbCrops;
 
       return {
         Id: Number(Id),
         Name: Name as string,
-        LocationName: Location_Name as string,
+        IsPermanent,
+        CycleRestartPoint,
       };
     }
 

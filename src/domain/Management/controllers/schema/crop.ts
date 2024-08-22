@@ -9,7 +9,8 @@ import { SchemaValidator } from "../../../../shared/infra/validator/validator";
 const createCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().trim().required(),
-    LocationName: Joi.string().allow(null),
+    IsPermanent: Joi.boolean().required(),
+    CycleRestartPoint: Joi.number().allow(null).required(),
     CreatedAt: Joi.string().isoDate().optional(),
     UpdatedAt: Joi.string().isoDate().optional(),
   }).append(userAccountSchema)
@@ -18,7 +19,8 @@ const createCropValidator = new SchemaValidator(
 const updateCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().required(),
-    LocationName: Joi.string().allow(null),
+    IsPermanent: Joi.boolean().required(),
+    CycleRestartPoint: Joi.number().allow(null).required(),
   })
     .append(UserOperationDescriptionSchema)
     .append(idSchema)

@@ -15,8 +15,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
   async createCrop(
     data: {
       Name: string;
-      IsPermanent?: boolean;
-      CycleRestartPoint?: number;
+      IsPermanent: boolean;
+      CycleRestartPoint: number | null;
       CreatedAt?: string;
       UpdatedAt?: string;
     },
@@ -31,7 +31,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
     }
 
     const cropOrError = ManagementCrop.create({
-      LocationName,
+      CycleRestartPoint,
+      IsPermanent,
       Name,
     });
 
@@ -79,7 +80,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
       Array<{
         Id: number;
         Name: string;
-        LocationName: string | null;
+        IsPermanent: boolean;
+        CycleRestartPoint: number | null;
       }> | null
     >
   > {
@@ -108,7 +110,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
     data: {
       Id: number;
       Name: string;
-      LocationName: string | null;
+      IsPermanent: boolean;
+      CycleRestartPoint: number | null;
     },
     operation: UserCommandOperationProps
   ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>> {
@@ -128,7 +131,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
 
     const cultureOrError = ManagementCrop.create({
       Id: data.Id,
-      LocationName: data.LocationName,
+      IsPermanent: data.IsPermanent,
+      CycleRestartPoint: data.CycleRestartPoint,
       Name: data.Name,
     });
 

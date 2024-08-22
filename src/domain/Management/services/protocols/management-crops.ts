@@ -7,7 +7,8 @@ export interface IManagementCropsServices {
   createCrop(
     data: {
       Name: string;
-      LocationName: string | null;
+      IsPermanent: boolean;
+      CycleRestartPoint: number | null;
       CreatedAt?: string;
       UpdatedAt?: string;
     },
@@ -33,7 +34,8 @@ export interface IManagementCropsServices {
       Array<{
         Id: number;
         Name: string;
-        LocationName: string | null;
+        IsPermanent: boolean;
+        CycleRestartPoint: number | null;
       }> | null
     >
   >;
@@ -41,7 +43,8 @@ export interface IManagementCropsServices {
     data: {
       Id: number;
       Name: string;
-      LocationName: string | null;
+      IsPermanent: boolean;
+      CycleRestartPoint: number | null;
     },
     operation: UserCommandOperationProps
   ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>;
