@@ -15,13 +15,14 @@ export class ManagementCropsServices implements IManagementCropsServices {
   async createCrop(
     data: {
       Name: string;
-      LocationName: string | null;
+      IsPermanent?: boolean;
+      CycleRestartPoint?: number;
       CreatedAt?: string;
       UpdatedAt?: string;
     },
     author: number
   ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>> {
-    const { LocationName, Name } = data;
+    const { CycleRestartPoint, IsPermanent, Name } = data;
 
     const alreadyExists = await this.cropRepository.nameExists(Name);
 
