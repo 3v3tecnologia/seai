@@ -29,7 +29,7 @@ export class ManagementCropControllers {
     params: {
       Name: string;
       IsPermanent: boolean;
-      CycleRestartPoint: number;
+      CycleRestartPoint: string;
     } & LoginUserAccount
   ): Promise<HttpResponse> {
     try {
@@ -167,7 +167,7 @@ export class ManagementCropControllers {
       id: number;
       Name: string;
       IsPermanent: boolean;
-      CycleRestartPoint: number | null;
+      CycleRestartPoint: string;
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {
     try {

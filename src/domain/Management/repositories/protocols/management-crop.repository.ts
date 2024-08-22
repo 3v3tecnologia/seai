@@ -18,9 +18,12 @@ export interface IManagementCropsRepository {
 
   findByBasin(id: number): Promise<Array<string> | null>;
 
-  findCropById(
-    id: number
-  ): Promise<{ Id: number; Name: string; LocationName: string | null } | null>;
+  findCropById(id: number): Promise<{
+    Id: number;
+    Name: string;
+    IsPermanent: boolean;
+    CycleRestartPoint: string;
+  } | null>;
 
   findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle> | null>;
 
@@ -28,7 +31,7 @@ export interface IManagementCropsRepository {
     Id: number;
     Name: string;
     IsPermanent: boolean;
-    CycleRestartPoint: number | null;
+    CycleRestartPoint: string;
   }> | null>;
 
   deleteCropCycles(
@@ -48,7 +51,7 @@ export interface IManagementCropsRepository {
     Id: number;
     Name: string;
     IsPermanent: boolean;
-    CycleRestartPoint: number | null;
+    CycleRestartPoint: string;
   }> | null>;
 
   checkIfCropNameAlreadyExists(

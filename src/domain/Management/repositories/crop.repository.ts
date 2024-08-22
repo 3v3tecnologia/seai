@@ -193,9 +193,12 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     return !!result;
   }
 
-  async findCropById(
-    id: number
-  ): Promise<{ Id: number; Name: string; LocationName: string | null } | null> {
+  async findCropById(id: number): Promise<{
+    Id: number;
+    Name: string;
+    IsPermanent: boolean;
+    CycleRestartPoint: string;
+  } | null> {
     const result = await governmentDb.raw(
       `
       SELECT * FROM management."Crop" c
@@ -228,7 +231,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     return {
       Id: rawCrop.Id,
       Name: rawCrop.Name,
-      LocationName: rawCrop.Location_Name,
+      IsPermanent: rawCrop.Is_Permanent,
+      CycleRestartPoint: rawCrop.Cycle_Restart_Stage,
     };
   }
 
@@ -236,11 +240,18 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     Id: number;
     Name: string;
     IsPermanent: boolean;
-    CycleRestartPoint: number | null;
+    CycleRestartPoint: string;
   }> | null> {
     const data = await governmentDb
       .withSchema("management")
-      .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
+      .select(
+        "Id",
+        "Name",
+        "Cycle_Restart_Stage",
+        "Is_Permanent",
+        "CreatedAt",
+        "UpdatedAt"
+      )
       .from("Crop");
 
     if (data.length === 0) {
@@ -248,14 +259,20 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     }
 
     return data.map((raw: any) => {
-      const { Id, Name, IsPermanent, CycleRestartPoint, CreatedAt, UpdatedAt } =
-        raw;
+      const {
+        Id,
+        Name,
+        Is_Permanent,
+        Cycle_Restart_Stage,
+        CreatedAt,
+        UpdatedAt,
+      } = raw;
 
       return {
         Id: Id as number,
         Name: Name as string,
-        IsPermanent,
-        CycleRestartPoint,
+        IsPermanent: Is_Permanent,
+        CycleRestartPoint: Cycle_Restart_Stage,
       };
     });
   }
@@ -264,13 +281,14 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     Id: number;
     Name: string;
     IsPermanent: boolean;
-    CycleRestartPoint: number | null;
+    CycleRestartPoint: string;
   }> | null> {
     const data = await governmentDb.raw(`
       SELECT
           "Id",
           "Name",
-          "Location_Name",
+          "Cycle_Restart_Stage",
+          "Is_Permanent",
           "CreatedAt",
           "UpdatedAt"
       FROM
@@ -294,12 +312,12 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
     if (dbCrops.length) {
       return dbCrops.map((row: any) => {
-        const { Id, Name, IsPermanent, CycleRestartPoint } = row;
+        const { Id, Name, Is_Permanent, Cycle_Restart_Stage } = row;
         return {
           Id: Number(Id),
           Name: Name as string,
-          IsPermanent,
-          CycleRestartPoint,
+          IsPermanent: Is_Permanent,
+          CycleRestartPoint: Cycle_Restart_Stage,
         };
       });
     }
@@ -363,19 +381,26 @@ export class ManagementCropRepository implements IManagementCropsRepository {
   ): Promise<ManagementCropParams | null> {
     const dbCrops = await governmentDb
       .withSchema("management")
-      .select("Id", "Name", "Location_Name", "CreatedAt", "UpdatedAt")
+      .select(
+        "Id",
+        "Name",
+        "Cycle_Restart_Stage",
+        "Is_Permanent",
+        "CreatedAt",
+        "UpdatedAt"
+      )
       .where({ Name: name })
       .from("Crop")
       .first();
 
     if (dbCrops) {
-      const { Id, Name, IsPermanent, CycleRestartPoint } = dbCrops;
+      const { Id, Name, Is_Permanent, Cycle_Restart_Stage } = dbCrops;
 
       return {
         Id: Number(Id),
         Name: Name as string,
-        IsPermanent,
-        CycleRestartPoint,
+        IsPermanent: Is_Permanent,
+        CycleRestartPoint: Cycle_Restart_Stage,
       };
     }
 

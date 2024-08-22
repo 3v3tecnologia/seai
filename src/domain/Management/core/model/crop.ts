@@ -9,7 +9,7 @@ export type ManagementCropParams = {
   Id?: number;
   Name: string;
   IsPermanent: boolean;
-  CycleRestartPoint: number | null;
+  CycleRestartPoint: string;
   Cycles?: Array<ManagementCropCycle>;
 };
 
@@ -17,7 +17,7 @@ export class ManagementCrop {
   private _id: number | null;
   private readonly _name: string;
   private readonly _isPermanent: boolean;
-  private readonly _cycleRestartPoint: number | null;
+  private readonly _cycleRestartPoint: string;
   private readonly _cycles: Array<ManagementCropCycle>;
 
   private constructor(props: ManagementCropParams) {

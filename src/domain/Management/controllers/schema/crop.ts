@@ -10,7 +10,7 @@ const createCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().trim().required(),
     IsPermanent: Joi.boolean().required(),
-    CycleRestartPoint: Joi.number().allow(null).required(),
+    CycleRestartPoint: Joi.string().trim().optional(),
     CreatedAt: Joi.string().isoDate().optional(),
     UpdatedAt: Joi.string().isoDate().optional(),
   }).append(userAccountSchema)

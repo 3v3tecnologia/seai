@@ -16,7 +16,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
     data: {
       Name: string;
       IsPermanent: boolean;
-      CycleRestartPoint: number | null;
+      CycleRestartPoint: string;
       CreatedAt?: string;
       UpdatedAt?: string;
     },
@@ -81,7 +81,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
         Id: number;
         Name: string;
         IsPermanent: boolean;
-        CycleRestartPoint: number | null;
+        CycleRestartPoint: string;
       }> | null
     >
   > {
@@ -99,7 +99,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
       {
         Id: number;
         Name: string;
-        LocationName: string | null;
+        IsPermanent: boolean;
+        CycleRestartPoint: string;
       } | null
     >
   > {
@@ -111,7 +112,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
       Id: number;
       Name: string;
       IsPermanent: boolean;
-      CycleRestartPoint: number | null;
+      CycleRestartPoint: string;
     },
     operation: UserCommandOperationProps
   ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>> {

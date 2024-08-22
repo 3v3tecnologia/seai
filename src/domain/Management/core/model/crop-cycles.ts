@@ -55,7 +55,8 @@ export function checkCropCycleSequence(
 
 export function findKc(
   cropDate: number,
-  cropCycles: Array<ManagementCropCycle>
+  cropCycles: Array<ManagementCropCycle>,
+  cycleRestartPoint: string
 ): Either<Error, ManagementCropCycle> {
   const startCropCycle = cropCycles[0];
 
@@ -70,6 +71,16 @@ export function findKc(
   const endCropCycle = cropCycles[cropCycles.length - 1];
 
   if (cropDate > endCropCycle.End) {
+    // Se for cultura perene então deverá buscar os dados de KC
+    // a partir do ponto de início do ciclo de desenvolvimento especificado.
+    if (cycleRestartPoint) {
+      const data = cropCycles.find(
+        (cycle) => cycle.Title === cycleRestartPoint
+      );
+
+      if (data) return right(data);
+    }
+
     return left(
       new ManagementCropErrors.PlantingDateIsAfterThanCropCycleEndDate()
     );
