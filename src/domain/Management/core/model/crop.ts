@@ -1,8 +1,9 @@
-import { Either, right } from "../../../../shared/Either";
+import { Either, left, right } from "../../../../shared/Either";
 import {
   dateDiffInDays,
   parseBrazilianDateTime,
 } from "../../../../shared/utils/date";
+import { ManagementCropErrors } from "../errors/crop-errors";
 import { ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {
@@ -52,6 +53,48 @@ export class ManagementCrop {
 
   get Cycles() {
     return this._cycles;
+  }
+
+  findKc(
+    cropDate: number,
+  ): Either<Error, ManagementCropCycle> {
+    const startCropCycle = this.Cycles[0];
+
+    if (cropDate < startCropCycle.Start) {
+      return left(
+        new ManagementCropErrors.PlantingDateIsBeforeThanCropCycleStartDate(
+          startCropCycle.Start - cropDate
+        )
+      );
+    }
+
+    const endCropCycle = this.Cycles[this.Cycles.length - 1];
+
+    if (cropDate > endCropCycle.End) {
+      // Se for cultura perene então deverá buscar os dados de KC
+      // a partir do ponto de início do ciclo de desenvolvimento especificado.
+      if (this.CycleRestartPoint) {
+        const data = this.Cycles.find(
+          (cycle) => cycle.Title === this.CycleRestartPoint
+        );
+
+        if (data) return right(data);
+      }
+
+      return left(
+        new ManagementCropErrors.PlantingDateIsAfterThanCropCycleEndDate()
+      );
+    }
+
+    const data = this.Cycles.find(
+      (cycle) => cropDate >= cycle.Start && cropDate <= cycle.End
+    );
+
+    if (data) {
+      return right(data);
+    }
+
+    return left(new ManagementCropErrors.KcNotFound());
   }
 
   static create(props: ManagementCropParams): Either<Error, ManagementCrop> {

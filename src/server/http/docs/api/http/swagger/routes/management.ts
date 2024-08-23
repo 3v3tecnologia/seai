@@ -21,7 +21,8 @@ export const MANAGEMENT = {
               type: "object",
               example: {
                 Name: "FEIJÃO5",
-                LocationName: null,
+                CycleRestartPoint: "fase2",
+                IsPermanent: true,
               },
             },
           },
@@ -220,7 +221,8 @@ export const MANAGEMENT = {
               type: "object",
               example: {
                 Name: "LIMÃO",
-                LocationName: "ESTADOS",
+                IsPermanent: false,
+                CycleRestartPoint: "fase2",
                 ...UserOperationExample,
               },
             },

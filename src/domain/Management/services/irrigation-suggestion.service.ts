@@ -6,7 +6,7 @@ import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { BladeSuggestion } from "../core/model/blade-suggestion";
-import { getCropDate } from "../core/model/crop";
+import { getCropDate, ManagementCrop } from "../core/model/crop";
 import { findKc, ManagementCropCycle } from "../core/model/crop-cycles";
 import {
   IrrigationSystemEntity,
@@ -24,13 +24,12 @@ import { IIrrigationRepository } from "../repositories/protocols/irrigation.repo
 import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
 
 export class IrrigationCropsSuggestion
-  implements IIrrigationSuggestionServices
-{
+  implements IIrrigationSuggestionServices {
   constructor(
     private equipmentsMeasurementsRepository: IEquipmentsMeasurementsRepository,
     private cropsRepository: IManagementCropsRepository,
     private irrigationRepository: IIrrigationRepository
-  ) {}
+  ) { }
 
   async calculate(
     command: ICalcIrrigationRecommendationDTO

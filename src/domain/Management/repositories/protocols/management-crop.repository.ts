@@ -4,7 +4,7 @@ import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
 export interface IManagementCropsRepository {
   create(culture: ManagementCrop, author: number): Promise<number | null>;
-
+  checkIfStageExists(stage: string): Promise<boolean>
   update(
     culture: ManagementCrop,
     operation: UserCommandOperationProps
@@ -41,7 +41,7 @@ export interface IManagementCropsRepository {
 
   createCropCycles(
     data: {
-      idCrop: number;
+      id: number;
       cycles: Array<ManagementCropCycle>;
     },
     author: number

@@ -2,22 +2,12 @@ import { Either } from "../../../../shared/Either";
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { ManagementCropErrors } from "../../core/errors/crop-errors";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
+import { InsertCropCommand, DeleteCropInput, UpdateCropInput, InsertCropCycles, DeleteCropCycles } from "../dto/crop";
 
 export interface IManagementCropsServices {
-  createCrop(
-    data: {
-      Name: string;
-      IsPermanent: boolean;
-      CycleRestartPoint: string;
-      CreatedAt?: string;
-      UpdatedAt?: string;
-    },
-    author: number
-  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>;
-  deleteCrop(
-    id: number,
-    operation: UserCommandOperationProps
-  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, boolean>>;
+  createCrop(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>;
+  deleteCrop(input: DeleteCropInput
+  ): Promise<Either<Error, boolean>>
   getCropById(id: number): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
@@ -40,31 +30,9 @@ export interface IManagementCropsServices {
       }> | null
     >
   >;
-  updateCrop(
-    data: {
-      Id: number;
-      Name: string;
-      IsPermanent: boolean;
-      CycleRestartPoint: string;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>;
-  insertCropCycles(
-    {
-      cycles,
-      idCrop,
-    }: {
-      idCrop: number;
-      cycles: Array<ManagementCropCycle>;
-    },
-    author: number
-  ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
-
-  deleteCropCyclesByCropId(
-    idCrop: number,
-    operation: UserCommandOperationProps
-  ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
-
+  updateCrop(input: UpdateCropInput): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>;
+  insertCropCycles(input: InsertCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
+  deleteCropCyclesByCropId(input: DeleteCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
   findCropCyclesByCropId(
     idCrop: number
   ): Promise<

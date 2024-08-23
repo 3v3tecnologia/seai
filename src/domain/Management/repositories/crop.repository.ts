@@ -1,18 +1,16 @@
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
 
-import { IManagementCropsRepository } from "./protocols/management-crop.repository";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import {
   censusDb,
   governmentDb,
   logsDb,
 } from "../../../shared/infra/database/postgres/connection/knexfile";
+import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { IManagementCropsRepository } from "./protocols/management-crop.repository";
 export class ManagementCropRepository implements IManagementCropsRepository {
-  async create(
-    culture: ManagementCrop,
-    author: number
-  ): Promise<number | null> {
+  async create(culture: ManagementCrop, author: number): Promise<number | null> {
+
     const insertedCrop = await governmentDb
       .withSchema("management")
       .insert({
@@ -86,7 +84,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
   async createCropCycles(
     data: {
-      idCrop: number;
+      id: number;
       cycles: Array<ManagementCropCycle>;
     },
     author: number
@@ -94,14 +92,14 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     await governmentDb.transaction(async (trx) => {
       await trx("Crop_Cycle")
         .withSchema("management")
-        .where({ FK_Crop: data.idCrop })
+        .where({ FK_Crop: data.id })
         .del();
 
       await trx.batchInsert(
         "management.Crop_Cycle",
         data.cycles.map((cycle) => {
           return {
-            FK_Crop: data.idCrop,
+            FK_Crop: data.id,
             Stage_Title: cycle.Title,
             Start: cycle.Start,
             End: cycle.End,
@@ -193,12 +191,9 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     return !!result;
   }
 
-  async findCropById(id: number): Promise<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  } | null> {
+
+
+  async findCropById(id: number): Promise<Required<Omit<ManagementCropParams, 'Cycles'>> | null> {
     const result = await governmentDb.raw(
       `
       SELECT * FROM management."Crop" c
@@ -215,19 +210,6 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
     const rawCrop = data[0];
 
-    /*const cycles: Array<ManagementCropCycle> = data
-      .map((row: any) => {
-        return {
-          Title: row.Stage_Title,
-          DurationInDays: row.Duration_In_Days,
-          KC: row.KC,
-          Start: row.Start,
-          End: row.End,
-          Increment: row.Increment,
-        };
-      })
-      .filter((row: ManagementCropCycle) => row.Title !== null);*/
-
     return {
       Id: rawCrop.Id,
       Name: rawCrop.Name,
@@ -236,12 +218,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     };
   }
 
-  async find(): Promise<Array<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  }> | null> {
+  async find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null> {
     const data = await governmentDb
       .withSchema("management")
       .select(
@@ -263,9 +240,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         Id,
         Name,
         Is_Permanent,
-        Cycle_Restart_Stage,
-        CreatedAt,
-        UpdatedAt,
+        Cycle_Restart_Stage
       } = raw;
 
       return {
@@ -277,12 +252,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     });
   }
 
-  async findCropByName(name: string): Promise<Array<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  }> | null> {
+  async findCropByName(name: string): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null> {
     const data = await governmentDb.raw(`
       SELECT
           "Id",
@@ -362,6 +332,17 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     }
 
     return raw.rows.map((row: any) => row.Cultura);
+  }
+
+  async checkIfStageExists(stage: string): Promise<boolean> {
+    const result = await governmentDb
+      .withSchema("management")
+      .from("Crop_Cycle")
+      .where("Stage_Title", stage)
+      .first()
+
+
+    return result ? true : false
   }
 
   async checkIfThereIsIrrigation(id: number): Promise<boolean> {

@@ -23,7 +23,7 @@ import {
 } from "./schema/crop";
 
 export class ManagementCropControllers {
-  constructor(private managementCropServices: IManagementCropsServices) {}
+  constructor(private managementCropServices: IManagementCropsServices) { }
 
   async createCrop(
     params: {
@@ -48,11 +48,16 @@ export class ManagementCropControllers {
 
       const createdOrError = await this.managementCropServices.createCrop(
         {
-          Name,
-          CycleRestartPoint,
-          IsPermanent,
-        },
-        params.accountId
+          data: {
+            Name,
+            CycleRestartPoint,
+            IsPermanent,
+          },
+          audit: {
+            author: accountId,
+            operation: ''
+          }
+        }
       );
 
       if (createdOrError.isLeft()) {
@@ -86,9 +91,14 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const deletedOrError = await this.managementCropServices.deleteCrop(id, {
-        author: accountId,
-        operation: Operation,
+      const deletedOrError = await this.managementCropServices.deleteCrop({
+        data: {
+          id
+        },
+        audit: {
+          author: accountId,
+          operation: Operation,
+        }
       });
 
       if (deletedOrError.isLeft()) {
@@ -189,14 +199,16 @@ export class ManagementCropControllers {
 
       const updatedOrError = await this.managementCropServices.updateCrop(
         {
-          Id: Number(id),
-          Name: Name,
-          CycleRestartPoint,
-          IsPermanent,
-        },
-        {
-          author: accountId,
-          operation: Operation,
+          data: {
+            Id: Number(id),
+            Name: Name,
+            CycleRestartPoint,
+            IsPermanent,
+          },
+          audit: {
+            author: accountId,
+            operation: Operation
+          }
         }
       );
 
@@ -239,10 +251,15 @@ export class ManagementCropControllers {
 
       const createdOrError = await this.managementCropServices.insertCropCycles(
         {
-          idCrop: id,
-          cycles: data,
-        },
-        params.accountId
+          data: {
+            id,
+            cycles: data,
+          },
+          audit: {
+            author: accountId,
+            operation: ''
+          }
+        }
       );
 
       if (createdOrError.isLeft()) {

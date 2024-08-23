@@ -1,80 +1,21 @@
-// export namespace ManagementCropDTO {
-//   export namespace CreateCropCycles {
-//     export type Input = {
-//       Id: number;
-//       AccountId: number;
-//       Cycles: Array<{
-//         Title: string;
-//         DurationInDays: number;
-//         Start: number;
-//         End: number;
-//         KC: number;
-//         Increment: number;
-//       }>;
-//     };
+import { AuditableInput } from "../../../../shared/utils/command";
+import { ManagementCropParams } from "../../core/model/crop";
+import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
-//     export type Output = string;
-//   }
 
-//   export namespace DeleteCropCycles {
-//     export type Input = {
-//       id: number;
-//     } & CommandProps;
-//     export type Output = boolean;
-//   }
+export type InsertCropCommand = AuditableInput<Omit<ManagementCropParams, "Id" | "Cycles">>
 
-//   export namespace GetCropCycles {
-//     export type Input = number;
-//     export type Output = Array<ManagementCropCycle> | null;
-//   }
+export type DeleteCropInput = AuditableInput<{
+    id: number
+}>
 
-//   export namespace CreateCrop {
-//     type CreateManagementCropInputDTO = {
-//       Name: string;
-//       LocationName: string | null;
-//       CreatedAt?: string;
-//       UpdatedAt?: string;
-//     };
+export type UpdateCropInput = AuditableInput<Required<Required<Omit<ManagementCropParams, "Cycles">>>>
 
-//     export type Input = CreateManagementCropInputDTO;
-//     export type Output = number;
-//   }
-//   export namespace DeleteCrop {
-//     export type Input = {
-//       id: number;
-//     } & CommandProps;
-//     export type Output = boolean;
-//   }
+export type InsertCropCycles = AuditableInput<{
+    id: number;
+    cycles: Array<ManagementCropCycle>;
+}>
 
-//   export namespace GetCrop {
-//     export type Input = number;
-//   export type Output = {
-//     Id: number;
-//     Name: string;
-//     LocationName: string | null;
-//   } | null;
-// }
-
-//   export namespace GetAllCrops {
-//     export type Input = {
-//       Name?: string;
-//     };
-
-//   export type Output = Array<{
-//     Id: number;
-//     Name: string;
-//     LocationName: string | null;
-//   }> | null;
-// }
-
-//   export namespace UpdateCrop {
-//     type UpdateManagementCropInputDTO = {
-//       Id: number;
-//       Name: string;
-//       LocationName: string | null;
-//     } & CommandProps;
-
-//     export type Input = UpdateManagementCropInputDTO;
-//     export type Output = void;
-//   }
-// }
+export type DeleteCropCycles = AuditableInput<{
+    id: number;
+}>
