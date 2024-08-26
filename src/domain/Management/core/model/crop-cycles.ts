@@ -53,6 +53,7 @@ export function checkCropCycleSequence(
   return right();
 }
 
+// TO-DO: remove the logic from here
 export function findKc(
   cropDate: number,
   cropCycles: Array<ManagementCropCycle>,

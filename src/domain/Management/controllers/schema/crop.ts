@@ -6,13 +6,32 @@ import {
 } from "../../../../shared/infra/validator/schemas";
 import { SchemaValidator } from "../../../../shared/infra/validator/validator";
 
+// const createCropValidator = new SchemaValidator(
+//   Joi.object({
+//     Name: Joi.string().trim().required(),
+//     IsPermanent: Joi.boolean().required(),
+//     CycleRestartPoint: Joi.string().trim().optional(),
+//     CreatedAt: Joi.string().isoDate().optional(),
+//     UpdatedAt: Joi.string().isoDate().optional(),
+//   }).append(userAccountSchema)
+// );
+
 const createCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().trim().required(),
     IsPermanent: Joi.boolean().required(),
     CycleRestartPoint: Joi.string().trim().optional(),
-    CreatedAt: Joi.string().isoDate().optional(),
-    UpdatedAt: Joi.string().isoDate().optional(),
+    Cycles: Joi.array()
+      .items(
+        Joi.object({
+          Title: Joi.string().trim().required(),
+          Start: Joi.number().integer().required(),
+          End: Joi.number().integer().required(),
+          KC: Joi.number().required(),
+          Increment: Joi.number().required(),
+        })
+      )
+      .required(),
   }).append(userAccountSchema)
 );
 
@@ -20,11 +39,32 @@ const updateCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().required(),
     IsPermanent: Joi.boolean().required(),
-    CycleRestartPoint: Joi.number().allow(null).required(),
+    CycleRestartPoint: Joi.string().trim().optional(),
+    Cycles: Joi.array()
+      .items(
+        Joi.object({
+          Title: Joi.string().trim().required(),
+          Start: Joi.number().integer().required(),
+          End: Joi.number().integer().required(),
+          KC: Joi.number().required(),
+          Increment: Joi.number().required(),
+        })
+      )
+      .required(),
   })
     .append(UserOperationDescriptionSchema)
     .append(idSchema)
 );
+
+// const updateCropValidator = new SchemaValidator(
+//   Joi.object({
+//     Name: Joi.string().required(),
+//     IsPermanent: Joi.boolean().required(),
+//     CycleRestartPoint: Joi.string().trim().optional(),
+//   })
+//     .append(UserOperationDescriptionSchema)
+//     .append(idSchema)
+// );
 
 const deleteCropValidator = new SchemaValidator(
   Joi.object(idSchema).append(UserOperationDescriptionSchema)

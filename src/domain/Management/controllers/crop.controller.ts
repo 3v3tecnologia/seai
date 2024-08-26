@@ -10,6 +10,7 @@ import {
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
 
 import { IManagementCropsServices } from "../services/protocols/management-crops";
 import {
@@ -19,26 +20,38 @@ import {
   getAllCropCropCyclesValidator,
   getAllCropsValidator,
   getCropByIdValidator,
-  updateCropValidator,
+  updateCropValidator
 } from "./schema/crop";
+
+type CreateCropRequest = {
+  Name: string;
+  IsPermanent: boolean;
+  CycleRestartPoint: string;
+  Cycles: Array<ManagementCropCycle>;
+} & LoginUserAccount
+
+type UpdateCropRequest = {
+  id: number;
+  Name: string;
+  IsPermanent: boolean;
+  CycleRestartPoint: string;
+  Cycles: Array<ManagementCropCycle>;
+} & UserOperationControllerDTO
 
 export class ManagementCropControllers {
   constructor(private managementCropServices: IManagementCropsServices) { }
 
-  async createCrop(
-    params: {
-      Name: string;
-      IsPermanent: boolean;
-      CycleRestartPoint: string;
-    } & LoginUserAccount
+  async create(
+    params: CreateCropRequest
   ): Promise<HttpResponse> {
     try {
-      const { IsPermanent, CycleRestartPoint, Name, accountId } = params;
+      const { IsPermanent, CycleRestartPoint, Name, Cycles, accountId } = params;
 
       const { error } = await createCropValidator.validate({
         IsPermanent,
         CycleRestartPoint,
         Name,
+        Cycles,
         accountId,
       });
 
@@ -46,12 +59,13 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const createdOrError = await this.managementCropServices.createCrop(
+      const createdOrError = await this.managementCropServices.create(
         {
           data: {
             Name,
             CycleRestartPoint,
             IsPermanent,
+            Cycles
           },
           audit: {
             author: accountId,
@@ -67,6 +81,53 @@ export class ManagementCropControllers {
       // await this.userLogs.log(request.accountId, this.useCase);
 
       return created(createdOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+
+  async update(
+    params: UpdateCropRequest
+  ): Promise<HttpResponse> {
+    try {
+      const { CycleRestartPoint, IsPermanent, Name, Cycles, Operation, accountId, id } =
+        params;
+
+      const { error } = await updateCropValidator.validate({
+        id,
+        accountId,
+        Operation,
+        CycleRestartPoint,
+        IsPermanent,
+        Name,
+        Cycles
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const updatedOrError = await this.managementCropServices.update(
+        {
+          data: {
+            Id: Number(id),
+            Name: Name,
+            CycleRestartPoint,
+            IsPermanent,
+            Cycles
+          },
+          audit: {
+            author: accountId,
+            operation: Operation
+          }
+        }
+      );
+
+      if (updatedOrError.isLeft()) {
+        return forbidden(updatedOrError.value);
+      }
+
+      return created("Sucesso ao atualizar cultura");
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
@@ -172,63 +233,11 @@ export class ManagementCropControllers {
     }
   }
 
-  async updateCrop(
-    params: {
-      id: number;
-      Name: string;
-      IsPermanent: boolean;
-      CycleRestartPoint: string;
-    } & UserOperationControllerDTO
-  ): Promise<HttpResponse> {
-    try {
-      const { CycleRestartPoint, IsPermanent, Name, id, Operation, accountId } =
-        params;
-
-      const { error } = await updateCropValidator.validate({
-        CycleRestartPoint,
-        IsPermanent,
-        Name,
-        id,
-        Operation,
-        accountId,
-      });
-
-      if (error) {
-        return badRequest(error);
-      }
-
-      const updatedOrError = await this.managementCropServices.updateCrop(
-        {
-          data: {
-            Id: Number(id),
-            Name: Name,
-            CycleRestartPoint,
-            IsPermanent,
-          },
-          audit: {
-            author: accountId,
-            operation: Operation
-          }
-        }
-      );
-
-      if (updatedOrError.isLeft()) {
-        return forbidden(updatedOrError.value);
-      }
-
-      return created("Sucesso ao atualizar cultura");
-    } catch (error) {
-      console.error(error);
-      return serverError(error as Error);
-    }
-  }
-
   async createCropCycles(
     params: {
       id: number;
       data: Array<{
         Title: string;
-        // DurationInDays: number;
         Start: number;
         End: number;
         KC: number;

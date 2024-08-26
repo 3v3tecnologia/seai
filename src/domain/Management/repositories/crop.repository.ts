@@ -9,47 +9,98 @@ import {
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { IManagementCropsRepository } from "./protocols/management-crop.repository";
 export class ManagementCropRepository implements IManagementCropsRepository {
-  async create(culture: ManagementCrop, author: number): Promise<number | null> {
+  async create(culture: ManagementCrop, author: number): Promise<number | undefined> {
+    let cropId: number | undefined
 
-    const insertedCrop = await governmentDb
-      .withSchema("management")
-      .insert({
-        Name: culture.Name,
-        Cycle_Restart_Stage: culture.CycleRestartPoint,
-        Is_Permanent: culture.IsPermanent,
-        CreatedAt: governmentDb.fn.now(),
-      })
-      .returning("Id")
-      .into("Crop");
+    await governmentDb.transaction(async (trx) => {
+      const createCropResult = await trx
+        .withSchema("management")
+        .insert({
+          Name: culture.Name,
+          Cycle_Restart_Stage: culture.CycleRestartPoint,
+          Is_Permanent: culture.IsPermanent,
+          CreatedAt: governmentDb.fn.now(),
+        })
+        .returning("Id")
+        .into("Crop");
 
-    await logsDb
-      .insert({
-        User_Id: author,
-        Resource: "crop",
-        Operation: "create",
-        Description: "Criação da cultura",
-      })
-      .withSchema("users")
-      .into("Operations");
 
-    return insertedCrop.length ? insertedCrop[0]?.Id : null;
+      cropId = createCropResult.length ? createCropResult[0]?.Id : undefined;
+
+      await trx("Crop_Cycle")
+        .withSchema("management")
+        .where({ FK_Crop: cropId })
+        .del();
+
+
+      await trx.batchInsert(
+        "management.Crop_Cycle",
+        culture.Cycles.map((cycle) => {
+          return {
+            FK_Crop: cropId,
+            Stage_Title: cycle.Title,
+            Start: cycle.Start,
+            End: cycle.End,
+            KC: cycle.KC,
+            Increment: cycle.Increment,
+          };
+        })
+      );
+    });
+
+    if (cropId) {
+      await logsDb
+        .insert({
+          User_Id: author,
+          Resource: "crop",
+          Operation: "create",
+          Description: "Criação da cultura",
+        })
+        .withSchema("users")
+        .into("Operations");
+    }
+
+    return cropId
+
   }
 
   async update(
     culture: ManagementCrop,
     operation: UserCommandOperationProps
   ): Promise<void> {
-    await governmentDb("Crop")
-      .withSchema("management")
-      .update({
-        Name: culture.Name,
-        Cycle_Restart_Stage: culture.CycleRestartPoint,
-        Is_Permanent: culture.IsPermanent,
-        UpdatedAt: governmentDb.fn.now(),
-      })
-      .where({
-        Id: culture.Id,
-      });
+    await governmentDb.transaction(async (trx) => {
+      await trx("Crop")
+        .withSchema("management")
+        .update({
+          Name: culture.Name,
+          Cycle_Restart_Stage: culture.CycleRestartPoint,
+          Is_Permanent: culture.IsPermanent,
+          UpdatedAt: trx.fn.now(),
+        })
+        .where({
+          Id: culture.Id,
+        });
+
+      await trx("Crop_Cycle")
+        .withSchema("management")
+        .where({ FK_Crop: culture.Id })
+        .del();
+
+
+      await trx.batchInsert(
+        "management.Crop_Cycle",
+        culture.Cycles.map((cycle) => {
+          return {
+            FK_Crop: culture.Id,
+            Stage_Title: cycle.Title,
+            Start: cycle.Start,
+            End: cycle.End,
+            KC: cycle.KC,
+            Increment: cycle.Increment,
+          };
+        })
+      );
+    })
 
     await logsDb
       .insert({
@@ -191,9 +242,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     return !!result;
   }
 
-
-
-  async findCropById(id: number): Promise<Required<Omit<ManagementCropParams, 'Cycles'>> | null> {
+  async findCropById(id: number): Promise<ManagementCrop | null> {
     const result = await governmentDb.raw(
       `
       SELECT * FROM management."Crop" c
@@ -210,12 +259,19 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
     const rawCrop = data[0];
 
-    return {
+    const cycles = await this.findCropsCycles(id)
+
+    const cropOrError = ManagementCrop.create({
       Id: rawCrop.Id,
       Name: rawCrop.Name,
       IsPermanent: rawCrop.Is_Permanent,
       CycleRestartPoint: rawCrop.Cycle_Restart_Stage,
-    };
+      Cycles: cycles || []
+    })
+
+    if (cropOrError.isLeft()) return null
+
+    return cropOrError.value as ManagementCrop
   }
 
   async find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null> {
@@ -359,7 +415,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
   async checkIfCropNameAlreadyExists(
     name: string
-  ): Promise<ManagementCropParams | null> {
+  ): Promise<Omit<ManagementCropParams, 'Cycles'> | null> {
     const dbCrops = await governmentDb
       .withSchema("management")
       .select(

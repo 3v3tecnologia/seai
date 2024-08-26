@@ -20,14 +20,14 @@ export const setupManagementCropV2Routes = (router: Router): void => {
     "/management/crop",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.createCrop.bind(controllers))
+    adaptHTTPHandler(controllers.create.bind(controllers))
   );
 
   router.put(
     "/management/crop/:id",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.updateCrop.bind(controllers))
+    adaptHTTPHandler(controllers.update.bind(controllers))
   );
 
   router.delete(

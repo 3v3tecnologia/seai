@@ -4,14 +4,14 @@ import {
   parseBrazilianDateTime,
 } from "../../../../shared/utils/date";
 import { ManagementCropErrors } from "../errors/crop-errors";
-import { ManagementCropCycle } from "./crop-cycles";
+import { checkCropCycleSequence, ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {
   Id?: number;
   Name: string;
   IsPermanent: boolean;
   CycleRestartPoint: string;
-  Cycles?: Array<ManagementCropCycle>;
+  Cycles: Array<ManagementCropCycle>;
 };
 
 export class ManagementCrop {
@@ -99,6 +99,20 @@ export class ManagementCrop {
 
   static create(props: ManagementCropParams): Either<Error, ManagementCrop> {
     // TO-DO : check cycles validations
+    const validCyclesOrError = checkCropCycleSequence(props.Cycles);
+
+    if (validCyclesOrError.isLeft()) {
+      return left(validCyclesOrError.value);
+    }
+
+    // if (props.IsPermanent) {
+    //   const restartPointNotIncluded = props.Cycles.some((item) => item.Title === props.CycleRestartPoint) === false
+
+    //   if (restartPointNotIncluded) {
+    //     return left(new Error("Necessário informar um valor válido para o estágio de reinício do cíclo da cultura."))
+    //   }
+    // }
+
     const culture = new ManagementCrop(props);
 
     return right(culture);

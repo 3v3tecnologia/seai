@@ -1,24 +1,20 @@
 import { Either } from "../../../../shared/Either";
-import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { ManagementCropErrors } from "../../core/errors/crop-errors";
+import { ManagementCrop } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
-import { InsertCropCommand, DeleteCropInput, UpdateCropInput, InsertCropCycles, DeleteCropCycles } from "../dto/crop";
+import { DeleteCropCycles, DeleteCropInput, InsertCropCommand, InsertCropCycles, UpdateCropInput } from "../dto/crop";
 
 export interface IManagementCropsServices {
-  createCrop(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>;
+  create(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>
+  update({ audit, data }: UpdateCropInput): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>
   deleteCrop(input: DeleteCropInput
   ): Promise<Either<Error, boolean>>
   getCropById(id: number): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
-      {
-        Id: number;
-        Name: string;
-        IsPermanent: boolean;
-        CycleRestartPoint: string;
-      } | null
+      ManagementCrop | null
     >
-  >;
+  >
   getAllCrops(params: { Name?: string }): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
@@ -30,7 +26,6 @@ export interface IManagementCropsServices {
       }> | null
     >
   >;
-  updateCrop(input: UpdateCropInput): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>>;
   insertCropCycles(input: InsertCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
   deleteCropCyclesByCropId(input: DeleteCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
   findCropCyclesByCropId(

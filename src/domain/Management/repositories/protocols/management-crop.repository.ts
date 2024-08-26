@@ -3,7 +3,7 @@ import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
 export interface IManagementCropsRepository {
-  create(culture: ManagementCrop, author: number): Promise<number | null>;
+  create(culture: ManagementCrop, author: number): Promise<number | undefined>;
   checkIfStageExists(stage: string): Promise<boolean>
   update(
     culture: ManagementCrop,
@@ -18,12 +18,7 @@ export interface IManagementCropsRepository {
 
   findByBasin(id: number): Promise<Array<string> | null>;
 
-  findCropById(id: number): Promise<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  } | null>;
+  findCropById(id: number): Promise<ManagementCrop | null>
 
   findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle> | null>;
 
@@ -56,7 +51,7 @@ export interface IManagementCropsRepository {
 
   checkIfCropNameAlreadyExists(
     name: string
-  ): Promise<ManagementCropParams | null>;
+  ): Promise<Omit<ManagementCropParams, 'Cycles'> | null>
 
   checkIfThereIsIrrigation(id: number): Promise<boolean>;
   // findAllCrops(): Promise<Array<{
