@@ -25,7 +25,7 @@ export interface IManagementCropsRepository {
 
   findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle>>;
 
-  findCropByName(name: string): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
+  findCropByName(name: string): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>>>
 
   deleteCropCycles(
     idCrop: number,
@@ -40,7 +40,7 @@ export interface IManagementCropsRepository {
     author: number
   ): Promise<void>;
 
-  find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
+  find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>>>
 
   checkIfCropNameAlreadyExists(
     name: string

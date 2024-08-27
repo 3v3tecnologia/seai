@@ -131,7 +131,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
         Name: string;
         IsPermanent: boolean;
         CycleRestartPoint: number;
-      }> | null
+      }>
     >
   > {
     if (params?.Name) {
