@@ -23,7 +23,7 @@ export interface IManagementCropsServices {
         Name: string;
         IsPermanent: boolean;
         CycleRestartPoint: number;
-      }> | null
+      }>
     >
   >;
   setRestartCyclePoint(id_crop: number, id_cycle: number): Promise<Either<Error, void>>
