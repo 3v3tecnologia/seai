@@ -1,38 +1,15 @@
-import { Express, Router } from "express";
+import { Express } from "express";
 
-import { managementRoutes } from "../../v2/management/routes/routes";
-import { equipmentsRoutes } from "../../v2/equipments/routes";
-import {
-  accessKeyRouter,
-  backgroundJobsRouter,
-  censusRouter,
-  equipmentsRouter,
-  faqRouter,
-  loginRouter,
-  newsRouter,
-  userRouter,
-} from "./http-routes";
+import { v1Router } from "./api/v1";
+import { v2Router } from "./api/v2";
 
 export function setRoutes(app: Express): void {
-  const router = Router();
-
-  router.use("/user", userRouter());
-  router.use("/login", loginRouter());
-  router.use("/faq", faqRouter());
-  router.use("/census", censusRouter());
-  router.use("/equipments", equipmentsRouter());
-  router.use("/news", newsRouter());
-  router.use("/jobs", backgroundJobsRouter());
-  router.use("/accessKey", accessKeyRouter());
-
   app.get("/_health", (req, res) => {
     res.status(200).json({ status: "good" });
   });
 
-  app.use("/api/v1", router);
-
-  app.use("/api/v2/management", managementRoutes());
-  app.use("/api/v2/equipments", equipmentsRoutes());
+  app.use("/api/v1", v1Router);
+  app.use("/api/v2", v2Router);
 
   app.use("*", (req, res) => {
     res.status(404).json({

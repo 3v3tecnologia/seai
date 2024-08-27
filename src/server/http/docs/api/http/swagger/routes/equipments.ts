@@ -2,143 +2,32 @@ import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
 import { BASE_URL } from "../commons/baseURL";
 import { PaginationSchema } from "../commons/withPagination";
+import {
+  UserOperationSchema,
+  UserOperationExample,
+} from "../commons/user-operation";
 
 const TAGS = ["Equipments"];
 
-const IRRIGANT = {
-  [`${BASE_URL.V1}/equipments/activated`]: {
+export const EQUIPMENTS = {
+  [`${BASE_URL.V2}/equipments/last-updated-at`]: {
     get: {
-      tags: ["Irrigant"],
-      summary: "Get all equipments with yesterday's measurements",
-      parameters: [
-        {
-          name: "type",
-          in: "query",
-          required: true,
-          description: "Equipment type",
-          schema: {
-            type: "string",
-            enum: ["station", "pluviometer"],
-          },
-        },
-        {
-          name: "latitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "longitude",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-        {
-          name: "distance",
-          description: "Distance in Kilometers",
-          in: "query",
-          required: false,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
+      tags: TAGS,
+      summary: "Get last update date",
+      description: "Get by meteorological organ",
+      // security: [BEARER_AUTH],
       responses: {
         200: {
           content: {
             "application/json": {
               schema: {
-                type: "object",
-                properties: {
-                  data: {
-                    type: "array",
-                  },
-                },
                 example: {
-                  StationExample: {
-                    data: [
-                      {
-                        Id: 1,
-                        Code: "B850A89C",
-                        Name: "São Benedito - Sítio Ingazeira",
-                        Type: {
-                          Id: 1,
-                          Name: "station",
-                        },
-                        Organ: {
-                          Id: 2,
-                          Name: "FUNCEME",
-                        },
-                        Altitude: 844,
-                        Location: {
-                          Coordinates: [-3.995388889, -40.955111111],
-                        },
-                        Et0: 3.0475848,
-                      },
-                      {
-                        Id: 36,
-                        Code: "32321",
-                        Name: "Fortaleza - Itaperi",
-                        Type: {
-                          Id: 1,
-                          Name: "station",
-                        },
-                        Organ: {
-                          Id: 2,
-                          Name: "FUNCEME",
-                        },
-                        Altitude: 28,
-                        Location: {
-                          Coordinates: [-3.795127, -38.557368],
-                        },
-                        Et0: 1.577899,
-                      },
-                    ],
-                  },
-                  PluviometerExample: {
-                    data: [
-                      {
-                        Id: 133,
-                        Code: "24302",
-                        Name: "MINEIROLANDIA",
-                        Type: {
-                          Id: 2,
-                          Name: "pluviometer",
-                        },
-                        Organ: {
-                          Id: 2,
-                          Name: "FUNCEME",
-                        },
-                        Altitude: null,
-                        Location: {
-                          Coordinates: [-5.567, -39.633305556],
-                        },
-                        Precipitation: 38,
-                      },
-                      {
-                        Id: 132,
-                        Code: "24110",
-                        Name: "SAO GONCALO DO AMARANTE",
-                        Type: {
-                          Id: 2,
-                          Name: "pluviometer",
-                        },
-                        Organ: {
-                          Id: 2,
-                          Name: "FUNCEME",
-                        },
-                        Altitude: null,
-                        Location: {
-                          Coordinates: [-3.674722222, -38.979722222],
-                        },
-                        Precipitation: 21,
-                      },
-                    ],
-                  },
+                  data: [
+                    {
+                      Time: "2024-05-03T18:52:22.192Z",
+                      Id_Organ: 1,
+                    },
+                  ],
                 },
               },
             },
@@ -148,9 +37,6 @@ const IRRIGANT = {
       },
     },
   },
-};
-
-export const EQUIPMENTS = {
   [`${BASE_URL.V1}/equipments`]: {
     get: {
       tags: TAGS,
@@ -204,6 +90,24 @@ export const EQUIPMENTS = {
             type: "string",
           },
         },
+        {
+          name: "only_with_measurements",
+          in: "query",
+          description:
+            "Filter equipment that has measurements. It is necessary to pass the equipment type ID before",
+          required: false,
+          schema: {
+            type: "boolean",
+          },
+        },
+        {
+          name: "enabled",
+          in: "query",
+          required: false,
+          schema: {
+            type: "boolean",
+          },
+        },
       ],
       responses: {
         200: {
@@ -251,6 +155,7 @@ export const EQUIPMENTS = {
                                 },
                               },
                             },
+                            LastSync: "string",
                             CreatedAt: "string",
                             UpdatedAt: "string",
                             Enable: "boolean",
@@ -281,6 +186,7 @@ export const EQUIPMENTS = {
                           Location: {
                             Coordinates: [-3.995388889, -40.955111111],
                           },
+                          LastSync: "2024-05 - 10T18: 26:07.738Z",
                           CreatedAt: "2024-03-29T02:34:51.281+00:00",
                           UpdatedAt: "2024-04-01T19:56:15.697297+00:00",
                           Enable: true,
@@ -301,6 +207,7 @@ export const EQUIPMENTS = {
                           Location: {
                             Coordinates: [-7.300925, -39.271107],
                           },
+                          LastSync: "2024-05 - 10T18: 26:07.738Z",
                           CreatedAt: "2024-03-29T02:34:51.281+00:00",
                           UpdatedAt: "2024-04-01T19:56:50.264197+00:00",
                           Enable: true,
@@ -345,9 +252,11 @@ export const EQUIPMENTS = {
               type: "object",
               properties: {
                 Enable: "boolean",
+                ...UserOperationSchema,
               },
               example: {
                 Enable: true,
+                ...UserOperationExample,
               },
             },
           },
@@ -379,5 +288,4 @@ export const EQUIPMENTS = {
       },
     },
   },
-  ...IRRIGANT,
 };

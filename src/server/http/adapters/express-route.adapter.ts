@@ -1,8 +1,22 @@
 import { Response, Request } from "express";
 
-import { Controller } from "../../../presentation/controllers/ports/controllers";
+import { Controller } from "../../../shared/ports/controllers";
+import { HttpResponse } from "../../../shared/ports/http-response";
 
-export function adaptRouteV2(callback: any) {
+export function sendHTTPResponse(res: HttpResponse, response: Response) {
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    return response.status(res.statusCode).json({
+      data: res.body,
+    });
+  }
+
+  //Enviar a mensagem do erro, evitar passar muitas informações detalhadas
+  return response.status(res.statusCode).json({
+    error: res.body.message,
+  });
+}
+
+export const adaptHTTPHandler = (callback: any) => {
   return async (request: Request, response: Response) => {
     const req = {
       ...(request.body || {}),
@@ -11,6 +25,7 @@ export function adaptRouteV2(callback: any) {
       url: request.originalUrl,
       accountId: request.accountId,
       accessToken: request.accessToken || null,
+      accessKey: request.accessKey || null,
     };
 
     const res = await callback(req);
@@ -26,7 +41,7 @@ export function adaptRouteV2(callback: any) {
       error: res.body.message,
     });
   };
-}
+};
 
 export const adaptRoute = (controller: Controller) => {
   return async (request: Request, response: Response) => {
@@ -37,6 +52,7 @@ export const adaptRoute = (controller: Controller) => {
       url: request.originalUrl,
       accountId: request.accountId,
       accessToken: request.accessToken || null,
+      accessKey: request.accessToken || null,
     };
 
     const res = await controller.handle(req);

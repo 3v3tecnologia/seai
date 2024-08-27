@@ -8,7 +8,7 @@ export const PaginationSchema = {
   TotalItems: {
     type: "number",
   },
-  Total: {
+  TotalPages: {
     type: "number",
   },
 };

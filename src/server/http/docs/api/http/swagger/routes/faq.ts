@@ -1,6 +1,11 @@
 import { BASE_URL } from "../commons/baseURL";
 import { BEARER_AUTH } from "../commons/security";
 import { DEFAULT_RESPONSES } from "../commons/status";
+import {
+  UserOperationExample,
+  UserOperationSchema,
+} from "../commons/user-operation";
+import { PaginationSchema } from "../commons/withPagination";
 
 const TAGS = {
   CATEGORY: ["FAQ CATEGORY"],
@@ -8,7 +13,7 @@ const TAGS = {
 };
 
 const CATEGORY = {
-  [`${BASE_URL.V1}/faq/category/create`]: {
+  [`${BASE_URL.V1}/faq/categories`]: {
     post: {
       tags: TAGS.CATEGORY,
       security: [BEARER_AUTH],
@@ -60,51 +65,6 @@ const CATEGORY = {
         ...DEFAULT_RESPONSES,
       },
     },
-  },
-  [`${BASE_URL.V1}/faq/category/delete/{id}`]: {
-    delete: {
-      tags: TAGS.CATEGORY,
-      security: [BEARER_AUTH],
-      summary: "Delete category by id",
-      description: "Delete FAQ category by id",
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Category Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "Category created successfully",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Categoria deletada com sucesso",
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/faq/category/list`]: {
     get: {
       tags: TAGS.CATEGORY,
       security: [BEARER_AUTH],
@@ -154,7 +114,63 @@ const CATEGORY = {
       },
     },
   },
-  [`${BASE_URL.V1}/faq/category/update`]: {
+  [`${BASE_URL.V1}/faq/categories/{id}`]: {
+    delete: {
+      tags: TAGS.CATEGORY,
+      security: [BEARER_AUTH],
+      summary: "Delete category by id",
+      description: "Delete FAQ category by id",
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Category Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Category created successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Categoria deletada com sucesso",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
     put: {
       tags: TAGS.CATEGORY,
       security: [BEARER_AUTH],
@@ -175,11 +191,13 @@ const CATEGORY = {
                 description: {
                   type: "string",
                 },
+                ...UserOperationSchema,
               },
               example: {
                 id: 1,
                 title: "categoria 1",
                 description: "descrição da categoria 1",
+                ...UserOperationExample,
               },
             },
           },
@@ -214,7 +232,7 @@ const CATEGORY = {
 };
 
 const FAQ = {
-  [`${BASE_URL.V1}/faq/create`]: {
+  [`${BASE_URL.V1}/faq`]: {
     post: {
       tags: TAGS.FAQ,
       security: [BEARER_AUTH],
@@ -232,21 +250,18 @@ const FAQ = {
                 answer: {
                   type: "string",
                 },
-                order: {
+                // order: {
+                //   type: "number",
+                // },
+                id_category: {
                   type: "number",
-                },
-                categories: {
-                  type: "array",
-                  items: {
-                    type: "number",
-                  },
                 },
               },
               example: {
                 question: "O que é TDD?",
                 answer: "Test-Driven Development",
-                order: 1,
-                categories: [2, 3, 4],
+                // order: 1,
+                id_category: 7,
               },
             },
           },
@@ -277,51 +292,52 @@ const FAQ = {
         ...DEFAULT_RESPONSES,
       },
     },
-  },
-  [`${BASE_URL.V1}/faq/update`]: {
-    put: {
+    get: {
       tags: TAGS.FAQ,
       security: [BEARER_AUTH],
-      summary: "Update a FAQ question",
-      description: "Update FAQ with question, answer",
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                id: {
-                  type: "number",
-                },
-                question: {
-                  type: "string",
-                },
-                answer: {
-                  type: "string",
-                },
-                order: {
-                  type: "number",
-                },
-                categories: {
-                  type: "array",
-                  items: {
-                    type: "number",
-                  },
-                },
-              },
-              example: {
-                question: "O que é TDD?",
-                answer: "Test-Driven Development",
-                order: 1,
-                categories: [2, 3, 4],
-              },
-            },
+      summary: "Get FAQs with categories",
+      description: "Get FAQs with categories",
+      parameters: [
+        {
+          name: "pageNumber",
+          in: "query",
+          description: "Pagination number. Default 1",
+          required: false,
+          schema: {
+            type: "number",
           },
         },
-      },
+        {
+          name: "limit",
+          in: "query",
+          description: "Data limit",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "id_category",
+          in: "query",
+          description: "Id category",
+          required: false,
+          schema: {
+            type: "number",
+          },
+        },
+        {
+          name: "question",
+          in: "query",
+          description: "Textual filter by question",
+          required: false,
+          schema: {
+            type: "string",
+          },
+        },
+      ],
       responses: {
-        201: {
-          description: "FAQ created successfully",
+        200: {
+          description: "Get all FAQs",
           content: {
             "application/json": {
               schema: {
@@ -330,12 +346,60 @@ const FAQ = {
                   type: "object",
                   properties: {
                     data: {
-                      type: "string",
+                      type: "array",
+                      Items: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            id: "number",
+                            question: "string",
+                            answer: "string",
+                            order: "number",
+                            description: "string",
+                            created_at: "string",
+                            updated_at: "string",
+                            categories: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  id: "number",
+                                  title: "string",
+                                  description: "string",
+                                  created_at: "string",
+                                  updated_at: "string",
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      ...PaginationSchema,
                     },
                   },
                 },
                 example: {
-                  data: "Faq atualizado com sucesso",
+                  data: {
+                    Items: [
+                      {
+                        id: 1,
+                        question: "O que é TDD2?",
+                        answer: "Desenvolvimento orientado a testes",
+                        created_at: "2024-05-06T20:25:13.732Z",
+                        updated_at: "2024-05-06T20:25:13.732Z",
+                        category: {
+                          id: 3,
+                          title: "categoria 1",
+                          description: "descrição da categoria 1",
+                        },
+                      },
+                    ],
+                    TotalItems: 1,
+                    Page: 1,
+                    PageSize: 10,
+                    TotalPages: 1,
+                  },
                 },
               },
             },
@@ -345,7 +409,7 @@ const FAQ = {
       },
     },
   },
-  [`${BASE_URL.V1}/faq/get/{id}`]: {
+  [`${BASE_URL.V1}/faq/{id}`]: {
     get: {
       tags: TAGS.FAQ,
       security: [BEARER_AUTH],
@@ -374,28 +438,6 @@ const FAQ = {
                   properties: {
                     data: {
                       type: "object",
-                      properties: {
-                        id: "number",
-                        question: "string",
-                        answer: "string",
-                        order: "number",
-                        description: "string",
-                        created_at: "string",
-                        updated_at: "string",
-                        categories: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              id: "number",
-                              title: "string",
-                              description: "string",
-                              created_at: "string",
-                              updated_at: "string",
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                 },
@@ -432,184 +474,6 @@ const FAQ = {
         ...DEFAULT_RESPONSES,
       },
     },
-  },
-  [`${BASE_URL.V1}/faq/list`]: {
-    get: {
-      tags: TAGS.FAQ,
-      security: [BEARER_AUTH],
-      summary: "Get FAQs with categories",
-      description: "Get FAQs with categories",
-      responses: {
-        200: {
-          description: "Get all FAQs",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: "number",
-                          question: "string",
-                          answer: "string",
-                          order: "number",
-                          description: "string",
-                          created_at: "string",
-                          updated_at: "string",
-                          categories: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                id: "number",
-                                title: "string",
-                                description: "string",
-                                created_at: "string",
-                                updated_at: "string",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: [
-                    {
-                      id: 1,
-                      question: "O que é TDD",
-                      answer: "Desenvolvimento orientado a testes",
-                      order: 1,
-                      created_at: "2023-07-04T11:39:50.085Z",
-                      updated_at: "2023-07-04T11:39:50.085Z",
-                      categories: [
-                        {
-                          id: 2,
-                          title: "Práticas",
-                          description: "teste",
-                          created_at: "2023-07-04T11:40:26.459Z",
-                          updated_at: "2023-07-04T11:40:26.459Z",
-                        },
-                        {
-                          id: 3,
-                          title: "Geral",
-                          description: "teste",
-                          created_at: "2023-07-04T11:40:26.462Z",
-                          updated_at: "2023-07-04T11:40:26.462Z",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/faq/list-by-category/{id}`]: {
-    get: {
-      tags: TAGS.FAQ,
-      security: [BEARER_AUTH],
-      summary: "Get all FAQs by category id",
-      description:
-        "Get all FAQs by category id, returning data with categories in response",
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Category Id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      responses: {
-        200: {
-          description: "Get all FAQs by category id",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: "number",
-                          question: "string",
-                          answer: "string",
-                          order: "number",
-                          description: "string",
-                          created_at: "string",
-                          updated_at: "string",
-                          categories: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                id: "number",
-                                title: "string",
-                                description: "string",
-                                created_at: "string",
-                                updated_at: "string",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: [
-                    {
-                      id: 1,
-                      question: "O que é TDD",
-                      answer: "Desenvolvimento orientado a testes",
-                      order: 1,
-                      created_at: "2023-07-04T11:39:50.085Z",
-                      updated_at: "2023-07-04T11:39:50.085Z",
-                      categories: [
-                        {
-                          id: 2,
-                          title: "Práticas",
-                          description: "teste",
-                          created_at: "2023-07-04T11:40:26.459Z",
-                          updated_at: "2023-07-04T11:40:26.459Z",
-                        },
-                        {
-                          id: 3,
-                          title: "Geral",
-                          description: "teste",
-                          created_at: "2023-07-04T11:40:26.462Z",
-                          updated_at: "2023-07-04T11:40:26.462Z",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-  },
-  [`${BASE_URL.V1}/faq/delete/{id}`]: {
     delete: {
       tags: TAGS.FAQ,
       security: [BEARER_AUTH],
@@ -626,6 +490,21 @@ const FAQ = {
           },
         },
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                ...UserOperationSchema,
+              },
+              example: {
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
       responses: {
         200: {
           description: "Category created successfully",
@@ -643,6 +522,70 @@ const FAQ = {
                 },
                 example: {
                   data: "Faq deletado com sucesso",
+                },
+              },
+            },
+          },
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    },
+    put: {
+      tags: TAGS.FAQ,
+      security: [BEARER_AUTH],
+      summary: "Update a FAQ question",
+      description: "Update FAQ with question, answer",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                id: {
+                  type: "number",
+                },
+                question: {
+                  type: "string",
+                },
+                answer: {
+                  type: "string",
+                },
+                order: {
+                  type: "number",
+                },
+                id_category: {
+                  type: "number",
+                },
+                ...UserOperationSchema,
+              },
+              example: {
+                question: "O que é TDD?",
+                answer: "Test-Driven Development",
+                order: 1,
+                id_category: 4,
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "FAQ created successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                items: {
+                  type: "object",
+                  properties: {
+                    data: {
+                      type: "string",
+                    },
+                  },
+                },
+                example: {
+                  data: "Faq atualizado com sucesso",
                 },
               },
             },

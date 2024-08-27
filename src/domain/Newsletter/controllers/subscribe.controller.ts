@@ -1,0 +1,55 @@
+import { ISchemaValidator } from "../../../shared/infra/validator/validator";
+import { HttpResponse } from "../../../shared/ports/http-response";
+import {
+  badRequest,
+  created,
+  forbidden,
+  serverError,
+} from "../../../shared/utils/http-responses";
+import { SubscribeToNews } from "../services";
+
+export class SubscribeToNewsController {
+  private useCase: SubscribeToNews;
+  private validator: ISchemaValidator;
+
+  constructor(useCase: SubscribeToNews, validator: ISchemaValidator) {
+    this.useCase = useCase;
+    this.validator = validator;
+  }
+
+  async handle(
+    request: SubscribeToNewsControllerProtocol.Request
+  ): Promise<HttpResponse> {
+    try {
+      const { Email } = request;
+
+      const { error } = await this.validator.validate({
+        Email,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+
+      const createdOrError = await this.useCase.execute({
+        Email: request.Email,
+      });
+
+      if (createdOrError.isLeft()) {
+        return forbidden(createdOrError.value);
+      }
+
+      return created(createdOrError.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+}
+
+export namespace SubscribeToNewsControllerProtocol {
+  export type Request = {
+    accountId: number;
+    Email: string;
+  };
+}

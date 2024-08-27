@@ -3,7 +3,8 @@ import { setTimeout } from "node:timers";
 export function terminate(server, options = { coredump: false, timeout: 500 }) {
   // Exit function
   const exit = (code) => {
-    options.coredump ? process.abort() : process.exit(code);
+    console.log("code ", code);
+    options.coredump ? process.abort() : process.exit(0);
   };
 
   return (code, reason) => (err, promise) => {

@@ -1,0 +1,74 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "name": "Debug Node.js Tests",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "debug:test"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal",
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Docker: Attach to Node",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "remoteRoot": "/usr/src/app/",
+      "localRoot": "${workspaceFolder}",
+      "address": "127.0.0.1",
+      "port": 9229,
+      "trace": true,
+      "restart": true,
+      "sourceMaps": false,
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "localRoot": "${workspaceFolder}",
+      "name": "Attach server running locally by Process ID",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "processId": "${command:PickProcess}",
+      "address": "127.0.0.1",
+      "port": 9229,
+      "restart": true,
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "name": "Debug Node.js Server Locally",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "debug:dev"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "restart": true,
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}",
+      "console": "integratedTerminal",
+    },
+  ],
+  "compounds": [ // Allows you to define and run multiple debug configurations simultaneously
+    // {
+    //     "configurations": ["Debug Node.js Tests", "Debug Node.js Server"],
+    //     "stopAll": true
+    // }
+  ]
+}
