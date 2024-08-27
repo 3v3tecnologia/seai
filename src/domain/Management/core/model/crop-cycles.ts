@@ -2,6 +2,7 @@ import { Either, left, right } from "../../../../shared/Either";
 import { ManagementCropErrors } from "../errors/crop-errors";
 
 export type ManagementCropCycle = {
+  Id?: number;
   Title: string;
   // DurationInDays: number;
   Start: number;
@@ -53,9 +54,11 @@ export function checkCropCycleSequence(
   return right();
 }
 
+// TO-DO: remove the logic from here
 export function findKc(
   cropDate: number,
-  cropCycles: Array<ManagementCropCycle>
+  cropCycles: Array<ManagementCropCycle>,
+  cycleRestartPoint: string
 ): Either<Error, ManagementCropCycle> {
   const startCropCycle = cropCycles[0];
 
@@ -70,6 +73,16 @@ export function findKc(
   const endCropCycle = cropCycles[cropCycles.length - 1];
 
   if (cropDate > endCropCycle.End) {
+    // Se for cultura perene então deverá buscar os dados de KC
+    // a partir do ponto de início do ciclo de desenvolvimento especificado.
+    if (cycleRestartPoint) {
+      const data = cropCycles.find(
+        (cycle) => cycle.Title === cycleRestartPoint
+      );
+
+      if (data) return right(data);
+    }
+
     return left(
       new ManagementCropErrors.PlantingDateIsAfterThanCropCycleEndDate()
     );

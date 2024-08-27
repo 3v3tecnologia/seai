@@ -20,9 +20,25 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                Name: "FEIJÃO5",
-                LocationName: null,
-              },
+                Name: "Cultura Teste",
+                IsPermanent: true,
+                Cycles: [
+                  {
+                    Title: "Ciclo 1",
+                    Start: 1,
+                    End: 3,
+                    KC: 54,
+                    Increment: 0
+                  },
+                  {
+                    Title: "Ciclo 2",
+                    Start: 4,
+                    End: 5,
+                    KC: 54,
+                    Increment: 0
+                  }
+                ]
+              }
             },
           },
         },
@@ -75,86 +91,22 @@ export const MANAGEMENT = {
                 example: {
                   data: [
                     {
-                      Title: "test2",
+                      Id: 1,
+                      Title: "Ciclo 1",
                       Start: 1,
                       End: 3,
                       KC: 54,
                       Increment: 0,
                     },
                     {
-                      Title: "test2",
+                      Id: 2,
+                      Title: "Ciclo 2",
                       Start: 1,
                       End: 3,
                       KC: 54,
                       Increment: 0,
                     },
                   ],
-                },
-              },
-            },
-          },
-        },
-        ...DEFAULT_RESPONSES,
-      },
-    },
-    post: {
-      tags: TAGS,
-      security: [BEARER_AUTH],
-      summary: "Create crop",
-      parameters: [
-        {
-          name: "id",
-          in: "path",
-          description: "Crop id",
-          required: true,
-          schema: {
-            type: "number",
-          },
-        },
-      ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              example: {
-                data: [
-                  {
-                    Title: "test2",
-                    Start: 1,
-                    End: 3,
-                    KC: 54,
-                    Increment: 0,
-                  },
-                  {
-                    Title: "test2",
-                    Start: 1,
-                    End: 3,
-                    KC: 54,
-                    Increment: 0,
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                items: {
-                  type: "object",
-                  properties: {
-                    data: {
-                      type: "string",
-                    },
-                  },
-                },
-                example: {
-                  data: "Sucesso ao criar ciclos de cultura.",
                 },
               },
             },
@@ -187,11 +139,30 @@ export const MANAGEMENT = {
                 type: "object",
                 example: {
                   data: {
-                    Id: 3,
-                    Name: "ALFACE",
-                    LocationName: "FORTALEZA",
-                  },
-                },
+                    Id: 16,
+                    Name: "Cultura Teste",
+                    IsPermanent: true,
+                    Cycles: [
+                      {
+                        Id: 10,
+                        Title: "Ciclo 1",
+                        Start: 1,
+                        End: 3,
+                        KC: 54,
+                        Increment: 0
+                      },
+                      {
+                        Id: 11,
+                        Title: "Ciclo 2",
+                        Start: 4,
+                        End: 5,
+                        KC: 54,
+                        Increment: 0
+                      }
+                    ],
+                    CycleRestartPoint: 10
+                  }
+                }
               },
             },
           },
@@ -219,8 +190,24 @@ export const MANAGEMENT = {
             schema: {
               type: "object",
               example: {
-                Name: "LIMÃO",
-                LocationName: "ESTADOS",
+                Name: "Cultura Teste",
+                IsPermanent: true,
+                Cycles: [
+                  {
+                    Title: "Ciclo 1",
+                    Start: 1,
+                    End: 3,
+                    KC: 54,
+                    Increment: 0
+                  },
+                  {
+                    Title: "Ciclo 2",
+                    Start: 4,
+                    End: 5,
+                    KC: 54,
+                    Increment: 0
+                  }
+                ],
                 ...UserOperationExample,
               },
             },
@@ -304,5 +291,41 @@ export const MANAGEMENT = {
         ...DEFAULT_RESPONSES,
       },
     },
+  },
+  [`${BASE_URL.V2}/management/crop/{id}/cycle/restart-point`]: {
+    patch: {
+      tags: TAGS,
+      security: [BEARER_AUTH],
+      parameters: [
+        {
+          name: "id",
+          in: "path",
+          description: "Crop Id",
+          required: true,
+          schema: {
+            type: "number",
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              example: {
+                CycleRestartPoint: 4,
+                ...UserOperationExample,
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        204: {
+          content: {},
+        },
+        ...DEFAULT_RESPONSES,
+      },
+    }
   },
 };

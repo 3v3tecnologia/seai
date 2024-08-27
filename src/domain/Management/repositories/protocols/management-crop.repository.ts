@@ -3,8 +3,9 @@ import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 
 export interface IManagementCropsRepository {
-  create(culture: ManagementCrop, author: number): Promise<number | null>;
-
+  create(culture: ManagementCrop, author: number): Promise<number | undefined>;
+  checkIfStageExists(stage: string): Promise<boolean>
+  checkIfCycleExists(id_crop: number, id_cycle: number): Promise<boolean>
   update(
     culture: ManagementCrop,
     operation: UserCommandOperationProps
@@ -18,17 +19,13 @@ export interface IManagementCropsRepository {
 
   findByBasin(id: number): Promise<Array<string> | null>;
 
-  findCropById(
-    id: number
-  ): Promise<{ Id: number; Name: string; LocationName: string | null } | null>;
+  findCropById(id: number): Promise<ManagementCrop | null>
 
-  findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle> | null>;
+  addRestartCyclePoint(id_crop: number, id_cycle: number): Promise<void>
 
-  findCropByName(name: string): Promise<Array<{
-    Id: number;
-    Name: string;
-    LocationName: string | null;
-  }> | null>;
+  findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle>>;
+
+  findCropByName(name: string): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
 
   deleteCropCycles(
     idCrop: number,
@@ -37,26 +34,18 @@ export interface IManagementCropsRepository {
 
   createCropCycles(
     data: {
-      idCrop: number;
+      id: number;
       cycles: Array<ManagementCropCycle>;
     },
     author: number
   ): Promise<void>;
 
-  find(): Promise<Array<{
-    Id: number;
-    Name: string;
-    LocationName: string | null;
-  }> | null>;
+  find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
 
   checkIfCropNameAlreadyExists(
     name: string
-  ): Promise<ManagementCropParams | null>;
+  ): Promise<Omit<ManagementCropParams, 'Cycles'> | null>
 
   checkIfThereIsIrrigation(id: number): Promise<boolean>;
-  // findAllCrops(): Promise<Array<{
-  //   Id: number;
-  //   Name: string;
-  //   LocationName: string | null;
-  // }> | null>;
+
 }

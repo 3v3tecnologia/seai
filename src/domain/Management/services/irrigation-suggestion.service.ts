@@ -6,7 +6,7 @@ import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
 import { ManagementCropErrors } from "../core/errors/crop-errors";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { BladeSuggestion } from "../core/model/blade-suggestion";
-import { getCropDate } from "../core/model/crop";
+import { getCropDate, ManagementCrop } from "../core/model/crop";
 import { findKc, ManagementCropCycle } from "../core/model/crop-cycles";
 import {
   IrrigationSystemEntity,
@@ -24,13 +24,12 @@ import { IIrrigationRepository } from "../repositories/protocols/irrigation.repo
 import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
 
 export class IrrigationCropsSuggestion
-  implements IIrrigationSuggestionServices
-{
+  implements IIrrigationSuggestionServices {
   constructor(
     private equipmentsMeasurementsRepository: IEquipmentsMeasurementsRepository,
     private cropsRepository: IManagementCropsRepository,
     private irrigationRepository: IIrrigationRepository
-  ) {}
+  ) { }
 
   async calculate(
     command: ICalcIrrigationRecommendationDTO
@@ -102,26 +101,26 @@ export class IrrigationCropsSuggestion
       return left(irrigationSystemOrError.value);
     }
 
-    //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
-    const cropCycles = await this.cropsRepository.findCropsCycles(
-      command.CropId
-    );
+    const crop = await this.cropsRepository.findCropById(command.CropId);
 
-    if (cropCycles == null) {
+    if (crop == null) {
       return left(new ManagementCropErrors.CropCyclesError());
     }
 
     const cropDate = getCropDate(command.PlantingDate);
 
-    // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
-    // varia de acordo com o ciclo de crescimento da cultura
-    const cycleOrError = findKc(cropDate, cropCycles);
+
+    const cycleOrError = crop.findKc(cropDate)
 
     if (cycleOrError.isLeft()) {
       return left(cycleOrError.value);
     }
 
+    /**
+     * INFO: Valores do coeficiente de cultura (Kc) variando para cada fase de crescimento da cultura
+    */
     const cropCycle = cycleOrError.value;
+
     const irrigationSystem =
       irrigationSystemOrError.value as IrrigationSystemEntity;
 

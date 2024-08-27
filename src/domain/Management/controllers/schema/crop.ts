@@ -6,23 +6,47 @@ import {
 } from "../../../../shared/infra/validator/schemas";
 import { SchemaValidator } from "../../../../shared/infra/validator/validator";
 
+
+
 const createCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().trim().required(),
-    LocationName: Joi.string().allow(null),
-    CreatedAt: Joi.string().isoDate().optional(),
-    UpdatedAt: Joi.string().isoDate().optional(),
+    IsPermanent: Joi.boolean().required(),
+    // CycleRestartPoint: Joi.string().trim().optional(),
+    Cycles: Joi.array()
+      .items(
+        Joi.object({
+          Title: Joi.string().trim().required(),
+          Start: Joi.number().integer().required(),
+          End: Joi.number().integer().required(),
+          KC: Joi.number().required(),
+          Increment: Joi.number().required(),
+        })
+      )
+      .required(),
   }).append(userAccountSchema)
 );
 
 const updateCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().required(),
-    LocationName: Joi.string().allow(null),
+    IsPermanent: Joi.boolean().required(),
+    Cycles: Joi.array()
+      .items(
+        Joi.object({
+          Title: Joi.string().trim().required(),
+          Start: Joi.number().integer().required(),
+          End: Joi.number().integer().required(),
+          KC: Joi.number().required(),
+          Increment: Joi.number().required(),
+        })
+      )
+      .required(),
   })
     .append(UserOperationDescriptionSchema)
     .append(idSchema)
 );
+
 
 const deleteCropValidator = new SchemaValidator(
   Joi.object(idSchema).append(UserOperationDescriptionSchema)
@@ -38,6 +62,14 @@ const getAllCropCropCyclesValidator = new SchemaValidator(
   Joi.object({
     id: Joi.number().required(),
   })
+);
+
+const setCycleRestartPointValidator = new SchemaValidator(
+  Joi.object({
+    CycleRestartPoint: Joi.number().integer().positive().required(),
+  })
+    .append(userAccountSchema)
+    .append(idSchema)
 );
 
 const createCropCycleValidator = new SchemaValidator(
@@ -67,6 +99,7 @@ const getAllCropsValidator = new SchemaValidator(
 
 export {
   createCropValidator,
+  setCycleRestartPointValidator,
   updateCropValidator,
   deleteCropValidator,
   getCropByIdValidator,
