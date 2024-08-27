@@ -155,7 +155,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
       return right({ Id: Id as number, Name, IsPermanent, Cycles, CycleRestartPoint: CycleRestartPoint as number });
 
     }
-    return right();
+    return right(null);
   }
 
 
