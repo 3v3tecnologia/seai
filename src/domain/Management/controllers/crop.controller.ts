@@ -7,6 +7,7 @@ import {
   badRequest,
   created,
   forbidden,
+  noContent,
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
@@ -20,6 +21,7 @@ import {
   getAllCropCropCyclesValidator,
   getAllCropsValidator,
   getCropByIdValidator,
+  setCycleRestartPointValidator,
   updateCropValidator
 } from "./schema/crop";
 
@@ -28,6 +30,11 @@ type CreateCropRequest = {
   IsPermanent: boolean;
   CycleRestartPoint: string;
   Cycles: Array<ManagementCropCycle>;
+} & LoginUserAccount
+
+type SetRestartCyclePointRequest = {
+  id: number;
+  CycleRestartPoint: number;
 } & LoginUserAccount
 
 type UpdateCropRequest = {
@@ -45,11 +52,10 @@ export class ManagementCropControllers {
     params: CreateCropRequest
   ): Promise<HttpResponse> {
     try {
-      const { IsPermanent, CycleRestartPoint, Name, Cycles, accountId } = params;
+      const { IsPermanent, Name, Cycles, accountId } = params;
 
       const { error } = await createCropValidator.validate({
         IsPermanent,
-        CycleRestartPoint,
         Name,
         Cycles,
         accountId,
@@ -63,7 +69,6 @@ export class ManagementCropControllers {
         {
           data: {
             Name,
-            CycleRestartPoint,
             IsPermanent,
             Cycles
           },
@@ -78,7 +83,6 @@ export class ManagementCropControllers {
         return forbidden(createdOrError.value);
       }
 
-      // await this.userLogs.log(request.accountId, this.useCase);
 
       return created(createdOrError.value);
     } catch (error) {
@@ -90,14 +94,13 @@ export class ManagementCropControllers {
     params: UpdateCropRequest
   ): Promise<HttpResponse> {
     try {
-      const { CycleRestartPoint, IsPermanent, Name, Cycles, Operation, accountId, id } =
+      const { IsPermanent, Name, Cycles, Operation, accountId, id } =
         params;
 
       const { error } = await updateCropValidator.validate({
         id,
         accountId,
         Operation,
-        CycleRestartPoint,
         IsPermanent,
         Name,
         Cycles
@@ -112,7 +115,6 @@ export class ManagementCropControllers {
           data: {
             Id: Number(id),
             Name: Name,
-            CycleRestartPoint,
             IsPermanent,
             Cycles
           },
@@ -233,24 +235,15 @@ export class ManagementCropControllers {
     }
   }
 
-  async createCropCycles(
-    params: {
-      id: number;
-      data: Array<{
-        Title: string;
-        Start: number;
-        End: number;
-        KC: number;
-        Increment: number;
-      }>;
-    } & LoginUserAccount
+  async setCropCycleRestartPoint(
+    params: SetRestartCyclePointRequest
   ): Promise<HttpResponse> {
     try {
-      const { id, data, accountId } = params;
+      const { id, CycleRestartPoint, accountId } = params;
 
-      const { error } = await createCropCycleValidator.validate({
+      const { error } = await setCycleRestartPointValidator.validate({
         id,
-        data,
+        CycleRestartPoint,
         accountId,
       });
 
@@ -258,24 +251,13 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const createdOrError = await this.managementCropServices.insertCropCycles(
-        {
-          data: {
-            id,
-            cycles: data,
-          },
-          audit: {
-            author: accountId,
-            operation: ''
-          }
-        }
-      );
+      const createdOrError = await this.managementCropServices.setRestartCyclePoint(id, CycleRestartPoint);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
       }
 
-      return created("Sucesso ao criar cultura");
+      return noContent()
     } catch (error) {
       console.error(error);
       return serverError(error as Error);

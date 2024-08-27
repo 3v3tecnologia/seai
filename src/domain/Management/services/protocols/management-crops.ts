@@ -1,6 +1,6 @@
 import { Either } from "../../../../shared/Either";
 import { ManagementCropErrors } from "../../core/errors/crop-errors";
-import { ManagementCrop } from "../../core/model/crop";
+import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
 import { ManagementCropCycle } from "../../core/model/crop-cycles";
 import { DeleteCropCycles, DeleteCropInput, InsertCropCommand, InsertCropCycles, UpdateCropInput } from "../dto/crop";
 
@@ -12,7 +12,7 @@ export interface IManagementCropsServices {
   getCropById(id: number): Promise<
     Either<
       ManagementCropErrors.CropAlreadyExistsError,
-      ManagementCrop | null
+      Required<ManagementCropParams> | null
     >
   >
   getAllCrops(params: { Name?: string }): Promise<
@@ -22,12 +22,13 @@ export interface IManagementCropsServices {
         Id: number;
         Name: string;
         IsPermanent: boolean;
-        CycleRestartPoint: string;
+        CycleRestartPoint: number;
       }> | null
     >
   >;
-  insertCropCycles(input: InsertCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
-  deleteCropCyclesByCropId(input: DeleteCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
+  setRestartCyclePoint(id_crop: number, id_cycle: number): Promise<Either<Error, void>>
+  // insertCropCycles(input: InsertCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
+  // deleteCropCyclesByCropId(input: DeleteCropCycles): Promise<Either<ManagementCropErrors.CropNotExistsError, any>>;
   findCropCyclesByCropId(
     idCrop: number
   ): Promise<

@@ -5,6 +5,7 @@ import { ManagementCropCycle } from "../../core/model/crop-cycles";
 export interface IManagementCropsRepository {
   create(culture: ManagementCrop, author: number): Promise<number | undefined>;
   checkIfStageExists(stage: string): Promise<boolean>
+  checkIfCycleExists(id_crop: number, id_cycle: number): Promise<boolean>
   update(
     culture: ManagementCrop,
     operation: UserCommandOperationProps
@@ -20,14 +21,11 @@ export interface IManagementCropsRepository {
 
   findCropById(id: number): Promise<ManagementCrop | null>
 
-  findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle> | null>;
+  addRestartCyclePoint(id_crop: number, id_cycle: number): Promise<void>
 
-  findCropByName(name: string): Promise<Array<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  }> | null>;
+  findCropsCycles(idCrop: number): Promise<Array<ManagementCropCycle>>;
+
+  findCropByName(name: string): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
 
   deleteCropCycles(
     idCrop: number,
@@ -42,21 +40,12 @@ export interface IManagementCropsRepository {
     author: number
   ): Promise<void>;
 
-  find(): Promise<Array<{
-    Id: number;
-    Name: string;
-    IsPermanent: boolean;
-    CycleRestartPoint: string;
-  }> | null>;
+  find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null>
 
   checkIfCropNameAlreadyExists(
     name: string
   ): Promise<Omit<ManagementCropParams, 'Cycles'> | null>
 
   checkIfThereIsIrrigation(id: number): Promise<boolean>;
-  // findAllCrops(): Promise<Array<{
-  //   Id: number;
-  //   Name: string;
-  //   LocationName: string | null;
-  // }> | null>;
+
 }

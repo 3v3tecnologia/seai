@@ -2,6 +2,7 @@ import { Either, left, right } from "../../../../shared/Either";
 import { ManagementCropErrors } from "../errors/crop-errors";
 
 export type ManagementCropCycle = {
+  Id?: number;
   Title: string;
   // DurationInDays: number;
   Start: number;

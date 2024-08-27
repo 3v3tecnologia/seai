@@ -30,6 +30,13 @@ export const setupManagementCropV2Routes = (router: Router): void => {
     adaptHTTPHandler(controllers.update.bind(controllers))
   );
 
+  router.patch(
+    "/management/crop/:id/cycle/restart-point",
+    authorization,
+    cropPermissions.write,
+    adaptHTTPHandler(controllers.setCropCycleRestartPoint.bind(controllers))
+  );
+
   router.delete(
     "/management/crop/:id",
     authorization,
@@ -44,12 +51,6 @@ export const setupManagementCropV2Routes = (router: Router): void => {
     adaptHTTPHandler(controllers.getAllCropCycles.bind(controllers))
   );
 
-  router.post(
-    "/management/crop/cycles/:id",
-    authorization,
-    cropPermissions.write,
-    adaptHTTPHandler(controllers.createCropCycles.bind(controllers))
-  );
 
   //Irrigant
   router.get(

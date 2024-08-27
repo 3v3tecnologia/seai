@@ -103,30 +103,24 @@ export class IrrigationCropsSuggestion
 
     const crop = await this.cropsRepository.findCropById(command.CropId);
 
-    //  Valores do coeficiente de cultura (Kc) para cada fase de crescimento da cultura
-    const cropCycles = await this.cropsRepository.findCropsCycles(
-      command.CropId
-    );
-
-    if (cropCycles == null) {
+    if (crop == null) {
       return left(new ManagementCropErrors.CropCyclesError());
     }
 
     const cropDate = getCropDate(command.PlantingDate);
 
-    // Coeficiente da cultura : serve para estimar a evapotranspiração específica da cultura (ETC)
-    // varia de acordo com o ciclo de crescimento da cultura
-    const cycleOrError = findKc(
-      cropDate,
-      cropCycles,
-      crop?.CycleRestartPoint as string
-    );
+
+    const cycleOrError = crop.findKc(cropDate)
 
     if (cycleOrError.isLeft()) {
       return left(cycleOrError.value);
     }
 
+    /**
+     * INFO: Valores do coeficiente de cultura (Kc) variando para cada fase de crescimento da cultura
+    */
     const cropCycle = cycleOrError.value;
+
     const irrigationSystem =
       irrigationSystemOrError.value as IrrigationSystemEntity;
 

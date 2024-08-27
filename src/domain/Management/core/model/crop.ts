@@ -10,7 +10,7 @@ export type ManagementCropParams = {
   Id?: number;
   Name: string;
   IsPermanent: boolean;
-  CycleRestartPoint: string;
+  CycleRestartPoint?: number;
   Cycles: Array<ManagementCropCycle>;
 };
 
@@ -18,14 +18,18 @@ export class ManagementCrop {
   private _id: number | null;
   private readonly _name: string;
   private readonly _isPermanent: boolean;
-  private readonly _cycleRestartPoint: string;
+  /**
+   * INFO: Identificador (ID) de qual ciclo irá ser associado.
+   * Importante pois no cadastro só poderá existir um ponto de reinício do clico se o ciclo existir.
+   */
+  private readonly _cycleRestartPoint?: number;
   private readonly _cycles: Array<ManagementCropCycle>;
 
   private constructor(props: ManagementCropParams) {
     this._id = props.Id || null;
     this._name = props.Name;
     this._cycles = props.Cycles || [];
-    this._cycleRestartPoint = props.CycleRestartPoint;
+    if (props.CycleRestartPoint) this._cycleRestartPoint = props.CycleRestartPoint;
     this._isPermanent = props.IsPermanent;
 
     Object.freeze(this);
@@ -44,7 +48,7 @@ export class ManagementCrop {
   }
 
   get CycleRestartPoint() {
-    return this._cycleRestartPoint;
+    return this._cycleRestartPoint || null;
   }
 
   get IsPermanent() {
@@ -75,7 +79,7 @@ export class ManagementCrop {
       // a partir do ponto de início do ciclo de desenvolvimento especificado.
       if (this.CycleRestartPoint) {
         const data = this.Cycles.find(
-          (cycle) => cycle.Title === this.CycleRestartPoint
+          (cycle) => cycle.Id === this.CycleRestartPoint
         );
 
         if (data) return right(data);
@@ -105,13 +109,9 @@ export class ManagementCrop {
       return left(validCyclesOrError.value);
     }
 
-    // if (props.IsPermanent) {
-    //   const restartPointNotIncluded = props.Cycles.some((item) => item.Title === props.CycleRestartPoint) === false
-
-    //   if (restartPointNotIncluded) {
-    //     return left(new Error("Necessário informar um valor válido para o estágio de reinício do cíclo da cultura."))
-    //   }
-    // }
+    if (props.Cycles.length < 1) {
+      return left(new Error("Necessário haver pelo menos um ciclo de cultura cadastrado."))
+    }
 
     const culture = new ManagementCrop(props);
 

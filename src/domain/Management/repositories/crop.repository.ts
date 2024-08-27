@@ -27,11 +27,6 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
       cropId = createCropResult.length ? createCropResult[0]?.Id : undefined;
 
-      await trx("Crop_Cycle")
-        .withSchema("management")
-        .where({ FK_Crop: cropId })
-        .del();
-
 
       await trx.batchInsert(
         "management.Crop_Cycle",
@@ -46,6 +41,31 @@ export class ManagementCropRepository implements IManagementCropsRepository {
           };
         })
       );
+
+      if (culture.IsPermanent) {
+        const firstCycle = await trx
+          .withSchema("management")
+          .select("Id")
+          .from("Crop_Cycle")
+          .where({ FK_Crop: cropId })
+          .orderBy("Start")
+          .first();
+        ;
+        /**
+         * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
+         * sendo o primeiro ciclo.
+        */
+        await trx("Crop")
+          .withSchema("management")
+          .update({
+            Cycle_Restart_Stage: firstCycle.Id,
+            UpdatedAt: trx.fn.now(),
+          })
+          .where({
+            Id: cropId,
+          });
+      }
+
     });
 
     if (cropId) {
@@ -100,6 +120,30 @@ export class ManagementCropRepository implements IManagementCropsRepository {
           };
         })
       );
+
+      if (culture.IsPermanent) {
+        const firstCycle = await trx
+          .withSchema("management")
+          .select("Id")
+          .from("Crop_Cycle")
+          .where({ FK_Crop: culture.Id })
+          .orderBy("Start")
+          .first();
+        ;
+        /**
+         * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
+         * sendo o primeiro ciclo.
+        */
+        await trx("Crop")
+          .withSchema("management")
+          .update({
+            Cycle_Restart_Stage: firstCycle.Id,
+            UpdatedAt: trx.fn.now(),
+          })
+          .where({
+            Id: culture.Id,
+          });
+      }
     })
 
     await logsDb
@@ -111,6 +155,28 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       })
       .withSchema("users")
       .into("Operations");
+  }
+
+  async addRestartCyclePoint(id_crop: number, id_cycle: number): Promise<void> {
+    await governmentDb("Crop")
+      .withSchema("management")
+      .update({
+        Cycle_Restart_Stage: id_cycle,
+        UpdatedAt: governmentDb.fn.now(),
+      })
+      .where({
+        Id: id_crop,
+      });
+  }
+  async checkIfCycleExists(id_crop: number, id_cycle: number): Promise<boolean> {
+    const data = await governmentDb("Crop_Cycle")
+      .withSchema("management")
+      .where({
+        Id: id_cycle,
+        FK_Crop: id_crop
+      });
+
+    return data.length > 0 ? true : false
   }
 
   async delete(
@@ -174,7 +240,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
 
   async findCropsCycles(
     idCrop: number
-  ): Promise<Array<ManagementCropCycle> | null> {
+  ): Promise<Array<ManagementCropCycle>> {
     const data = await governmentDb
       .withSchema("management")
       .select("*")
@@ -182,14 +248,12 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .where({ FK_Crop: idCrop })
       .orderBy("Start");
 
-    if (data.length === 0) {
-      return null;
-    }
 
     return data.map((raw: any) => {
-      const { Stage_Title, DurationInDays, Start, End, KC, Increment } = raw;
+      const { Id, Stage_Title, DurationInDays, Start, End, KC, Increment } = raw;
 
       return {
+        Id,
         Title: Stage_Title,
         DurationInDays,
         Start,
@@ -266,13 +330,16 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       Name: rawCrop.Name,
       IsPermanent: rawCrop.Is_Permanent,
       CycleRestartPoint: rawCrop.Cycle_Restart_Stage,
-      Cycles: cycles || []
+      Cycles: cycles
     })
 
     if (cropOrError.isLeft()) return null
 
+
     return cropOrError.value as ManagementCrop
   }
+
+
 
   async find(): Promise<Array<Required<Omit<ManagementCropParams, 'Cycles'>>> | null> {
     const data = await governmentDb
@@ -303,7 +370,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         Id: Id as number,
         Name: Name as string,
         IsPermanent: Is_Permanent,
-        CycleRestartPoint: Cycle_Restart_Stage,
+        CycleRestartPoint: Cycle_Restart_Stage
       };
     });
   }
