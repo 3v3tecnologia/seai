@@ -296,6 +296,7 @@ export const MANAGEMENT = {
     patch: {
       tags: TAGS,
       security: [BEARER_AUTH],
+      description: "Sets the restart point when creating or updating a crop",
       parameters: [
         {
           name: "id",
