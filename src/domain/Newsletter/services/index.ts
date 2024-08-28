@@ -1,13 +1,9 @@
-export * from "./create.service";
-export * from "./delete.service";
-export * from "./fetch.service";
-export * from "./fetch-by-id.service";
-export * from "./update.service";
-export * from "./delete-subscriber.service";
-export * from "./subscribe.service";
-export * from "./fetch-subscribers.service";
-export * from "./delete-subscriber.service";
-export * from "./fetch-subscriber-by-email.service";
-export * from "./update-send-at.service";
-export * from "./fetch-subscribers-emails.service";
-export * from "./fetch-only-sent.service";
+import env from "../../../server/http/env";
+import { BcryptAdapter } from "../../../shared/infra/cryptography/bcrypt-adapter";
+import { PgBossAdapter } from "../../../shared/infra/queueProvider/pg-boss";
+import { NewsLetterRepository } from "../infra/database/repository/newsletter.repository";
+import { NewsletterService } from "./newsletter.service";
+
+
+
+export const newsletterService = new NewsletterService(new NewsLetterRepository(), new PgBossAdapter(), new BcryptAdapter(env.hashSalt))

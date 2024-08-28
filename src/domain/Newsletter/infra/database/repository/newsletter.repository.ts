@@ -3,6 +3,7 @@ import {
   newsletterDb,
 } from "../../../../../shared/infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../shared/infra/database/postgres/paginate";
+import { PaginatedInput } from "../../../../../shared/utils/command";
 import {
   IOutputWithPagination,
   IPaginationInput,
@@ -12,9 +13,12 @@ import {
 import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
 import { Content } from "../../../model/content";
 import { NewsMapper } from "../../../model/mapper/newsletter";
-import { NewsRepositoryProtocol } from "./protocol/newsletter-repository";
+import { NewsSubscriberMapper } from "../../../model/mapper/subscriber";
+import { Subscriber } from "../../../model/subscriber";
+import { NewsletterRepositoryProtocol } from "./protocol/newsletter-repository";
 
-export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
+export class NewsLetterRepository implements NewsletterRepositoryProtocol {
+
   async create(
     news: {
       Title: string;
@@ -184,19 +188,20 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
   }
 
   async getAll(
-    params: {
+    params: PaginatedInput<{
       only_sent: boolean;
       title?: string;
       sendDate?: string;
-    } & IPaginationInput
+    }>
   ): Promise<IOutputWithPagination<Required<Content>> | null> {
-    const { pageNumber, limit, offset, title, sendDate } = params;
+    const { title, sendDate } = params.data;
+    const { limit, offset, pageNumber } = params.paginate;
 
     const binding = [];
 
     const queries: Array<string> = [];
 
-    if (params.only_sent) {
+    if (params.data.only_sent) {
       queries.push(`WHERE news."SentAt"  IS NOT NULL`);
     }
 
@@ -255,5 +260,83 @@ export class DbNewsLetterContentRepository implements NewsRepositoryProtocol {
       limit: limit,
       count: countRows,
     });
+  }
+
+  async getReceiversEmails(): Promise<null | Array<{
+    Email: string;
+    Code: string;
+  }>> {
+    const result = await newsletterDb
+      .select("Email", "Code")
+      .where({
+        Confirmation_Status: "confirmed",
+      })
+      .from("Subscriber");
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result.map(({ Email, Code }: any) => {
+      return {
+        Email,
+        Code,
+      };
+    });
+  }
+
+  async getSubscriberByEmail(
+    email: string
+  ): Promise<Required<Subscriber> | null> {
+    const result = await newsletterDb("Subscriber")
+      .select("Id", "Email", "CreatedAt", "UpdatedAt")
+      .where({
+        Email: email,
+      })
+      .first();
+
+    if (!result) {
+      return null;
+    }
+
+    return NewsSubscriberMapper.toDomain(result);
+  }
+
+  async subscribe(
+    request: {
+      Email: string;
+      Code: string;
+      Status?: "pending" | "confirmed";
+    }
+  ): Promise<number> {
+    const data = {
+      Email: request.Email,
+      Code: request.Code,
+    };
+
+    if (request.Status) {
+      Object.assign(data, {
+        Confirmation_Status: request.Status,
+      });
+    }
+
+    const result = await newsletterDb
+      .insert(data)
+      .returning("Id")
+      .into("Subscriber");
+
+    const id = result.length && result[0].Id;
+
+    return id;
+  }
+
+  async unsubscribe(
+    email: string
+  ): Promise<void> {
+    await newsletterDb("Subscriber")
+      .where({
+        Email: email,
+      })
+      .delete();
   }
 }

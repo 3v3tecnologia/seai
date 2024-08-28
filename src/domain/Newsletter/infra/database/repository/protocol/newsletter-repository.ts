@@ -1,132 +1,14 @@
+import { PaginatedInput } from "../../../../../../shared/utils/command";
 import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
 import { Content } from "../../../../model/content";
-import { Sender } from "../../../../model/sender";
 import { Subscriber } from "../../../../model/subscriber";
 
-export namespace NewsletterSenderRepositoryDTO {
-  export namespace Create {
-    export type Request = {
-      Email: string;
-      Organ: string;
-    };
-    export type Response = Promise<number>;
-  }
 
-  export namespace Update {
-    export type Request = {
-      Id: number;
-      Email: string;
-      Organ: string;
-    };
-    export type Response = Promise<void>;
-  }
-
-  export namespace Delete {
-    export type Request = {
-      Id: number;
-    };
-    export type Response = Promise<void>;
-  }
-
-  export namespace GetById {
-    export type Request = {
-      Id: number;
-    };
-    export type Response = Promise<Required<Sender> | null>;
-  }
-
-  export namespace GetAll {
-    export type Request = IPaginationInput;
-    export type Response = Promise<IOutputWithPagination<Required<Sender>>>;
-  }
-}
-
-export namespace SubscriberRepositoryDTO {
-  export namespace GetAll {
-    export type Request = { email?: string } & IPaginationInput;
-    export type Response = Promise<IOutputWithPagination<Subscriber>>;
-  }
-
-  export namespace Create {
-    export type Request = {
-      Email: string;
-      Code: string;
-      Status?: "pending" | "confirmed";
-    };
-    export type Response = Promise<number>;
-  }
-
-  export namespace Delete {
-    export type Request = {
-      Email: string;
-    };
-    export type Response = Promise<void>;
-  }
-
-  export namespace Update {
-    export type Request = {
-      Id: number;
-      Email: string;
-    };
-    export type Response = Promise<void>;
-  }
-
-  export namespace GetByEmail {
-    export type Request = {
-      Email: string;
-    };
-    export type Response = Promise<Required<Subscriber> | null>;
-  }
-}
-
-export interface SenderRepositoryProtocol {
-  create(
-    request: NewsletterSenderRepositoryDTO.Create.Request
-  ): NewsletterSenderRepositoryDTO.Create.Response;
-  update(
-    request: NewsletterSenderRepositoryDTO.Update.Request
-  ): NewsletterSenderRepositoryDTO.Update.Response;
-  delete(
-    request: NewsletterSenderRepositoryDTO.Delete.Request
-  ): NewsletterSenderRepositoryDTO.Delete.Response;
-  getById(
-    request: NewsletterSenderRepositoryDTO.GetById.Request
-  ): NewsletterSenderRepositoryDTO.GetById.Response;
-  getAll(
-    request: NewsletterSenderRepositoryDTO.GetAll.Request
-  ): NewsletterSenderRepositoryDTO.GetAll.Response;
-}
-
-export interface NewsletterSubscriberRepositoryProtocol {
-  create(
-    request: SubscriberRepositoryDTO.Create.Request
-  ): SubscriberRepositoryDTO.Create.Response;
-  update(
-    request: SubscriberRepositoryDTO.Update.Request
-  ): SubscriberRepositoryDTO.Update.Response;
-  delete(
-    request: SubscriberRepositoryDTO.Delete.Request
-  ): SubscriberRepositoryDTO.Delete.Response;
-  deleteByCode(code: string): Promise<void>;
-  getByEmail(
-    request: SubscriberRepositoryDTO.GetByEmail.Request
-  ): SubscriberRepositoryDTO.GetByEmail.Response;
-  getReceiversEmails(): Promise<null | Array<{ Email: string; Code: string }>>;
-  getAll(
-    request: SubscriberRepositoryDTO.GetAll.Request
-  ): SubscriberRepositoryDTO.GetAll.Response;
-  getByCode(
-    code: string,
-    status: "confirmed" | "pending"
-  ): Promise<Required<Subscriber> | null>;
-  confirmSubscriber(code: string): Promise<void>;
-}
-
-export interface NewsRepositoryProtocol {
+export interface NewsletterRepositoryProtocol {
   create(
     news: {
       Title: string;
@@ -151,11 +33,11 @@ export interface NewsRepositoryProtocol {
   delete(id: number, operation: UserCommandOperationProps): Promise<void>;
   getById(id: number): Promise<Content | null>;
   getAll(
-    params: {
+    params: PaginatedInput<{
       only_sent: boolean;
       title?: string;
       sendDate?: string;
-    } & IPaginationInput
+    }>
   ): Promise<IOutputWithPagination<Required<Content>> | null>;
   getNewsById(id: number): Promise<{
     Id: number;
@@ -167,4 +49,21 @@ export interface NewsRepositoryProtocol {
     SendDate: string;
   } | null>;
   updateSendAt(id: number): Promise<void>;
+  getReceiversEmails(): Promise<null | Array<{
+    Email: string;
+    Code: string;
+  }>>
+  unsubscribe(
+    email: string
+  ): Promise<void>
+  subscribe(
+    request: {
+      Email: string;
+      Code: string;
+      Status?: "pending" | "confirmed";
+    }
+  ): Promise<number>
+  getSubscriberByEmail(
+    email: string
+  ): Promise<Required<Subscriber> | null>
 }
