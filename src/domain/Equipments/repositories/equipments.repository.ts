@@ -18,6 +18,7 @@ import {
   logsDb,
 } from "../../../shared/infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../shared/infra/database/postgres/paginate";
+import { PaginatedInput } from "../../../shared/utils/command";
 
 export class EquipmentsRepository implements IEquipmentsRepository {
   async enableEquipment(
@@ -182,10 +183,9 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2  ${
-        [params?.latitude, params?.longitude].every((e) => e)
-          ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-          : ""
+      WHERE equipment."FK_Type" = 2  ${[params?.latitude, params?.longitude].every((e) => e)
+        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        : ""
       })
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (
@@ -483,9 +483,9 @@ export class EquipmentsRepository implements IEquipmentsRepository {
         Location:
           coordinates !== null
             ? {
-                Latitude: coordinates[0],
-                Longitude: coordinates[1],
-              }
+              Latitude: coordinates[0],
+              Longitude: coordinates[1],
+            }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,
@@ -660,9 +660,9 @@ export class EquipmentsRepository implements IEquipmentsRepository {
         Location:
           coordinates !== null
             ? {
-                Latitude: coordinates[0],
-                Longitude: coordinates[1],
-              }
+              Latitude: coordinates[0],
+              Longitude: coordinates[1],
+            }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,
@@ -676,24 +676,29 @@ export class EquipmentsRepository implements IEquipmentsRepository {
   }
 
   async getAll(
-    params: {
+    params: PaginatedInput<{
+      equipmentId?: number;
       idOrgan?: number;
       idType?: number;
       name?: string;
       enabled?: boolean;
       only_with_measurements?: boolean;
-    } & IPaginationInput
+    }>
   ): Promise<IOutputWithPagination<EquipmentEntity>> {
     const {
       idOrgan,
       idType,
-      pageNumber,
-      limit,
-      offset,
       name,
       only_with_measurements,
       enabled,
-    } = params;
+    } = params.data;
+
+    const {
+      pageNumber,
+      limit,
+      offset,
+
+    } = params.paginate;
     const pageLimit = limit;
 
     const binding = [];

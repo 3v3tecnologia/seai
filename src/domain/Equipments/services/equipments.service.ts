@@ -1,17 +1,17 @@
-import {
-  IOutputWithPagination,
-  IPaginationInput,
-} from "../../../shared/utils/pagination";
 import { Either, left, right } from "../../../shared/Either";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { PaginatedInput } from "../../../shared/utils/command";
+import {
+  IOutputWithPagination
+} from "../../../shared/utils/pagination";
 import { EquipmentEntity } from "../core/models/Equipment";
+import { EquipmentsTypes } from "../core/models/equipments-types";
 import { MeteorologicalOrganEntity } from "../core/models/MetereologicalOrgan";
 import { IEquipmentsRepository } from "../repositories/protocols/equipment";
+import { AuditableInput } from './../../../shared/utils/command';
 import { IEquipmentsServices } from "./protocol/equipments";
-import { EquipmentsTypes } from "../core/models/equipments-types";
 
 export class EquipmentsServices implements IEquipmentsServices {
-  constructor(private equipmentRepository: IEquipmentsRepository) {}
+  constructor(private equipmentRepository: IEquipmentsRepository) { }
 
   async insert(request: {
     IdEquipmentExternal: string;
@@ -86,42 +86,45 @@ export class EquipmentsServices implements IEquipmentsServices {
   }
 
   async getAll(
-    request: {
+    request: PaginatedInput<{
       equipmentId?: number;
       idOrgan?: number;
       idType?: number;
       name?: string;
       enabled?: boolean;
       only_with_measurements?: boolean;
-    } & IPaginationInput
+    }>
   ): Promise<
     Either<
       Error,
       IOutputWithPagination<EquipmentEntity> | EquipmentEntity | null
     >
   > {
-    if (request.equipmentId) {
+    const { data, paginate } = request
+
+    if (data.equipmentId) {
       const equipment = await this.equipmentRepository.getEquipmentId(
-        request.equipmentId
+        data.equipmentId
       );
       return right(equipment);
     }
 
-    const result = await this.equipmentRepository.getAll(request);
+    const result = await this.equipmentRepository.getAll({
+      data,
+      paginate
+    });
 
     return right(result);
   }
 
   async update(
-    request: {
+    { audit, data }: AuditableInput<{
       IdEquipment: number;
       Enable: boolean;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>> {
+    }>): Promise<Either<Error, string>> {
     const notFound =
       (await this.equipmentRepository.checkIfEquipmentIdExists(
-        request.IdEquipment
+        data.IdEquipment
       )) === false;
 
     if (notFound) {
@@ -130,13 +133,13 @@ export class EquipmentsServices implements IEquipmentsServices {
 
     await this.equipmentRepository.enableEquipment(
       {
-        IdEquipment: request.IdEquipment,
-        Enable: request.Enable,
+        IdEquipment: data.IdEquipment,
+        Enable: data.Enable,
       },
-      operation
+      audit
     );
 
-    return right(`Sucesso ao atualizar equipamento ${request.IdEquipment}.`);
+    return right(`Sucesso ao atualizar equipamento ${data.IdEquipment}.`);
   }
 
   async getMeteorologicalOrgans(): Promise<
