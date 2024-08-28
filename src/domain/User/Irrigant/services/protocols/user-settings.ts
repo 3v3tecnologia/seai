@@ -15,9 +15,9 @@ export interface IUserPreferencesServices {
   deleteEquipments(user_id: number): Promise<Either<Error, void>>;
   updateEquipments(dto: UpdateUserEquipmentsDTO): Promise<Either<Error, void>>;
   getEquipments(user_id: number): Promise<Either<Error, Array<any>>>;
-  updateNotifications(
-    dto: UpdateUserEquipmentsDTO
-  ): Promise<Either<Error, void>>;
+  // updateNotifications(
+  //   dto: UpdateUserEquipmentsDTO
+  // ): Promise<Either<Error, void>>;
   getNotifications(user_id: number): Promise<Either<Error, Array<any>>>;
   updateUserNotificationPreference(
     dto: UpdateUserPreferencesDTO
