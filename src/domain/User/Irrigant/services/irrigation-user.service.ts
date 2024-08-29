@@ -9,7 +9,7 @@ import { UserPassword } from "../../lib/model/userPassword";
 
 import { TokenProvider } from "../../lib/infra/token-provider";
 
-import { PUBLIC_ASSETS_BASE_URL } from "../../../../server/http/config/url";
+import { PUBLIC_ASSETS_BASE_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../server/http/config/url";
 import { TASK_QUEUES } from "../../../../shared/infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { InactivatedAccount } from "../../lib/errors/account-not-activated";
@@ -150,9 +150,9 @@ export class IrrigationUserService implements IIrrigationUserService {
     const account = user.login
       ? await this.accountRepository.getByLogin(user.login, "registered")
       : await this.accountRepository.getByEmail(
-          user.email as string,
-          "registered"
-        );
+        user.email as string,
+        "registered"
+      );
 
     if (!account) {
       return left(new UserNotFoundError());
@@ -220,7 +220,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/reset-password/${Buffer.from(
+      redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${Buffer.from(
         account.email
       ).toString("base64")}`,
       action: "forgot-user-account",
