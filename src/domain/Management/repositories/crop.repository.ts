@@ -97,7 +97,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
           Is_Permanent: culture.IsPermanent,
           UpdatedAt: trx.fn.now(),
         })
-        .where({
+        .whereNull('Deleted_At')
+        .andWhere({
           Id: culture.Id,
         });
 
@@ -164,7 +165,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         Cycle_Restart_Stage: id_cycle,
         UpdatedAt: governmentDb.fn.now(),
       })
-      .where({
+      .whereNull('Deleted_At')
+      .andWhere({
         Id: id_crop,
       });
   }
@@ -183,10 +185,19 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     idCrop: number,
     operation: UserCommandOperationProps
   ): Promise<void> {
+    // await governmentDb("Crop")
+    //   .withSchema("management")
+    //   .where({ Id: idCrop })
+    //   .del();
+
+    // Soft delete
     await governmentDb("Crop")
       .withSchema("management")
-      .where({ Id: idCrop })
-      .del();
+      .update({
+        UpdatedAt: governmentDb.fn.now(),
+      })
+      .whereNull('Deleted_At')
+      .andWhere({ Id: idCrop })
 
     await logsDb
       .insert({
@@ -289,7 +300,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .withSchema("management")
       .select("*")
       .from("Crop")
-      .where({ Name: crop })
+      .whereNull('Deleted_At')
+      .andWhere({ Name: crop })
       .first();
 
     return !!result;
@@ -300,7 +312,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       .withSchema("management")
       .select("*")
       .from("Crop")
-      .where({ Id: crop })
+      .whereNull('Deleted_At')
+      .andWhere({ Id: crop })
       .first();
 
     return !!result;
@@ -310,7 +323,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     const result = await governmentDb.raw(
       `
       SELECT * FROM management."Crop" c
-      WHERE c."Id" = ?
+      WHERE c."Id" = ? AND c."Deleted_At" IS NULL
     `,
       [id]
     );
@@ -352,7 +365,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         "CreatedAt",
         "UpdatedAt"
       )
-      .from("Crop");
+      .from("Crop")
+      .whereNull('Deleted_At');
 
     return data.map((raw: any) => {
       const {
@@ -382,7 +396,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
           "UpdatedAt"
       FROM
           management."Crop" c
-      WHERE
+      WHERE c."Deleted_At" IS NULL AND
           (
                 to_tsvector(
                   'simple',
@@ -410,6 +424,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     });
   }
 
+  // TO-DO: Remove
   async findByBasin(id: number): Promise<Array<string> | null> {
     const raw = await censusDb.raw(
       `
@@ -485,7 +500,8 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         "CreatedAt",
         "UpdatedAt"
       )
-      .where({ Name: name })
+      .whereNull('Deleted_At')
+      .andWhere({ Name: name })
       .from("Crop")
       .first();
 
