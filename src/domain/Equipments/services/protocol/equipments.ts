@@ -6,6 +6,7 @@ import { Either } from "../../../../shared/Either";
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { EquipmentEntity } from "../../core/models/Equipment";
 import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
+import { AuditableInput, PaginatedInput } from "../../../../shared/utils/command";
 
 export interface IEquipmentsServices {
   insert(request: {
@@ -36,28 +37,26 @@ export interface IEquipmentsServices {
   >;
 
   getAll(
-    request: {
+    request: PaginatedInput<{
       equipmentId?: number;
       idOrgan?: number;
       idType?: number;
       name?: string;
       enabled?: boolean;
       only_with_measurements?: boolean;
-    } & IPaginationInput
+    }>
   ): Promise<
     Either<
       Error,
       IOutputWithPagination<EquipmentEntity> | EquipmentEntity | null
     >
-  >;
+  >
 
   update(
-    request: {
+    request: AuditableInput<{
       IdEquipment: number;
       Enable: boolean;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>>;
+    }>): Promise<Either<Error, string>>
 
   getByType(
     type: "station" | "pluviometer"

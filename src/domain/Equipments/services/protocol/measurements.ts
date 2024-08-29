@@ -6,6 +6,7 @@ import { Either } from "../../../../shared/Either";
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
 import { PluviometerReadEntity } from "../../core/models/PluviometerRead";
 import { StationReadEntity } from "../../core/models/StationRead";
+import { AuditableInput } from "../../../../shared/utils/command";
 
 export interface IEquipmentsMeasurementsServices {
   getByEquipmentsCodesAndDate(
@@ -43,14 +44,12 @@ export interface IEquipmentsMeasurementsServices {
     } & IPaginationInput
   ): Promise<Either<Error, IOutputWithPagination<StationReadEntity> | null>>;
   updateByPluviometer(
-    request: {
+    { audit, data }: AuditableInput<{
       IdRead: number;
       Precipitation: number | null;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>>;
+    }>): Promise<Either<Error, string>>
   updateByStation(
-    request: {
+    { audit, data }: AuditableInput<{
       IdRead: number;
       TotalRadiation: number | null;
       AverageRelativeHumidity: number | null;
@@ -61,7 +60,5 @@ export interface IEquipmentsMeasurementsServices {
       MinAtmosphericTemperature: number | null;
       AtmosphericPressure: number | null;
       WindVelocity: number | null;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>>;
+    }>): Promise<Either<Error, string>>
 }

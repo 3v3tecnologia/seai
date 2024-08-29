@@ -11,14 +11,14 @@ import {
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
 import { IEquipmentsMeasurementsServices } from "./protocol/measurements";
 import { EquipmentsTypes } from "../core/models/equipments-types";
+import { AuditableInput } from "../../../shared/utils/command";
 
 export class EquipmentsMeasurementsServices
-  implements IEquipmentsMeasurementsServices
-{
+  implements IEquipmentsMeasurementsServices {
   constructor(
     private equipmentsRepository: IEquipmentsRepository,
     private equipmentsMeasurementsRepository: IEquipmentsMeasurementsRepository
-  ) {}
+  ) { }
 
   async getByEquipmentsCodesAndDate(
     eqpType: `${EquipmentsTypes}`,
@@ -259,17 +259,16 @@ export class EquipmentsMeasurementsServices
     );
   }
 
+
   async updateByPluviometer(
-    request: {
+    { audit, data }: AuditableInput<{
       IdRead: number;
       Precipitation: number | null;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>> {
+    }>): Promise<Either<Error, string>> {
     const measureExists =
       await this.equipmentsMeasurementsRepository.checkIfPluviometerMeasurementsExists(
         {
-          id: request.IdRead,
+          id: data.IdRead,
         }
       );
 
@@ -278,17 +277,18 @@ export class EquipmentsMeasurementsServices
     }
 
     await this.equipmentsMeasurementsRepository.updatePluviometerMeasures(
-      request,
-      operation
+      data,
+      audit
     );
 
     return right(
-      `Sucesso ao atualizar leitura de pluviômetro ${request.IdRead}.`
+      `Sucesso ao atualizar leitura de pluviômetro ${data.IdRead}.`
     );
   }
 
+
   async updateByStation(
-    request: {
+    { audit, data }: AuditableInput<{
       IdRead: number;
       TotalRadiation: number | null;
       AverageRelativeHumidity: number | null;
@@ -299,12 +299,10 @@ export class EquipmentsMeasurementsServices
       MinAtmosphericTemperature: number | null;
       AtmosphericPressure: number | null;
       WindVelocity: number | null;
-    },
-    operation: UserCommandOperationProps
-  ): Promise<Either<Error, string>> {
+    }>): Promise<Either<Error, string>> {
     const measurements =
       await this.equipmentsMeasurementsRepository.getStationMeasurementsById(
-        request.IdRead
+        data.IdRead
       );
 
     if (measurements === null) {
@@ -329,37 +327,37 @@ export class EquipmentsMeasurementsServices
         longitude: (eqpCoordinates && eqpCoordinates[1]) || 0,
       },
       measures: {
-        atmosphericPressure: request.AtmosphericPressure as number,
+        atmosphericPressure: data.AtmosphericPressure as number,
         averageAtmosphericTemperature:
-          request.AverageAtmosphericTemperature as number,
-        averageRelativeHumidity: request.AverageRelativeHumidity as number,
-        maxAtmosphericTemperature: request.MaxAtmosphericTemperature as number,
-        maxRelativeHumidity: request.MaxRelativeHumidity as number,
-        minAtmosphericTemperature: request.MinAtmosphericTemperature as number,
-        minRelativeHumidity: request.MinRelativeHumidity as number,
-        totalRadiation: request.TotalRadiation as number,
-        windVelocity: request.WindVelocity as number,
+          data.AverageAtmosphericTemperature as number,
+        averageRelativeHumidity: data.AverageRelativeHumidity as number,
+        maxAtmosphericTemperature: data.MaxAtmosphericTemperature as number,
+        maxRelativeHumidity: data.MaxRelativeHumidity as number,
+        minAtmosphericTemperature: data.MinAtmosphericTemperature as number,
+        minRelativeHumidity: data.MinRelativeHumidity as number,
+        totalRadiation: data.TotalRadiation as number,
+        windVelocity: data.WindVelocity as number,
       },
     });
 
     await this.equipmentsMeasurementsRepository.updateStationMeasures(
       {
-        IdRead: request.IdRead,
-        AtmosphericPressure: request.AtmosphericPressure as number,
+        IdRead: data.IdRead,
+        AtmosphericPressure: data.AtmosphericPressure as number,
         AverageAtmosphericTemperature:
-          request.AverageAtmosphericTemperature as number,
-        AverageRelativeHumidity: request.AverageRelativeHumidity as number,
-        MaxAtmosphericTemperature: request.MaxAtmosphericTemperature as number,
-        MaxRelativeHumidity: request.MaxRelativeHumidity as number,
-        MinAtmosphericTemperature: request.MinAtmosphericTemperature as number,
-        MinRelativeHumidity: request.MinRelativeHumidity as number,
-        TotalRadiation: request.TotalRadiation as number,
-        WindVelocity: request.WindVelocity as number,
+          data.AverageAtmosphericTemperature as number,
+        AverageRelativeHumidity: data.AverageRelativeHumidity as number,
+        MaxAtmosphericTemperature: data.MaxAtmosphericTemperature as number,
+        MaxRelativeHumidity: data.MaxRelativeHumidity as number,
+        MinAtmosphericTemperature: data.MinAtmosphericTemperature as number,
+        MinRelativeHumidity: data.MinRelativeHumidity as number,
+        TotalRadiation: data.TotalRadiation as number,
+        WindVelocity: data.WindVelocity as number,
         Et0: Et0,
       },
-      operation
+      audit
     );
 
-    return right(`Sucesso ao atualizar leitura de estação ${request.IdRead}.`);
+    return right(`Sucesso ao atualizar leitura de estação ${data.IdRead}.`);
   }
 }

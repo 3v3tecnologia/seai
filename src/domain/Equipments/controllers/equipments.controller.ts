@@ -23,6 +23,7 @@ import {
   getMeteorologicalOrganAccessCredentialRequest,
   updateEquipmentRequest,
 } from "./request/equipments";
+import { mapToPaginatedInput } from "../../../shared/utils/command";
 
 export class EquipmentsControllers {
   static async getDateOfLastMeasurementTaken(): Promise<HttpResponse> {
@@ -145,20 +146,13 @@ export class EquipmentsControllers {
 
       return ok(result.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
 
   static async fetchAll(request: fetchAllRequest) {
     try {
-      console.log(request);
-      const dto = {
-        ...parsePaginationInput({
-          page: request.pageNumber,
-          limit: request.limit,
-        }),
-      };
+      const dto = {};
 
       if (request.idOrgan) {
         Object.assign(dto, {
@@ -189,11 +183,15 @@ export class EquipmentsControllers {
           only_with_measurements: request.only_with_measurements === "true",
         });
       }
-      const result = await equipmentsService.getAll(dto);
+
+      const result = await equipmentsService.getAll(mapToPaginatedInput(dto, {
+        limit: request.limit,
+        offset: request.offset,
+        pageNumber: request.pageNumber
+      }));
 
       return ok(result.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -204,7 +202,6 @@ export class EquipmentsControllers {
 
       return ok(result.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
@@ -226,12 +223,14 @@ export class EquipmentsControllers {
 
       const resultOrError = await equipmentsService.update(
         {
-          IdEquipment: id,
-          Enable,
-        },
-        {
-          author: accountId,
-          operation: Operation,
+          data: {
+            IdEquipment: id,
+            Enable,
+          },
+          audit: {
+            author: accountId,
+            operation: Operation,
+          }
         }
       );
 
@@ -241,7 +240,6 @@ export class EquipmentsControllers {
 
       return ok(resultOrError.value);
     } catch (error) {
-      console.error(error);
       return serverError(error as Error);
     }
   }
