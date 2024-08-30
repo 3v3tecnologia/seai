@@ -12,13 +12,11 @@ export class ManagementCropsServices implements IManagementCropsServices {
   constructor(private cropRepository: IManagementCropsRepository) { }
 
   async update({ audit, data }: UpdateCropInput): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, void>> {
-    // Id or name?
     const exists = await this.cropRepository.idExists(data.Id);
 
     if (!exists) {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
-    // Id or name?
     const cropWithSameName =
       await this.cropRepository.checkIfCropNameAlreadyExists(data.Name);
 
@@ -29,7 +27,6 @@ export class ManagementCropsServices implements IManagementCropsServices {
     const cultureOrError = ManagementCrop.create({
       Id: data.Id,
       IsPermanent: data.IsPermanent,
-      // CycleRestartPoint: data.CycleRestartPoint,
       Name: data.Name,
       Cycles: data.Cycles
     });
@@ -157,25 +154,6 @@ export class ManagementCropsServices implements IManagementCropsServices {
     }
     return right(null);
   }
-
-
-  // Useless?
-  /*async deleteCropCyclesByCropId({ audit, data }: DeleteCropCycles
-  ): Promise<Either<ManagementCropErrors.CropNotExistsError, any>> {
-    const { id } = data
-
-    const notFound = (await this.cropRepository.idExists(id)) === false;
-
-    if (notFound) {
-      return left(new ManagementCropErrors.CropNotExistsError());
-    }
-
-    await this.cropRepository.deleteCropCycles(id, audit);
-
-    return right(
-      `Sucesso ao apagar dados de ciclo de cultura do cultivar ${id}`
-    );
-  }*/
 
   async findCropCyclesByCropId(
     idCrop: number

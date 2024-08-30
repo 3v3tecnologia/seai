@@ -1,45 +1,8 @@
 import { governmentDb } from "../../../shared/infra/database/postgres/connection/knexfile";
 import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
 import { IrrigationSystemTypes } from "../core/model/irrigation-system";
-import { IIrrigationRepository } from "./protocols/irrigation.repository";
+import { IIrrigationRepository, IrrigationCropsData, IUserRecordedRecommendationData } from "./protocols/irrigation.repository";
 
-export type IrrigationCropsData = {
-  id?: number;
-  user_id: number;
-  crop_id: number;
-  name: string;
-  planting_date: string;
-  system_type: IrrigationSystemTypes;
-  area?: number;
-  effective_area?: number;
-  plants_qtd?: number;
-  sprinkler_precipitation?: number;
-  length?: number;
-  spacing?: number;
-  flow?: number;
-};
-
-export type IUserRecordedRecommendationData = {
-  Id: number;
-  StationId: number;
-  Name: string;
-  PluviometerId: number;
-  SystemType: IrrigationSystemTypes;
-  CropId: number;
-  Crop: string;
-  PlantingDate: string;
-  ETo: number | null;
-  Pluviometry: number | null;
-  Area?: number | null;
-  EffectiveArea?: number | null;
-  PlantsQtd?: number | null;
-  System_Precipitation?: number | null;
-  Length?: number | null;
-  Spacing?: number | null;
-  Flow?: number | null;
-  CreatedAt: string;
-  UpdatedAt?: string | null;
-};
 
 function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
   const {
@@ -58,17 +21,18 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
     updated_at,
     crop_id,
     crop_name,
+    crop_deleted_at,
     station_id,
     ETo,
     pluviometer_id,
     pluviometry,
   } = row;
 
-  return {
+  const irrigation_recommendation = {
     Id: Number(id),
     Name: name,
-    CropId: Number(crop_id),
-    Crop: crop_name,
+    CropId: null,
+    Crop: null,
     SystemType: system_type as IrrigationSystemTypes,
     PlantingDate: planting_date,
     StationId: Number(station_id),
@@ -86,7 +50,16 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
     Spacing: spacing ? Number(spacing) : null,
     CreatedAt: created_at,
     UpdatedAt: updated_at,
-  };
+  }
+
+  if (crop_deleted_at === null) {
+    Object.assign(irrigation_recommendation, {
+      CropId: Number(crop_id),
+      Crop: crop_name,
+    })
+  }
+
+  return irrigation_recommendation
 }
 
 export class IrrigationCropsRepository implements IIrrigationRepository {
@@ -149,6 +122,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       .from("Irrigation_Crops");
   }
   async deleteById(id: number, user_id: number): Promise<void> {
+    // TO-DO : check if crop was deleted
     await governmentDb
       .withSchema("management")
       .del()
@@ -184,6 +158,8 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       system_type,
       user_id,
     } = params;
+
+    // TO-DO : check if crop was deleted
 
     await governmentDb
       .withSchema("management")
@@ -239,6 +215,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
                 irrigation.flow ,
                 crop."Id" AS "crop_id",
                 crop."Name" AS "crop_name",
+                crop."Deleted_At" as "crop_deleted_at",
                 user_eqps.station_id,
                 (
                     SELECT
@@ -311,20 +288,14 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
         "ic.id",
         "UserIrrigation.irrigation_crops_id"
       )
+      .innerJoin(
+        "management.Crop as c",
+        "c.Id",
+        "ic.crop_id"
+      )
       .where("ic.name", name)
-      .select("ic.id", "ic.name")
+      .select("ic.id", "ic.name", "c.Deleted_At")
       .first();
-    // const dbResponse = await governmentDb
-    //   .withSchema("management")
-    //   .select("id", "user_id", "name")
-    //   .innerJoin("Irrigation_Crops",)
-    //   .where({
-    //     name,
-    //   })
-    //   .andWhere({
-    //     user_id,
-    //   })
-    //   .first();
 
     if (dbResponse) {
       const { id, name } = dbResponse;
@@ -422,6 +393,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
                 irrigation.flow ,
                 crop."Id" AS "crop_id",
                 crop."Name" AS "crop_name",
+                crop."Deleted_At" as "crop_deleted_at",
                 user_eqps.station_id,
                 (
                     SELECT
