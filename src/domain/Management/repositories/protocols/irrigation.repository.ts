@@ -18,12 +18,12 @@ export type IrrigationCropsData = {
 
 export type IUserRecordedRecommendationData = {
   Id: number;
-  Name: string;
   StationId: number;
+  Name: string;
   PluviometerId: number;
   SystemType: IrrigationSystemTypes;
-  CropId: number;
-  Crop: string;
+  CropId: number | null;
+  Crop: string | null;
   PlantingDate: string;
   ETo: number | null;
   Pluviometry: number | null;

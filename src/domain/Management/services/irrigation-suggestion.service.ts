@@ -250,8 +250,8 @@ export class IrrigationCropsSuggestion
               Id: irrigation.Id,
               Name: irrigation.Name,
               Crop: {
-                Id: irrigation.CropId,
-                Name: irrigation.Crop,
+                Id: irrigation.CropId as number,
+                Name: irrigation.Crop as string,
                 Etc: null,
                 CropDays: null,
                 IrrigationTime: null,
@@ -283,8 +283,8 @@ export class IrrigationCropsSuggestion
             Id: irrigation.Id,
             Name: irrigation.Name,
             Crop: {
-              Id: irrigation.CropId,
-              Name: irrigation.Crop,
+              Id: irrigation.CropId as number,
+              Name: irrigation.Crop as string,
               Etc: suggestion.Etc,
               Kc: suggestion.Kc,
               IrrigationTime: suggestion.IrrigationTime,

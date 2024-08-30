@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../shared/Either";
+import { ManagementCropErrors } from "../core/errors/crop-errors";
 import {
   IrrigationSystemTypes,
   makeSystemIrrigationMeasurements,
@@ -6,6 +7,7 @@ import {
 
 import { IIrrigationSystemMeasurementsEntity } from "../core/model/irrigation-system-measurements";
 import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
+import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
 import {
   CalcIrrigationRecommendationDTO,
   ISaveIrrigationRecommendationDTO,
@@ -14,13 +16,18 @@ import {
 import { IUserIrrigationCropsServices } from "./protocols/user-irrigation";
 
 export class UserIrrigationCropsServices
-  implements IUserIrrigationCropsServices
-{
-  constructor(private irrigationCropsRepository: IIrrigationRepository) {}
+  implements IUserIrrigationCropsServices {
+  constructor(private irrigationCropsRepository: IIrrigationRepository, private cropsRepository: IManagementCropsRepository) { }
 
   async saveIrrigationCrops(
     dto: ISaveIrrigationRecommendationDTO
   ): Promise<Either<Error, number>> {
+    const cropAlreadyExists = await this.cropsRepository.idExists(dto.CropId)
+
+    if (cropAlreadyExists === false) {
+      return left(new ManagementCropErrors.CropNotExistsError())
+    }
+
     const userIrrigationAlreadyExists =
       await this.irrigationCropsRepository.getUserIrrigationByName(
         dto.Name,
@@ -71,6 +78,12 @@ export class UserIrrigationCropsServices
   async updateIrrigationCropsById(
     dto: IUpdateIrrigationRecommendationDTO
   ): Promise<Either<Error, string>> {
+    const cropAlreadyExists = await this.cropsRepository.idExists(dto.CropId)
+
+    if (cropAlreadyExists === false) {
+      return left(new ManagementCropErrors.CropNotExistsError())
+    }
+
     const userIrrigationAlreadyExists =
       await this.irrigationCropsRepository.getUserIrrigationCropsById(
         dto.Id,
@@ -166,7 +179,7 @@ export class UserIrrigationCropsServices
     if (
       data &&
       toISOstringShortDate(new Date(data.created_at)) ===
-        toISOstringShortDate(new Date())
+      toISOstringShortDate(new Date())
     ) {
       await this.irrigationCropsRepository.deleteById(id, user_id);
       return right();
