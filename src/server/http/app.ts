@@ -27,6 +27,9 @@ export const setupApp = async (): Promise<Express> => {
   // );
   app.use(morgan("tiny"));
 
+  app.use(express.json({ limit: '5mb' }));
+  app.use(express.urlencoded({ limit: '5mb', extended: true }));
+
   app.use(
     "/static",
     express.static(resolve(__dirname, "..", "..", "..", "public"))
