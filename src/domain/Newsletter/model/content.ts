@@ -1,3 +1,4 @@
+import { MAX_PAYLOAD_SIZE } from "../../../server/http/config/payload";
 import { Either, left, right } from "../../../shared/Either";
 import { isDateInThePast } from "../../../shared/utils/date";
 
@@ -18,8 +19,10 @@ export type Content = {
   UpdatedAt?: string;
 };
 
-// Check if the size exceeds 2MB (2 * 1024 * 1024 bytes)
-export const NEWSLETTER_CONTENT_SIZE_LIMIT = 2 * 1024 * 1024;
+
+
+// Check if the size exceeds 5MB (5 * 1024 * 1024 bytes)
+export const NEWSLETTER_CONTENT_SIZE_LIMIT = MAX_PAYLOAD_SIZE * 1024 * 1024;
 
 export function validateContentSize(data: any): Either<Error, void> {
   // Convert the Data string to bytes

@@ -8,6 +8,7 @@ import { setApiDocs } from "./swagger-docs";
 
 import morgan from "morgan";
 import helmet from "helmet";
+import { MAX_PAYLOAD_SIZE } from "./config/payload";
 
 export const setupApp = async (): Promise<Express> => {
   const app = express();
@@ -27,8 +28,8 @@ export const setupApp = async (): Promise<Express> => {
   // );
   app.use(morgan("tiny"));
 
-  app.use(express.json({ limit: '5mb' }));
-  app.use(express.urlencoded({ limit: '5mb', extended: true }));
+  app.use(express.json({ limit: `${MAX_PAYLOAD_SIZE}mb` }));
+  app.use(express.urlencoded({ limit: `${MAX_PAYLOAD_SIZE}mb`, extended: true }));
 
   app.use(
     "/static",
