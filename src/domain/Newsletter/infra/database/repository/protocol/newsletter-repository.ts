@@ -39,6 +39,7 @@ export interface NewsletterRepositoryProtocol {
       sendDate?: string;
     }>
   ): Promise<IOutputWithPagination<Required<Content>> | null>;
+  getPreviewsBySendDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>>
   getNewsById(id: number): Promise<{
     Id: number;
     Title: string;

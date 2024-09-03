@@ -53,6 +53,13 @@ export const newsRouter = (): Router => {
   );
 
   router.get(
+    "/previews/:date",
+    // authorization,
+    // newsReadAccessAuth,
+    adaptHTTPHandler(NewsletterController.getPreviews)
+  );
+
+  router.get(
     "/:id",
     // authorization,
     // newsReadAccessAuth,

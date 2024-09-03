@@ -40,3 +40,7 @@ export type GetAllNewslettersRequest = {
   // start?: string;
   // end?: string | null;
 } & IPaginationInput
+
+export type GetAllPreviewsRequest = {
+  date: string;
+}

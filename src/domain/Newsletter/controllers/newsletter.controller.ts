@@ -1,9 +1,8 @@
 import { mapToPaginatedInput } from "../../../shared/utils/command";
 import { badRequest, created, forbidden, ok, serverError } from "../../../shared/utils/http-responses";
-import { parsePaginationInput } from "../../../shared/utils/pagination";
 import { newsletterService } from "../services";
 import newsletterValidator from './schema/newsletter-validator';
-import { CreateNewsletterRequest, DeleteNewsletterRequest, GetAllNewslettersRequest, GetOnlySentNewsletterRequest, UpdateNewsletterRequest, UpdateNewsletterSendAtRequest } from "./schema/request";
+import { CreateNewsletterRequest, DeleteNewsletterRequest, GetAllNewslettersRequest, GetAllPreviewsRequest, GetOnlySentNewsletterRequest, UpdateNewsletterRequest, UpdateNewsletterSendAtRequest } from "./schema/request";
 
 export class NewsletterController {
   static async create(request: CreateNewsletterRequest) {
@@ -261,6 +260,23 @@ export class NewsletterController {
       }
 
       return ok(createdOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+
+  static async getPreviews(request: GetAllPreviewsRequest) {
+    try {
+      const { date } = request;
+
+
+      const resultOrError = await newsletterService.getPreviewsBySendDate(date);
+
+      if (resultOrError.isLeft()) {
+        return forbidden(resultOrError.value);
+      }
+
+      return ok(resultOrError.value);
     } catch (error) {
       return serverError(error as Error);
     }

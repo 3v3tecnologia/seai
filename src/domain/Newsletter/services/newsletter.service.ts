@@ -230,6 +230,12 @@ export class NewsletterService implements NewsletterServiceProtocol {
     return right(result);
   }
 
+  async getPreviewsBySendDate(sendDate: string): Promise<Either<Error, Array<Pick<Content, 'Title' | 'Description' | 'Id'>>>> {
+    const result = await this.repository.getPreviewsBySendDate(sendDate);
+
+    return right(result);
+  }
+
   // Used to send bulk emails
   async getSubscribers(): Promise<Either<Error, Array<{
     Email: string;

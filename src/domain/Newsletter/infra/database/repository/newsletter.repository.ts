@@ -1,3 +1,4 @@
+import { NEWSLETTER_PUBLIC_PAGE_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../../server/http/config/url";
 import {
   logsDb,
   newsletterDb,
@@ -102,6 +103,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     };
   }
 
+  // TO-DO: update sendAt by date
   async updateSendAt(id: number): Promise<void> {
     await newsletterDb("News")
       .where({
@@ -201,8 +203,13 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
 
     const queries: Array<string> = [];
 
+    // Filter by current or old date
     if (params.data.only_sent) {
-      queries.push(`WHERE news."SentAt"  IS NOT NULL`);
+      // Current date in YYYY-MM-DD format
+      const date = new Date().toISOString().split('T')[0]
+
+      queries.push(`WHERE news."SendDate"::date <= ?`);
+      binding.push(date);
     }
 
     if (title) {
@@ -260,6 +267,31 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
       limit: limit,
       count: countRows,
     });
+  }
+
+  async getPreviewsBySendDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>> {
+
+    const response = await newsletterDb.raw(
+      `
+      SELECT
+          news."Id" ,
+          news."Title" ,
+          news."Description"
+      FROM "News" as news
+      WHERE news."SendDate"::date = ?
+      ORDER BY news."SendDate" DESC
+    `,
+      [sendDate]
+    );
+
+    const rows = response.rows;
+
+    return rows.map(({ Id, Title, Description }: { Id: number, Title: string, Description: string }) => ({
+      Id,
+      Title,
+      Description,
+      Link: `${NEWSLETTER_PUBLIC_PAGE_URL}/${Id}`
+    }))
   }
 
   async getReceiversEmails(): Promise<null | Array<{
