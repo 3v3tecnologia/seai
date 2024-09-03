@@ -1,6 +1,6 @@
 export type IrrigationCrop = {
-  Id: number;
-  Name: string;
+  Id: number | null;
+  Name: string | null;
   CropDays: number | null;
   Kc: number | null;
   Etc: number | null;

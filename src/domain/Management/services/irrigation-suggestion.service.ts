@@ -101,6 +101,10 @@ export class IrrigationCropsSuggestion
       return left(irrigationSystemOrError.value);
     }
 
+    if (command.CropId === null) {
+      return left(new Error("Cultura não encontrada."))
+    }
+
     const crop = await this.cropsRepository.findCropById(command.CropId);
 
     if (crop == null) {
@@ -250,8 +254,8 @@ export class IrrigationCropsSuggestion
               Id: irrigation.Id,
               Name: irrigation.Name,
               Crop: {
-                Id: irrigation.CropId as number,
-                Name: irrigation.Crop as string,
+                Id: irrigation.CropId,
+                Name: irrigation.Crop,
                 Etc: null,
                 CropDays: null,
                 IrrigationTime: null,
