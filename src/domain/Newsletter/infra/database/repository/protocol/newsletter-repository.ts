@@ -39,7 +39,7 @@ export interface NewsletterRepositoryProtocol {
       sendDate?: string;
     }>
   ): Promise<IOutputWithPagination<Required<Content>> | null>;
-  getPreviewsBySendDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>>
+  getUnsetNewsByDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>>
   getNewsById(id: number): Promise<{
     Id: number;
     Title: string;
@@ -49,7 +49,7 @@ export interface NewsletterRepositoryProtocol {
     UpdatedAt: string;
     SendDate: string;
   } | null>;
-  updateSendAt(id: number): Promise<void>;
+  markAsSent(date: string): Promise<void>
   getReceiversEmails(): Promise<null | Array<{
     Email: string;
     Code: string;

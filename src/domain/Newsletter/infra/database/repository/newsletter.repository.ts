@@ -1,4 +1,4 @@
-import { NEWSLETTER_PUBLIC_PAGE_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../../server/http/config/url";
+import { NEWSLETTER_PUBLIC_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../../server/http/config/url";
 import {
   logsDb,
   newsletterDb,
@@ -104,14 +104,12 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
   }
 
   // TO-DO: update sendAt by date
-  async updateSendAt(id: number): Promise<void> {
-    await newsletterDb("News")
-      .where({
-        Id: id,
-      })
-      .update({
-        SentAt: newsletterDb.fn.now(),
-      });
+  async markAsSent(date: string): Promise<void> {
+    await newsletterDb.raw(`
+      UPDATE "News"
+      SET "SentAt" = NOW()
+      WHERE "SendDate"::date = ?
+    `, [date])
   }
 
   async update(
@@ -269,7 +267,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     });
   }
 
-  async getPreviewsBySendDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>> {
+  async getUnsetNewsByDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>> {
 
     const response = await newsletterDb.raw(
       `
@@ -279,6 +277,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
           news."Description"
       FROM "News" as news
       WHERE news."SendDate"::date = ?
+      AND news."SentAt" IS NULL
       ORDER BY news."SendDate" DESC
     `,
       [sendDate]
@@ -290,7 +289,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
       Id,
       Title,
       Description,
-      Link: `${NEWSLETTER_PUBLIC_PAGE_URL}/${Id}`
+      Link: `${NEWSLETTER_PUBLIC_URL}/${Id}`
     }))
   }
 

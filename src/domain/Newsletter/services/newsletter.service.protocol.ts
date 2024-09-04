@@ -33,11 +33,10 @@ export interface NewsletterServiceProtocol {
       SendDate: string;
     }>
   ): Promise<Either<Error, string>>
-  updateSendAt(
-    id: number
+  markAsSent(
+    sendDate: string
   ): Promise<Either<Error, string>>
-  getById(id: number): Promise<Either<Error, Content | null>>
-  getPreviewsBySendDate(sendDate: string): Promise<Either<Error, Array<Pick<Content, 'Title' | 'Description' | 'Id'>>>>
+  getUnsentBySendDate(sendDate: string): Promise<Either<Error, Array<Pick<Content, 'Title' | 'Description' | 'Id'>>>>
   getOnlySent(request: PaginatedInput<{
     title?: string;
     sendDate?: string;

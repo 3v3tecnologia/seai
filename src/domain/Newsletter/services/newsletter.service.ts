@@ -165,20 +165,12 @@ export class NewsletterService implements NewsletterServiceProtocol {
     return right(successLog);
   }
   // Mark the news as sent
-  async updateSendAt(
-    id: number
+  async markAsSent(
+    sendDate: string
   ): Promise<Either<Error, string>> {
-    const alreadyExistsNews = await this.repository.getById(id);
+    await this.repository.markAsSent(sendDate);
 
-    if (alreadyExistsNews == null) {
-      return left(new Error(`Notícia não encontrada.`));
-    }
-
-    await this.repository.updateSendAt(id);
-
-    const successLog = `Notícia atualizada com sucessso.`;
-
-    return right(successLog);
+    return right(`Notícias com data de envio para ${sendDate} atualizadas com sucesso.`);
   }
 
   async getById(id: number): Promise<Either<Error, Content | null>> {
@@ -230,8 +222,8 @@ export class NewsletterService implements NewsletterServiceProtocol {
     return right(result);
   }
 
-  async getPreviewsBySendDate(sendDate: string): Promise<Either<Error, Array<Pick<Content, 'Title' | 'Description' | 'Id'>>>> {
-    const result = await this.repository.getPreviewsBySendDate(sendDate);
+  async getUnsentBySendDate(sendDate: string): Promise<Either<Error, Array<Pick<Content, 'Title' | 'Description' | 'Id'>>>> {
+    const result = await this.repository.getUnsetNewsByDate(sendDate);
 
     return right(result);
   }

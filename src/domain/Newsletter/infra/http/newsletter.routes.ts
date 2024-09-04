@@ -56,7 +56,7 @@ export const newsRouter = (): Router => {
     "/previews/:date",
     // authorization,
     // newsReadAccessAuth,
-    adaptHTTPHandler(NewsletterController.getPreviews)
+    adaptHTTPHandler(NewsletterController.getUnsent)
   );
 
   router.get(

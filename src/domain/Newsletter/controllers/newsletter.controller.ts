@@ -2,7 +2,7 @@ import { mapToPaginatedInput } from "../../../shared/utils/command";
 import { badRequest, created, forbidden, ok, serverError } from "../../../shared/utils/http-responses";
 import { newsletterService } from "../services";
 import newsletterValidator from './schema/newsletter-validator';
-import { CreateNewsletterRequest, DeleteNewsletterRequest, GetAllNewslettersRequest, GetAllPreviewsRequest, GetOnlySentNewsletterRequest, UpdateNewsletterRequest, UpdateNewsletterSendAtRequest } from "./schema/request";
+import { CreateNewsletterRequest, DeleteNewsletterRequest, GetAllNewslettersRequest, GetAllPreviewsRequest, GetOnlySentNewsletterRequest, MarkAsSentRequest, UpdateNewsletterRequest } from "./schema/request";
 
 export class NewsletterController {
   static async create(request: CreateNewsletterRequest) {
@@ -120,19 +120,19 @@ export class NewsletterController {
     }
   }
 
-  static async updateSendAt(request: UpdateNewsletterSendAtRequest) {
+  static async updateSendAt(request: MarkAsSentRequest) {
     try {
-      const { id } = request;
+      const { date } = request;
 
       const { error } = await newsletterValidator.updateSendAt.validate({
-        id,
+        date,
       });
 
       if (error) {
         return badRequest(error);
       }
 
-      const createdOrError = await newsletterService.updateSendAt(request.id);
+      const createdOrError = await newsletterService.markAsSent(request.date);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -265,12 +265,12 @@ export class NewsletterController {
     }
   }
 
-  static async getPreviews(request: GetAllPreviewsRequest) {
+  static async getUnsent(request: GetAllPreviewsRequest) {
     try {
       const { date } = request;
 
 
-      const resultOrError = await newsletterService.getPreviewsBySendDate(date);
+      const resultOrError = await newsletterService.getUnsentBySendDate(date);
 
       if (resultOrError.isLeft()) {
         return forbidden(resultOrError.value);

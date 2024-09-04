@@ -18,9 +18,9 @@ export type UpdateNewsletterRequest = {
   SendDate: string;
 } & UserOperationControllerDTO
 
-export type UpdateNewsletterSendAtRequest = {
+export type MarkAsSentRequest = {
   accountId: number;
-  id: number;
+  date: string;
 }
 
 export type DeleteNewsletterRequest = {
