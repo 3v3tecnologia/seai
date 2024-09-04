@@ -40,7 +40,7 @@ export const newsRouter = (): Router => {
   );
 
   router.patch(
-    "/:id",
+    "/:date",
     // authorization,
     adaptHTTPHandler(NewsletterController.updateSendAt)
   );

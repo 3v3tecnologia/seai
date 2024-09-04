@@ -293,7 +293,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     }))
   }
 
-  async getReceiversEmails(): Promise<null | Array<{
+  async getReceiversEmails(): Promise<Array<{
     Email: string;
     Code: string;
   }>> {
@@ -303,10 +303,6 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
         Confirmation_Status: "confirmed",
       })
       .from("Subscriber");
-
-    if (!result.length) {
-      return null;
-    }
 
     return result.map(({ Email, Code }: any) => {
       return {

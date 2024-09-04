@@ -1,21 +1,14 @@
-import { AuditableInput, PaginatedInput } from './../../../shared/utils/command';
 import { Either, left, right } from "../../../shared/Either";
-import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
-import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Encoder } from "../../../shared/ports/encoder";
-import { IOutputWithPagination, IPaginationInput } from "../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { IOutputWithPagination } from "../../../shared/utils/pagination";
 import { NewsletterRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
 import { Content, validateContentSize } from "../model/content";
+import { AuditableInput, PaginatedInput } from './../../../shared/utils/command';
 import { NewsletterServiceProtocol } from "./newsletter.service.protocol";
-
-
-
 
 export class NewsletterService implements NewsletterServiceProtocol {
   constructor(
     private repository: NewsletterRepositoryProtocol,
-    private readonly queueProvider: TaskSchedulerProviderProtocol,
     private readonly encoder: Encoder
   ) { }
 
@@ -55,23 +48,6 @@ export class NewsletterService implements NewsletterServiceProtocol {
       accountId
     );
 
-    // E se o sistema de jobs estiver indisponível? Como o sistema deve se comportar?
-    await this.queueProvider.send(
-      TASK_QUEUES.NEWSLETTER,
-      {
-        id: newsId,
-        title: Title,
-        description: Description,
-        content: Data,
-      },
-      {
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        startAfter: sendDate,
-        singletonkey: String(newsId),
-      }
-    );
 
     return right(newsId);
   }
@@ -97,7 +73,7 @@ export class NewsletterService implements NewsletterServiceProtocol {
     const successLog = `Notícia deletada com sucessso.`;
 
     // delete all jobs related to the news (purge by news id)
-    await this.queueProvider.removeByKey(String(id));
+    // await this.queueProvider.removeByKey(String(id));
 
     return right(successLog);
   }
@@ -142,25 +118,6 @@ export class NewsletterService implements NewsletterServiceProtocol {
     await this.repository.update(data, audit);
 
     const successLog = `Notícia atualizada com sucessso.`;
-
-    await this.queueProvider.removeByKey(String(Id));
-
-    await this.queueProvider.send(
-      TASK_QUEUES.NEWSLETTER,
-      {
-        id: Id,
-        title: Title,
-        description: Description,
-        content: Data,
-      },
-      {
-        priority: 1,
-        retryDelay: 60,
-        retryLimit: 3,
-        startAfter: new Date(SendDate),
-        singletonkey: String(Id),
-      }
-    );
 
     return right(successLog);
   }

@@ -50,7 +50,7 @@ export interface NewsletterRepositoryProtocol {
     SendDate: string;
   } | null>;
   markAsSent(date: string): Promise<void>
-  getReceiversEmails(): Promise<null | Array<{
+  getReceiversEmails(): Promise<Array<{
     Email: string;
     Code: string;
   }>>
