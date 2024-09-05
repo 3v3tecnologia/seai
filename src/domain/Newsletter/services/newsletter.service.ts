@@ -137,7 +137,9 @@ export class NewsletterService implements NewsletterServiceProtocol {
       return right(null);
     }
 
-    return right(data);
+    const { Id, Title, Description, CreatedAt, UpdatedAt, SentAt, SendDate, Data } = data
+
+    return right({ Id, Title, Description, CreatedAt, UpdatedAt, SentAt, SendDate, Data: Data.toString() });
   }
 
   async getOnlySent(request: PaginatedInput<{
