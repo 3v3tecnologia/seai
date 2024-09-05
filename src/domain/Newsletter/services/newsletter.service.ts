@@ -29,14 +29,6 @@ export class NewsletterService implements NewsletterServiceProtocol {
       return left(hasValidContentSizeOrError.value);
     }
 
-    const sendDate = new Date(SendDate);
-
-    // const hasValidSendDateOrError = validateSendDate(sendDate);
-
-    // if (hasValidSendDateOrError.isLeft()) {
-    //   return left(hasValidSendDateOrError.value);
-    // }
-
     const newsId = await this.repository.create(
       {
         Data,
@@ -72,9 +64,6 @@ export class NewsletterService implements NewsletterServiceProtocol {
 
     const successLog = `Notícia deletada com sucessso.`;
 
-    // delete all jobs related to the news (purge by news id)
-    // await this.queueProvider.removeByKey(String(id));
-
     return right(successLog);
   }
 
@@ -87,21 +76,13 @@ export class NewsletterService implements NewsletterServiceProtocol {
       SendDate: string
     }>
   ): Promise<Either<Error, string>> {
-    const { Id, Data, Description, SendDate, Title } = data
+    const { Id, Data } = data
 
     const hasValidContentSizeOrError = validateContentSize(Data);
 
     if (hasValidContentSizeOrError.isLeft()) {
       return left(hasValidContentSizeOrError.value);
     }
-
-    // const sendDate = new Date(SendDate);
-
-    // const hasValidSendDateOrError = validateSendDate(sendDate);
-
-    // if (hasValidSendDateOrError.isLeft()) {
-    //   return left(hasValidSendDateOrError.value);
-    // }
 
     const alreadyExistsNews = await this.repository.getById(Id);
 
