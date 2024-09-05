@@ -9,13 +9,12 @@ import { UserPassword } from "../../lib/model/userPassword";
 
 import { TokenProvider } from "../../lib/infra/token-provider";
 
-import { PUBLIC_ASSETS_BASE_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../server/http/config/url";
+import { USER_IRRIGANT_PUBLIC_URL } from "../../../../server/http/config/url";
 import { TASK_QUEUES } from "../../../../shared/infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { InactivatedAccount } from "../../lib/errors/account-not-activated";
 import { EmailAlreadyExists } from "../../lib/errors/email-already-exists";
 import { LoginAlreadyExists } from "../../lib/errors/login-aready-exists";
-import { UserNameAlreadyExists } from "../../lib/errors/name-already-exists";
 import { UserNotFoundError } from "../../lib/errors/user-not-found-error";
 import {
   UnmatchedPasswordError,
@@ -45,12 +44,12 @@ export class IrrigationUserService implements IIrrigationUserService {
   async create(
     dto: CreateIrrigationAccountDTO.Input
   ): Promise<CreateIrrigationAccountDTO.Output> {
-    const existingNameAccount =
-      await this.accountRepository.checkIfNameAlreadyExists(dto.name);
+    // const existingNameAccount =
+    //   await this.accountRepository.checkIfNameAlreadyExists(dto.name);
 
-    if (existingNameAccount) {
-      return left(new UserNameAlreadyExists());
-    }
+    // if (existingNameAccount) {
+    //   return left(new UserNameAlreadyExists());
+    // }
 
     const emailAlreadyExists = await this.accountRepository.getByEmail(
       dto.email
@@ -122,7 +121,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     if (user_id) {
       await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: dto.email,
-        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/activate/${Buffer.from(
+        redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${Buffer.from(
           dto.email
         ).toString("base64")}`,
         action: "create-user-account",
