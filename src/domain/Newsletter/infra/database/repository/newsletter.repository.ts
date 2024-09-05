@@ -269,6 +269,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
 
   async getUnsetNewsByDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>> {
 
+
     const response = await newsletterDb.raw(
       `
       SELECT
@@ -276,11 +277,12 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
           news."Title" ,
           news."Description"
       FROM "News" as news
-      WHERE news."SendDate"::date = ?
+      WHERE news."SendDate"::date <= ?
+      AND news."SendDate"::date >= (?::date - INTERVAL '1 day')::date
       AND news."SentAt" IS NULL
       ORDER BY news."SendDate" DESC
     `,
-      [sendDate]
+      [sendDate, sendDate]
     );
 
     const rows = response.rows;
