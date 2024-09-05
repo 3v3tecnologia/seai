@@ -13,19 +13,18 @@ import { MAX_PAYLOAD_SIZE } from "./config/payload";
 export const setupApp = async (): Promise<Express> => {
   const app = express();
 
-  app.use(
-    helmet.contentSecurityPolicy({
+  app.use(helmet({
+    contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        fontSrc: ["'self'"],
-        imgSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
         styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
-        frameSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'online.swagger.io'],
       },
-      reportOnly: true, // Set to 'true' to enable report-only mode
-    })
-  );
+    },
+    hidePoweredBy: true, // This hides the X-Powered-By header
+  }));
+
   app.use(morgan("tiny"));
 
   app.use(express.json({ limit: `${MAX_PAYLOAD_SIZE}mb` }));
