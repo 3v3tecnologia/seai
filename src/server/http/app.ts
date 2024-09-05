@@ -13,17 +13,17 @@ import { MAX_PAYLOAD_SIZE } from "./config/payload";
 export const setupApp = async (): Promise<Express> => {
   const app = express();
 
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
-        imgSrc: ["'self'", 'data:', 'online.swagger.io'],
-      },
-    },
-    hidePoweredBy: true, // This hides the X-Powered-By header
-  }));
+  // app.use(helmet({
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       defaultSrc: ["'self'"],
+  //       scriptSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
+  //       styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
+  //       imgSrc: ["'self'", 'data:', 'online.swagger.io'],
+  //     },
+  //   },
+  //   hidePoweredBy: true, // This hides the X-Powered-By header
+  // }));
 
   app.use(morgan("tiny"));
 
