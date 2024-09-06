@@ -107,13 +107,13 @@ export class ManagementCropsServices implements IManagementCropsServices {
       return left(new ManagementCropErrors.CropNotExistsError());
     }
 
-    const withIrrigation = await this.cropRepository.checkIfThereIsIrrigation(
-      id
-    );
+    // const withIrrigation = await this.cropRepository.checkIfThereIsIrrigation(
+    //   id
+    // );
 
-    if (withIrrigation) {
-      return left(new ManagementCropErrors.AssociatedWithIrrigation());
-    }
+    // if (withIrrigation) {
+    //   return left(new ManagementCropErrors.AssociatedWithIrrigation());
+    // }
 
     await this.cropRepository.delete(id, audit);
 
