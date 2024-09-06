@@ -560,11 +560,11 @@ export class UserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Login", login)
-      // .where((builder) => {
-      //   builder
-      //     .where("Type", UserTypes.ADMIN)
-      //     .orWhere("Type", UserTypes.STANDARD);
-      // })
+      .where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
       .first();
 
     if (status) {

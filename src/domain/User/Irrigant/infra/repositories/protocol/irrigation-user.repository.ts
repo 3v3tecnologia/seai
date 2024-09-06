@@ -55,7 +55,7 @@ export interface IrrigationUserRepositoryProtocol {
     IrrigationUserProps,
     "id" | "name" | "code" | "status" | "login"
   > | null>;
-  getUserByCode(code: string): Promise<IrrigationUserProps | null>;
+  getUserByCode(code: string, status?: UserStatus): Promise<IrrigationUserProps | null>;
   checkIfEmailAlreadyExists(email: string): Promise<boolean>;
   checkIfLoginAlreadyExists(login: string): Promise<boolean>;
 }

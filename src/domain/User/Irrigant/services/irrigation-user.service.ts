@@ -81,12 +81,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(userOrError.value);
     }
 
-    const userCode = await this.encoder.hashInPbkdf2(
-      dto.email,
-      100,
-      10,
-      "sha512"
-    );
+    const userCode = this.encoder.generateRandomHexCode(16)
 
     const hashedPassword = await this.encoder.hash(dto.password);
 
@@ -95,7 +90,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       email: dto.email,
       login: dto.login,
       name: dto.name,
-      code: userCode as string,
+      code: userCode,
       password: hashedPassword,
     });
 
@@ -121,9 +116,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     if (user_id) {
       await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: dto.email,
-        redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${Buffer.from(
-          dto.email
-        ).toString("base64")}`,
+        redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${userCode}`,
         action: "create-user-account",
       });
     }
@@ -187,9 +180,9 @@ export class IrrigationUserService implements IIrrigationUserService {
 
   //
   async completeRegister(code: string): Promise<Either<Error, void>> {
-    const userEmailToString = base64Decode(code);
+    // const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getUserByCode(code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -219,9 +212,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${Buffer.from(
-        account.email
-      ).toString("base64")}`,
+      redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${account.code}`,
       action: "forgot-user-account",
     });
 
@@ -239,10 +230,10 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new Error("Código não informado"));
     }
 
-    const userEmailToString = base64Decode(code);
+    // const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(
-      userEmailToString,
+    const account = await this.accountRepository.getUserByCode(
+      code,
       "registered"
     );
 
