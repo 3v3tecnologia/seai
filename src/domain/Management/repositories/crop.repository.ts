@@ -194,7 +194,7 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     await governmentDb("Crop")
       .withSchema("management")
       .update({
-        UpdatedAt: governmentDb.fn.now(),
+        Deleted_At: governmentDb.fn.now(),
       })
       .whereNull('Deleted_At')
       .andWhere({ Id: idCrop })
