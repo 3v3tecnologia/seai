@@ -3,11 +3,10 @@ import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/utils/logger";
 import { getYesterDayDate } from "../../../shared/utils/date";
 import { DecimalFormatter } from "../../../shared/utils/decimal-formatter";
-import { ManagementCropErrors } from "../core/errors/crop-errors";
+import { ManagementCropErrors } from "../../Crop/core/crop-errors";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { BladeSuggestion } from "../core/model/blade-suggestion";
-import { getCropDate, ManagementCrop } from "../core/model/crop";
-import { findKc, ManagementCropCycle } from "../core/model/crop-cycles";
+
 import {
   IrrigationSystemEntity,
   makeIrrigationSystem,
@@ -21,7 +20,9 @@ import { IrrigationRecommendation } from "../core/model/irrigation-recommendatio
 import { IIrrigationSuggestionServices } from "./protocols/irrigation-suggestion";
 import { IEquipmentsMeasurementsRepository } from "../../Equipments/repositories/protocols/measurements";
 import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
-import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
+import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
+import { getCropDate } from "../../Crop/core/model/crop";
+import { ManagementCropCycle } from "../../Crop/core/model/crop-cycles";
 
 export class IrrigationCropsSuggestion
   implements IIrrigationSuggestionServices {

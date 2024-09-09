@@ -1,5 +1,4 @@
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
-import { ManagementCropCycle } from "../core/model/crop-cycles";
 
 import {
   censusDb,
@@ -7,7 +6,9 @@ import {
   logsDb,
 } from "../../../shared/infra/database/postgres/connection/knexfile";
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
-import { IManagementCropsRepository } from "./protocols/management-crop.repository";
+import { IManagementCropsRepository } from "./protocol/management-crop.repository";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
+
 export class ManagementCropRepository implements IManagementCropsRepository {
   async create(culture: ManagementCrop, author: number): Promise<number | undefined> {
     let cropId: number | undefined

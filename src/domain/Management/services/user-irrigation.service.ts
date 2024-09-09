@@ -1,5 +1,6 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCropErrors } from "../core/errors/crop-errors";
+import { ManagementCropErrors } from "../../Crop/core/crop-errors";
+import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
 import {
   IrrigationSystemTypes,
   makeSystemIrrigationMeasurements,
@@ -7,7 +8,6 @@ import {
 
 import { IIrrigationSystemMeasurementsEntity } from "../core/model/irrigation-system-measurements";
 import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
-import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
 import {
   CalcIrrigationRecommendationDTO,
   ISaveIrrigationRecommendationDTO,

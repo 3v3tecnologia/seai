@@ -3,7 +3,7 @@ import {
   dateDiffInDays,
   parseBrazilianDateTime,
 } from "../../../../shared/utils/date";
-import { ManagementCropErrors } from "../errors/crop-errors";
+import { ManagementCropErrors } from "../../../Crop/core/crop-errors";
 import { checkCropCycleSequence, ManagementCropCycle } from "./crop-cycles";
 
 export type ManagementCropParams = {

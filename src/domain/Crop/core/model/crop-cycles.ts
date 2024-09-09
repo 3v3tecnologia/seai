@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { ManagementCropErrors } from "../errors/crop-errors";
+import { ManagementCropErrors } from "../../../Crop/core/crop-errors";
 
 export type ManagementCropCycle = {
   Id?: number;

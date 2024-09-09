@@ -1,29 +1,9 @@
-import {
-  LoginUserAccount,
-  UserOperationControllerDTO,
-} from "../../../@types/login-user";
+import { LoginUserAccount, UserOperationControllerDTO } from "../../../@types/login-user";
 import { HttpResponse } from "../../../shared/ports/http-response";
-import {
-  badRequest,
-  created,
-  forbidden,
-  noContent,
-  ok,
-  serverError,
-} from "../../../shared/utils/http-responses";
+import { badRequest, created, forbidden, noContent, ok, serverError } from "../../../shared/utils/http-responses";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
-
-import { IManagementCropsServices } from "../services/protocols/management-crops";
-import {
-  createCropCycleValidator,
-  createCropValidator,
-  deleteCropValidator,
-  getAllCropCropCyclesValidator,
-  getAllCropsValidator,
-  getCropByIdValidator,
-  setCycleRestartPointValidator,
-  updateCropValidator
-} from "./schema/crop";
+import { IManagementCropsServices } from "../services/crop.service.protocol";
+import { createCropValidator, deleteCropValidator, getAllCropCropCyclesValidator, getAllCropsValidator, getCropByIdValidator, setCycleRestartPointValidator, updateCropValidator } from "./schema/crop";
 
 type CreateCropRequest = {
   Name: string;

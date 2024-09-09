@@ -1,12 +1,11 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCropErrors } from "../core/errors/crop-errors";
+import { ManagementCropErrors } from "../core/crop-errors";
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
-import {
-  ManagementCropCycle
-} from "../core/model/crop-cycles";
-import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
-import { DeleteCropInput, InsertCropCommand, UpdateCropInput } from "./dto/crop";
-import { IManagementCropsServices } from "./protocols/management-crops";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
+import { IManagementCropsRepository } from "../repositories/protocol/management-crop.repository";
+import { DeleteCropInput, InsertCropCommand, UpdateCropInput } from "./crop-dto";
+import { IManagementCropsServices } from "./crop.service.protocol";
+
 
 export class ManagementCropsServices implements IManagementCropsServices {
   constructor(private cropRepository: IManagementCropsRepository) { }
