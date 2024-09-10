@@ -294,6 +294,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
         "ic.crop_id"
       )
       .where("ic.name", name)
+      .andWhere('UserIrrigation.updated_at', null)
       .select("ic.id", "ic.name", "c.Deleted_At")
       .first();
 
