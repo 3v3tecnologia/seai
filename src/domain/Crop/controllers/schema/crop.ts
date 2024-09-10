@@ -35,6 +35,7 @@ const updateCropValidator = new SchemaValidator(
     Cycles: Joi.array()
       .items(
         Joi.object({
+          Id: Joi.number().optional(),
           Title: Joi.string().trim().required(),
           Start: Joi.number().integer().required(),
           End: Joi.number().integer().required(),
