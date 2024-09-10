@@ -1,4 +1,4 @@
-import { Knex } from "knex";
+import { getPaginatedResult } from "../../../../shared/infra/database/pagination";
 import { logsDb } from "../../../../shared/infra/database/postgres/connection/knexfile";
 import {
   IOutputWithPagination,
@@ -8,25 +8,8 @@ import {
 import { toDomain, UserOperation } from "../../model/user-operations";
 import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
 
-async function getPaginatedResult(
-  query: Knex.QueryBuilder,
-  limit: number,
-  offset: number
-) {
-  const count = query.clone().count().clearSelect();
-  const [rows, countResponse] = await Promise.all([
-    query.limit(limit).offset(offset),
-    count,
-  ]);
-
-  return {
-    rows,
-    count: countResponse.length,
-  };
-}
 export class UserOperationsRepository
-  implements UserOperationsRepositoryProtocol
-{
+  implements UserOperationsRepositoryProtocol {
   async getAll(
     params: {
       user_id?: number;
@@ -71,7 +54,7 @@ export class UserOperationsRepository
         "Operations.Operation",
         "Operations.Description",
         "Operations.User_Id"
-      ),
+      ).orderBy("Time"),
       params.limit,
       params.offset
     );
