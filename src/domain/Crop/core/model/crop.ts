@@ -107,7 +107,7 @@ export class ManagementCrop {
       return left(validCyclesOrError.value);
     }
 
-    if (props.CycleRestartPoint !== null && props.IsPermanent === false) {
+    if (props.IsPermanent === false && props.CycleRestartPoint !== undefined && props.CycleRestartPoint !== null) {
       return left(new Error("Ponto de reinício do ciclo só deve ser definido quando a cultura for perene."))
     }
 

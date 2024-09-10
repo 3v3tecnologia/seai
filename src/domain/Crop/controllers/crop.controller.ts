@@ -34,6 +34,8 @@ export class ManagementCropControllers {
     try {
       const { IsPermanent, Name, Cycles, CycleRestartPoint, accountId } = params;
 
+
+
       const { error } = await createCropValidator.validate({
         IsPermanent,
         Name,
