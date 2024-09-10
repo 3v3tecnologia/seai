@@ -29,6 +29,21 @@ const updateStationMeasurements = new SchemaValidator(
   stationMeasurementsSchema
     .append(idSchema)
     .append(UserOperationDescriptionSchema)
+    .append({
+      TotalRadiation: Joi.number().min(50).max(400),
+      IdRead: Joi.number().optional(),
+      AverageRelativeHumidity: Joi.number().min(5).max(100).required(),
+      MinRelativeHumidity: Joi.number().min(5).max(100).required(),
+      MaxRelativeHumidity: Joi.number().min(5).max(100).required(),
+
+      AverageAtmosphericTemperature: Joi.number().min(0).max(60).required(),
+      MaxAtmosphericTemperature: Joi.number().min(0).max(60).required(),
+      MinAtmosphericTemperature: Joi.number().min(0).max(60).required(),
+
+      AtmosphericPressure: Joi.number().min(500).max(1200).required(),
+
+      WindVelocity: Joi.number().min(0.5).max(20).required(),
+    })
     .options({
       abortEarly: false,
     })

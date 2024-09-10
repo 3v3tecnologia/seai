@@ -226,12 +226,14 @@ export class EquipmentsMeasurementsControllers {
 
       const resultOrError = await equipmentsMeasurementsService.updateByStation(
         {
-          IdRead: Number(id),
-          ...measurements,
-        },
-        {
-          author: accountId,
-          operation: Operation,
+          data: {
+            IdRead: Number(id),
+            ...measurements,
+          },
+          audit: {
+            author: accountId,
+            operation: Operation,
+          }
         }
       );
 
@@ -267,12 +269,14 @@ export class EquipmentsMeasurementsControllers {
       const resultOrError =
         await equipmentsMeasurementsService.updateByPluviometer(
           {
-            IdRead: id,
-            Precipitation,
-          },
-          {
-            author: accountId,
-            operation: Operation,
+            data: {
+              IdRead: id,
+              Precipitation,
+            },
+            audit: {
+              author: accountId,
+              operation: Operation,
+            }
           }
         );
 
