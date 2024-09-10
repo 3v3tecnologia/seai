@@ -12,7 +12,7 @@ const createCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().trim().required(),
     IsPermanent: Joi.boolean().required(),
-    // CycleRestartPoint: Joi.string().trim().optional(),
+    CycleRestartPoint: Joi.number().optional(),
     Cycles: Joi.array()
       .items(
         Joi.object({
@@ -31,6 +31,7 @@ const updateCropValidator = new SchemaValidator(
   Joi.object({
     Name: Joi.string().required(),
     IsPermanent: Joi.boolean().required(),
+    CycleRestartPoint: Joi.number().optional(),
     Cycles: Joi.array()
       .items(
         Joi.object({

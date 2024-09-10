@@ -1,12 +1,11 @@
 import { Either, left, right } from "../../../shared/Either";
-import { ManagementCropErrors } from "../core/errors/crop-errors";
+import { ManagementCropErrors } from "../core/crop-errors";
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
-import {
-  ManagementCropCycle
-} from "../core/model/crop-cycles";
-import { IManagementCropsRepository } from "../repositories/protocols/management-crop.repository";
-import { DeleteCropInput, InsertCropCommand, UpdateCropInput } from "./dto/crop";
-import { IManagementCropsServices } from "./protocols/management-crops";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
+import { IManagementCropsRepository } from "../repositories/protocol/management-crop.repository";
+import { DeleteCropInput, InsertCropCommand, UpdateCropInput } from "./crop-dto";
+import { IManagementCropsServices } from "./crop.service.protocol";
+
 
 export class ManagementCropsServices implements IManagementCropsServices {
   constructor(private cropRepository: IManagementCropsRepository) { }
@@ -28,7 +27,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
       Id: data.Id,
       IsPermanent: data.IsPermanent,
       Name: data.Name,
-      Cycles: data.Cycles
+      Cycles: data.Cycles,
+      CycleRestartPoint: data.CycleRestartPoint
     });
 
     if (cultureOrError.isLeft()) {
@@ -43,7 +43,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
   }
 
   async create(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>> {
-    const { data: { IsPermanent, Name, Cycles }, audit } = input;
+    const { data: { IsPermanent, Name, Cycles, CycleRestartPoint }, audit } = input;
 
     const alreadyExists = await this.cropRepository.nameExists(Name);
 
@@ -54,7 +54,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
     const cropOrError = ManagementCrop.create({
       IsPermanent,
       Name,
-      Cycles
+      Cycles,
+      CycleRestartPoint
     });
 
     if (cropOrError.isLeft()) {

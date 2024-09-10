@@ -1,34 +1,14 @@
-import {
-  LoginUserAccount,
-  UserOperationControllerDTO,
-} from "../../../@types/login-user";
+import { LoginUserAccount, UserOperationControllerDTO } from "../../../@types/login-user";
 import { HttpResponse } from "../../../shared/ports/http-response";
-import {
-  badRequest,
-  created,
-  forbidden,
-  noContent,
-  ok,
-  serverError,
-} from "../../../shared/utils/http-responses";
+import { badRequest, created, forbidden, noContent, ok, serverError } from "../../../shared/utils/http-responses";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
-
-import { IManagementCropsServices } from "../services/protocols/management-crops";
-import {
-  createCropCycleValidator,
-  createCropValidator,
-  deleteCropValidator,
-  getAllCropCropCyclesValidator,
-  getAllCropsValidator,
-  getCropByIdValidator,
-  setCycleRestartPointValidator,
-  updateCropValidator
-} from "./schema/crop";
+import { IManagementCropsServices } from "../services/crop.service.protocol";
+import { createCropValidator, deleteCropValidator, getAllCropCropCyclesValidator, getAllCropsValidator, getCropByIdValidator, setCycleRestartPointValidator, updateCropValidator } from "./schema/crop";
 
 type CreateCropRequest = {
   Name: string;
   IsPermanent: boolean;
-  CycleRestartPoint: string;
+  CycleRestartPoint: number;
   Cycles: Array<ManagementCropCycle>;
 } & LoginUserAccount
 
@@ -41,7 +21,7 @@ type UpdateCropRequest = {
   id: number;
   Name: string;
   IsPermanent: boolean;
-  CycleRestartPoint: string;
+  CycleRestartPoint: number;
   Cycles: Array<ManagementCropCycle>;
 } & UserOperationControllerDTO
 
@@ -52,7 +32,7 @@ export class ManagementCropControllers {
     params: CreateCropRequest
   ): Promise<HttpResponse> {
     try {
-      const { IsPermanent, Name, Cycles, accountId } = params;
+      const { IsPermanent, Name, Cycles, CycleRestartPoint, accountId } = params;
 
       const { error } = await createCropValidator.validate({
         IsPermanent,
@@ -70,7 +50,8 @@ export class ManagementCropControllers {
           data: {
             Name,
             IsPermanent,
-            Cycles
+            Cycles,
+            CycleRestartPoint
           },
           audit: {
             author: accountId,
@@ -94,7 +75,7 @@ export class ManagementCropControllers {
     params: UpdateCropRequest
   ): Promise<HttpResponse> {
     try {
-      const { IsPermanent, Name, Cycles, Operation, accountId, id } =
+      const { IsPermanent, Name, Cycles, Operation, CycleRestartPoint, accountId, id } =
         params;
 
       const { error } = await updateCropValidator.validate({
@@ -116,7 +97,8 @@ export class ManagementCropControllers {
             Id: Number(id),
             Name: Name,
             IsPermanent,
-            Cycles
+            Cycles,
+            CycleRestartPoint
           },
           audit: {
             author: accountId,

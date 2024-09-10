@@ -1,5 +1,4 @@
 import { ManagementCrop, ManagementCropParams } from "../core/model/crop";
-import { ManagementCropCycle } from "../core/model/crop-cycles";
 
 import {
   censusDb,
@@ -7,7 +6,9 @@ import {
   logsDb,
 } from "../../../shared/infra/database/postgres/connection/knexfile";
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
-import { IManagementCropsRepository } from "./protocols/management-crop.repository";
+import { IManagementCropsRepository } from "./protocol/management-crop.repository";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
+
 export class ManagementCropRepository implements IManagementCropsRepository {
   async create(culture: ManagementCrop, author: number): Promise<number | undefined> {
     let cropId: number | undefined
@@ -43,27 +44,27 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       );
 
       if (culture.IsPermanent) {
-        const firstCycle = await trx
-          .withSchema("management")
-          .select("Id")
-          .from("Crop_Cycle")
-          .where({ FK_Crop: cropId })
-          .orderBy("Start")
-          .first();
-        ;
+        // const firstCycle = await trx
+        //   .withSchema("management")
+        //   .select("Id")
+        //   .from("Crop_Cycle")
+        //   .where({ FK_Crop: cropId })
+        //   .orderBy("Start")
+        //   .first();
+        // ;
         /**
          * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
          * sendo o primeiro ciclo.
         */
-        await trx("Crop")
-          .withSchema("management")
-          .update({
-            Cycle_Restart_Stage: firstCycle.Id,
-            UpdatedAt: trx.fn.now(),
-          })
-          .where({
-            Id: cropId,
-          });
+        // await trx("Crop")
+        //   .withSchema("management")
+        //   .update({
+        //     Cycle_Restart_Stage: firstCycle.Id,
+        //     UpdatedAt: trx.fn.now(),
+        //   })
+        //   .where({
+        //     Id: cropId,
+        //   });
       }
 
     });
@@ -123,27 +124,27 @@ export class ManagementCropRepository implements IManagementCropsRepository {
       );
 
       if (culture.IsPermanent) {
-        const firstCycle = await trx
-          .withSchema("management")
-          .select("Id")
-          .from("Crop_Cycle")
-          .where({ FK_Crop: culture.Id })
-          .orderBy("Start")
-          .first();
-        ;
+        // const firstCycle = await trx
+        //   .withSchema("management")
+        //   .select("Id")
+        //   .from("Crop_Cycle")
+        //   .where({ FK_Crop: culture.Id })
+        //   .orderBy("Start")
+        //   .first();
+        // ;
         /**
          * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
          * sendo o primeiro ciclo.
         */
-        await trx("Crop")
-          .withSchema("management")
-          .update({
-            Cycle_Restart_Stage: firstCycle.Id,
-            UpdatedAt: trx.fn.now(),
-          })
-          .where({
-            Id: culture.Id,
-          });
+        // await trx("Crop")
+        //   .withSchema("management")
+        //   .update({
+        //     Cycle_Restart_Stage: firstCycle.Id,
+        //     UpdatedAt: trx.fn.now(),
+        //   })
+        //   .where({
+        //     Id: culture.Id,
+        //   });
       }
     })
 

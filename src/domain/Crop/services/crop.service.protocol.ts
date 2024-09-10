@@ -1,8 +1,9 @@
-import { Either } from "../../../../shared/Either";
-import { ManagementCropErrors } from "../../core/errors/crop-errors";
-import { ManagementCrop, ManagementCropParams } from "../../core/model/crop";
-import { ManagementCropCycle } from "../../core/model/crop-cycles";
-import { DeleteCropCycles, DeleteCropInput, InsertCropCommand, InsertCropCycles, UpdateCropInput } from "../dto/crop";
+import { Either } from "../../../shared/Either";
+import { ManagementCropErrors } from "../core/crop-errors";
+import { ManagementCropParams } from "../core/model/crop";
+import { ManagementCropCycle } from "../core/model/crop-cycles";
+import { DeleteCropInput, InsertCropCommand, UpdateCropInput } from "./crop-dto";
+
 
 export interface IManagementCropsServices {
   create(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>>

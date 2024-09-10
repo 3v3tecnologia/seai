@@ -5,10 +5,10 @@ import { sendHTTPResponse } from "../../../server/http/adapters/express-route.ad
 import { authorization } from "../../../server/http/http-middlewares";
 import { makeIrrigationRecommendationControllers } from "../controllers/factories/irrigation-recommendation.controller";
 import { makeUserIrrigationControllers } from "../controllers/factories/user-irrigation.controller";
-import { ManagementCropRepository } from "../repositories/crop.repository";
 import { IrrigationCropsRepository } from "../repositories/irrigation.repository";
 import { IrrigationCropsSuggestion } from "../services/irrigation-suggestion.service";
 import { EquipmentsMeasurementsRepository } from "../../Equipments/repositories/equipments-measurements.repository";
+import { ManagementCropRepository } from "../../Crop/repositories/crop.repository";
 
 export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
   const irrigationControllers = makeIrrigationRecommendationControllers();

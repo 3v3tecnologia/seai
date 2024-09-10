@@ -1,4 +1,4 @@
-import { ManagementCropCycle } from "./crop-cycles";
+import { ManagementCropCycle } from "../../../Crop/core/model/crop-cycles";
 import { IrrigationSystemEntity } from "./irrigation-system";
 import { Pivot } from "./irrigation-system-measurements";
 
