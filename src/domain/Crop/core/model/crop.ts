@@ -29,7 +29,7 @@ export class ManagementCrop {
     this._id = props.Id || null;
     this._name = props.Name;
     this._cycles = props.Cycles || [];
-    if (props.CycleRestartPoint) this._cycleRestartPoint = props.CycleRestartPoint;
+    this._cycleRestartPoint = props.CycleRestartPoint;
     this._isPermanent = props.IsPermanent;
 
     Object.freeze(this);
@@ -48,7 +48,7 @@ export class ManagementCrop {
   }
 
   get CycleRestartPoint() {
-    return this._cycleRestartPoint || null;
+    return this._cycleRestartPoint != undefined ? this._cycleRestartPoint : null
   }
 
   get IsPermanent() {
@@ -77,10 +77,8 @@ export class ManagementCrop {
     if (cropDate > endCropCycle.End) {
       // Se for cultura perene então deverá buscar os dados de KC
       // a partir do ponto de início do ciclo de desenvolvimento especificado.
-      if (this.CycleRestartPoint) {
-        const data = this.Cycles.find(
-          (cycle) => cycle.Id === this.CycleRestartPoint
-        );
+      if (this.IsPermanent && this.CycleRestartPoint !== null) {
+        const data = this.Cycles[this.CycleRestartPoint]
 
         if (data) return right(data);
       }
@@ -107,6 +105,16 @@ export class ManagementCrop {
 
     if (validCyclesOrError.isLeft()) {
       return left(validCyclesOrError.value);
+    }
+
+    if (props.CycleRestartPoint !== null && props.IsPermanent === false) {
+      return left(new Error("Ponto de reinício do ciclo só deve ser definido quando a cultura for perene."))
+    }
+
+    if (props.IsPermanent) {
+      if (props.Cycles[props.CycleRestartPoint as number] == undefined) {
+        return left(new Error("Ciclo de cultura não encontrado"))
+      }
     }
 
     if (props.Cycles.length < 1) {

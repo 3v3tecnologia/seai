@@ -27,7 +27,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
       Id: data.Id,
       IsPermanent: data.IsPermanent,
       Name: data.Name,
-      Cycles: data.Cycles
+      Cycles: data.Cycles,
+      CycleRestartPoint: data.CycleRestartPoint
     });
 
     if (cultureOrError.isLeft()) {
@@ -42,7 +43,7 @@ export class ManagementCropsServices implements IManagementCropsServices {
   }
 
   async create(input: InsertCropCommand): Promise<Either<ManagementCropErrors.CropAlreadyExistsError, number>> {
-    const { data: { IsPermanent, Name, Cycles }, audit } = input;
+    const { data: { IsPermanent, Name, Cycles, CycleRestartPoint }, audit } = input;
 
     const alreadyExists = await this.cropRepository.nameExists(Name);
 
@@ -53,7 +54,8 @@ export class ManagementCropsServices implements IManagementCropsServices {
     const cropOrError = ManagementCrop.create({
       IsPermanent,
       Name,
-      Cycles
+      Cycles,
+      CycleRestartPoint
     });
 
     if (cropOrError.isLeft()) {
