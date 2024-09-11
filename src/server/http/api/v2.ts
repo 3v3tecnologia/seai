@@ -1,7 +1,7 @@
 import express from "express";
 import { setupCensusV2Routes } from "../../../domain/Census/http/v2.routes";
 import { setupEquipmentsV2Routes } from "../../../domain/Equipments/http/v2.routes";
-import { setupIrrigationRecommendationV2Routes } from "../../../domain/Management/http/irrigation-recommendation";
+import { setupIrrigationRecommendationV2Routes } from "../../../domain/Irrigation/http/irrigation-recommendation";
 import { setupUserIrrigantSettingsV2Routes } from "../../../domain/User/Irrigant/infra/http/user-settings.routes";
 import { setupManagementCropV2Routes } from "../../../domain/Crop/http/crop";
 

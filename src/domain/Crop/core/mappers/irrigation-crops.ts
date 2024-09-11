@@ -1,5 +1,5 @@
-import { IrrigationSystemTypes } from "../../../Management/core/model/irrigation-system";
-import { IUserRecordedRecommendationData } from "../../../Management/repositories/protocols/irrigation.repository";
+import { IrrigationSystemTypes } from "../../../Irrigation/core/model/irrigation-system";
+import { IUserRecordedRecommendationData } from "../../../Irrigation/repositories/protocols/irrigation.repository";
 
 
 export function mapIrrigationCropsToDomain(
