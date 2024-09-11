@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { SchemaValidator } from "../../../../shared/infra/validator/validator";
 
-const createCropStudiesValidator = new SchemaValidator(
+const createStudiesValidator = new SchemaValidator(
   Joi.object({
     id: Joi.number().required(),
     data: Joi.array()
@@ -19,10 +19,10 @@ const createCropStudiesValidator = new SchemaValidator(
   })
 );
 
-const getCropStudiesValidator = new SchemaValidator(
+const getStudiesValidator = new SchemaValidator(
   Joi.object({
     id: Joi.number().required(),
   })
 );
 
-export { createCropStudiesValidator, getCropStudiesValidator };
+export { createStudiesValidator, getStudiesValidator };

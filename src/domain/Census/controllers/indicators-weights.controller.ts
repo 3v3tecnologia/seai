@@ -1,4 +1,3 @@
-import { ISchemaValidator } from "../../../shared/infra/validator/validator";
 import { HttpResponse } from "../../../shared/ports/http-response";
 import {
   badRequest,
@@ -8,30 +7,12 @@ import {
   serverError,
 } from "../../../shared/utils/http-responses";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import {
-  ICalculateIndicatorsWeightsService,
-  IGetBasinService,
-  IGetIndicatorsWeightsByBasinService,
-  IGetWaterCutService,
-  InsertIndicatorsWeightsService,
-} from "../services/indicators-weights";
+import { censusWeightsService } from "../services";
+import { calculateIndicatorsWeightsValidator, createIndicatorsWeightsValidator, getIndicatorsWeightsValidator, getWaterCutValidator } from "./schema/weights";
 
-export interface IInsertIndicatorsWeightsController {
-  handle(request: {
-    basin_ids: Array<number>;
-    year: number;
-    data: Array<CensusCultureWeights>;
-  }): Promise<HttpResponse>;
-}
+export class IndicatorsWeightsController {
 
-export class InsertIndicatorsWeightsController
-  implements IInsertIndicatorsWeightsController
-{
-  constructor(
-    private readonly indicatorsWeightsService: InsertIndicatorsWeightsService,
-    private readonly validator: ISchemaValidator
-  ) {}
-  async handle(request: {
+  static async create(request: {
     basin_ids: Array<number>;
     year: number;
     data: Array<CensusCultureWeights>;
@@ -39,7 +20,7 @@ export class InsertIndicatorsWeightsController
     try {
       const { basin_ids, year, data } = request;
 
-      const { error } = await this.validator.validate({
+      const { error } = await createIndicatorsWeightsValidator.validate({
         basin_ids,
         year,
         data,
@@ -49,7 +30,7 @@ export class InsertIndicatorsWeightsController
         return badRequest(error);
       }
 
-      const deletedOrError = await this.indicatorsWeightsService.save({
+      const deletedOrError = await censusWeightsService.create({
         basin_ids,
         year,
         weights: data,
@@ -64,20 +45,13 @@ export class InsertIndicatorsWeightsController
       return serverError(error as Error);
     }
   }
-}
 
-export class GetIndicatorWeightsByBasinsIdsController {
-  constructor(
-    private readonly indicatorsWeightsService: IGetIndicatorsWeightsByBasinService,
-    private readonly validator: ISchemaValidator
-  ) {}
-
-  async handle(request: {
+  static async getByBasinIds(request: {
     basin_ids: string;
     year: number;
   }): Promise<HttpResponse> {
     try {
-      const { error } = await this.validator.validate({
+      const { error } = await getIndicatorsWeightsValidator.validate({
         basin_ids: request.basin_ids,
         year: request.year,
       });
@@ -88,7 +62,7 @@ export class GetIndicatorWeightsByBasinsIdsController {
 
       const ids = request.basin_ids.split(",").map((id) => Number(id));
 
-      const resultOrError = await this.indicatorsWeightsService.getByBasinsIds({
+      const resultOrError = await censusWeightsService.getByBasinsIds({
         basin_ids: ids,
         year: request.year,
       });
@@ -102,18 +76,12 @@ export class GetIndicatorWeightsByBasinsIdsController {
       return serverError(error as Error);
     }
   }
-}
-export class CalculateIndicatorWeightsController {
-  constructor(
-    private readonly indicatorsWeightsService: ICalculateIndicatorsWeightsService,
-    private readonly validator: ISchemaValidator
-  ) {}
 
-  async handle(request: { basin_ids: Array<number> }): Promise<HttpResponse> {
+  static async calculateWeights(request: { basin_ids: Array<number> }): Promise<HttpResponse> {
     try {
       const { basin_ids } = request;
 
-      const { error } = await this.validator.validate({
+      const { error } = await calculateIndicatorsWeightsValidator.validate({
         basin_ids,
       });
 
@@ -121,7 +89,7 @@ export class CalculateIndicatorWeightsController {
         return badRequest(error);
       }
 
-      const resultOrError = await this.indicatorsWeightsService.calculate({
+      const resultOrError = await censusWeightsService.calculate({
         basin_ids,
       });
 
@@ -134,27 +102,28 @@ export class CalculateIndicatorWeightsController {
       return serverError(error as Error);
     }
   }
-}
 
-export interface ICalculateWaterCutController {
-  handle(request: { basin_ids: Array<number> }): Promise<HttpResponse>;
-}
+  static async getBasin(): Promise<HttpResponse> {
+    try {
+      const resultOrError = await censusWeightsService.getBasin();
 
-export class CalculateWatercutController
-  implements ICalculateWaterCutController
-{
-  constructor(
-    private readonly indicatorsWeightsService: IGetWaterCutService,
-    private readonly validator: ISchemaValidator
-  ) {}
+      if (resultOrError.isLeft()) {
+        return badRequest(resultOrError.value);
+      }
 
-  async handle({
+      return ok(resultOrError.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+
+  static async getWaterCut({
     basin_ids,
   }: {
     basin_ids: Array<number>;
   }): Promise<HttpResponse> {
     try {
-      const { error } = await this.validator.validate({
+      const { error } = await getWaterCutValidator.validate({
         basin_ids,
       });
 
@@ -162,7 +131,7 @@ export class CalculateWatercutController
         return badRequest(error);
       }
 
-      const resultOrError = await this.indicatorsWeightsService.getWaterCut(
+      const resultOrError = await censusWeightsService.getWaterCut(
         basin_ids
       );
 
@@ -175,22 +144,5 @@ export class CalculateWatercutController
       return serverError(error as Error);
     }
   }
-}
 
-export class GetBasinController {
-  constructor(private readonly indicatorsWeightsService: IGetBasinService) {}
-
-  async handle(): Promise<HttpResponse> {
-    try {
-      const resultOrError = await this.indicatorsWeightsService.getBasin();
-
-      if (resultOrError.isLeft()) {
-        return badRequest(resultOrError.value);
-      }
-
-      return ok(resultOrError.value);
-    } catch (error) {
-      return serverError(error as Error);
-    }
-  }
 }

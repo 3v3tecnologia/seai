@@ -4,7 +4,7 @@ import { WaterCutMapper } from "./mappers/water-cut";
 import { IIndicatorsWeightsRepository } from "./protocol/weights-repository";
 import { censusDb } from "../../../shared/infra/database/postgres/connection/knexfile";
 
-class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
+export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
   async save(
     weights: Array<CensusCultureWeights>,
     basin_mask: number
@@ -174,8 +174,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
     if (params.crops_names) {
       filtersSQL.set(
         "crops",
-        `${
-          filtersSQL.has("users_registered_count") ? "and" : "having"
+        `${filtersSQL.has("users_registered_count") ? "and" : "having"
         }  cultura not in (${params.crops_names.map((_) => "?").join(",")})`
       );
       bindings = bindings.concat(params.crops_names);
@@ -185,8 +184,7 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
       // having sum(areairrigada_total) > 30
       filtersSQL.set(
         "area",
-        `${
-          filtersSQL.has("crops") ? "and" : "having"
+        `${filtersSQL.has("crops") ? "and" : "having"
         } sum(areairrigada_total) > ?`
       );
       bindings.push(params.area);
@@ -451,5 +449,3 @@ class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository {
   }
 }
 
-export const makeIndicatorsWeightsRepository = () =>
-  new IndicatorsWeightsRepository();
