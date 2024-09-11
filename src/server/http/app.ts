@@ -7,25 +7,14 @@ import { setMiddleware } from "./middlewares";
 import { setApiDocs } from "./swagger-docs";
 
 import morgan from "morgan";
-import helmet from "helmet";
 
 export const setupApp = async (): Promise<Express> => {
   const app = express();
 
-  // app.use(
-  //   helmet.contentSecurityPolicy({
-  //     directives: {
-  //       defaultSrc: ["'self'"],
-  //       fontSrc: ["'self'"],
-  //       imgSrc: ["'self'"],
-  //       scriptSrc: ["'self'"],
-  //       styleSrc: ["'self'"],
-  //       frameSrc: ["'self'"],
-  //     },
-  //     reportOnly: true, // Set to 'true' to enable report-only mode
-  //   })
-  // );
   app.use(morgan("tiny"));
+
+  app.use(express.json({ limit: `2mb` }));
+  app.use(express.urlencoded({ extended: true }));
 
   app.use(
     "/static",

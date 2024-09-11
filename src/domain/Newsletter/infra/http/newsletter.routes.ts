@@ -1,46 +1,20 @@
 import { Router } from "express";
-import { adaptRoute } from "../../../../server/http/adapters/express-route.adapter";
+import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 
 import {
   authorization,
   newsletterPermissions,
 } from "../../../../server/http/http-middlewares";
-import { NewsletterControllersFactory } from "../../controllers/factory/newsletter.controller.factory";
+import { NewsletterController } from "../../controllers/newsletter.controller";
 
 export const newsRouter = (): Router => {
-  const router = Router();
-
-  router.post(
-    "/subscribe",
-    adaptRoute(NewsletterControllersFactory.makeCreateNewsletterSubscriber())
-  );
-
-  router.delete(
-    "/unregister",
-    adaptRoute(NewsletterControllersFactory.makeDeleteNewsletterSubscriber())
-  );
-
-  router.patch(
-    "/confirm-subscription/:code",
-    adaptRoute(NewsletterControllersFactory.makeConfirmSubscriberByCode())
-  );
-
-  router.delete(
-    "/unsubscribe/:code",
-    adaptRoute(NewsletterControllersFactory.makeConfirmUnsubscribeByCode())
-  );
-
-  router.get(
-    "/subscribers",
-    authorization,
-    adaptRoute(NewsletterControllersFactory.makeFetchNewsletterSubscribers())
-  );
+  const router = Router()
 
   router.get(
     "/subscribers/email",
     authorization,
-    adaptRoute(
-      NewsletterControllersFactory.makeFetchNewsletterSubscribersEmails()
+    adaptHTTPHandler(
+      NewsletterController.getSubscribers
     )
   );
 
@@ -48,48 +22,55 @@ export const newsRouter = (): Router => {
     "/",
     authorization,
     newsletterPermissions.write,
-    adaptRoute(NewsletterControllersFactory.makeCreateNewsletter())
-  );
-
-  router.patch(
-    "/:id",
-    // authorization,
-    adaptRoute(NewsletterControllersFactory.makeUpdateSendAt())
+    adaptHTTPHandler(NewsletterController.create)
   );
 
   router.put(
     "/:id",
     authorization,
     newsletterPermissions.write,
-    adaptRoute(NewsletterControllersFactory.makeUpdateNewsletter())
+    adaptHTTPHandler(NewsletterController.update)
   );
 
   router.delete(
     "/:id",
     authorization,
     newsletterPermissions.write,
-    adaptRoute(NewsletterControllersFactory.makeDeleteNewsletter())
+    adaptHTTPHandler(NewsletterController.delete)
+  );
+
+  router.patch(
+    "/:date",
+    // authorization,
+    adaptHTTPHandler(NewsletterController.updateSendAt)
   );
 
   router.get(
     "/sent",
     // authorization,
     // newsReadAccessAuth,
-    adaptRoute(NewsletterControllersFactory.makeFetchOnlySentNewsletter())
+    adaptHTTPHandler(NewsletterController.getOnlySent)
+  );
+
+  router.get(
+    "/previews/:date",
+    // authorization,
+    // newsReadAccessAuth,
+    adaptHTTPHandler(NewsletterController.getUnsent)
   );
 
   router.get(
     "/:id",
     // authorization,
     // newsReadAccessAuth,
-    adaptRoute(NewsletterControllersFactory.makeFetchByIdNewsletter())
+    adaptHTTPHandler(NewsletterController.getById)
   );
 
   router.get(
     "/",
     authorization,
     newsletterPermissions.read,
-    adaptRoute(NewsletterControllersFactory.makeFetchAllNewsletter())
+    adaptHTTPHandler(NewsletterController.getAll)
   );
 
   return router;

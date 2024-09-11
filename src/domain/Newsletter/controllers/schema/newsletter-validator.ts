@@ -43,7 +43,10 @@ const fetchNews = new SchemaValidator(
   })
 );
 
-const updateSendAt = new SchemaValidator(Joi.object(idSchema));
+const updateSendAt = new SchemaValidator(Joi.object({
+  date: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/, "YYYY-MM-DD").required()
+}));
 
 const fetchOnlySent = new SchemaValidator(
   Joi.object({

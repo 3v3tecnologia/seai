@@ -1,8 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import {
-  DeleteNewsletterSubscriberUseCaseProtocol,
-  SubscribeToNewsUseCaseProtocol,
-} from "../../../Newsletter/services";
+import { NewsletterServiceProtocol } from "../../../Newsletter/services/newsletter.service.protocol";
 import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
 import { IUserPreferencesRepository } from "../infra/repositories/protocol/preferences.repository";
 
@@ -18,9 +15,9 @@ export class UserSettingsServices implements IUserPreferencesServices {
   constructor(
     private repository: IUserPreferencesRepository,
     private readonly accountRepository: IrrigationUserRepositoryProtocol,
-    private readonly subscribeToNewsletter: SubscribeToNewsUseCaseProtocol.UseCase,
-    private readonly unsubscribeToNewsletter: DeleteNewsletterSubscriberUseCaseProtocol.UseCase
-  ) {}
+    private readonly newsletterService: NewsletterServiceProtocol,
+  ) { }
+
   //Associate equipments to User
   // The user is allowed to have only 2 equipments
   async saveEquipments(
@@ -66,19 +63,6 @@ export class UserSettingsServices implements IUserPreferencesServices {
     return right(await this.repository.getUsersEquipments(user_id));
   }
 
-  async updateNotifications(
-    dto: UpdateUserEquipmentsDTO
-  ): Promise<Either<Error, void>> {
-    // Save user equipments
-    // Shouldn't allow the user to save duplicate equipments
-    await this.repository.updateEquipments({
-      user_id: dto.UserId,
-      station_id: dto.StationId,
-      pluviometer_id: dto.PluviometerId,
-    });
-
-    return right();
-  }
   // Get user's equipments
   async getNotifications(user_id: number): Promise<Either<Error, Array<any>>> {
     // Save user equipments
@@ -98,26 +82,16 @@ export class UserSettingsServices implements IUserPreferencesServices {
       return left(new Error("Serviço de notificação não encontrado"));
     }
 
-    console.log(dto);
 
     if (availableNotificationsService.service == "newsletter") {
       const userAccount = await this.accountRepository.getUserById(dto.UserId);
       if (dto.Enabled) {
-        await this.unsubscribeToNewsletter.execute({
-          Email: userAccount!.email,
-        });
-        // subscribe user email to newsletter
-        const successOrError = await this.subscribeToNewsletter.execute({
-          Email: userAccount!.email,
-          Status: "confirmed",
-        });
+        await this.newsletterService.unsubscribe(userAccount!.email);
+        const successOrError = await this.newsletterService.subscribe(userAccount!.email);
 
         if (successOrError.isLeft()) return left(successOrError.value);
       } else {
-        // remove user email from newsletter
-        const successOrError = await this.unsubscribeToNewsletter.execute({
-          Email: userAccount!.email,
-        });
+        const successOrError = await this.newsletterService.unsubscribe(userAccount!.email);
         if (successOrError.isLeft()) return left(successOrError.value);
       }
     }
@@ -137,9 +111,7 @@ export class UserSettingsServices implements IUserPreferencesServices {
   ): Promise<Either<Error, void>> {
     await this.repository.removeUserNotificationsPreferences(user_id);
 
-    await this.unsubscribeToNewsletter.execute({
-      Email: email,
-    });
+    await this.newsletterService.unsubscribe(email);
 
     return right();
   }

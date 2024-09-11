@@ -10,7 +10,7 @@ import {
   GetEquipmentsRequest,
   SaveEquipmentsRequest,
   UpdateEquipmentsRequest,
-} from "../../../Management/controllers/dto/user-settings";
+} from "../../../Irrigation/controllers/dto/user-settings";
 import { IUserPreferencesServices } from "../services/protocols/user-settings";
 import {
   GetUserNotificationsPreferences,
@@ -26,7 +26,7 @@ import {
 } from "./schema/preferences";
 
 export class UserPreferencesControllers {
-  constructor(private services: IUserPreferencesServices) {}
+  constructor(private services: IUserPreferencesServices) { }
 
   async saveEquipments(request: SaveEquipmentsRequest): Promise<HttpResponse> {
     try {

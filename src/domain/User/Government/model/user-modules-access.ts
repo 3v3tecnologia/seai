@@ -25,9 +25,21 @@ export enum Modules {
   WEIGHTS = "weights",
   CROP = "crop",
   EQUIPMENTS = "equipments",
+  LOGS = "logs",
 }
 
-export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
+// export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
+
+export type SystemModulesProps = {
+  [Modules.CROP]: SystemModulesPermissions;
+  [Modules.NEWSLETTER]: SystemModulesPermissions;
+  [Modules.USER]: SystemModulesPermissions;
+  [Modules.FAQ]: SystemModulesPermissions;
+  [Modules.STUDIES]: SystemModulesPermissions;
+  [Modules.WEIGHTS]: SystemModulesPermissions;
+  [Modules.EQUIPMENTS]: SystemModulesPermissions;
+  [Modules.LOGS]?: SystemModulesPermissions;
+};
 
 export class SystemModules {
   private modules: SystemModulesProps;
@@ -41,7 +53,7 @@ export class SystemModules {
   }
 
   static validate(
-    modules: Required<SystemModulesProps>,
+    modules: SystemModulesProps,
     permission_type: UserType
   ): Either<string, void> {
     const isNullOrUndefinedArgs = againstNullOrUndefinedBulk([
@@ -67,6 +79,10 @@ export class SystemModules {
         argument: modules[Modules.USER],
         argumentName: Modules.USER,
       },
+      // {
+      //   argument: modules[Modules.LOGS],
+      //   argumentName: Modules.LOGS,
+      // },
     ]);
 
     if (isNullOrUndefinedArgs.isLeft()) {
@@ -91,6 +107,7 @@ export class SystemModules {
         SystemModules.hasFullPermissions(modules[Modules.FAQ]),
         SystemModules.hasFullPermissions(modules[Modules.USER]),
         SystemModules.hasFullPermissions(modules[Modules.NEWSLETTER]),
+        // SystemModules.hasFullPermissions(modules[Modules.LOGS]),
       ].every((permission) => permission === true);
 
       if (hasAdminPermissions === false) {
@@ -106,6 +123,12 @@ export class SystemModules {
           "Para usuário básico, não deve haver permissão para gerenciar usuários."
         );
       }
+
+      // if (SystemModules.hasSomePermission(modules[Modules.LOGS])) {
+      //   return left(
+      //     "Para usuário básico, não deve haver permissão para gerenciar logs."
+      //   );
+      // }
     }
 
     return right();
@@ -162,11 +185,12 @@ export class SystemModules {
   }
 
   static create(
-    modules: Required<SystemModulesProps>,
+    modules: SystemModulesProps,
     permission_type: UserType,
     systemModules?: Array<{ id: number; name: string }>
   ): Either<Error, SystemModules> {
     if (systemModules) {
+      // Check if user modules exists in database
       const isExistsOrError = SystemModules.checkIfModuleExists(
         modules,
         systemModules

@@ -6,8 +6,7 @@ import {
 } from "./protocol/irrigation-user.repository";
 
 export class IrrigationUserRepository
-  implements IrrigationUserRepositoryProtocol
-{
+  implements IrrigationUserRepositoryProtocol {
   async add(user: {
     code: string;
     email: string;
@@ -59,8 +58,8 @@ export class IrrigationUserRepository
     return id_user;
   }
 
-  async getUserByCode(code: string): Promise<IrrigationUserProps | null> {
-    const result = await governmentDb
+  async getUserByCode(code: string, status?: UserStatus): Promise<IrrigationUserProps | null> {
+    const query = governmentDb
       .withSchema("users")
       .select(
         "Id",
@@ -76,6 +75,14 @@ export class IrrigationUserRepository
       .where({ Code: code })
       .from("User")
       .first();
+
+    if (status) {
+      query.andWhere({
+        Status: status,
+      });
+    }
+
+    const result = await query
 
     if (!result) {
       return null;

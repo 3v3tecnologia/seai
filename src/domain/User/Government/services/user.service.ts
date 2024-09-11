@@ -1,6 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
 import { Encoder } from "../../../../shared/ports/encoder";
-import { base64Decode } from "../../../../shared/utils/base64Encoder";
 import { Email } from "../../lib/model/email";
 import { UserLogin } from "../../lib/model/login";
 import { UserName } from "../../lib/model/name";
@@ -14,7 +13,9 @@ import { TaskSchedulerProviderProtocol } from "../../../../shared/infra/queuePro
 import { Optional } from "../../../../shared/optional";
 import { IPaginationInput } from "../../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { InactivatedAccount } from "../../lib/errors/account-not-activated";
 import { UserAlreadyRegisteredError } from "../../lib/errors/already-registered";
+import { EmailAlreadyExists } from "../../lib/errors/email-already-exists";
 import { FailToDeleteUserError } from "../../lib/errors/fail-to-delete-user-error";
 import { UserModulesNotFound } from "../../lib/errors/invalid-modules";
 import { LoginAlreadyExists } from "../../lib/errors/login-aready-exists";
@@ -28,11 +29,9 @@ import {
 import { User, UserType, UserTypes } from "../model/user";
 import {
   SystemModules,
-  SystemModulesProps,
+  SystemModulesProps
 } from "../model/user-modules-access";
 import { IUserService } from "./user.service.procotol";
-import { InactivatedAccount } from "../../lib/errors/account-not-activated";
-import { EmailAlreadyExists } from "../../lib/errors/email-already-exists";
 
 export class GovernmentUserService implements IUserService {
   constructor(
@@ -97,28 +96,22 @@ export class GovernmentUserService implements IUserService {
 
     const userEmail = user.email?.value as string;
 
-    const userCode = await this.encoder.hashInPbkdf2(
-      userEmail,
-      100,
-      10,
-      "sha512"
-    );
+    const userCode = this.encoder.generateRandomHexCode(16)
 
     const user_id = await this.accountRepository.add(
       {
         email: userEmail,
         type: user.type,
         modules: user.access?.value as SystemModulesProps,
-        code: userCode as string,
+        code: userCode,
       },
       author
     );
 
     if (user_id) {
-      const base64Code = Buffer.from(userEmail).toString("base64");
       await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: userEmail,
-        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${base64Code}`,
+        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${userCode}`,
         action: "create-user-account",
       });
     }
@@ -193,9 +186,8 @@ export class GovernmentUserService implements IUserService {
     >
   > {
     // Decode user code to base64
-    const userEmailToString = base64Decode(user.code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getUserByCode(user.code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -264,11 +256,9 @@ export class GovernmentUserService implements IUserService {
       return left(new UserNotFoundError());
     }
 
-    const base64Code = Buffer.from(account.email).toString("base64");
-
     await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/retrieve-account/${base64Code}`,
+      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/change-password/${account.code}`,
       action: "forgot-user-account",
     });
 
@@ -286,9 +276,9 @@ export class GovernmentUserService implements IUserService {
       return left(new Error("Código não informado"));
     }
 
-    const userEmailToString = base64Decode(code);
+    // const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getByEmail(userEmailToString);
+    const account = await this.accountRepository.getUserByCode(code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -611,7 +601,8 @@ export class GovernmentUserService implements IUserService {
       > | null
     >
   > {
-    const access = await this.accountRepository.getUserById(userId);
-    return right(access);
+    const user = await this.accountRepository.getUserById(userId);
+
+    return right(user);
   }
 }

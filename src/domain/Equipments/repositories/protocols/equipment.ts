@@ -9,6 +9,7 @@ import {
   IPaginationInput,
 } from "../../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { PaginatedInput } from "../../../../shared/utils/command";
 
 export interface MeteorologicalOrganRepositoryProtocol {
   checkIfOrganNameAlreadyExists(organName: string): Promise<boolean>;
@@ -78,14 +79,15 @@ export interface IEquipmentsRepository
   ): Promise<number | null>;
   getAllByType(organName: string, eqpType: string): Promise<any>;
   getAll(
-    request: {
+    params: PaginatedInput<{
+      equipmentId?: number;
       idOrgan?: number;
       idType?: number;
       name?: string;
       enabled?: boolean;
       only_with_measurements?: boolean;
-    } & IPaginationInput
-  ): Promise<IOutputWithPagination<EquipmentEntity>>;
+    }>
+  ): Promise<IOutputWithPagination<EquipmentEntity>>
   getEquipmentId(id: number): Promise<EquipmentEntity | null>;
   getPluviometersWithYesterdayMeasurements(
     params: {

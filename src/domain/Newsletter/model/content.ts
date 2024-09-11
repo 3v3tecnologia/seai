@@ -18,7 +18,9 @@ export type Content = {
   UpdatedAt?: string;
 };
 
-// Check if the size exceeds 2MB (2 * 1024 * 1024 bytes)
+
+
+// Check if the size exceeds 1MB (2 * 1024 * 1024 bytes)
 export const NEWSLETTER_CONTENT_SIZE_LIMIT = 2 * 1024 * 1024;
 
 export function validateContentSize(data: any): Either<Error, void> {

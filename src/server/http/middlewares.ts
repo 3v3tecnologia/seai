@@ -9,4 +9,5 @@ export function setMiddleware(app: Express): void {
   app.use(contentType);
   // app.use(cors);
   app.use(cors());
+
 }

@@ -43,6 +43,12 @@ const calculateIndicatorsWeightsValidator = new SchemaValidator(
   })
 );
 
+const getWaterCutValidator = new SchemaValidator(
+  Joi.object({
+    basin_ids: Joi.array().items(Joi.number().integer()).required(),
+  })
+);
+
 const calculateWaterCutValidator = new SchemaValidator(
   Joi.object({
     basin_ids: Joi.array().items(Joi.number().integer()).required(),
@@ -55,4 +61,5 @@ export {
   getIndicatorsWeightsValidator,
   calculateIndicatorsWeightsValidator,
   calculateWaterCutValidator,
+  getWaterCutValidator
 };

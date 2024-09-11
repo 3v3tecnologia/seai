@@ -32,16 +32,12 @@ export const IRRIGANT = {
                 example: {
                   data: [
                     {
-                      Id: 3,
-                      Name: "ALFACE",
-                      LocationName: "FORTALEZA",
-                    },
-                    {
-                      Id: 4,
-                      Name: "FEIJÃO",
-                      LocationName: "FORTALEZA",
-                    },
-                  ],
+                      Id: 1,
+                      Name: "Cultura Teste",
+                      IsPermanent: true,
+                      CycleRestartPoint: 1
+                    }
+                  ]
                 },
               },
             },

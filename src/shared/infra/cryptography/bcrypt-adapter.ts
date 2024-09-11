@@ -17,15 +17,20 @@ export class BcryptAdapter implements Encoder {
   async compare(plaintext: string, digest: string): Promise<boolean> {
     return bcrypt.compare(plaintext, digest);
   }
+
+  generateRandomHexCode(length: number): string {
+    return crypto.randomBytes(length).toString('hex');
+  }
+
   async hashInPbkdf2(
-    userEmail: string,
+    data: string,
     iterations: number,
     keylen: number,
     digest: string
   ): Promise<Error | string> {
     return new Promise((resolve, reject) => {
       crypto.pbkdf2(
-        userEmail,
+        data,
         this.hashSalt,
         iterations,
         keylen,
