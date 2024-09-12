@@ -126,7 +126,7 @@ export class GovernmentUserService implements IUserService {
     password,
     email,
   }: {
-    login?: string;
+    login: string;
     email?: string;
     password: string;
   }): Promise<
@@ -138,9 +138,7 @@ export class GovernmentUserService implements IUserService {
       }
     >
   > {
-    const account = login
-      ? await this.accountRepository.getByLogin(login)
-      : await this.accountRepository.getByEmail(email as string, "registered");
+    const account = Email.validate(login) ? await this.accountRepository.getByEmail(login, "registered") : await this.accountRepository.getByLogin(login)
 
     if (!account) {
       return left(new UserNotFoundError());
