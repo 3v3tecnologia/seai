@@ -152,6 +152,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       Enable: data.Enable,
     };
   }
+
   async getPluviometersWithYesterdayMeasurements(
     params: { latitude: number; longitude: number; distance?: number } | null
   ): Promise<Array<PluviometerWithLastMeasurement> | null> {
@@ -296,6 +297,154 @@ export class EquipmentsRepository implements IEquipmentsRepository {
 
     return stations.length ? stations : null;
   }
+
+  async getActivatedStations(
+    params: { latitude: number; longitude: number; distance?: number } | null
+  ): Promise<Array<StationWithLastMeasurement> | null> {
+    const STATION_ID_TYPE = 1;
+    const MEASURES_ROWS = 1;
+
+    // TODO: Need to refactor to bind params
+    const coordinateFilter = [params?.latitude, params?.longitude].every(
+      (e) => e
+    )
+      ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+      : "";
+
+    const query = `
+        WITH Stations AS (SELECT
+                          equipment."IdEquipment" AS "Id",
+                          equipment."Enable",
+                          equipment."IdEquipmentExternal" AS "EqpCode",
+                          equipment."Name",
+                          equipment."Altitude" ,
+                          equipment."CreatedAt",
+                          lastSync."completedon" as "LastSync",
+                          equipment."UpdatedAt" ,
+                          organ."IdOrgan" AS "IdOrgan",
+                          organ."Name" AS "OrganName",
+                          eqpType."IdType" AS "IdType",
+                          eqpType."Name" AS "EqpType",
+                          ST_AsGeoJSON(
+                              equipment."Location"::geometry
+          )::json AS "GeoLocation"
+      FROM
+                          equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
+                          organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN equipments."LastUpdatedAt" AS lastSync
+      ON lastSync."fk_organ" = equipment."FK_Organ"
+      INNER JOIN equipments."EquipmentType" eqpType ON
+                          eqpType."IdType" = equipment."FK_Type"
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${coordinateFilter} AND  equipment."Enable" = true
+      WHERE equipment."Enable" = true
+      )
+      SELECT Stations.*, Measurements.* FROM Stations,
+          LATERAL (
+              SELECT
+                  rs."FK_Equipment" ,
+                  rs."Time",
+                  rs."Hour",
+                  TRUNC(rs."Et0"::numeric,2) AS "Et0"
+              FROM
+                  equipments."ReadStations" rs
+              WHERE
+                  rs."FK_Equipment" = Stations."Id"
+              ORDER BY
+                  rs."Time" DESC
+              LIMIT ${MEASURES_ROWS}
+          ) AS Measurements
+    `;
+
+    const data = await governmentDb.raw(query);
+
+    const rows = data.rows;
+
+    if (!rows) {
+      return null;
+    }
+
+    const stations: Array<StationWithLastMeasurement> = rows.map(
+      (row: any) => ({
+        ...mapEquipmentToDomain(row),
+        Et0: Number(row.Et0) || null,
+      })
+    );
+
+    return stations.length ? stations : null;
+  }
+
+  async getActivatedPluviometers(
+    params: { latitude: number; longitude: number; distance?: number } | null
+  ): Promise<Array<PluviometerWithLastMeasurement> | null> {
+    // TO-DO: filtrar só equipamentos que tenha dados do dia anterior
+
+    // TODO: Need to refactor to bind params
+    const query = `
+          WITH Pluviometers AS (SELECT
+                          equipment."IdEquipment" AS "Id",
+                          equipment."Enable",
+                          equipment."IdEquipmentExternal" AS "EqpCode",
+                          equipment."Name",
+                          equipment."Altitude" ,
+                          equipment."CreatedAt",
+                          equipment."UpdatedAt",
+                          lastSync."completedon" as "LastSync",
+                          organ."IdOrgan" AS "IdOrgan",
+                          organ."Name" AS "OrganName",
+                          eqpType."IdType" AS "IdType",
+                          eqpType."Name" AS "EqpType",
+                          ST_AsGeoJSON(
+                              equipment."Location"::geometry
+          )::json AS "GeoLocation"
+      FROM
+                          equipments."MetereologicalEquipment" AS equipment
+      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
+                          organ."IdOrgan" = equipment."FK_Organ"
+      INNER JOIN equipments."LastUpdatedAt" AS lastSync
+      ON lastSync."fk_organ" = equipment."FK_Organ"
+      INNER JOIN equipments."EquipmentType" eqpType ON
+                          eqpType."IdType" = equipment."FK_Type"
+      WHERE equipment."FK_Type" = 2  ${[params?.latitude, params?.longitude].every((e) => e)
+        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
+        : ""
+      } AND  equipment."Enable" = true)
+      SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
+          LATERAL (
+              SELECT
+                  rs."FK_Equipment" ,
+                  rs."Time",
+                  rs."Hour",
+                  CASE WHEN rs."Value" >=0 THEN TRUNC(rs."Value"::numeric,2)
+                  ELSE NULL  END AS "Value"
+              FROM
+                  equipments."ReadPluviometers" rs
+              WHERE
+                  rs."FK_Equipment" = Pluviometers."Id"
+              ORDER BY
+                  rs."Time" DESC
+              LIMIT 1
+          ) AS Measurements
+    `;
+
+    const data = await governmentDb.raw(query);
+
+    if (!data.rows.length) {
+      return null;
+    }
+
+    const rows = data.rows;
+
+    const pluviometers: Array<PluviometerWithLastMeasurement> = rows.map(
+      (row: any) => ({
+        ...mapEquipmentToDomain(row),
+        Precipitation: row.Value !== null ? Number(row.Value) : null,
+      })
+    );
+
+    return pluviometers.length ? pluviometers : null;
+  }
+
   async checkIfOrganNameAlreadyExists(organName: string): Promise<boolean> {
     const exists = await governmentDb
       .withSchema("equipments")
