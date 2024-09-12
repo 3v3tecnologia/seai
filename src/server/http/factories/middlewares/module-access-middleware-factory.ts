@@ -1,4 +1,4 @@
-import { UserRepository } from "../../../../domain/User/Government/infra/database/repository/user-repository";
+import { UserRepository } from "../../../../domain/User/infra/repositories/gov-user-repository";
 import { ModuleAccessPermissionMiddleware } from "../../../../domain/User/Government/middlewares/module-access";
 import { Middleware } from "../../../../shared/middlewares/middleware";
 
