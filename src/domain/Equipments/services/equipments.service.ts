@@ -233,7 +233,7 @@ export class EquipmentsServices implements IEquipmentsServices {
     switch (request?.type) {
       case "station":
         return right(
-          await this.equipmentRepository.getActivatedPluviometers(
+          await this.equipmentRepository.getActivatedStations(
             params
           )
         );
