@@ -337,7 +337,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
       WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${coordinateFilter} AND  equipment."Enable" = true
-      WHERE equipment."Enable" = true
+      AND equipment."Enable" = true
       )
       SELECT Stations.*, Measurements.* FROM Stations,
           LATERAL (
