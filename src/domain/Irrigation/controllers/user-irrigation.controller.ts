@@ -5,7 +5,7 @@ import {
   noContent,
   ok,
 } from "../../../shared/utils/http-responses";
-import { IUserIrrigationCropsServices } from "../services/protocols/user-irrigation";
+import { userIrrigationService } from "../services/factories/user-irrigation";
 import {
   DeleteIrrigationCropsRequest,
   GetAllIrrigationCropsRequest,
@@ -22,9 +22,8 @@ import {
 } from "./schema/user-irrigation";
 
 export class UserIrrigationControllers {
-  constructor(private services: IUserIrrigationCropsServices) {}
 
-  async create(request: SaveIrrigationCropsRequest): Promise<HttpResponse> {
+  static async create(request: SaveIrrigationCropsRequest): Promise<HttpResponse> {
     try {
       const {
         accountId,
@@ -48,7 +47,7 @@ export class UserIrrigationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.saveIrrigationCrops({
+      const successOrError = await userIrrigationService.saveIrrigationCrops({
         UserId: accountId,
         Name: Name,
         CropId: CropId,
@@ -67,7 +66,7 @@ export class UserIrrigationControllers {
     }
   }
 
-  async updateIrrigationCropsById(
+  static async updateIrrigationCropsById(
     request: UpdateIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
@@ -95,7 +94,7 @@ export class UserIrrigationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.updateIrrigationCropsById({
+      const successOrError = await userIrrigationService.updateIrrigationCropsById({
         Id: id,
         UserId: accountId,
         Name: Name,
@@ -115,7 +114,7 @@ export class UserIrrigationControllers {
     }
   }
 
-  async deleteIrrigationCrops(
+  static async deleteIrrigationCrops(
     request: DeleteIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
@@ -130,7 +129,7 @@ export class UserIrrigationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.deleteIrrigationCropsById(
+      const successOrError = await userIrrigationService.deleteIrrigationCropsById(
         id,
         accountId
       );
@@ -145,7 +144,7 @@ export class UserIrrigationControllers {
     }
   }
 
-  async getIrrigationCropsById(
+  static async getIrrigationCropsById(
     request: GetIrrigationCropsByIdRequest
   ): Promise<HttpResponse> {
     try {
@@ -160,7 +159,7 @@ export class UserIrrigationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.getIrrigationCropsById(
+      const successOrError = await userIrrigationService.getIrrigationCropsById(
         id,
         accountId
       );
@@ -175,7 +174,7 @@ export class UserIrrigationControllers {
     }
   }
 
-  async getAllIrrigationCrops(
+  static async getAllIrrigationCrops(
     request: GetAllIrrigationCropsRequest
   ): Promise<HttpResponse> {
     try {
@@ -189,7 +188,7 @@ export class UserIrrigationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.getAllIrrigationCrops(
+      const successOrError = await userIrrigationService.getAllIrrigationCrops(
         accountId
       );
 
