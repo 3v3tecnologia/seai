@@ -8,7 +8,7 @@ import {
 } from "../../../shared/utils/http-responses";
 import { irrigantUserAccountService } from "../services/factories/irrigation-user";
 import { IrrigantSignUpRequest } from "./requests/irrigant";
-import { createUserValidator, loginValidator } from "./schema/irrigant";
+import { createUserValidator } from "./schema/irrigant";
 
 export class IrrigantUserController {
 
@@ -29,35 +29,6 @@ export class IrrigantUserController {
       }
 
       const result = await irrigantUserAccountService.create(request);
-
-      if (result.isLeft()) {
-        return forbidden(result.value);
-      }
-      return ok(result.value);
-    } catch (error) {
-      console.error(error);
-      return serverError(error as Error);
-    }
-  }
-
-  static async login(request: {
-    login?: string;
-    email?: string;
-    password: string;
-  }): Promise<HttpResponse> {
-    try {
-      const { login, email, password } = request;
-
-      const { error } = await loginValidator.validate({
-        login,
-        email,
-        password,
-      });
-
-      if (error) {
-        return badRequest(error);
-      }
-      const result = await irrigantUserAccountService.login(request);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -90,7 +61,7 @@ export class IrrigantUserController {
     try {
       const { email } = request;
 
-      const result = await this.userService.forgotPassword(email);
+      const result = await irrigantUserAccountService.forgotPassword(email);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -111,7 +82,7 @@ export class IrrigantUserController {
     try {
       const { code, password, confirmPassword } = request;
 
-      const result = await this.userService.resetPassword({
+      const result = await irrigantUserAccountService.resetPassword({
         code,
         password,
         confirmPassword,
@@ -140,7 +111,7 @@ export class IrrigantUserController {
       const { accountId, login, name, confirmPassword, email, password } =
         request;
 
-      const result = await this.userService.updateProfile({
+      const result = await irrigantUserAccountService.updateProfile({
         id: accountId,
         login,
         name,
@@ -164,7 +135,7 @@ export class IrrigantUserController {
     try {
       const { id } = request;
 
-      const result = await this.userService.deleteAccount(id);
+      const result = await irrigantUserAccountService.deleteAccount(id);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -181,7 +152,7 @@ export class IrrigantUserController {
     try {
       const { accountId } = request;
 
-      const result = await this.userService.getProfile(accountId);
+      const result = await irrigantUserAccountService.getProfile(accountId);
 
       if (result.isLeft()) {
         return forbidden(result.value);

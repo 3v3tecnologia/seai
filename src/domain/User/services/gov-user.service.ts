@@ -7,8 +7,6 @@ import { UserPassword } from "../core/model/userPassword";
 
 import { TokenProvider } from "../infra/token-provider";
 
-import { PUBLIC_ASSETS_BASE_URL } from "../../../server/http/config/url";
-import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Optional } from "../../../shared/optional";
 import { IPaginationInput } from "../../../shared/utils/pagination";
@@ -22,15 +20,15 @@ import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import { UserAlreadyExistsError } from "../core/errors/user-already-exists";
 import { UserNotFoundError } from "../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../core/errors/wrong-password";
-import {
-  UserAccountProps,
-  UserRepositoryProtocol,
-} from "../infra/repositories/protocol/gov-user-repository";
 import { User, UserType, UserTypes } from "../core/model/gov-user";
 import {
   SystemModules,
   SystemModulesProps
 } from "../core/model/user-modules-access";
+import {
+  UserAccountProps,
+  UserRepositoryProtocol,
+} from "../infra/repositories/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
 
 
@@ -38,12 +36,10 @@ export class GovernmentUserService implements IUserService {
   constructor(
     private readonly accountRepository: UserRepositoryProtocol,
     private readonly encoder: Encoder,
-    private readonly tokenProvider: TokenProvider,
     private readonly queueProvider: TaskSchedulerProviderProtocol
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
-    this.tokenProvider = tokenProvider;
     this.queueProvider = queueProvider;
   }
   async getSystemModules(): Promise<
@@ -110,11 +106,15 @@ export class GovernmentUserService implements IUserService {
     );
 
     if (user_id) {
-      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      await this.queueProvider.send("create-user-account", {
         email: userEmail,
-        redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${userCode}`,
-        action: "create-user-account",
+        type: "government",
       });
+      // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      //   email: userEmail,
+      //   redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${userCode}`,
+      //   action: "create-user-account",
+      // });
     }
 
     return right(
@@ -122,51 +122,6 @@ export class GovernmentUserService implements IUserService {
     );
   }
 
-  async login({
-    login,
-    password,
-  }: {
-    login: string;
-    password: string;
-  }): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  > {
-    const account = Email.validate(login) ? await this.accountRepository.getByEmail(login, "registered") : await this.accountRepository.getByLogin(login)
-
-    if (!account) {
-      return left(new UserNotFoundError());
-    }
-    const isMatch = await this.encoder.compare(
-      password,
-      account.password as string
-    );
-
-    if (isMatch === false) {
-      return left(new WrongPasswordError());
-    }
-
-    const userId = account.id as number;
-
-    const token = await this.tokenProvider.sign(
-      {
-        accountId: userId,
-      },
-      "7d"
-    );
-
-    return right({
-      accessToken: token,
-      userName: account.name,
-    });
-  }
-
-  //
   async completeRegister(user: {
     code: string;
     name: string;
@@ -243,7 +198,6 @@ export class GovernmentUserService implements IUserService {
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    // WARN: versão final não irá ter checagem por email, mas deverá trazer o usuário do banco
     const account = await this.accountRepository.getByEmail(
       email,
       "registered"
@@ -253,11 +207,15 @@ export class GovernmentUserService implements IUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    await this.queueProvider.send("forgot-user-account", {
       email: account.email,
-      redirect_url: `${PUBLIC_ASSETS_BASE_URL}/change-password/${account.code}`,
-      action: "forgot-user-account",
+      type: "government",
     });
+    // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    //   email: account.email,
+    //   redirect_url: `${PUBLIC_ASSETS_BASE_URL}/change-password/${account.code}`,
+    //   action: "forgot-user-account",
+    // });
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);
   }

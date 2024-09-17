@@ -4,7 +4,8 @@ import { GovernmentUserController } from "../../controllers/gov-user.controller"
 import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 
 
-export const userRouter = (router: Router): void => {
+export const setupGovUserRoutes = (): Router => {
+  const router = Router();
 
   router.get(
     "/system/modules",
@@ -73,10 +74,6 @@ export const userRouter = (router: Router): void => {
     adaptHTTPHandler(GovernmentUserController.deleteUser)
   );
 
-  router.post(
-    "/sign-in",
-    adaptHTTPHandler(GovernmentUserController.login)
-  );
 
   router.patch(
     "/complete-registration/:code",
@@ -92,5 +89,7 @@ export const userRouter = (router: Router): void => {
     "/password/forgot",
     adaptHTTPHandler(GovernmentUserController.forgotPassword)
   );
+
+  return router
 
 };

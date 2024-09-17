@@ -22,23 +22,6 @@ export interface IUserService {
     },
     author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>>;
-  login({
-    login,
-    password,
-    email,
-  }: {
-    login?: string;
-    email?: string;
-    password: string;
-  }): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  >;
   completeRegister(user: {
     code: string;
     name: string;

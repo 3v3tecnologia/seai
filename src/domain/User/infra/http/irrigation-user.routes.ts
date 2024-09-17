@@ -3,7 +3,9 @@ import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route
 import { IrrigantUserController } from "../../controllers/irrigant-user.controller";
 import { authorization } from "../../../../server/http/http-middlewares";
 
-export const irrigationUserRoutes = (router: Router): void => {
+export const setupIrrigationUser = (): Router => {
+  const router = Router();
+
   router.post("/", adaptHTTPHandler(IrrigantUserController.create));
 
   router.get(
@@ -24,7 +26,6 @@ export const irrigationUserRoutes = (router: Router): void => {
     adaptHTTPHandler(IrrigantUserController.updateProfile)
   );
 
-  router.post("/login", adaptHTTPHandler(IrrigantUserController.login));
 
   router.patch(
     "/reset-password/:code",
@@ -40,4 +41,6 @@ export const irrigationUserRoutes = (router: Router): void => {
     "/forgot-password",
     adaptHTTPHandler(IrrigantUserController.forgotPassword)
   );
+
+  return router
 };

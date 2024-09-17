@@ -6,21 +6,12 @@ export interface IIrrigationUserService {
   create(
     dto: CreateIrrigationAccountDTO.Input
   ): Promise<CreateIrrigationAccountDTO.Output>;
-  login(user: { login?: string; email?: string; password: string }): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  >;
   completeRegister(code: string): Promise<Either<Error, void>>;
   resetPassword(params: {
     code: string;
     password: string;
     confirmPassword: string;
-  }): Promise<Either<Error, null>>;
+  }): Promise<Either<Error, void>>
   forgotPassword(email: string): Promise<Either<Error, string>>;
   updateProfile(request: {
     id: number;

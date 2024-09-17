@@ -1,12 +1,12 @@
 import env from "../../../../server/http/env";
 import { BcryptAdapter } from "../../../../shared/infra/cryptography/bcrypt-adapter";
-import { PgBossAdapter } from "../../../../shared/infra/queueProvider/pg-boss";
+import { JwtAdapter } from "../../../../shared/infra/cryptography/jwt-adapter";
 import { GovernmentUserRepository } from "../../infra/repositories/gov-user-repository";
-import { GovernmentUserService } from "../gov-user.service";
+import { AuthService } from "../authentication.service";
 
 
-export const govUserService = new GovernmentUserService(
+export const authService = new AuthService(
     new GovernmentUserRepository(),
+    new JwtAdapter(env.jwtSecret),
     new BcryptAdapter(env.hashSalt),
-    new PgBossAdapter(),
 );

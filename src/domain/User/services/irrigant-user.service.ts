@@ -6,18 +6,13 @@ import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
-import { TokenProvider } from "../infra/token-provider";
-
-import { USER_IRRIGANT_PUBLIC_URL } from "../../../server/http/config/url";
-import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { InactivatedAccount } from "../core/errors/account-not-activated";
 import { EmailAlreadyExists } from "../core/errors/email-already-exists";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import { UserNotFoundError } from "../core/errors/user-not-found-error";
 import {
-  UnmatchedPasswordError,
-  WrongPasswordError,
+  UnmatchedPasswordError
 } from "../core/errors/wrong-password";
 import { IrrigationUser } from "../core/model/irrigation-user";
 import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
@@ -30,13 +25,11 @@ export class IrrigationUserService implements IIrrigationUserService {
   constructor(
     private readonly accountRepository: IrrigationUserRepositoryProtocol,
     private readonly encoder: Encoder,
-    private readonly tokenProvider: TokenProvider,
     private readonly queueProvider: TaskSchedulerProviderProtocol,
     private readonly userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
-    this.tokenProvider = tokenProvider;
     this.queueProvider = queueProvider;
     this.userPreferencesServices = userPreferencesServices;
   }
@@ -114,11 +107,15 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     // Send confirmation email
     if (user_id) {
-      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
-        email: dto.email,
-        redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${userCode}`,
-        action: "create-user-account",
+      await this.queueProvider.send("create-user-account", {
+        type: "irrigant",
+        email: dto.email
       });
+      // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      //   email: dto.email,
+      //   redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${userCode}`,
+      //   action: "create-user-account",
+      // });
     }
 
     return right(
@@ -126,59 +123,6 @@ export class IrrigationUserService implements IIrrigationUserService {
     );
   }
 
-  async login(user: {
-    login?: string;
-    email?: string;
-    password: string;
-  }): Promise<
-    Either<
-      Error,
-      {
-        accessToken: string;
-        // accountId: number;
-      }
-    >
-  > {
-    const account = user.login
-      ? await this.accountRepository.getByLogin(user.login, "registered")
-      : await this.accountRepository.getByEmail(
-        user.email as string,
-        "registered"
-      );
-
-    if (!account) {
-      return left(new UserNotFoundError());
-    }
-
-    if (account.status === "pending") {
-      return left(new InactivatedAccount());
-    }
-
-    const isMatch = await this.encoder.compare(
-      user.password,
-      account.password as string
-    );
-
-    if (isMatch === false) {
-      return left(new WrongPasswordError());
-    }
-
-    const userId = account.id as number;
-
-    const token = await this.tokenProvider.sign(
-      {
-        accountId: userId,
-      },
-      "7d"
-    );
-
-    return right({
-      accessToken: token,
-      userName: account.name,
-    });
-  }
-
-  //
   async completeRegister(code: string): Promise<Either<Error, void>> {
     // const userEmailToString = base64Decode(code);
 
@@ -210,11 +154,16 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    await this.queueProvider.send("forgot-user-account", {
       email: account.email,
-      redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${account.code}`,
-      action: "forgot-user-account",
+      type: "irrigant"
     });
+
+    // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    //   email: account.email,
+    //   redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${account.code}`,
+    //   action: "forgot-user-account",
+    // });
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
   }
@@ -223,14 +172,12 @@ export class IrrigationUserService implements IIrrigationUserService {
     code: string;
     password: string;
     confirmPassword: string;
-  }): Promise<Either<Error, null>> {
+  }): Promise<Either<Error, void>> {
     const { code, confirmPassword, password } = params;
 
     if (!code) {
       return left(new Error("Código não informado"));
     }
-
-    // const userEmailToString = base64Decode(code);
 
     const account = await this.accountRepository.getUserByCode(
       code,
@@ -264,7 +211,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       account.password
     );
 
-    return right(null);
+    return right();
   }
 
   async updateProfile(request: {

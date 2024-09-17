@@ -1,59 +1,20 @@
-import { Either, left, right } from "../../../../shared/Either";
-import { Encoder } from "../../../../shared/ports/encoder";
-import { UserAccountProps, UserRepositoryProtocol } from "../../Government/infra/database/repository/protocol/user-repository";
-import { InactivatedAccount } from "../../lib/errors/account-not-activated";
-import { UserNotFoundError } from "../../lib/errors/user-not-found-error";
-import { WrongPasswordError } from "../../lib/errors/wrong-password";
-import { TokenProvider } from "../../lib/infra/token-provider";
-import { Email } from "../../lib/model/email";
-import { UserStatus } from "../../lib/model/status";
+import { Either, left, right } from "../../../shared/Either";
+import { Encoder } from "../../../shared/ports/encoder";
+import { InactivatedAccount } from "../core/errors/account-not-activated";
+import { UserNotFoundError } from "../core/errors/user-not-found-error";
+import { WrongPasswordError } from "../core/errors/wrong-password";
+import { Email } from "../core/model/email";
+import { UserRepositoryProtocol } from "../infra/repositories/protocol/gov-user-repository";
+import { TokenProvider } from "../infra/token-provider";
+import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
 
-export type AuthServiceInput = {
-    login: string;
-    password: string;
-}
 
-export type AuthServiceOutput = Promise<
-    Either<
-        Error,
-        {
-            accessToken: string;
-        }
-    >
->
-
-export interface IAuthService {
-    auth({
-        login,
-        password,
-    }: AuthServiceInput): Promise<
-        Either<
-            Error,
-            {
-                accessToken: string;
-            }
-        >
-    >
-}
-
-export interface IAuthServiceRepository {
-    getByEmail(
-        email: string,
-        type: string,
-        status?: UserStatus
-    ): Promise<UserAccountProps | null>;
-    getByLogin(
-        login: string,
-        type: string,
-        status?: UserStatus
-    ): Promise<UserAccountProps | null>;
-}
-
-export class AuthService implements IAuthServiceRepository {
+export class AuthService implements IAuthService {
     constructor(
         private readonly accountRepository: UserRepositoryProtocol,
         private readonly tokenProvider: TokenProvider,
-        private readonly encoder: Encoder) { }
+        private readonly encoder: Encoder,
+    ) { }
 
     async auth({
         login,
