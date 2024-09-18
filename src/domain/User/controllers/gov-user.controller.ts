@@ -15,14 +15,13 @@ import {
   IPaginationInput,
   parsePaginationInput,
 } from "../../../shared/utils/pagination";
-import { deleteUserIrrigationValidator, updateUserIrrigationValidator } from "../../Irrigation/controllers/schema/user-irrigation";
 import { UserType, UserTypes } from "../core/model/gov-user";
 import {
   Modules,
   SystemModulesPermissions,
 } from "../core/model/user-modules-access";
 import { govUserService } from "../services/factories/gov-user";
-import { createUserValidator } from "./schema/irrigant";
+import { createGovUserValidator, deleteGovUserValidator, updateGovUserValidator } from "./schema/gov-user";
 
 
 export class GovernmentUserController {
@@ -45,7 +44,7 @@ export class GovernmentUserController {
     try {
       const { email, modules, type, accountId } = request;
 
-      const { error } = await createUserValidator.validate({
+      const { error } = await createGovUserValidator.validate({
         email,
         modules,
         type,
@@ -209,7 +208,7 @@ export class GovernmentUserController {
       //   );
       // }
 
-      const { error } = await deleteUserIrrigationValidator.validate({
+      const { error } = await deleteGovUserValidator.validate({
         ...dto,
         Operation: request.Operation,
         accountId: request.accountId,
@@ -371,7 +370,7 @@ export class GovernmentUserController {
       const { id, email, login, name, modules, type, Operation, accountId } =
         request;
 
-      const { error } = await updateUserIrrigationValidator.validate({
+      const { error } = await updateGovUserValidator.validate({
         id,
         email,
         modules,

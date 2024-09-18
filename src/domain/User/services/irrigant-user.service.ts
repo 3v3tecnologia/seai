@@ -19,6 +19,7 @@ import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
+import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
@@ -107,15 +108,13 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     // Send confirmation email
     if (user_id) {
-      await this.queueProvider.send("create-user-account", {
-        type: "irrigant",
-        email: dto.email
+
+      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+        email: dto.email,
+        user_code: userCode,
+        user_type: "irrigant",
+        action: "create_account"
       });
-      // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
-      //   email: dto.email,
-      //   redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/activate/${userCode}`,
-      //   action: "create-user-account",
-      // });
     }
 
     return right(
@@ -154,16 +153,13 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send("forgot-user-account", {
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      type: "irrigant"
+      user_code: account.code,
+      user_type: "irrigant",
+      action: "recovery_account"
     });
 
-    // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
-    //   email: account.email,
-    //   redirect_url: `${USER_IRRIGANT_PUBLIC_URL}/reset-password/${account.code}`,
-    //   action: "forgot-user-account",
-    // });
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
   }

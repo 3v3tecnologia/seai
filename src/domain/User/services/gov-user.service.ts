@@ -5,7 +5,6 @@ import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
-import { TokenProvider } from "../infra/token-provider";
 
 import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Optional } from "../../../shared/optional";
@@ -30,6 +29,7 @@ import {
   UserRepositoryProtocol,
 } from "../infra/repositories/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
+import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 
 
 export class GovernmentUserService implements IUserService {
@@ -106,15 +106,12 @@ export class GovernmentUserService implements IUserService {
     );
 
     if (user_id) {
-      await this.queueProvider.send("create-user-account", {
+      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: userEmail,
-        type: "government",
+        user_code: userCode,
+        user_type: "government",
+        action: "create_account"
       });
-      // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
-      //   email: userEmail,
-      //   redirect_url: `${PUBLIC_ASSETS_BASE_URL}/initial-register-infos/${userCode}`,
-      //   action: "create-user-account",
-      // });
     }
 
     return right(
@@ -207,15 +204,13 @@ export class GovernmentUserService implements IUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send("forgot-user-account", {
+    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      type: "government",
+      user_code: account.code,
+      user_type: "government",
+      action: "recovery_account"
     });
-    // await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
-    //   email: account.email,
-    //   redirect_url: `${PUBLIC_ASSETS_BASE_URL}/change-password/${account.code}`,
-    //   action: "forgot-user-account",
-    // });
+
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);
   }

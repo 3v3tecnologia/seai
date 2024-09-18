@@ -16,8 +16,8 @@ setEquipmentsV1Router(v1Router);
 setupUserIrrigantSettingsV2Routes(v1Router)
 // setupGovUserRoutes(v1Router)
 
-v1Router.use("/user", setupAuthorizationRoute());
 v1Router.use("/user", setupGovUserRoutes());
+v1Router.use("/user", setupAuthorizationRoute());
 v1Router.use("/user/irrigant", setupIrrigationUser());
 v1Router.use("/news", newsRouter());
 v1Router.use("/news", newsRouter());

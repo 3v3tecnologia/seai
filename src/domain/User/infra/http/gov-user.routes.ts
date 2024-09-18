@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 import { authorization, userPermissions } from "../../../../server/http/http-middlewares";
 import { GovernmentUserController } from "../../controllers/gov-user.controller";
-import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 
 
 export const setupGovUserRoutes = (): Router => {
@@ -89,6 +89,8 @@ export const setupGovUserRoutes = (): Router => {
     "/password/forgot",
     adaptHTTPHandler(GovernmentUserController.forgotPassword)
   );
+
+
 
   return router
 
