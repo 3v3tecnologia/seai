@@ -24,7 +24,11 @@ const userModulesAccess = Joi.object({
   [Modules.FAQ]: systemModulesPermissionsSchema,
   [Modules.NEWSLETTER]: systemModulesPermissionsSchema,
   [Modules.STUDIES]: systemModulesPermissionsSchema,
-  [Modules.WEIGHTS]: systemModulesPermissionsSchema,
+  [Modules.LOGS]: Joi.object({
+    id: Joi.number(),
+    read: Joi.boolean().required(),
+    write: Joi.boolean().required(),
+  }).optional(),
 });
 
 export const userTypes = Joi.string().valid("admin", "standard");
