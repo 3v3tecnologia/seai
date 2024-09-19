@@ -566,13 +566,24 @@ export class GovernmentUserService implements IUserService {
 
     const user = userAccountOrError.value as User;
 
+    let userModules = null
+
+    if (user.access) {
+      /**
+       * TO-DO: Avoid using this function
+      */
+      delete user.access.value.logs
+
+      userModules = user.access.value
+    }
+
     const userToPersistency = {
       id: user.id as number,
       email: user.email ? (user.email.value as string) : null,
       login: user.login ? (user.login.value as string) : null,
       type: user.type ? (user.type as string) : null,
       name: user.name ? (user.name.value as string) : null,
-      modules: user.access ? user.access.value : null,
+      modules: userModules,
     };
 
     if (user.password) {
