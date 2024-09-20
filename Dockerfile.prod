@@ -17,7 +17,7 @@ RUN npm run build
 
 RUN rm -rf node_modules
 
-RUN npm ci --only=production
+RUN npm ci --only=production && npm cache clean --force
 
 # Final stage
 FROM node:18-alpine3.18 AS final
