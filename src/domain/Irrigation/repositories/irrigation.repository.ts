@@ -350,7 +350,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
         user_id,
       })
       .andWhere({
-        id,
+        irrigation_crops_id: id,
       })
       .first();
 

@@ -2,11 +2,11 @@ import { UserOperationControllerDTO } from "../../../../@types/login-user";
 import { IPaginationInput } from "../../../../shared/utils/pagination";
 import { EquipmentsTypes } from "../../core/models/equipments-types";
 
-export type getAllEquipmentsRequest = {
+export type GetAllEquipmentsRequest = {
   type: `${EquipmentsTypes}`;
 };
 
-export type bulkInsertRequest = {
+export type BulkInsertRequest = {
   id_organ: number;
   items: Array<{
     IdEquipmentExternal: string;
@@ -22,11 +22,11 @@ export type bulkInsertRequest = {
   }>;
 };
 
-export type getMeteorologicalOrganAccessCredentialRequest = {
+export type GetMeteorologicalOrganAccessCredentialRequest = {
   organName: string;
 };
 
-export type createEquipmentRequest = {
+export type CreateEquipmentRequest = {
   accountId: number;
   IdEquipmentExternal: string;
   Name: string;
@@ -40,7 +40,7 @@ export type createEquipmentRequest = {
   Enable: boolean;
 };
 
-export type fetchEquipmentsWithYesterDayMeasurementsRequest = {
+export type GetSyncronizedEquipmentsRequest = {
   type: `${EquipmentsTypes}`;
 } & {
   latitude?: number;
@@ -48,7 +48,15 @@ export type fetchEquipmentsWithYesterDayMeasurementsRequest = {
   distance?: number;
 };
 
-export type fetchAllRequest = {
+export type FetchActivatedEquipmentsRequest = {
+  type: `${EquipmentsTypes}`;
+} & {
+  latitude?: number;
+  longitude?: number;
+  distance?: number;
+};
+
+export type FetchAllRequest = {
   equipmentId?: number;
   idOrgan?: number;
   idType?: number;
@@ -57,7 +65,7 @@ export type fetchAllRequest = {
   only_with_measurements?: string;
 } & IPaginationInput;
 
-export type updateEquipmentRequest = {
+export type UpdateEquipmentRequest = {
   id: number;
   Enable: boolean;
 } & UserOperationControllerDTO;

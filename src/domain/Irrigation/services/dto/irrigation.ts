@@ -89,8 +89,8 @@ export class CalcIrrigationRecommendationDTO {
 
     const data = {
       Name: recordedRecommendation.Name,
-      CropId: recordedRecommendation.CropId,
-      Crop: recordedRecommendation.Crop,
+      CropId: recordedRecommendation.CropId as number,
+      Crop: recordedRecommendation.Crop as string,
       PlantingDate: formatDateStringToTime(recordedRecommendation.PlantingDate),
       Pluviometer: {
         Id: recordedRecommendation.PluviometerId,

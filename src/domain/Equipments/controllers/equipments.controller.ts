@@ -1,29 +1,25 @@
-import { UserOperationControllerDTO } from "../../../@types/login-user";
-import {
-  IPaginationInput,
-  parsePaginationInput,
-} from "../../../shared/utils/pagination";
 
 import { Notification } from "../../../shared/notification/notification";
-import { equipmentsService } from "../services";
-import { updateEquipment } from "./schemas/equipment-validator";
 import { HttpResponse } from "../../../shared/ports/http-response";
+import { mapToPaginatedInput } from "../../../shared/utils/command";
 import {
   badRequest,
   created,
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
+import { equipmentsService } from "../services";
 import {
-  bulkInsertRequest,
-  createEquipmentRequest,
-  fetchAllRequest,
-  fetchEquipmentsWithYesterDayMeasurementsRequest,
-  getAllEquipmentsRequest,
-  getMeteorologicalOrganAccessCredentialRequest,
-  updateEquipmentRequest,
+  BulkInsertRequest,
+  CreateEquipmentRequest,
+  FetchActivatedEquipmentsRequest,
+  FetchAllRequest,
+  GetAllEquipmentsRequest,
+  GetMeteorologicalOrganAccessCredentialRequest,
+  GetSyncronizedEquipmentsRequest,
+  UpdateEquipmentRequest
 } from "./request/equipments";
-import { mapToPaginatedInput } from "../../../shared/utils/command";
+import { updateEquipment } from "./schemas/equipment-validator";
 
 export class EquipmentsControllers {
   static async getDateOfLastMeasurementTaken(): Promise<HttpResponse> {
@@ -37,7 +33,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async getAll(request: getAllEquipmentsRequest): Promise<HttpResponse> {
+  static async getAll(request: GetAllEquipmentsRequest): Promise<HttpResponse> {
     try {
       const equipmentsOrError = await equipmentsService.getByType(request.type);
 
@@ -51,7 +47,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async bulkInsert(request: bulkInsertRequest): Promise<HttpResponse> {
+  static async bulkInsert(request: BulkInsertRequest): Promise<HttpResponse> {
     try {
       const successOrError = await equipmentsService.bulkInsert(
         request.items,
@@ -83,7 +79,7 @@ export class EquipmentsControllers {
   }
 
   static async getMeteorologicalOrganAccessCredentials(
-    request: getMeteorologicalOrganAccessCredentialRequest
+    request: GetMeteorologicalOrganAccessCredentialRequest
   ): Promise<HttpResponse> {
     try {
       const credentialsOrError =
@@ -101,7 +97,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async create(request: createEquipmentRequest) {
+  static async create(request: CreateEquipmentRequest) {
     try {
       const resultOrError = await equipmentsService.insert({
         Name: request.Name,
@@ -124,8 +120,34 @@ export class EquipmentsControllers {
     }
   }
 
-  static async fetchEquipmentsWithYesterDayMeasurements(
-    request: fetchEquipmentsWithYesterDayMeasurementsRequest
+  static async getActivatedEquipments(
+    request: FetchActivatedEquipmentsRequest
+  ) {
+    try {
+      const errors = new Notification();
+      if (request.type === undefined || request.type === null) {
+        errors.addError(
+          new Error(
+            "É necessário informar o tipo de equipamento e o valor deve ser 'station' ou 'pluviometer'"
+          )
+        );
+      }
+
+      if (errors.hasErrors()) {
+        return badRequest(new Error(errors.messages()));
+      }
+      const result = await equipmentsService.getActivatedEquipments(
+        request
+      );
+
+      return ok(result.value);
+    } catch (error) {
+      return serverError(error as Error);
+    }
+  }
+
+  static async getSyncronizedEquipments(
+    request: GetSyncronizedEquipmentsRequest
   ) {
     try {
       const errors = new Notification();
@@ -150,7 +172,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async fetchAll(request: fetchAllRequest) {
+  static async fetchAll(request: FetchAllRequest) {
     try {
       const dto = {};
 
@@ -206,7 +228,7 @@ export class EquipmentsControllers {
     }
   }
 
-  static async update(request: updateEquipmentRequest) {
+  static async update(request: UpdateEquipmentRequest) {
     try {
       const { Enable, accountId, Operation, id } = request;
 

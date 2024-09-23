@@ -31,7 +31,14 @@ export const setEquipmentsV1Router = (router: Router): void => {
   router.get(
     "/equipments/activated",
     adaptHTTPHandler(
-      EquipmentsControllers.fetchEquipmentsWithYesterDayMeasurements
+      EquipmentsControllers.getActivatedEquipments
+    )
+  );
+
+  router.get(
+    "/equipments/synchronized",
+    adaptHTTPHandler(
+      EquipmentsControllers.getSyncronizedEquipments
     )
   );
 
