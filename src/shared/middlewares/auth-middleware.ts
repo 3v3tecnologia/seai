@@ -1,7 +1,7 @@
 import { Middleware } from "./middleware";
 
 import ENV from "../../server/http/env";
-import { TokenProvider } from "../../domain/User/lib/infra/token-provider";
+import { TokenProvider } from "../../domain/User/infra/token-provider";
 import { HttpResponse } from "../ports/http-response";
 import { forbidden, ok, unauthenticated } from "../utils/http-responses";
 

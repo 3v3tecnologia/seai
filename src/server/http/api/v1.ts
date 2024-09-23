@@ -1,20 +1,25 @@
 import express from "express";
-import { newsRouter } from "../../../domain/Newsletter/infra/http/newsletter.routes";
-import { userRouter } from "../../../domain/User/Government/infra/http/user.routes";
-import { userOperationsRouter } from "../../../domain/Logs/infra/http/user-operations.routes";
-import { faqRouter } from "../../../domain/FAQ/infra/http/faq.routes";
 import { setEquipmentsV1Router } from "../../../domain/Equipments/http/v1.routes";
-import { irrigationUserRoutes } from "../../../domain/User/Irrigant/infra/http/irrigation-user.routes";
+import { faqRouter } from "../../../domain/FAQ/infra/http/faq.routes";
+import { newsRouter } from "../../../domain/Newsletter/infra/http/newsletter.routes";
+import { setupAuthorizationRoute } from "../../../domain/User/infra/http/auth.routes";
+import { setupGovUserRoutes } from "../../../domain/User/infra/http/gov-user.routes";
+import { setupUserIrrigantSettingsV2Routes } from "../../../domain/User/infra/http/irrigation-settings.routes";
+import { setupIrrigationUser } from "../../../domain/User/infra/http/irrigation-user.routes";
 
 const v1Router = express.Router();
 
 v1Router.use("/faq", faqRouter());
 
-v1Router.use("/user/irrigant", irrigationUserRoutes());
-v1Router.use("/user", userRouter());
 
 setEquipmentsV1Router(v1Router);
+setupUserIrrigantSettingsV2Routes(v1Router)
+// setupGovUserRoutes(v1Router)
+
+v1Router.use("/user", setupGovUserRoutes());
+v1Router.use("/user", setupAuthorizationRoute());
+v1Router.use("/user/irrigant", setupIrrigationUser());
 v1Router.use("/news", newsRouter());
-v1Router.use("/logs", userOperationsRouter());
+v1Router.use("/news", newsRouter());
 
 export { v1Router };
