@@ -13,6 +13,7 @@
     "build:clean": "npm run clean && npm run build",
     "build:watch": "tsc -w",
     "build:start": "npm run build:clean && npm run start:prod",
+    "db:seeds": "docker container exec -w /usr/src seai-database-dev bash seed.sh",
     "dev:watch": "concurrently -s all \"tsc -w\" nodemon dist/src/index.js",
     "start:prod": "cross-env NODE_ENV=production node dist/src/index.js",
     "start:dev:local": "tsx --env-file=.env.development.local --watch src/index.ts",
