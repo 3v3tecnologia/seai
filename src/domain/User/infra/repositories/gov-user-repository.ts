@@ -313,11 +313,10 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     );
 
     if (type) {
-      const baseWhere = `WHERE u."Type" = ?`;
       if (queries.length) {
-        queries.push(`AND ${baseWhere}`);
+        queries.push(`AND u."Type" = ?`);
       } else {
-        queries.push(baseWhere);
+        queries.push(`WHERE u."Type" = ?`);
       }
       binding.push(type);
     }
