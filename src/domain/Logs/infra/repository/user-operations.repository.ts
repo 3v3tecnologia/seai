@@ -54,7 +54,7 @@ export class UserOperationsRepository
         "Operations.Operation",
         "Operations.Description",
         "Operations.User_Id"
-      ).orderBy("Time"),
+      ).orderBy("Time", "desc"),
       params.limit,
       params.offset
     );

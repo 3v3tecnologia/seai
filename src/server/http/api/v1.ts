@@ -6,6 +6,7 @@ import { setupAuthorizationRoute } from "../../../domain/User/infra/http/auth.ro
 import { setupGovUserRoutes } from "../../../domain/User/infra/http/gov-user.routes";
 import { setupUserIrrigantSettingsV2Routes } from "../../../domain/User/infra/http/irrigation-settings.routes";
 import { setupIrrigationUser } from "../../../domain/User/infra/http/irrigation-user.routes";
+import { userOperationsRouter } from "../../../domain/Logs/infra/http/user-operations.routes";
 
 const v1Router = express.Router();
 
@@ -20,6 +21,6 @@ v1Router.use("/user", setupGovUserRoutes());
 v1Router.use("/user", setupAuthorizationRoute());
 v1Router.use("/user/irrigant", setupIrrigationUser());
 v1Router.use("/news", newsRouter());
-v1Router.use("/news", newsRouter());
+v1Router.use("/logs", userOperationsRouter());
 
 export { v1Router };
