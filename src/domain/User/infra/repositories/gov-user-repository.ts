@@ -21,6 +21,7 @@ import {
   UserAccountProps,
   UserRepositoryProtocol,
 } from "./protocol/gov-user-repository";
+import { getPaginatedResult } from "../../../../shared/infra/database/pagination";
 
 function mapUserModulePermissionsToPersistence(
   user_id: number,
@@ -295,68 +296,41 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       type?: Record<UserTypes, string>;
     } & IPaginationInput
   ): Promise<IOutputWithPagination<UserAccountProps>> {
-    const { pageNumber, limit, offset, name, type } = params;
+    const { pageNumber, limit, name, type } = params;
 
     const pageLimit = limit;
 
-    const binding = [];
-    const queries: Array<any> = [];
+    const query = governmentDb
+      .withSchema("users")
+      .select(
+        "u.Id",
+        "u.Name",
+        "u.Login",
+        "u.Email",
+        "u.Password",
+        "u.Type",
+        "u.CreatedAt",
+        "u.UpdatedAt")
+      .from("User as u")
 
     if (name) {
-      queries.push(
-        `WHERE (to_tsvector('simple', coalesce(u."Name", ''))) @@ to_tsquery('simple', '${name}:*')`
-      );
+      query.whereRaw(`to_tsvector('simple', coalesce(u."Name", '')) @@ to_tsquery('simple', '${name}:*')`)
     }
 
-    queries.push(
-      `WHERE u."Type" IN ('admin'::users.user_types,'standard'::users.user_types )`
-    );
+    query.whereRaw(`u."Type" IN ('admin'::users.user_types,'standard'::users.user_types )`)
 
     if (type) {
-      if (queries.length) {
-        queries.push(`AND u."Type" = ?`);
-      } else {
-        queries.push(`WHERE u."Type" = ?`);
-      }
-      binding.push(type);
+      query.where("u.Type", type)
     }
 
-    const countSQL = `
-      SELECT count(*)  FROM users."User" u  ${queries.join(" ")}
-    `;
+    const { count, rows } = await getPaginatedResult(
+      query,
+      params.limit,
+      params.offset
+    );
 
-    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
-
-    queries.push(`order by u."Id" LIMIT ? OFFSET ?`);
-    binding.push(pageLimit);
-    binding.push(offset);
-
-    const getUsersSQL = `
-      SELECT
-          u."Id" ,
-          u."Name" ,
-          u."Login" ,
-          u."Email" ,
-          u."Password" ,
-          u."Type" ,
-          u."CreatedAt" ,
-          u."UpdatedAt"
-      FROM
-          users."User" u
-      ${queries.join(" ")}
-    `;
-
-    const response = await governmentDb.raw(getUsersSQL, binding);
-
-    const rows = response.rows;
-
-    if (!rows) {
-      return null;
-    }
 
     const users = rows.map((row: any) => {
-      // const modules = await this.getUserModules(user.Id);
-
       return {
         id: Number(row.Id),
         name: row.Name,
@@ -371,7 +345,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     return toPaginatedOutput({
       data: users,
       page: pageNumber,
-      count: countRows,
+      count,
       limit: pageLimit,
     });
   }
