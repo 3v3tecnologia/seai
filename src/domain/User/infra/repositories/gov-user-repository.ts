@@ -618,7 +618,23 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     id_user: number,
     operation?: UserCommandOperationProps
   ): Promise<boolean> {
-    await governmentDb("User").withSchema("users").where("Id", id_user).del();
+    await governmentDb("User")
+      .withSchema("users")
+      .where({
+        Id: id_user,
+      })
+      .andWhere((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
+      .update({
+        Deleted_At: governmentDb.fn.now(),
+        Code: null,
+        Pasword: null,
+        Email: null,
+        Login: null
+      });
 
     if (operation) {
       await logsDb
@@ -639,15 +655,33 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     email: string,
     operation: UserCommandOperationProps
   ): Promise<boolean> {
+    // await governmentDb("User")
+    //   .withSchema("users")
+    //   .where("Email", email)
+    //   .where((builder) => {
+    //     builder
+    //       .where("Type", UserTypes.ADMIN)
+    //       .orWhere("Type", UserTypes.STANDARD);
+    //   })
+    //   .del();
+
     await governmentDb("User")
       .withSchema("users")
-      .where("Email", email)
-      .where((builder) => {
+      .where({
+        Email: email,
+      })
+      .andWhere((builder) => {
         builder
           .where("Type", UserTypes.ADMIN)
           .orWhere("Type", UserTypes.STANDARD);
       })
-      .del();
+      .update({
+        Deleted_At: governmentDb.fn.now(),
+        Code: null,
+        Pasword: null,
+        Email: null,
+        Login: null
+      });
 
     await logsDb
       .insert({
