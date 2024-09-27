@@ -57,7 +57,7 @@ export class GovernmentUserService implements IUserService {
     author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const existingUser = await this.accountRepository.getByEmail(request.email);
+    const existingUser = await this.accountRepository.checkIfEmailAlreadyExists(request.email);
 
     if (existingUser) {
       return left(new UserAlreadyExistsError());

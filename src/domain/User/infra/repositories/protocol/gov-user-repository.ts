@@ -79,7 +79,8 @@ export interface UserRepositoryProtocol {
   > | null>;
   getByEmail(
     email: string,
-    status?: UserStatus
+    status?: UserStatus,
+    type?: UserType
   ): Promise<UserAccountProps | null>;
   getByLogin(
     login: string,

@@ -487,18 +487,23 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
   async getByEmail(
     email: string,
     status?: UserStatus,
+    type?: UserType
   ): Promise<UserAccountProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
       .where("Email", email)
-      // .where((builder) => {
-      //   builder
-      //     .where("Type", UserTypes.ADMIN)
-      //     .orWhere("Type", UserTypes.STANDARD);
-      // })
+
       .first();
+
+    if (type) {
+      query.where((builder) => {
+        builder
+          .where("Type", UserTypes.ADMIN)
+          .orWhere("Type", UserTypes.STANDARD);
+      })
+    }
 
     if (status) {
       query.andWhere({
