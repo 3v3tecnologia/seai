@@ -50,7 +50,7 @@ export class GovernmentUserService implements IUserService {
 
 
   private isGovUser(type: string) {
-    return [UserTypes.ADMIN, UserTypes.STANDARD].some((type) => type === type)
+    return [UserTypes.ADMIN, UserTypes.STANDARD].some((item) => item === type)
   }
 
   async create(
