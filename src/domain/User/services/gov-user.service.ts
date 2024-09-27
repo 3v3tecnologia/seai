@@ -48,6 +48,11 @@ export class GovernmentUserService implements IUserService {
     return right(await this.accountRepository.getModules());
   }
 
+
+  private isGovUser(type: string) {
+    return [UserTypes.ADMIN, UserTypes.STANDARD].some((type) => type === type)
+  }
+
   async create(
     request: {
       email: string;
@@ -386,7 +391,7 @@ export class GovernmentUserService implements IUserService {
       );
 
       if (existingAccount) {
-        if (existingAccount.id !== request.id) {
+        if (existingAccount.id !== request.id && this.isGovUser(existingAccount.type)) {
           return left(new EmailAlreadyExists());
         }
       }
@@ -468,7 +473,7 @@ export class GovernmentUserService implements IUserService {
         request.email
       );
 
-      if (existingAccount) {
+      if (existingAccount && this.isGovUser(existingAccount.type)) {
         if (existingAccount.id !== request.id) {
           return left(new EmailAlreadyExists());
         }
