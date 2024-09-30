@@ -67,11 +67,7 @@ export interface UserRepositoryProtocol {
   deleteById(
     id_user: number,
     operation?: UserCommandOperationProps
-  ): Promise<boolean>;
-  deleteByEmail(
-    email: string,
-    operation: UserCommandOperationProps
-  ): Promise<boolean>;
+  ): Promise<void>;
   getById(
     id_user: number
   ): Promise<Required<
