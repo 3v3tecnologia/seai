@@ -188,6 +188,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
         "CreatedAt",
         "UpdatedAt"
       )
+      .whereNull("Deleted_At")
       .where({ Id: id_user })
       .from("User")
       .first();
@@ -312,6 +313,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
         "u.CreatedAt",
         "u.UpdatedAt")
       .from("User as u")
+      .whereNull("Deleted_At")
 
     if (name) {
       query.whereRaw(`to_tsvector('simple', coalesce(u."Name", '')) @@ to_tsquery('simple', '${name}:*')`)
@@ -461,23 +463,14 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
   async getByEmail(
     email: string,
     status?: UserStatus,
-    type?: UserType
   ): Promise<UserAccountProps | null> {
     const query = governmentDb
       .withSchema("users")
       .select("*")
       .from("User")
+      .whereNull("Deleted_At")
       .where("Email", email)
-
       .first();
-
-    if (type) {
-      query.where((builder) => {
-        builder
-          .where("Type", UserTypes.ADMIN)
-          .orWhere("Type", UserTypes.STANDARD);
-      })
-    }
 
     if (status) {
       query.andWhere({
@@ -537,6 +530,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       .withSchema("users")
       .select("*")
       .from("User")
+      .whereNull("Deleted_At")
       .where("Login", login)
       // .andWhere("Type", type)
       // .where((builder) => {
@@ -601,6 +595,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       .withSchema("users")
       .select("*")
       .from("User")
+      .whereNull("Deleted_At")
       .where("Name", name)
       .where((builder) => {
         builder
@@ -617,7 +612,8 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
   async deleteById(
     id_user: number,
     operation?: UserCommandOperationProps
-  ): Promise<boolean> {
+  ): Promise<void> {
+
     await governmentDb("User")
       .withSchema("users")
       .where({
@@ -631,10 +627,18 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       .update({
         Deleted_At: governmentDb.fn.now(),
         Code: null,
-        Pasword: null,
+        Password: null,
         Email: null,
         Login: null
       });
+
+    await governmentDb("User_Access")
+      .withSchema("users")
+      .where({
+        Fk_User: id_user
+      })
+      .del()
+
 
     if (operation) {
       await logsDb
@@ -647,53 +651,6 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
         .withSchema("users")
         .into("Operations");
     }
-
-    return true;
-  }
-
-  async deleteByEmail(
-    email: string,
-    operation: UserCommandOperationProps
-  ): Promise<boolean> {
-    // await governmentDb("User")
-    //   .withSchema("users")
-    //   .where("Email", email)
-    //   .where((builder) => {
-    //     builder
-    //       .where("Type", UserTypes.ADMIN)
-    //       .orWhere("Type", UserTypes.STANDARD);
-    //   })
-    //   .del();
-
-    await governmentDb("User")
-      .withSchema("users")
-      .where({
-        Email: email,
-      })
-      .andWhere((builder) => {
-        builder
-          .where("Type", UserTypes.ADMIN)
-          .orWhere("Type", UserTypes.STANDARD);
-      })
-      .update({
-        Deleted_At: governmentDb.fn.now(),
-        Code: null,
-        Pasword: null,
-        Email: null,
-        Login: null
-      });
-
-    await logsDb
-      .insert({
-        User_Id: operation.author,
-        Resource: "user",
-        Operation: "delete",
-        Description: operation.operation,
-      })
-      .withSchema("users")
-      .into("Operations");
-
-    return true;
   }
 
   async getById(id_user: number): Promise<Required<UserAccountProps> | null> {
@@ -701,6 +658,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       .withSchema("users")
       .select("*")
       .from("User")
+      .whereNull("Deleted_At")
       .where({ Id: id_user })
       .where((builder) => {
         builder
@@ -760,6 +718,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
           [login]
         )
       )
+      .whereNull("Deleted_At")
       .where("Login", login)
       .where((builder) => {
         builder
@@ -777,6 +736,7 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
       .select("*")
       .from("User")
       .where("Email", email)
+      .whereNull("Deleted_At")
       .where((builder) => {
         builder
           .where("Type", UserTypes.ADMIN)

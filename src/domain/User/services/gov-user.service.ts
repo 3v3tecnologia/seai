@@ -277,7 +277,7 @@ export class GovernmentUserService implements IUserService {
       return left(new UserNotFoundError());
     }
 
-    const result = await this.accountRepository.deleteById(
+    await this.accountRepository.deleteById(
       account.id as number,
       {
         author: operation.author,
@@ -285,9 +285,6 @@ export class GovernmentUserService implements IUserService {
       }
     );
 
-    if (result === false) {
-      return left(new FailToDeleteUserError());
-    }
 
     return right("Usuário deletado com sucesso");
   }
