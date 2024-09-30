@@ -42,15 +42,15 @@ function mapStationMeasurementsWithUnitsToDomain(row: any): StationReadEntity {
       Value: Number(row.MaxRelativeHumidity) || null,
     },
     AverageAtmosphericTemperature: {
-      Unit: "hPa",
+      Unit: "ºC",
       Value: Number(row.AverageAtmosphericTemperature) || null,
     },
     MaxAtmosphericTemperature: {
-      Unit: "hPa",
+      Unit: "ºC",
       Value: Number(row.MaxAtmosphericTemperature) || null,
     },
     MinAtmosphericTemperature: {
-      Unit: "hPa",
+      Unit: "ºC",
       Value: Number(row.MinAtmosphericTemperature) || null,
     },
     AtmosphericPressure: {
@@ -91,8 +91,7 @@ function mapPluviometerMeasurementsWithUnitsToDomain(
 }
 
 export class EquipmentsMeasurementsRepository
-  implements IEquipmentsMeasurementsRepository
-{
+  implements IEquipmentsMeasurementsRepository {
   async checkIfStationMeasureTimeAlreadyExists(
     params: IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Params
   ): IEquipsMeasurementsRepoDTO.CheckIfStationMeasureTimeAlreadyExists.Result {
