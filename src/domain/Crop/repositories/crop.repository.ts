@@ -43,30 +43,6 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         })
       );
 
-      if (culture.IsPermanent) {
-        // const firstCycle = await trx
-        //   .withSchema("management")
-        //   .select("Id")
-        //   .from("Crop_Cycle")
-        //   .where({ FK_Crop: cropId })
-        //   .orderBy("Start")
-        //   .first();
-        // ;
-        /**
-         * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
-         * sendo o primeiro ciclo.
-        */
-        // await trx("Crop")
-        //   .withSchema("management")
-        //   .update({
-        //     Cycle_Restart_Stage: firstCycle.Id,
-        //     UpdatedAt: trx.fn.now(),
-        //   })
-        //   .where({
-        //     Id: cropId,
-        //   });
-      }
-
     });
 
     if (cropId) {
@@ -123,29 +99,6 @@ export class ManagementCropRepository implements IManagementCropsRepository {
         })
       );
 
-      if (culture.IsPermanent) {
-        // const firstCycle = await trx
-        //   .withSchema("management")
-        //   .select("Id")
-        //   .from("Crop_Cycle")
-        //   .where({ FK_Crop: culture.Id })
-        //   .orderBy("Start")
-        //   .first();
-        // ;
-        /**
-         * INFO: Quando cadastrar um cultura perene irá por padrão inserir o ciclo para reinício da cultura
-         * sendo o primeiro ciclo.
-        */
-        // await trx("Crop")
-        //   .withSchema("management")
-        //   .update({
-        //     Cycle_Restart_Stage: firstCycle.Id,
-        //     UpdatedAt: trx.fn.now(),
-        //   })
-        //   .where({
-        //     Id: culture.Id,
-        //   });
-      }
     })
 
     await logsDb
@@ -186,12 +139,6 @@ export class ManagementCropRepository implements IManagementCropsRepository {
     idCrop: number,
     operation: UserCommandOperationProps
   ): Promise<void> {
-    // await governmentDb("Crop")
-    //   .withSchema("management")
-    //   .where({ Id: idCrop })
-    //   .del();
-
-    // Soft delete
     await governmentDb("Crop")
       .withSchema("management")
       .update({
