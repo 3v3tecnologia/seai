@@ -22,6 +22,7 @@ import {
   UserRepositoryProtocol,
 } from "./protocol/gov-user-repository";
 import { getPaginatedResult } from "../../../../shared/infra/database/pagination";
+import { RegisteredUser } from "./protocol/user-repository";
 
 function mapUserModulePermissionsToPersistence(
   user_id: number,
@@ -38,6 +39,7 @@ function mapUserModulePermissionsToPersistence(
 }
 
 export class GovernmentUserRepository implements UserRepositoryProtocol {
+
   async add(
     user: {
       type: UserType;
@@ -588,6 +590,73 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     }
 
     return user;
+  }
+
+  async getRegisteredUserByEmail(email: string): Promise<RegisteredUser | null> {
+    const query = governmentDb
+      .withSchema("users")
+      .select("*")
+      .from("User")
+      .whereNull("Deleted_At")
+      .where("Email", email)
+      .where("Status", 'registered')
+      .first();
+
+
+    const result = await query;
+
+    if (!result) {
+      return null;
+    }
+
+    const {
+      Id,
+      Name,
+      Code,
+      Status,
+      Password,
+    } = result;
+
+    return {
+      id: Id,
+      name: Name,
+      code: Code,
+      status: Status,
+      password: Password,
+    };
+  }
+  async getRegisteredUserByLogin(login: string): Promise<RegisteredUser | null> {
+    const query = governmentDb
+      .withSchema("users")
+      .select("*")
+      .from("User")
+      .whereNull("Deleted_At")
+      .where("Login", login)
+      .where("Status", 'registered')
+      .first();
+
+
+    const result = await query;
+
+    if (!result) {
+      return null;
+    }
+
+    const {
+      Id,
+      Name,
+      Code,
+      Status,
+      Password,
+    } = result;
+
+    return {
+      id: Id,
+      name: Name,
+      code: Code,
+      status: Status,
+      password: Password,
+    };
   }
 
   async checkIfNameAlreadyExists(name: string): Promise<boolean> {

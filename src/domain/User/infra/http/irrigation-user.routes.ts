@@ -6,6 +6,11 @@ import { authorization } from "../../../../server/http/http-middlewares";
 export const setupIrrigationUser = (): Router => {
   const router = Router();
 
+  router.post(
+    "/sign-in",
+    adaptHTTPHandler(IrrigantUserController.signIn)
+  );
+
   router.post("/", adaptHTTPHandler(IrrigantUserController.create));
 
   router.get(

@@ -1,5 +1,6 @@
 import { Optional } from "../../../../../shared/optional";
 import { UserStatus } from "../../../core/model/status";
+import { IGetRegisteredUserRepository, RegisteredUser } from "./user-repository";
 
 export type IrrigationUserProps = {
   id: number;
@@ -14,7 +15,7 @@ export type IrrigationUserProps = {
   createdAt?: string;
 };
 
-export interface IrrigationUserRepositoryProtocol {
+export interface IrrigationUserRepositoryProtocol extends IGetRegisteredUserRepository {
   add(user: {
     code: string;
     status?: string;
@@ -36,6 +37,12 @@ export interface IrrigationUserRepositoryProtocol {
   updateUserPassword(user_id: number, password: string): Promise<void>;
   deleteById(id_user: number): Promise<boolean>;
   deleteByEmail(email: string): Promise<boolean>;
+  getRegisteredUserByLogin(
+    email: string,
+  ): Promise<{ status: string, password: string, name: string, id: number } | null>;
+  getRegisteredUserByEmail(
+    email: string,
+  ): Promise<{ status: string, password: string, name: string, id: number } | null>
   getById(
     id_user: number
   ): Promise<Required<
@@ -49,6 +56,12 @@ export interface IrrigationUserRepositoryProtocol {
     login: string,
     status?: UserStatus
   ): Promise<IrrigationUserProps | null>;
+  getRegisteredUserByEmail(
+    email: string,
+  ): Promise<RegisteredUser | null>;
+  getRegisteredUserByLogin(
+    login: string,
+  ): Promise<RegisteredUser | null>;
   getUserById(
     id_user: number
   ): Promise<Optional<

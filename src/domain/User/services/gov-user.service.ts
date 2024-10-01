@@ -30,22 +30,21 @@ import {
 import { IUserService } from "./protocols/gov-user";
 import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
+import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
 
 
 export class GovernmentUserService implements IUserService {
   constructor(
-    private readonly accountRepository: UserRepositoryProtocol,
+    private readonly userRepository: UserRepositoryProtocol,
     private readonly encoder: Encoder,
-    private readonly queueProvider: MQProviderProtocol
-  ) {
-    this.accountRepository = accountRepository;
-    this.encoder = encoder;
-    this.queueProvider = queueProvider;
-  }
+    private readonly queueProvider: MQProviderProtocol,
+    private readonly authService: IAuthService
+  ) { }
+
   async getSystemModules(): Promise<
     Either<Error, Array<{ id: number; name: string }>>
   > {
-    return right(await this.accountRepository.getModules());
+    return right(await this.userRepository.getModules());
   }
 
 
@@ -62,14 +61,14 @@ export class GovernmentUserService implements IUserService {
     author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>> {
     // TO DO: verificar o caso de criar o usuário mas o email não ter sido enviado para tal destinatário
-    const existingUser = await this.accountRepository.checkIfEmailAlreadyExists(request.email);
+    const existingUser = await this.userRepository.checkIfEmailAlreadyExists(request.email);
 
     if (existingUser) {
       return left(new UserAlreadyExistsError());
     }
 
     // validar se os módulos existem mesmo
-    const modules = await this.accountRepository.getModules();
+    const modules = await this.userRepository.getModules();
 
     if (!modules) {
       return left(new Error("Não há módulos de acesso cadastrado"));
@@ -100,7 +99,7 @@ export class GovernmentUserService implements IUserService {
 
     const userCode = this.encoder.generateRandomHexCode(16)
 
-    const user_id = await this.accountRepository.add(
+    const user_id = await this.userRepository.add(
       {
         email: userEmail,
         type: user.type,
@@ -124,6 +123,10 @@ export class GovernmentUserService implements IUserService {
     );
   }
 
+  async signIn(login: AuthServiceInput): AuthServiceOutput {
+    return await this.authService.auth(login)
+  }
+
   async completeRegister(user: {
     code: string;
     name: string;
@@ -141,7 +144,7 @@ export class GovernmentUserService implements IUserService {
   > {
     // Decode user code to base64
 
-    const account = await this.accountRepository.getUserByCode(user.code);
+    const account = await this.userRepository.getUserByCode(user.code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -174,7 +177,7 @@ export class GovernmentUserService implements IUserService {
 
     const login = userLoginOrError.value?.value as string;
 
-    const existingUser = await this.accountRepository.getByLogin(login);
+    const existingUser = await this.userRepository.getByLogin(login);
 
     if (existingUser) {
       return left(new LoginAlreadyExists());
@@ -185,7 +188,7 @@ export class GovernmentUserService implements IUserService {
 
     const hashedPassword = await this.encoder.hash(password);
 
-    const isUpdated = await this.accountRepository.update({
+    const isUpdated = await this.userRepository.update({
       code: account.code,
       login: login,
       name: name,
@@ -200,7 +203,7 @@ export class GovernmentUserService implements IUserService {
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    const account = await this.accountRepository.getByEmail(
+    const account = await this.userRepository.getByEmail(
       email,
       "registered"
     );
@@ -233,7 +236,7 @@ export class GovernmentUserService implements IUserService {
 
     // const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getUserByCode(code);
+    const account = await this.userRepository.getUserByCode(code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -253,7 +256,7 @@ export class GovernmentUserService implements IUserService {
 
     account.password = newPassword;
 
-    await this.accountRepository.updateUserPassword(
+    await this.userRepository.updateUserPassword(
       account.id as number,
       account.password
     );
@@ -268,16 +271,16 @@ export class GovernmentUserService implements IUserService {
     let account = null;
 
     if (request.email) {
-      account = await this.accountRepository.getByEmail(request.email);
+      account = await this.userRepository.getByEmail(request.email);
     } else if (request.id) {
-      account = await this.accountRepository.getById(request.id);
+      account = await this.userRepository.getById(request.id);
     }
 
     if (account === null) {
       return left(new UserNotFoundError());
     }
 
-    await this.accountRepository.deleteById(
+    await this.userRepository.deleteById(
       account.id as number,
       {
         author: operation.author,
@@ -302,7 +305,7 @@ export class GovernmentUserService implements IUserService {
       }
     >
   > {
-    const result = await this.accountRepository.getById(id);
+    const result = await this.userRepository.getById(id);
 
     if (result === null) {
       return left(new Error("Falha ao buscar usuário"));
@@ -321,14 +324,14 @@ export class GovernmentUserService implements IUserService {
     password?: string;
     confirmPassword?: string;
   }): Promise<Either<UserNotFoundError | LoginAlreadyExists, string>> {
-    const userAccount = await this.accountRepository.getById(request.id);
+    const userAccount = await this.userRepository.getById(request.id);
 
     if (userAccount == null) {
       return left(new UserNotFoundError());
     }
 
     if (request.login) {
-      const existingAccount = await this.accountRepository.getByLogin(
+      const existingAccount = await this.userRepository.getByLogin(
         request.login
       );
 
@@ -383,7 +386,7 @@ export class GovernmentUserService implements IUserService {
     }
 
     if (request.email) {
-      const existingAccount = await this.accountRepository.getByEmail(
+      const existingAccount = await this.userRepository.getByEmail(
         request.email
       );
 
@@ -406,7 +409,7 @@ export class GovernmentUserService implements IUserService {
       });
     }
 
-    await this.accountRepository.update(toUpdate);
+    await this.userRepository.update(toUpdate);
 
     return right(`Usuário atualizado com sucesso.`);
   }
@@ -426,12 +429,12 @@ export class GovernmentUserService implements IUserService {
   > {
     if (request?.id) {
       return right(
-        await this.accountRepository.getUserById(Number(request.id))
+        await this.userRepository.getUserById(Number(request.id))
       );
     }
 
     return right(
-      await this.accountRepository.list(
+      await this.userRepository.list(
         request as {
           name?: string | undefined;
           type?: Record<UserTypes, string> | undefined;
@@ -453,7 +456,7 @@ export class GovernmentUserService implements IUserService {
   ): Promise<
     Either<UserNotFoundError | WrongPasswordError | LoginAlreadyExists, string>
   > {
-    const existingAccount = await this.accountRepository.getById(request.id);
+    const existingAccount = await this.userRepository.getById(request.id);
 
     if (existingAccount === null) {
       return left(new UserNotFoundError());
@@ -466,7 +469,7 @@ export class GovernmentUserService implements IUserService {
     }
 
     if (request.email) {
-      const existingAccount = await this.accountRepository.getByEmail(
+      const existingAccount = await this.userRepository.getByEmail(
         request.email
       );
 
@@ -477,7 +480,7 @@ export class GovernmentUserService implements IUserService {
       }
     }
 
-    const modules = await this.accountRepository.getModules();
+    const modules = await this.userRepository.getModules();
 
     const userPermissionType = request.type;
 
@@ -548,7 +551,7 @@ export class GovernmentUserService implements IUserService {
       });
     }
     // TODO: deve passar todos os campos do 'account'
-    await this.accountRepository.update(userToPersistency, operation);
+    await this.userRepository.update(userToPersistency, operation);
 
     return right(`Usuário atualizado com sucesso.`);
   }
@@ -564,7 +567,7 @@ export class GovernmentUserService implements IUserService {
       > | null
     >
   > {
-    const user = await this.accountRepository.getUserById(userId);
+    const user = await this.userRepository.getUserById(userId);
 
     return right(user);
   }

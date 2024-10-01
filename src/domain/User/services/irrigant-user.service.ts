@@ -20,26 +20,23 @@ import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
 import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
 import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
+import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
   constructor(
-    private readonly accountRepository: IrrigationUserRepositoryProtocol,
+    private readonly userRepository: IrrigationUserRepositoryProtocol,
     private readonly encoder: Encoder,
     private readonly queueProvider: MQProviderProtocol,
-    private readonly userPreferencesServices: IUserPreferencesServices
-  ) {
-    this.accountRepository = accountRepository;
-    this.encoder = encoder;
-    this.queueProvider = queueProvider;
-    this.userPreferencesServices = userPreferencesServices;
-  }
+    private readonly userPreferencesServices: IUserPreferencesServices,
+    private readonly authService: IAuthService
+  ) { }
 
   async create(
     dto: CreateIrrigationAccountDTO.Input
   ): Promise<CreateIrrigationAccountDTO.Output> {
 
-    const emailAlreadyExists = await this.accountRepository.getByEmail(
+    const emailAlreadyExists = await this.userRepository.getByEmail(
       dto.email
     );
 
@@ -47,7 +44,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new EmailAlreadyExists());
     }
 
-    const existingLogin = await this.accountRepository.getByLogin(dto.login);
+    const existingLogin = await this.userRepository.getByLogin(dto.login);
 
     if (existingLogin) {
       return left(new LoginAlreadyExists());
@@ -74,7 +71,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     const hashedPassword = await this.encoder.hash(dto.password);
 
     // TODO: deve passar todos os campos do 'account'
-    const user_id = await this.accountRepository.add({
+    const user_id = await this.userRepository.add({
       email: dto.email,
       login: dto.login,
       name: dto.name,
@@ -116,10 +113,14 @@ export class IrrigationUserService implements IIrrigationUserService {
     );
   }
 
+  async signIn(login: AuthServiceInput): AuthServiceOutput {
+    return await this.authService.auth(login)
+  }
+
   async completeRegister(code: string): Promise<Either<Error, void>> {
     // const userEmailToString = base64Decode(code);
 
-    const account = await this.accountRepository.getUserByCode(code);
+    const account = await this.userRepository.getUserByCode(code);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -129,7 +130,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new Error("Operação inválida"));
     }
 
-    await this.accountRepository.updateUserStatus(
+    await this.userRepository.updateUserStatus(
       account.id as number,
       "registered"
     );
@@ -138,7 +139,7 @@ export class IrrigationUserService implements IIrrigationUserService {
   }
 
   async forgotPassword(email: string): Promise<Either<Error, string>> {
-    const account = await this.accountRepository.getByEmail(
+    const account = await this.userRepository.getByEmail(
       email,
       "registered"
     );
@@ -169,7 +170,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new Error("Código não informado"));
     }
 
-    const account = await this.accountRepository.getUserByCode(
+    const account = await this.userRepository.getUserByCode(
       code,
       "registered"
     );
@@ -196,7 +197,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     account.password = newPassword;
 
-    await this.accountRepository.updateUserPassword(
+    await this.userRepository.updateUserPassword(
       account.id as number,
       account.password
     );
@@ -212,7 +213,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     password?: string;
     confirmPassword?: string;
   }): Promise<Either<Error, string>> {
-    const userAccount = await this.accountRepository.getById(
+    const userAccount = await this.userRepository.getById(
       request.id as number
     );
 
@@ -224,7 +225,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new InactivatedAccount());
     }
 
-    const existingLogin = await this.accountRepository.getByLogin(
+    const existingLogin = await this.userRepository.getByLogin(
       request.login
     );
 
@@ -275,7 +276,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     if (request.email) {
       // TO-DO: update newsleter subscriber
-      const existingAccount = await this.accountRepository.getByEmail(
+      const existingAccount = await this.userRepository.getByEmail(
         request.email
       );
 
@@ -298,13 +299,13 @@ export class IrrigationUserService implements IIrrigationUserService {
       });
     }
 
-    await this.accountRepository.update(toUpdate);
+    await this.userRepository.update(toUpdate);
 
     return right(`Usuário atualizado com sucesso.`);
   }
 
   async deleteAccount(id: number): Promise<Either<Error, void>> {
-    const account = await this.accountRepository.getById(id);
+    const account = await this.userRepository.getById(id);
 
     if (account === null) {
       return left(new UserNotFoundError());
@@ -314,7 +315,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       account.email
     );
 
-    await this.accountRepository.deleteById(id);
+    await this.userRepository.deleteById(id);
 
     return right();
   }
@@ -332,7 +333,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       }
     >
   > {
-    const result = await this.accountRepository.getById(id);
+    const result = await this.userRepository.getById(id);
 
     if (result === null) {
       return left(new Error("Falha ao buscar usuário"));
