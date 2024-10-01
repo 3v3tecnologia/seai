@@ -4,57 +4,56 @@ import {
   authorization,
   cropPermissions,
 } from "../../../server/http/http-middlewares";
-import { makeManagementCropControllers } from "../controllers/factories/crop.controller";
+import { ManagementCropController } from "../controllers/crop.controller";
 
 export const setupManagementCropV2Routes = (router: Router): void => {
-  const controllers = makeManagementCropControllers();
 
   router.get(
     "/management/crop/:id",
     authorization,
     cropPermissions.read,
-    adaptHTTPHandler(controllers.getCropById.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.getCropById)
   );
 
   router.post(
     "/management/crop",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.create.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.create)
   );
 
   router.put(
     "/management/crop/:id",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.update.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.update)
   );
 
   router.patch(
     "/management/crop/:id/cycle/restart-point",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.setCropCycleRestartPoint.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.setCropCycleRestartPoint)
   );
 
   router.delete(
     "/management/crop/:id",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.deleteCrop.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.deleteCrop)
   );
 
   router.get(
     "/management/crop/cycles/:id",
     authorization,
     cropPermissions.write,
-    adaptHTTPHandler(controllers.getAllCropCycles.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.getAllCropCycles)
   );
 
 
   //Irrigant
   router.get(
     "/management/crops",
-    adaptHTTPHandler(controllers.getAllCrops.bind(controllers))
+    adaptHTTPHandler(ManagementCropController.getAllCrops)
   );
 };
