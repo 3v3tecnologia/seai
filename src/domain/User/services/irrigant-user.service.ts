@@ -6,7 +6,6 @@ import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
-import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { InactivatedAccount } from "../core/errors/account-not-activated";
 import { EmailAlreadyExists } from "../core/errors/email-already-exists";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
@@ -20,13 +19,14 @@ import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
 import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
+import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
   constructor(
     private readonly accountRepository: IrrigationUserRepositoryProtocol,
     private readonly encoder: Encoder,
-    private readonly queueProvider: TaskSchedulerProviderProtocol,
+    private readonly queueProvider: MQProviderProtocol,
     private readonly userPreferencesServices: IUserPreferencesServices
   ) {
     this.accountRepository = accountRepository;
@@ -38,12 +38,6 @@ export class IrrigationUserService implements IIrrigationUserService {
   async create(
     dto: CreateIrrigationAccountDTO.Input
   ): Promise<CreateIrrigationAccountDTO.Output> {
-    // const existingNameAccount =
-    //   await this.accountRepository.checkIfNameAlreadyExists(dto.name);
-
-    // if (existingNameAccount) {
-    //   return left(new UserNameAlreadyExists());
-    // }
 
     const emailAlreadyExists = await this.accountRepository.getByEmail(
       dto.email
@@ -109,7 +103,7 @@ export class IrrigationUserService implements IIrrigationUserService {
     // Send confirmation email
     if (user_id) {
 
-      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: dto.email,
         user_code: userCode,
         user_type: "irrigant",
@@ -153,7 +147,7 @@ export class IrrigationUserService implements IIrrigationUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
       user_code: account.code,
       user_type: "irrigant",

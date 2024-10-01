@@ -6,7 +6,6 @@ import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
 
-import { TaskSchedulerProviderProtocol } from "../../../shared/infra/queueProvider/protocol/jog-scheduler.protocol";
 import { Optional } from "../../../shared/optional";
 import { IPaginationInput } from "../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
@@ -30,13 +29,14 @@ import {
 } from "../infra/repositories/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
 import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
+import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
 
 
 export class GovernmentUserService implements IUserService {
   constructor(
     private readonly accountRepository: UserRepositoryProtocol,
     private readonly encoder: Encoder,
-    private readonly queueProvider: TaskSchedulerProviderProtocol
+    private readonly queueProvider: MQProviderProtocol
   ) {
     this.accountRepository = accountRepository;
     this.encoder = encoder;
@@ -111,7 +111,7 @@ export class GovernmentUserService implements IUserService {
     );
 
     if (user_id) {
-      await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+      await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: userEmail,
         user_code: userCode,
         user_type: "government",
@@ -209,7 +209,7 @@ export class GovernmentUserService implements IUserService {
       return left(new UserNotFoundError());
     }
 
-    await this.queueProvider.send(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
+    await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
       user_code: account.code,
       user_type: "government",

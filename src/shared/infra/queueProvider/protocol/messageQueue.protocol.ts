@@ -1,3 +1,3 @@
-export interface MessageQueueProtocol {
-  send(queue: string, data: any, exchange?: string): Promise<any>;
+export interface MQProviderProtocol {
+  sendToQueue(queue: string, message: any): Promise<void>;
 }
