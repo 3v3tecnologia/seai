@@ -429,7 +429,7 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
         "bacia_mascara",
         "cultura",
         censusDb.raw(`
-        - 100 * (1 - (
+        TRUNC(- 100 * (1 - (
           COALESCE(peso_produtividade_ha, 0) +
           COALESCE(peso_produtividade_m3, 0) +
           COALESCE(peso_rentabilidade_ha, 0) +
@@ -438,7 +438,7 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
           COALESCE(peso_empregos_1000m3, 0) +
           COALESCE(peso_consumo_hidrico, 0) +
           COALESCE(peso_ciclo_cultura, 0)
-        ) / 8) as corte_hidrico
+        ) / 8)::numeric , 2) as corte_hidrico
       `)
       )
       .where("bacia_mascara", "=", mask)
