@@ -6,6 +6,8 @@ import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
 
+import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
+import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
 import { Optional } from "../../../shared/optional";
 import { IPaginationInput } from "../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../Logs/protocols/logger";
@@ -28,9 +30,6 @@ import {
   UserRepositoryProtocol,
 } from "../infra/repositories/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
-import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
-import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
-import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
 
 
 export class GovernmentUserService implements IUserService {
@@ -38,7 +37,6 @@ export class GovernmentUserService implements IUserService {
     private readonly userRepository: UserRepositoryProtocol,
     private readonly encoder: Encoder,
     private readonly queueProvider: MQProviderProtocol,
-    private readonly authService: IAuthService
   ) { }
 
   async getSystemModules(): Promise<
@@ -121,10 +119,6 @@ export class GovernmentUserService implements IUserService {
     return right(
       `Usuário criado com sucessso, aguardando confirmação do cadastro.`
     );
-  }
-
-  async signIn(login: AuthServiceInput): AuthServiceOutput {
-    return await this.authService.auth(login)
   }
 
   async completeRegister(user: {

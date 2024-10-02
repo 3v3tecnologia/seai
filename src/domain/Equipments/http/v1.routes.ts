@@ -7,59 +7,63 @@ import {
 import { EquipmentsControllers } from "../controllers/equipments.controller";
 import { EquipmentsMeasurementsControllers } from "../controllers/measurements.controller";
 
-export const setEquipmentsV1Router = (router: Router): void => {
+export const setEquipmentsV1Router = (): Router => {
+  const router = Router();
+
   router.get(
-    "/equipments/organ",
+    "/organ",
     authorization,
     adaptHTTPHandler(EquipmentsControllers.fetchMeteorologicalOrgan)
   );
 
   router.put(
-    "/equipments/:id",
+    "/:id",
     authorization,
     equipmentsPermissions.write,
     adaptHTTPHandler(EquipmentsControllers.update)
   );
 
   router.get(
-    "/equipments/",
+    "/",
     authorization,
     adaptHTTPHandler(EquipmentsControllers.fetchAll)
   );
 
   // Irrigant
   router.get(
-    "/equipments/activated",
+    "/activated",
     adaptHTTPHandler(
       EquipmentsControllers.getActivatedEquipments
     )
   );
 
   router.get(
-    "/equipments/synchronized",
+    "/synchronized",
     adaptHTTPHandler(
       EquipmentsControllers.getSyncronizedEquipments
     )
   );
 
   router.put(
-    "/equipments/pluviometer/measurements/:id",
+    "/pluviometer/measurements/:id",
     authorization,
     equipmentsPermissions.write,
     adaptHTTPHandler(EquipmentsMeasurementsControllers.updateByPluviometer)
   );
 
   router.put(
-    "/equipments/station/measurements/:id",
+    "/station/measurements/:id",
     authorization,
     equipmentsPermissions.write,
     adaptHTTPHandler(EquipmentsMeasurementsControllers.updateByStation)
   );
 
   router.get(
-    "/equipments/:id/measurements",
+    "/:id/measurements",
     authorization,
     equipmentsPermissions.read,
     adaptHTTPHandler(EquipmentsMeasurementsControllers.fetchLatest)
   );
+
+  return router
 };

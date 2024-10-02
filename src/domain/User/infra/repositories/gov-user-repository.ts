@@ -2,7 +2,6 @@ import {
   governmentDb,
   logsDb,
 } from "../../../../shared/infra/database/postgres/connection/knexfile";
-import { countTotalRows } from "../../../../shared/infra/database/postgres/paginate";
 import {
   IOutputWithPagination,
   IPaginationInput,
@@ -10,19 +9,18 @@ import {
 } from "../../../../shared/utils/pagination";
 
 import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
-import { UserStatus } from "../../core/model/status";
 import { UserType, UserTypes } from "../../core/model/gov-user";
+import { UserStatus } from "../../core/model/status";
 import {
   SystemModulesPermissions,
   SystemModulesProps,
 } from "../../core/model/user-modules-access";
 
+import { getPaginatedResult } from "../../../../shared/infra/database/pagination";
 import {
   UserAccountProps,
   UserRepositoryProtocol,
 } from "./protocol/gov-user-repository";
-import { getPaginatedResult } from "../../../../shared/infra/database/pagination";
-import { RegisteredUser } from "./protocol/user-repository";
 
 function mapUserModulePermissionsToPersistence(
   user_id: number,
@@ -590,73 +588,6 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
     }
 
     return user;
-  }
-
-  async getRegisteredUserByEmail(email: string): Promise<RegisteredUser | null> {
-    const query = governmentDb
-      .withSchema("users")
-      .select("*")
-      .from("User")
-      .whereNull("Deleted_At")
-      .where("Email", email)
-      .where("Status", 'registered')
-      .first();
-
-
-    const result = await query;
-
-    if (!result) {
-      return null;
-    }
-
-    const {
-      Id,
-      Name,
-      Code,
-      Status,
-      Password,
-    } = result;
-
-    return {
-      id: Id,
-      name: Name,
-      code: Code,
-      status: Status,
-      password: Password,
-    };
-  }
-  async getRegisteredUserByLogin(login: string): Promise<RegisteredUser | null> {
-    const query = governmentDb
-      .withSchema("users")
-      .select("*")
-      .from("User")
-      .whereNull("Deleted_At")
-      .where("Login", login)
-      .where("Status", 'registered')
-      .first();
-
-
-    const result = await query;
-
-    if (!result) {
-      return null;
-    }
-
-    const {
-      Id,
-      Name,
-      Code,
-      Status,
-      Password,
-    } = result;
-
-    return {
-      id: Id,
-      name: Name,
-      code: Code,
-      status: Status,
-      password: Password,
-    };
   }
 
   async checkIfNameAlreadyExists(name: string): Promise<boolean> {
