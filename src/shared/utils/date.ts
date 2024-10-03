@@ -4,9 +4,9 @@ export function getYesterDayDate(separator: string) {
   return `${date.getFullYear()}${separator}${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}${separator}${date
-    .getDate()
-    .toString()
-    .padStart(2, "0")}`;
+      .getDate()
+      .toString()
+      .padStart(2, "0")}`;
 }
 
 export function dateDiffInDays(start: Date, end: Date) {
@@ -56,4 +56,21 @@ export function formatDateToYYYYMMDD(date: string) {
   const [day, month, year] = date.split("/");
 
   return `${year}/${month}/${day}`;
+}
+
+
+
+export function decimalToHoursAndMinutes(decimalTime: number) {
+  const date = new Date(0, 0);
+  date.setSeconds(decimalTime * 60 * 60);
+
+  // Extract hours and minutes
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // Format the result
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  return `${formattedHours}Hrs ${formattedMinutes}Min`;
 }

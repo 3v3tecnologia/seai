@@ -1,3 +1,4 @@
+import { decimalToHoursAndMinutes } from "../../../../shared/utils/date";
 import { ManagementCropCycle } from "../../../Crop/core/model/crop-cycles";
 import { IrrigationSystemEntity } from "./irrigation-system";
 import { Pivot } from "./irrigation-system-measurements";
@@ -21,6 +22,7 @@ export class BladeSuggestion {
   public readonly Etc: number = 0;
   public readonly irrigationTime: string;
   public readonly repositionBlade: number = 0;
+  public readonly velocity: number | null = null;
 
   private constructor({
     Et0,
@@ -43,19 +45,24 @@ export class BladeSuggestion {
       this.precipitation,
       this.irrigationSystem.efficiency
     );
-    const irrigationTime = this.calcIrrigationTime(
-      this.repositionBlade,
-      this.irrigationSystem.applicationRate
-    );
 
+    if (this.irrigationSystem.type === 'Pivô Central') {
+      const measurements = this.irrigationSystem.measurements as Pivot
+      measurements.setVelocity(this.repositionBlade)
+
+      this.irrigationTime = decimalToHoursAndMinutes(measurements.calcOperatingTime())
+      this.velocity = measurements.Velocity
+
+      return
+    }
     /**
      *  Pivô Central: Obtenção do número de voltas necessárias para a reposição
      *  Em outros tipos de sistemas a saída será em horas
      */
-    this.irrigationTime =
-      this.irrigationSystem instanceof Pivot
-        ? decimalToPivotLaps(irrigationTime)
-        : decimalToHoursAndMinutes(irrigationTime);
+    this.irrigationTime = this.calcIrrigationTime(
+      this.repositionBlade,
+      this.irrigationSystem.applicationRate
+    )
   }
 
   private calcEtc(Eto: number, kc: number) {
@@ -63,7 +70,7 @@ export class BladeSuggestion {
   }
 
   private calcIrrigationTime(repositionBlade: number, applicationRate: number) {
-    return repositionBlade / applicationRate;
+    return decimalToHoursAndMinutes(repositionBlade / applicationRate)
   }
 
   private calcKc(cropDay: number, cropCycle: ManagementCropCycle) {
@@ -104,22 +111,4 @@ export class BladeSuggestion {
   }
 }
 
-function decimalToPivotLaps(decimalTime: number) {
-  const laps = Math.ceil(decimalTime);
-  return `${laps} volta(s)`;
-}
 
-function decimalToHoursAndMinutes(decimalTime: number) {
-  const date = new Date(0, 0);
-  date.setSeconds(decimalTime * 60 * 60);
-
-  // Extract hours and minutes
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  // Format the result
-  const formattedHours = hours.toString().padStart(2, "0");
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  return `${formattedHours}Hrs ${formattedMinutes}Min`;
-}

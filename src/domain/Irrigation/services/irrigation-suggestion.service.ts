@@ -23,6 +23,7 @@ import { IIrrigationRepository } from "../repositories/protocols/irrigation.repo
 import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
 import { getCropDate } from "../../Crop/core/model/crop";
 import { ManagementCropCycle } from "../../Crop/core/model/crop-cycles";
+import { Pivot } from "../core/model/irrigation-system-measurements";
 
 export class IrrigationCropsSuggestion
   implements IIrrigationSuggestionServices {
@@ -129,7 +130,7 @@ export class IrrigationCropsSuggestion
     const irrigationSystem =
       irrigationSystemOrError.value as IrrigationSystemEntity;
 
-    const bladeSuggestion = BladeSuggestion.create({
+    const recommendation = BladeSuggestion.create({
       cropCycle: cropCycle as ManagementCropCycle,
       precipitation: Precipitation,
       Et0,
@@ -138,21 +139,30 @@ export class IrrigationCropsSuggestion
       cropDay: cropDate,
     });
 
-    return right({
-      Etc: DecimalFormatter.truncate(bladeSuggestion.Etc, 2),
+
+    const result = {
+      Etc: DecimalFormatter.truncate(recommendation.Etc, 2),
       RepositionBlade: DecimalFormatter.truncate(
-        bladeSuggestion.repositionBlade,
+        recommendation.repositionBlade,
         2
       ),
       IrrigationEfficiency: irrigationSystem.efficiency,
-      IrrigationTime: bladeSuggestion.irrigationTime,
+      IrrigationTime: recommendation.irrigationTime,
       PlantingDate: command.PlantingDate,
       Stage: cropCycle?.Title,
       CropDays: cropDate,
       Et0: DecimalFormatter.truncate(Et0, 2),
       Precipitation,
-      Kc: bladeSuggestion.Kc,
-    });
+      Kc: recommendation.Kc,
+    }
+
+    if (irrigationSystem.type = 'Pivô Central') {
+      return right(Object.assign(result, {
+        Velocity: recommendation.velocity
+      }))
+    }
+
+    return right(result);
   }
 
   async calcByIrrigationId(
