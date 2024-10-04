@@ -6,6 +6,8 @@ import { UserLogin } from "../core/model/login";
 import { UserName } from "../core/model/name";
 import { UserPassword } from "../core/model/userPassword";
 
+import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
+import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
 import { InactivatedAccount } from "../core/errors/account-not-activated";
 import { EmailAlreadyExists } from "../core/errors/email-already-exists";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
@@ -18,9 +20,6 @@ import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
-import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues";
-import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
-import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
@@ -29,7 +28,6 @@ export class IrrigationUserService implements IIrrigationUserService {
     private readonly encoder: Encoder,
     private readonly queueProvider: MQProviderProtocol,
     private readonly userPreferencesServices: IUserPreferencesServices,
-    private readonly authService: IAuthService
   ) { }
 
   async create(
@@ -111,10 +109,6 @@ export class IrrigationUserService implements IIrrigationUserService {
     return right(
       `Usuário criado com sucessso, aguardando confirmação do cadastro.`
     );
-  }
-
-  async signIn(login: AuthServiceInput): AuthServiceOutput {
-    return await this.authService.auth(login)
   }
 
   async completeRegister(code: string): Promise<Either<Error, void>> {

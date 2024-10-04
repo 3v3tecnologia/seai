@@ -27,12 +27,7 @@ const userModulesAccess = Joi.object({
 
 export const userTypes = Joi.string().valid("admin", "standard");
 
-export const loginValidator = new SchemaValidator(
-  Joi.object({
-    login: Joi.string().required(),
-    password: Joi.string().required(),
-  })
-);
+
 
 export const createGovUserValidator = new SchemaValidator(
   Joi.object({

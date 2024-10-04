@@ -4,41 +4,44 @@ import { authorization } from "../../../../server/http/http-middlewares";
 import { UserPreferencesControllers } from "../../controllers/irrigant-settings.controller";
 
 
-export const setupUserIrrigantSettingsV2Routes = (router: Router): void => {
+export const setupUserIrrigantSettingsV2Routes = (): Router => {
+  const router = Router();
 
   router.post(
-    "/management/user/settings/equipments",
+    "/equipments",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.saveEquipments)
   );
 
   router.delete(
-    "/management/user/settings/equipments/:id",
+    "/equipments/:id",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.deleteEquipments)
   );
 
   router.patch(
-    "/management/user/settings/equipments",
+    "/equipments",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.updateEquipments)
   );
 
   router.get(
-    "/management/user/settings/equipments",
+    "/equipments",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.getEquipments)
   );
 
   router.patch(
-    "/management/user/settings/notifications/:id",
+    "/notifications/:id",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.updateUserNotificationPreference)
   );
 
   router.get(
-    "/management/user/settings/notifications",
+    "/notifications",
     authorization,
     adaptHTTPHandler(UserPreferencesControllers.getUserNotificationsPreferences)
   );
+
+  return router
 };

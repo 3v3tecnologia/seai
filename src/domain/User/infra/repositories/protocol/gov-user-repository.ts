@@ -7,7 +7,6 @@ import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
 import { SystemModulesProps } from "../../../core/model/user-modules-access";
 import { UserType, UserTypes } from "../../../core/model/gov-user";
 import { UserStatus } from "../../../core/model/status";
-import { IGetRegisteredUserRepository } from "./user-repository";
 
 export type UserAccountProps = {
   id: number;
@@ -22,7 +21,7 @@ export type UserAccountProps = {
   updatedAt?: string;
   createdAt?: string;
 };
-export interface UserRepositoryProtocol extends IGetRegisteredUserRepository {
+export interface UserRepositoryProtocol {
   add(
     user: {
       type: UserType;

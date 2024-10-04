@@ -11,6 +11,6 @@ setupEquipmentsV2Routes(v2Router);
 setupCensusV2Routes(v2Router);
 setupManagementCropV2Routes(v2Router);
 setupIrrigationRecommendationV2Routes(v2Router);
-setupUserIrrigantSettingsV2Routes(v2Router);
+v2Router.use("/management/user/settings", setupUserIrrigantSettingsV2Routes());
 
 export { v2Router };

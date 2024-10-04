@@ -4,17 +4,14 @@ import { InactivatedAccount } from "../core/errors/account-not-activated";
 import { UserNotFoundError } from "../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../core/errors/wrong-password";
 import { Email } from "../core/model/email";
-import { UserAccountProps } from "../infra/repositories/protocol/gov-user-repository";
-import { IGetRegisteredUserRepository } from "../infra/repositories/protocol/user-repository";
+import { UserTypes } from "../core/model/gov-user";
+import { IAuthRepository } from "../infra/repositories/protocol/auth.repository";
 import { TokenProvider } from "../infra/token-provider";
-import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/authentication";
-
-
-
+import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/auth";
 
 export class AuthService implements IAuthService {
   constructor(
-    private readonly userRepository: IGetRegisteredUserRepository,
+    private readonly authRepository: IAuthRepository,
     private readonly tokenProvider: TokenProvider,
     private readonly encoder: Encoder,
   ) { }
@@ -22,8 +19,10 @@ export class AuthService implements IAuthService {
   async auth({
     login,
     password,
-  }: AuthServiceInput): AuthServiceOutput {
-    const account = Email.validate(login) ? await this.userRepository.getRegisteredUserByEmail(login) : await this.userRepository.getRegisteredUserByLogin(login)
+    type
+  }: AuthServiceInput): Promise<AuthServiceOutput> {
+
+    const account = Email.validate(login) ? await this.authRepository.getByEmail(login, type) : await this.authRepository.getByLogin(login, type)
 
     if (!account) {
       return left(new UserNotFoundError());

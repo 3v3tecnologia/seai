@@ -4,7 +4,6 @@ import {
   IrrigationUserProps,
   IrrigationUserRepositoryProtocol,
 } from "./protocol/irrigation-user.repository";
-import { RegisteredUser } from "./protocol/user-repository";
 
 export class IrrigationUserRepository
   implements IrrigationUserRepositoryProtocol {
@@ -290,77 +289,6 @@ export class IrrigationUserRepository
       updatedAt: result.UpdatedAt,
     };
   }
-
-  async getRegisteredUserByEmail(email: string): Promise<RegisteredUser | null> {
-    const query = governmentDb
-      .withSchema("users")
-      .select("*")
-      .from("User")
-      .whereNull("Deleted_At")
-      .where("Type", "irrigant")
-      .where("Email", email)
-      .where("Status", 'registered')
-      .first();
-
-
-    const result = await query;
-
-    if (!result) {
-      return null;
-    }
-
-    const {
-      Id,
-      Name,
-      Code,
-      Status,
-      Password,
-    } = result;
-
-    return {
-      id: Id,
-      name: Name,
-      code: Code,
-      status: Status,
-      password: Password,
-    };
-  }
-
-  async getRegisteredUserByLogin(login: string): Promise<RegisteredUser | null> {
-    const query = governmentDb
-      .withSchema("users")
-      .select("*")
-      .from("User")
-      .whereNull("Deleted_At")
-      .where("Login", login)
-      .where("Status", 'registered')
-      .where("Type", "irrigant")
-      .first();
-
-
-    const result = await query;
-
-    if (!result) {
-      return null;
-    }
-
-    const {
-      Id,
-      Name,
-      Code,
-      Status,
-      Password,
-    } = result;
-
-    return {
-      id: Id,
-      name: Name,
-      code: Code,
-      status: Status,
-      password: Password,
-    };
-  }
-
   async checkIfNameAlreadyExists(name: string): Promise<boolean> {
     const query = governmentDb
       .withSchema("users")
