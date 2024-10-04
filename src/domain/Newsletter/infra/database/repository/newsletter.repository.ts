@@ -1,5 +1,6 @@
 import { NEWSLETTER_PUBLIC_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../../server/http/config/url";
 import {
+  governmentDb,
   logsDb,
   newsletterDb,
 } from "../../../../../shared/infra/database/postgres/connection/knexfile";
@@ -30,7 +31,8 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     },
     accountId: number
   ): Promise<number> {
-    const result = await newsletterDb
+    const result = await governmentDb
+      .withSchema("newsletter")
       .insert({
         Title: news.Title,
         Description: news.Description,
@@ -64,7 +66,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     UpdatedAt: string;
     SendDate: string;
   } | null> {
-    const result = await newsletterDb.raw(
+    const result = await governmentDb.raw(
       `
       SELECT
           n."Id" ,
@@ -75,7 +77,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
           n."UpdatedAt",
           n."SendAt",
           n."SendDate"
-      FROM "News" n
+      FROM newsletter."News" n
       WHERE n."Id" = ?
     `,
       [id]
@@ -89,11 +91,6 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
 
     return {
       Id: newsRow.Id,
-      // Author: {
-      //   Id: newsRow.Fk_Sender,
-      //   Email: newsRow.Email,
-      //   Organ: newsRow.Organ,
-      // },
       Title: newsRow.Title,
       Description: newsRow.Description,
       Data: newsRow.Content,
@@ -105,8 +102,8 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
 
   // TO-DO: update sendAt by date
   async markAsSent(date: string): Promise<void> {
-    await newsletterDb.raw(`
-      UPDATE "News"
+    await governmentDb.raw(`
+      UPDATE newsletter."News"
       SET "SentAt" = NOW()
       WHERE "SendDate"::date = ?
     `, [date])
@@ -123,7 +120,8 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     },
     operation: UserCommandOperationProps
   ): Promise<void> {
-    await newsletterDb("News")
+    await governmentDb("News")
+      .withSchema("newsletter")
       .where({
         Id: news.Id,
       })
@@ -149,9 +147,9 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     id: number,
     operation: UserCommandOperationProps
   ): Promise<void> {
-    await newsletterDb("News").where({ Id: id }).delete();
+    await governmentDb("News").withSchema("newsletter").where({ Id: id }).delete();
 
-    await logsDb
+    await governmentDb
       .insert({
         User_Id: operation.author,
         Resource: "newsletter",
@@ -163,7 +161,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
   }
 
   async getById(id: number): Promise<Content | null> {
-    const result = await newsletterDb.raw(
+    const result = await governmentDb.raw(
       `
       SELECT
           n."Id" ,
@@ -174,7 +172,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
           n."UpdatedAt",
           n."SentAt",
           n."SendDate"
-      FROM "News" n
+      FROM newsletter."News" n
       WHERE n."Id" = ?
     `,
       [id]
@@ -224,18 +222,18 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     }
 
     const countSQL = `
-      SELECT count(news."Id") FROM "News" as news
+      SELECT count(news."Id") FROM newsletter."News" as news
       ${queries.join(" ")}
     `;
 
-    const countRows = await countTotalRows(newsletterDb)(countSQL, binding);
+    const countRows = await countTotalRows(governmentDb)(countSQL, binding);
 
     queries.push(`ORDER BY news."SendDate" DESC LIMIT ? OFFSET ?`);
 
     binding.push(limit);
     binding.push(offset);
 
-    const response = await newsletterDb.raw(
+    const response = await governmentDb.raw(
       `
       SELECT
           news."Id" ,
@@ -245,7 +243,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
           news."UpdatedAt",
           news."SentAt",
           news."SendDate"
-      FROM "News" as news
+      FROM newsletter."News" as news
       ${queries.join(" ")}
     `,
       binding
@@ -270,13 +268,13 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
   async getUnsetNewsByDate(sendDate: string): Promise<Array<{ Link: string } & Pick<Content, 'Title' | 'Description' | 'Id'>>> {
 
 
-    const response = await newsletterDb.raw(
+    const response = await governmentDb.raw(
       `
       SELECT
           news."Id" ,
           news."Title" ,
           news."Description"
-      FROM "News" as news
+      FROM newsletter."News" as news
       WHERE news."SendDate"::date <= ?
       AND news."SendDate"::date >= (?::date - INTERVAL '1 day')::date
       AND news."SentAt" IS NULL
@@ -299,14 +297,30 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
     Email: string;
     Code: string;
   }>> {
-    const result = await newsletterDb
-      .select("Email", "Code")
-      .where({
-        Confirmation_Status: "confirmed",
-      })
-      .from("Subscriber");
+    const result = await governmentDb.raw(`
+        with UserWithNewsletter as (
+          select
+            *
+          from
+            management."User_Notifications" un
+          inner join management."Notification_Services" ns 
+          on
+            un.service_id = ns.id
+          where
+            ns.service_id = 'newsletter'
+            and un.enabled = true
+          )
+          select
+            u."Email",
+            u."Code"
+          from
+            UserWithNewsletter
+          inner join users."User" u 
+          on
+            u."Id" = UserWithNewsletter.user_id
+      `)
 
-    return result.map(({ Email, Code }: any) => {
+    return result.rows.map(({ Email, Code }: any) => {
       return {
         Email,
         Code,
@@ -317,8 +331,9 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
   async getSubscriberByEmail(
     email: string
   ): Promise<Required<Subscriber> | null> {
-    const result = await newsletterDb("Subscriber")
+    const result = await governmentDb("Subscriber")
       .select("Id", "Email", "CreatedAt", "UpdatedAt")
+      .withSchema("newsletter")
       .where({
         Email: email,
       })
@@ -349,7 +364,8 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
       });
     }
 
-    const result = await newsletterDb
+    const result = await governmentDb
+      .withSchema("newsletter")
       .insert(data)
       .returning("Id")
       .into("Subscriber");
@@ -362,7 +378,8 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
   async unsubscribe(
     email: string
   ): Promise<void> {
-    await newsletterDb("Subscriber")
+    await governmentDb("Subscriber")
+      .withSchema("newsletter")
       .where({
         Email: email,
       })

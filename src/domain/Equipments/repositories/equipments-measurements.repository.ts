@@ -319,7 +319,7 @@ export class EquipmentsMeasurementsRepository
         .where("IdRead", measurements.IdRead);
     });
 
-    await logsDb
+    await governmentDb
       .insert({
         User_Id: operation.author,
         Resource: "equipment-measurements",
@@ -340,7 +340,7 @@ export class EquipmentsMeasurementsRepository
       })
       .where("IdRead", measurements.IdRead);
 
-    await logsDb
+    await governmentDb
       .insert({
         User_Id: operation.author,
         Resource: "equipment-measurements",
