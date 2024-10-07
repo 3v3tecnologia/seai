@@ -73,7 +73,7 @@ export class IrrigantPreferencesRepository
     if (response) {
       return response.map((row: any) => ({
         id: row.id,
-        service: row.service_id,
+        service: row.service,
       }));
     }
 
@@ -95,7 +95,7 @@ export class IrrigantPreferencesRepository
     if (response) {
       return {
         id: response.id,
-        service: response.service_id,
+        service: response.service,
       };
     }
 
@@ -109,7 +109,7 @@ export class IrrigantPreferencesRepository
       `
       SELECT
           un.service_id ,
-                ns.service_id AS "service" ,
+                ns.service ,
                 un.enabled
       FROM
           (

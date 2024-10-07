@@ -64,7 +64,6 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
           objectMode: true,
           encoding: "utf8",
           transform(chunk, enc, cb) {
-            console.log("chunk ", chunk);
 
             const data = {
               Name: chunk.Name,

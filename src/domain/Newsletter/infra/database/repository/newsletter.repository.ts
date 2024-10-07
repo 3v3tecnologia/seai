@@ -303,11 +303,11 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
             *
           from
             management."User_Notifications" un
-          inner join management."Notification_Services" ns 
+          inner join management."Notification_Services" ns
           on
             un.service_id = ns.id
           where
-            ns.service_id = 'newsletter'
+            ns.service = 'newsletter'
             and un.enabled = true
           )
           select
@@ -315,7 +315,7 @@ export class NewsLetterRepository implements NewsletterRepositoryProtocol {
             u."Code"
           from
             UserWithNewsletter
-          inner join users."User" u 
+          inner join users."User" u
           on
             u."Id" = UserWithNewsletter.user_id
       `)
