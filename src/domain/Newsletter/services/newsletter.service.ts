@@ -177,39 +177,4 @@ export class NewsletterService implements NewsletterServiceProtocol {
 
     return right(data);
   }
-
-  async subscribe(email: string): Promise<Either<Error, void>> {
-    const AlreadyExistsSubscriber = await this.repository.getSubscriberByEmail(email);
-
-    if (AlreadyExistsSubscriber !== null) {
-      return left(new Error("Usuário já cadastrado."));
-    }
-
-    const userCode = await this.encoder.hashInPbkdf2(
-      email,
-      100,
-      10,
-      "sha512"
-    );
-
-    await this.repository.subscribe({
-      Code: userCode as string,
-      Email: email,
-      Status: 'confirmed'
-    });
-
-    return right()
-
-  }
-  async unsubscribe(email: string): Promise<Either<Error, void>> {
-    const subscriber = await this.repository.getSubscriberByEmail(email);
-
-    if (subscriber === null) {
-      return left(new Error("Email não encontrado"));
-    }
-
-    await this.repository.unsubscribe(email);
-
-    return right();
-  }
 }
