@@ -71,7 +71,8 @@ export class CalcIrrigationRecommendationDTO {
         break;
       case irrigationsTypesNames.Pivot:
         systemMeasurementsProps = {
-          Precipitation: recordedRecommendation.System_Precipitation as number,
+          Time: recordedRecommendation.Time as number,
+          Area: recordedRecommendation.Area as number
         };
         break;
       case irrigationsTypesNames.Sulcos:

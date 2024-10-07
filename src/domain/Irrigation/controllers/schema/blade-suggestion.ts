@@ -24,8 +24,8 @@ export const sulcosPropsSchema = systemEfficiencySchema.append({
 });
 
 export const pivotPropsSchema = systemEfficiencySchema.append({
-  TimeForLap: Joi.number().greater(0).required(),
-  Irrigated: Joi.number().greater(0).required(),
+  Time: Joi.number().greater(0).required(),
+  Area: Joi.number().greater(0).required(),
 });
 
 export const microSprinklingPropsSchema = systemEfficiencySchema.append({

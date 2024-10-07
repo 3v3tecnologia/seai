@@ -33,6 +33,7 @@ export type IUserRecordedRecommendationData = {
   System_Precipitation?: number | null;
   Length?: number | null;
   Spacing?: number | null;
+  Time?: number | null;
   Flow?: number | null;
   CreatedAt: string;
   UpdatedAt?: string | null;

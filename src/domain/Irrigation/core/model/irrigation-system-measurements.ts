@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { decimalToHoursAndMinutes } from "../../../../shared/utils/date";
 
 export interface IIrrigationSystemMeasurementsEntity {
   efficiency(): number;
@@ -20,9 +21,9 @@ export type SulcosProps = {
 } & Partial<SistemEfficiency>;
 
 export type PivotProps = {
-  TimeForLap: number; // Tempo para uma volta
-  Irrigated: number; // Lâmina irrigada
-  Velocity: number;
+  Time: number; // Tempo para uma volta
+  Area: number; // Lâmina irrigada
+  Velocity?: number;
 } & Partial<SistemEfficiency>;
 
 /**
@@ -122,6 +123,7 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
     super({
       ...props,
       Efficiency: props.Efficiency || Pivot.DEFAULT_EFFICIENCY,
+      Velocity: 0
     });
   }
 
@@ -134,15 +136,15 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
   }
 
   // Tempo estimado de funcionamento em horas e minutos
-  public calcOperatingTime(): number {
-    const timesForLapInMinutes = this._props.TimeForLap * 60
-    return Math.ceil(timesForLapInMinutes / this.Velocity)
+  public calOperatingTime(): string {
+    const timesForLapInMinutes = this._props.Time * 60
+    return decimalToHoursAndMinutes(Math.ceil(timesForLapInMinutes / this.Velocity))
   }
 
   // Ajuste na velocidade do pivô (em porcentagem)
   public setVelocity(reposition: number) {
     //  Lâmina irrigada / Lâmina de reposição
-    this._props.Velocity = this._props.Irrigated / reposition
+    this._props.Velocity = this._props.Area / reposition
   }
 
 
@@ -150,12 +152,12 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
     for (const prop of [
       {
         name: "Lâmina irrigada",
-        value: props.Irrigated,
+        value: props.Area,
         msg: "Lâmina irrigada em uma volta do sistema pivô tem que ser informada e seu valor deve ser inteiro",
       },
       {
         name: "Tempo",
-        value: props.TimeForLap,
+        value: props.Time,
         msg: "Tempo para uma volta do sistema pivô tem que ser informado e seu valor deve ser inteiro",
       },
     ]) {
