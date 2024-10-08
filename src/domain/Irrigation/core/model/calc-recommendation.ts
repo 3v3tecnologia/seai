@@ -10,10 +10,8 @@ export type CalcIrrigationInput = {
   Et0: number;
   precipitation: number;
   crop: ManagementCrop;
-  // cropCycle: ManagementCropCycle;
   plantingDate: string;
   irrigationSystem: IrrigationSystemEntity;
-  // cropDay: number;
 };
 
 function calcEtc(Eto: number, kc: number) {

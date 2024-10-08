@@ -61,9 +61,10 @@ export class UserIrrigationCropsServices
       system_type: dto.System.Type as IrrigationSystemTypes,
       area: systemMeasurements?.Area,
       effective_area: systemMeasurements?.EfectiveArea,
+      time: systemMeasurements?.Time,
       flow: systemMeasurements?.Flow,
       length: systemMeasurements?.Length,
-      plants_qtd: systemMeasurements?.PlantsQtd,
+      quantity: systemMeasurements?.Quantity,
       spacing: systemMeasurements?.Spacing,
       sprinkler_precipitation: systemMeasurements?.Precipitation,
     });
@@ -94,14 +95,6 @@ export class UserIrrigationCropsServices
       return left(new Error("Irrigação não encontrada"));
     }
 
-    // if (
-    //   userIrrigationAlreadyExists &&
-    //   userIrrigationAlreadyExists.id !== dto.Id
-    // ) {
-    //   return left(
-    //     new Error("Não é possível cadastrar irrigação com nome já existente.")
-    //   );
-    // }
 
     // Save Irrigation Crops
     const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
@@ -133,8 +126,9 @@ export class UserIrrigationCropsServices
         area: systemMeasurements?.Area,
         effective_area: systemMeasurements?.EfectiveArea,
         flow: systemMeasurements?.Flow,
+        time: systemMeasurements?.Time,
         length: systemMeasurements?.Length,
-        plants_qtd: systemMeasurements?.PlantsQtd,
+        quantity: systemMeasurements?.Quantity,
         spacing: systemMeasurements?.Spacing,
         sprinkler_precipitation: systemMeasurements?.Precipitation,
       });
@@ -155,8 +149,9 @@ export class UserIrrigationCropsServices
         area: systemMeasurements?.Area,
         effective_area: systemMeasurements?.EfectiveArea,
         flow: systemMeasurements?.Flow,
+        time: systemMeasurements?.Time,
         length: systemMeasurements?.Length,
-        plants_qtd: systemMeasurements?.PlantsQtd,
+        quantity: systemMeasurements?.Quantity,
         spacing: systemMeasurements?.Spacing,
         sprinkler_precipitation: systemMeasurements?.Precipitation,
       });

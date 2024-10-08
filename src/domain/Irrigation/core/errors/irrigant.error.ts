@@ -1,7 +1,7 @@
 export namespace IrrigantErrors {
   export class StationMeasurementsNotFound extends Error {
     constructor() {
-      super("Não há dados das últimas medições da estação.");
+      super("Não há dados das últimas medições de Et0 da estação.");
       this.name = "StationMeasurementsNotFound";
     }
   }
