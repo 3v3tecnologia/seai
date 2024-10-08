@@ -437,7 +437,8 @@ export const IRRIGANT = {
                     System: {
                       Type: "Pivô Central",
                       Measurements: {
-                        Precipitation: 10,
+                        Time: 2,
+                        Area: 1
                       },
                     },
                     CropId: 1,
@@ -483,7 +484,8 @@ export const IRRIGANT = {
                 System: {
                   Type: "Pivô Central",
                   Measurements: {
-                    Precipitation: 1,
+                    Time: 2,
+                    Area: 1
                   },
                 },
                 ...UserOperationExample,
@@ -560,7 +562,8 @@ export const IRRIGANT = {
                 System: {
                   Type: "Pivô Central",
                   Measurements: {
-                    Precipitation: 1,
+                    Time: 2,
+                    Area: 1
                   },
                 },
               },
@@ -600,7 +603,8 @@ export const IRRIGANT = {
                       System: {
                         Type: "Pivô Central",
                         Measurements: {
-                          Precipitation: 10,
+                          Time: 2,
+                          Area: 1
                         },
                       },
                       CropId: 1,
@@ -638,7 +642,8 @@ export const IRRIGANT = {
                       System: {
                         Type: "Pivô Central",
                         Measurements: {
-                          Precipitation: 1,
+                          Time: 2,
+                          Area: 1
                         },
                       },
                       CropId: 1,
