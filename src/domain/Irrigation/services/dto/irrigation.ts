@@ -53,17 +53,15 @@ export class CalcIrrigationRecommendationDTO {
       case irrigationsTypesNames.MicroSprinkling:
         systemMeasurementsProps = {
           Area: recordedRecommendation.Area as number,
-          EfectiveArea: recordedRecommendation.EffectiveArea as number,
           Flow: recordedRecommendation.Flow as number,
-          PlantsQtd: recordedRecommendation.PlantsQtd as number,
+          Quantity: recordedRecommendation.Quantity as number,
         };
         break;
       case irrigationsTypesNames.Dripping:
         systemMeasurementsProps = {
           Area: recordedRecommendation.Area as number,
-          EfectiveArea: recordedRecommendation.EffectiveArea as number,
           Flow: recordedRecommendation.Flow as number,
-          PlantsQtd: recordedRecommendation.PlantsQtd as number,
+          Quantity: recordedRecommendation.Quantity as number,
         };
         break;
       case irrigationsTypesNames.Sprinkling:
@@ -73,7 +71,8 @@ export class CalcIrrigationRecommendationDTO {
         break;
       case irrigationsTypesNames.Pivot:
         systemMeasurementsProps = {
-          Precipitation: recordedRecommendation.System_Precipitation as number,
+          Time: recordedRecommendation.Time as number,
+          Area: recordedRecommendation.Area as number
         };
         break;
       case irrigationsTypesNames.Sulcos:

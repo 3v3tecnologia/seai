@@ -1,5 +1,5 @@
 import { Either } from "../../../../shared/Either";
-import { UserIrrigationRecommendation } from "../../core/model/user-irrigation-recommendation";
+import { UserIrrigationRecommendation } from "../../core/model/user-recommendations";
 import { ICalcIrrigationRecommendationDTO } from "../dto/irrigation";
 
 export interface IIrrigationSuggestionServices {

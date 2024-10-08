@@ -9,11 +9,12 @@ export type IrrigationCropsData = {
   system_type: IrrigationSystemTypes;
   area?: number;
   effective_area?: number;
-  plants_qtd?: number;
+  quantity?: number;
   sprinkler_precipitation?: number;
   length?: number;
   spacing?: number;
   flow?: number;
+  time?: number; //Tempo “T” em horas e minutos para uma volta com 100% de velocidade (Pivô)
 };
 
 export type IUserRecordedRecommendationData = {
@@ -29,10 +30,11 @@ export type IUserRecordedRecommendationData = {
   Pluviometry: number | null;
   Area?: number | null;
   EffectiveArea?: number | null;
-  PlantsQtd?: number | null;
+  Quantity?: number | null;
   System_Precipitation?: number | null;
   Length?: number | null;
   Spacing?: number | null;
+  Time?: number | null;
   Flow?: number | null;
   CreatedAt: string;
   UpdatedAt?: string | null;

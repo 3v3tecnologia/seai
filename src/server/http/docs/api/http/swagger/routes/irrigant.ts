@@ -619,9 +619,8 @@ export const IRRIGANT = {
                         Type: "Microaspersão",
                         Measurements: {
                           Area: null,
-                          EfectiveArea: null,
                           Flow: null,
-                          PlantsQtd: null,
+                          Quantity: null,
                         },
                       },
                       CropId: 1,
