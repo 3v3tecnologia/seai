@@ -23,7 +23,10 @@ function calcIrrigationTime(repositionBlade: number, applicationRate: number) {
 }
 
 function calcKc(cropDay: number, cropCycle: ManagementCropCycle) {
-  return (cropDay - cropCycle.Start) * cropCycle.Increment + cropCycle.KC
+  return DecimalFormatter.truncate(
+    (cropDay - cropCycle.Start) * cropCycle.Increment + cropCycle.KC,
+    2
+  )
 }
 
 function calcRepositionBlade(
