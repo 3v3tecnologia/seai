@@ -1,4 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
+import { decimalToHoursAndMinutes } from "../../../../shared/utils/date";
 
 export interface IIrrigationSystemMeasurementsEntity {
   efficiency(): number;
@@ -20,21 +21,31 @@ export type SulcosProps = {
 } & Partial<SistemEfficiency>;
 
 export type PivotProps = {
-  Precipitation: number;
+  Time: number; // Tempo para uma volta
+  Area: number; // Lâmina irrigada
+  Velocity?: number;
 } & Partial<SistemEfficiency>;
 
+/**
+  *   Quantity = Quantidade de micro aspersores
+  *   Area =  Área irrigada há 1 hectare
+  *   Flow  =  Vazão dos micro aspersores  (litros por hora)
+*/
 export type MicroSprinklingProps = {
   Flow: number;
   Area: number;
-  EfectiveArea: number;
-  PlantsQtd: number;
+  Quantity: number;
 } & Partial<SistemEfficiency>;
 
+/**
+  *   Quantity = Quantidade de emissores
+  *   Area =  Área irrigada há 1 hectare
+  *   Flow  =  Vazão de emissores  (litros por hora)
+*/
 export type DrippingProps = {
   Flow: number;
   Area: number;
-  EfectiveArea: number;
-  PlantsQtd: number;
+  Quantity: number;
 } & Partial<SistemEfficiency>;
 
 export abstract class IrrigationSystemMeasurementsEntity<
@@ -112,19 +123,42 @@ export class Pivot extends IrrigationSystemMeasurementsEntity<
     super({
       ...props,
       Efficiency: props.Efficiency || Pivot.DEFAULT_EFFICIENCY,
+      Velocity: 0
     });
   }
 
   public applicationRate(): number {
-    return this._props.Precipitation;
+    return 0
   }
+
+  public get Velocity(): number {
+    return this._props.Velocity || 0;
+  }
+
+  // Tempo estimado de funcionamento em horas e minutos
+  public calOperatingTime(): string {
+    const timesForLapInMinutes = this._props.Time * 60
+    return decimalToHoursAndMinutes(Math.ceil(timesForLapInMinutes / this.Velocity))
+  }
+
+  // Ajuste na velocidade do pivô (em porcentagem)
+  public setVelocity(reposition: number) {
+    //  Lâmina irrigada / Lâmina de reposição
+    this._props.Velocity = this._props.Area / reposition
+  }
+
 
   static create(props: PivotProps): Either<Error, Pivot> {
     for (const prop of [
       {
-        name: "Precipitação",
-        value: props.Precipitation,
-        msg: "Precipitação por volta do sistema pivô tem que ser informada e seu valor deve ser inteiro",
+        name: "Lâmina irrigada",
+        value: props.Area,
+        msg: "Lâmina irrigada em uma volta do sistema pivô tem que ser informada e seu valor deve ser inteiro",
+      },
+      {
+        name: "Tempo",
+        value: props.Time,
+        msg: "Tempo para uma volta do sistema pivô tem que ser informado e seu valor deve ser inteiro",
       },
     ]) {
       if (prop.value === null || prop.value === undefined) {
@@ -147,33 +181,25 @@ export class MicroSprinkling extends IrrigationSystemMeasurementsEntity<
   }
 
   public applicationRate(): number {
-    return (
-      this._props.Flow /
-      (this._props.Area * this._props.EfectiveArea * this._props.PlantsQtd)
-    );
+    return (this._props.Quantity * this._props.Flow) / (this._props.Area * 10000)
   }
 
   static create(props: MicroSprinklingProps): Either<Error, MicroSprinkling> {
     for (const prop of [
       {
-        name: "Área plantada",
+        name: "Área irrigada",
         value: props.Area,
-        msg: "Área plantada tem que ser informada e seu valor deve ser inteiro",
-      },
-      {
-        name: "Área efetiva",
-        value: props.EfectiveArea,
-        msg: "Área efetiva tem que ser informada e seu valor deve ser inteiro",
+        msg: "Área irrigada tem que ser informada e seu valor deve ser inteiro",
       },
       {
         name: "Vazão",
         value: props.Flow,
-        msg: "Vazão tem que ser informada e seu valor deve ser inteiro",
+        msg: "Vazão dos micro aspersores tem que ser informada e seu valor deve ser inteiro",
       },
       {
         name: "Quantidade de plantas",
-        value: props.PlantsQtd,
-        msg: "Quantidade de plantas tem que ser informada e seu valor deve ser inteiro",
+        value: props.Quantity,
+        msg: "Quantidade de micro aspersores tem que ser informada e seu valor deve ser inteiro",
       },
     ]) {
       if (prop.value === null || prop.value === undefined) {
@@ -197,23 +223,15 @@ export class Dripping extends IrrigationSystemMeasurementsEntity<
   }
 
   public applicationRate(): number {
-    return (
-      this._props.Flow /
-      (this._props.Area * this._props.EfectiveArea * this._props.PlantsQtd)
-    );
+    return (this._props.Quantity * this._props.Flow) / (this._props.Area * 10000)
   }
 
   static create(props: DrippingProps): Either<Error, Dripping> {
     for (const prop of [
       {
-        name: "Área plantada",
+        name: "Área irrigada",
         value: props.Area,
-        msg: "Área plantada tem que ser informada e seu valor deve ser inteiro",
-      },
-      {
-        name: "Área efetiva",
-        value: props.EfectiveArea,
-        msg: "Área efetiva tem que ser informada e seu valor deve ser inteiro",
+        msg: "Área irrigada tem que ser informada e seu valor deve ser inteiro",
       },
       {
         name: "Vazão",
@@ -222,8 +240,8 @@ export class Dripping extends IrrigationSystemMeasurementsEntity<
       },
       {
         name: "Quantidade de plantas",
-        value: props.PlantsQtd,
-        msg: "Quantidade de plantas tem que ser informada e seu valor deve ser inteiro",
+        value: props.Quantity,
+        msg: "Quantidade de emissores tem que ser informada e seu valor deve ser inteiro",
       },
     ]) {
       if (prop.value === null || prop.value === undefined) {
@@ -247,7 +265,6 @@ export class Sprinkling extends IrrigationSystemMeasurementsEntity<
     });
   }
   public applicationRate(): number {
-    // [Dúvida] Vai precisar converter dados da asperção para tempo?
     return this._props.Precipitation;
   }
 

@@ -1,19 +1,13 @@
 import Joi from "joi";
 import {
-  drippingPropsSchema,
-  irrigationSystemPropsSchema,
-  irrigationTypesNames,
-  microSprinklingPropsSchema,
-  pivotPropsSchema,
-  plantingDateSchema,
-  sprinklingPropsSchema,
-  sulcosPropsSchema,
-} from "./blade-suggestion";
-import {
   idSchema,
   userAccountSchema,
 } from "../../../../shared/infra/validator/schemas";
 import { SchemaValidator } from "../../../../shared/infra/validator/validator";
+import {
+  irrigationSystemPropsSchema,
+  plantingDateSchema
+} from "./blade-suggestion";
 
 const userIrrigationToPersist = Joi.object({
   CropId: Joi.number().integer().required(),

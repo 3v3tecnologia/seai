@@ -1,5 +1,5 @@
-import { UserRepository } from "../../../../domain/User/Government/infra/database/repository/user-repository";
-import { ModuleAccessPermissionMiddleware } from "../../../../domain/User/Government/middlewares/module-access";
+import { GovernmentUserRepository } from "../../../../domain/User/infra/repositories/gov-user-repository";
+import { ModuleAccessPermissionMiddleware } from "../../../../domain/User/middlewares/module-access";
 import { Middleware } from "../../../../shared/middlewares/middleware";
 
 export const makeUserPermissionMiddleware = (
@@ -8,9 +8,8 @@ export const makeUserPermissionMiddleware = (
     [key: string]: boolean;
   }
 ): Middleware => {
-  const accountRepository = new UserRepository();
   return new ModuleAccessPermissionMiddleware(
-    accountRepository,
+    new GovernmentUserRepository(),
     module,
     access
   );

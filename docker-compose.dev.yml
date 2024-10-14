@@ -28,13 +28,11 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: development
-      args:
-        - API_PORT=${PORT}
     container_name: "seai-server"
     restart: always
     command: npm run start:debug:container
     ports:
-      - "${PORT}:${PORT}"
+      - "80:8080"
       - "9229:9229"
     volumes:
       - .:/usr/src/app
@@ -49,10 +47,6 @@ services:
 volumes:
   db-data: {}
   backend_node_modules: {}
-
-# secrets:
-#   db-password:
-#     file: db/password.txt
 
 networks:
   private:

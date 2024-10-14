@@ -4,7 +4,7 @@ import {
   ok,
   serverError,
 } from "../../../shared/utils/http-responses";
-import { IIrrigationSuggestionServices } from "../services/protocols/irrigation-suggestion";
+import { irrigationRecommendation } from "../services/factories/irrigation-suggestion";
 import {
   CalcIrrigationRecommendationByIdRequest,
   calcIrrigationRecommendationRequest,
@@ -13,9 +13,8 @@ import { bladeSuggestionValidator } from "./schema/blade-suggestion";
 import { calculateUserIrrigationRecommendationByIdValidator } from "./schema/user-irrigation";
 
 export class IrrigationRecommendationControllers {
-  constructor(private services: IIrrigationSuggestionServices) {}
 
-  async calcIrrigationRecommendation(
+  static async calcIrrigationRecommendation(
     request: calcIrrigationRecommendationRequest
   ): Promise<HttpResponse> {
     try {
@@ -41,7 +40,7 @@ export class IrrigationRecommendationControllers {
         return badRequest(error);
       }
 
-      const successOrError = await this.services.calculate(request);
+      const successOrError = await irrigationRecommendation.calculate(request);
 
       if (successOrError.isLeft()) {
         return badRequest(successOrError.value);
@@ -55,7 +54,7 @@ export class IrrigationRecommendationControllers {
     }
   }
 
-  async calcIrrigationRecommendationById(
+  static async calcIrrigationRecommendationById(
     request: CalcIrrigationRecommendationByIdRequest
   ): Promise<HttpResponse> {
     try {
@@ -70,7 +69,7 @@ export class IrrigationRecommendationControllers {
       if (error) {
         return badRequest(error);
       }
-      const successOrError = await this.services.calcByIrrigationId(
+      const successOrError = await irrigationRecommendation.calcByIrrigationId(
         request.id,
         request.accountId
       );

@@ -988,6 +988,10 @@ export const USER = {
                 password: {
                   type: "string",
                 },
+                type: {
+                  type: "string",
+                  enum: ["government", "irrigant"],
+                }
               },
               example: {
                 login: "admin",

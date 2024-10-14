@@ -13,7 +13,7 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
     system_type,
     area,
     effective_area,
-    plants_qtd,
+    quantity,
     sprinkler_precipitation,
     length,
     spacing,
@@ -26,6 +26,7 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
     ETo,
     pluviometer_id,
     pluviometry,
+    time
   } = row;
 
   const irrigation_recommendation = {
@@ -41,8 +42,9 @@ function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
     Pluviometry: pluviometry ? Number(pluviometry) : null,
     Flow: flow ? Number(flow) : null,
     Area: area ? Number(area) : null,
+    Time: time ? Number(time) : null,
     EffectiveArea: effective_area ? Number(effective_area) : null,
-    PlantsQtd: plants_qtd ? Number(plants_qtd) : null,
+    Quantity: quantity ? Number(quantity) : null,
     System_Precipitation: sprinkler_precipitation
       ? Number(sprinkler_precipitation)
       : null,
@@ -72,28 +74,37 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       flow,
       length,
       planting_date,
-      plants_qtd,
+      quantity,
       spacing,
       sprinkler_precipitation,
       system_type,
       user_id,
     } = params;
 
+    const data = {
+      area,
+      name,
+      crop_id,
+      effective_area,
+      flow,
+      length,
+      planting_date: formatDateToYYYYMMDD(planting_date),
+      quantity,
+      spacing,
+      sprinkler_precipitation,
+      system_type,
+    }
+
+    if (params.time) {
+      // Tempo “T” em horas e minutos para uma volta (Pivô)
+      Object.assign(data, {
+        time: params.time
+      })
+    }
+
     const response = await governmentDb
       .withSchema("management")
-      .insert({
-        area,
-        name,
-        crop_id,
-        effective_area,
-        flow,
-        length,
-        planting_date: formatDateToYYYYMMDD(planting_date),
-        plants_qtd,
-        spacing,
-        sprinkler_precipitation,
-        system_type,
-      })
+      .insert(data)
       .returning("id")
       .into("Irrigation_Crops");
 
@@ -142,7 +153,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       })
       .from("Irrigation_Crops");
   }
-  async update(params: Required<IrrigationCropsData>): Promise<void> {
+  async update(params: IrrigationCropsData): Promise<void> {
     const {
       id,
       area,
@@ -152,47 +163,43 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       flow,
       length,
       planting_date,
-      plants_qtd,
+      quantity,
       spacing,
       sprinkler_precipitation,
       system_type,
-      user_id,
     } = params;
 
     // TO-DO : check if crop was deleted
+    const data = {
+      area,
+      name,
+      crop_id,
+      effective_area,
+      flow,
+      length,
+      planting_date: formatDateToYYYYMMDD(planting_date),
+      quantity,
+      spacing,
+      sprinkler_precipitation,
+      system_type,
+    }
+
+
+    if (params.time) {
+      // Tempo “T” em horas e minutos para uma volta (Pivô)
+      Object.assign(data, {
+        time: params.time
+      })
+    }
 
     await governmentDb
       .withSchema("management")
-      .update({
-        area,
-        name,
-        crop_id,
-        effective_area,
-        flow,
-        length,
-        planting_date: formatDateToYYYYMMDD(planting_date),
-        plants_qtd,
-        spacing,
-        sprinkler_precipitation,
-        system_type,
-      })
+      .update(data)
       .where({
         id,
       })
       .from("Irrigation_Crops");
 
-    // await governmentDb
-    //   .withSchema("management")
-    //   .update({
-    //     updated_at: governmentDb.fn.now(),
-    //   })
-    //   .from("User_Irrigation_Crops")
-    //   .where({
-    //     irrigation_crops_id: id,
-    //   })
-    //   .andWhere({
-    //     user_id,
-    //   });
   }
   async getByUserId(
     user_id: number
@@ -208,11 +215,12 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
                 irrigation.system_type ,
                 irrigation.area ,
                 irrigation.effective_area ,
-                irrigation.plants_qtd ,
+                irrigation.quantity ,
                 irrigation.sprinkler_precipitation ,
                 irrigation.length ,
                 irrigation.spacing ,
                 irrigation.flow ,
+                irrigation.time ,
                 crop."Id" AS "crop_id",
                 crop."Name" AS "crop_name",
                 crop."Deleted_At" as "crop_deleted_at",
@@ -350,7 +358,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
         user_id,
       })
       .andWhere({
-        id,
+        irrigation_crops_id: id,
       })
       .first();
 
@@ -387,11 +395,12 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
                 irrigation.system_type ,
                 irrigation.area ,
                 irrigation.effective_area ,
-                irrigation.plants_qtd ,
+                irrigation.quantity ,
                 irrigation.sprinkler_precipitation ,
                 irrigation.length ,
                 irrigation.spacing ,
                 irrigation.flow ,
+                irrigation.time ,
                 crop."Id" AS "crop_id",
                 crop."Name" AS "crop_name",
                 crop."Deleted_At" as "crop_deleted_at",
@@ -461,7 +470,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
     const dbResponse = await governmentDb.raw(`
         SELECT u."Id",u."Name" ,u."Email"  FROM (SELECT un.user_id FROM management."User_Notifications" un
         WHERE un.service_id = (SELECT ns.id  FROM management."Notification_Services" ns
-        WHERE ns.service_id = 'irrigation') AND enabled = true) AS u_with_irrig_notif
+        WHERE ns.service = 'irrigation') AND enabled = true) AS u_with_irrig_notif
         INNER JOIN users."User" u ON u."Id"= u_with_irrig_notif.user_id
         WHERE u."Type" = 'irrigant' AND u."Status" = 'registered'`);
 

@@ -2,7 +2,7 @@ import { LoginUserAccount, UserOperationControllerDTO } from "../../../@types/lo
 import { HttpResponse } from "../../../shared/ports/http-response";
 import { badRequest, created, forbidden, noContent, ok, serverError } from "../../../shared/utils/http-responses";
 import { ManagementCropCycle } from "../core/model/crop-cycles";
-import { IManagementCropsServices } from "../services/crop.service.protocol";
+import { managementCropsServices } from "../services/factory";
 import { createCropValidator, deleteCropValidator, getAllCropCropCyclesValidator, getAllCropsValidator, getCropByIdValidator, setCycleRestartPointValidator, updateCropValidator } from "./schema/crop";
 
 type CreateCropRequest = {
@@ -25,10 +25,9 @@ type UpdateCropRequest = {
   Cycles: Array<ManagementCropCycle>;
 } & UserOperationControllerDTO
 
-export class ManagementCropControllers {
-  constructor(private managementCropServices: IManagementCropsServices) { }
+export class ManagementCropController {
 
-  async create(
+  static async create(
     params: CreateCropRequest
   ): Promise<HttpResponse> {
     try {
@@ -47,7 +46,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const createdOrError = await this.managementCropServices.create(
+      const createdOrError = await managementCropsServices.create(
         {
           data: {
             Name,
@@ -73,7 +72,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async update(
+  static async update(
     params: UpdateCropRequest
   ): Promise<HttpResponse> {
     try {
@@ -93,7 +92,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const updatedOrError = await this.managementCropServices.update(
+      const updatedOrError = await managementCropsServices.update(
         {
           data: {
             Id: Number(id),
@@ -120,7 +119,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async deleteCrop(
+  static async deleteCrop(
     params: {
       id: number;
     } & UserOperationControllerDTO
@@ -138,7 +137,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const deletedOrError = await this.managementCropServices.deleteCrop({
+      const deletedOrError = await managementCropsServices.deleteCrop({
         data: {
           id
         },
@@ -159,7 +158,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async getCropById(params: { id: number }): Promise<HttpResponse> {
+  static async getCropById(params: { id: number }): Promise<HttpResponse> {
     try {
       const { id } = params;
       const { error } = await getCropByIdValidator.validate({
@@ -170,7 +169,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const result = await this.managementCropServices.getCropById(id);
+      const result = await managementCropsServices.getCropById(id);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -183,7 +182,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async getAllCrops(params: { name?: string }): Promise<HttpResponse> {
+  static async getAllCrops(params: { name?: string }): Promise<HttpResponse> {
     try {
       const input = {};
 
@@ -206,7 +205,7 @@ export class ManagementCropControllers {
           Name: params.name,
         });
       }
-      const result = await this.managementCropServices.getAllCrops(dto);
+      const result = await managementCropsServices.getAllCrops(dto);
 
       if (result.isLeft()) {
         return forbidden(result.value);
@@ -219,7 +218,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async setCropCycleRestartPoint(
+  static async setCropCycleRestartPoint(
     params: SetRestartCyclePointRequest
   ): Promise<HttpResponse> {
     try {
@@ -235,7 +234,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const createdOrError = await this.managementCropServices.setRestartCyclePoint(id, CycleRestartPoint);
+      const createdOrError = await managementCropsServices.setRestartCyclePoint(id, CycleRestartPoint);
 
       if (createdOrError.isLeft()) {
         return forbidden(createdOrError.value);
@@ -248,7 +247,7 @@ export class ManagementCropControllers {
     }
   }
 
-  async getAllCropCycles(params: { id: number }): Promise<HttpResponse> {
+  static async getAllCropCycles(params: { id: number }): Promise<HttpResponse> {
     try {
       const { id } = params;
 
@@ -260,7 +259,7 @@ export class ManagementCropControllers {
         return badRequest(error);
       }
 
-      const result = await this.managementCropServices.findCropCyclesByCropId(
+      const result = await managementCropsServices.findCropCyclesByCropId(
         id
       );
 

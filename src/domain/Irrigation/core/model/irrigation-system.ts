@@ -22,8 +22,7 @@ export enum irrigationsTypesNames {
   Sulcos = "Sulcos",
 }
 
-export type IrrigationSystemTypes = `${
-  | irrigationsTypesNames.Dripping
+export type IrrigationSystemTypes = `${| irrigationsTypesNames.Dripping
   | irrigationsTypesNames.MicroSprinkling
   | irrigationsTypesNames.Pivot
   | irrigationsTypesNames.Sprinkling
@@ -61,12 +60,9 @@ export class IrrigationSystemEntity {
     this.efficiency = this.measurements.efficiency();
     this.applicationRate = this.measurements.applicationRate();
   }
-
-  /*calcAplicationRate() {
-    // "Micro-Aspersão" ou "Gotejamento"
-    return this.measurements.applicationRate();
-  }*/
 }
+
+
 
 export function makeSystemIrrigationMeasurements(data: {
   Type: IrrigationSystemTypes;

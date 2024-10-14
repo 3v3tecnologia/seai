@@ -198,6 +198,56 @@ export class EquipmentsServices implements IEquipmentsServices {
     }
   }
 
+  async getActivatedEquipments(
+    request: {
+      type: `${EquipmentsTypes}`;
+    } & {
+      latitude?: number;
+      longitude?: number;
+      distance?: number;
+    }
+  ): Promise<Either<Error, Array<any> | null>> {
+    let params: {
+      latitude: number;
+      longitude: number;
+      distance?: number;
+    } | null = null;
+
+    if (
+      [
+        Reflect.has(request, "latitude"),
+        Reflect.has(request, "longitude"),
+      ].every((param) => param == true)
+    ) {
+      params = {
+        latitude: request.latitude as number,
+        longitude: request.longitude as number,
+        distance: 1000,
+      };
+
+      if (Reflect.has(request, "distance") && request.distance) {
+        params.distance = request.distance as number;
+      }
+    }
+
+    switch (request?.type) {
+      case "station":
+        return right(
+          await this.equipmentRepository.getActivatedStations(
+            params
+          )
+        );
+      case "pluviometer":
+        return right(
+          await this.equipmentRepository.getActivatedPluviometers(
+            params
+          )
+        );
+      default:
+        return right(null);
+    }
+  }
+
   async getMeteorologicalOrganCredentials(
     organName: string
   ): Promise<Either<Error, any | null>> {

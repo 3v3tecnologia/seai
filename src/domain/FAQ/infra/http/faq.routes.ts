@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { adaptRoute } from "../../../../server/http/adapters/express-route.adapter";
+import { adaptHTTPHandler, adaptRoute } from "../../../../server/http/adapters/express-route.adapter";
 
 import {
   authorization,
   FAQPermissions,
 } from "../../../../server/http/http-middlewares";
-import { FaqControllersFactory } from "../../controllers";
+import { FAQController } from "../../controllers/faq.controller";
 
 export const faqRouter = (): Router => {
   const router = Router();
@@ -13,61 +13,61 @@ export const faqRouter = (): Router => {
   router.get(
     "/categories",
     // authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqCategories())
+    adaptHTTPHandler(FAQController.getCategories),
   );
 
   router.put(
     "/categories/:id",
     authorization,
     FAQPermissions.write,
-    adaptRoute(FaqControllersFactory.makeUpdateFaqCategory())
+    adaptHTTPHandler(FAQController.updateCategory)
   );
 
   router.post(
     "/categories",
     authorization,
     FAQPermissions.write,
-    adaptRoute(FaqControllersFactory.makeCreateFaqCategory())
+    adaptHTTPHandler(FAQController.createCategory)
   );
 
   router.delete(
     "/categories/:id",
     authorization,
     FAQPermissions.read,
-    adaptRoute(FaqControllersFactory.makeDeleteFaqCategory())
+    adaptHTTPHandler(FAQController.deleteCategory)
   );
 
   router.get(
     "/",
     // authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqsWithCategory())
+    adaptHTTPHandler(FAQController.getFaqs)
   );
 
   router.get(
     "/:id",
     // authorization,
-    adaptRoute(FaqControllersFactory.makeFetchFaqById())
+    adaptHTTPHandler(FAQController.getFaqById),
   );
 
   router.post(
     "/",
     authorization,
     FAQPermissions.write,
-    adaptRoute(FaqControllersFactory.makeCreateFaq())
+    adaptHTTPHandler(FAQController.createFaq),
   );
 
   router.put(
     "/:id",
     authorization,
     FAQPermissions.write,
-    adaptRoute(FaqControllersFactory.makeUpdateFaq())
+    adaptHTTPHandler(FAQController.updateFaq),
   );
 
   router.delete(
     "/:id",
     authorization,
     FAQPermissions.write,
-    adaptRoute(FaqControllersFactory.makeDeleteFaq())
+    adaptHTTPHandler(FAQController.deleteFaq),
   );
 
   return router;

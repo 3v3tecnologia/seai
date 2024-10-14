@@ -89,6 +89,12 @@ export interface IEquipmentsRepository
     }>
   ): Promise<IOutputWithPagination<EquipmentEntity>>
   getEquipmentId(id: number): Promise<EquipmentEntity | null>;
+  getActivatedPluviometers(
+    params: { latitude: number; longitude: number; distance?: number } | null
+  ): Promise<Array<PluviometerWithLastMeasurement> | null>
+  getActivatedStations(
+    params: { latitude: number; longitude: number; distance?: number } | null
+  ): Promise<Array<StationWithLastMeasurement> | null>
   getPluviometersWithYesterdayMeasurements(
     params: {
       latitude: number;

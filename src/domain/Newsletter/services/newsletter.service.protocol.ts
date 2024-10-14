@@ -53,6 +53,4 @@ export interface NewsletterServiceProtocol {
     Email: string;
     Code: string;
   }> | null>>
-  unsubscribe(email: string): Promise<Either<Error, void>>
-  subscribe(email: string): Promise<Either<Error, void>>
 }
