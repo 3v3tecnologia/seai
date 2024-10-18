@@ -81,8 +81,7 @@ export class UserSettingsServices implements IUserPreferencesServices {
   }
 
   async removeUserNotificationsPreferences(
-    user_id: number,
-    email: string
+    user_id: number
   ): Promise<Either<Error, void>> {
     await this.repository.removeUserNotificationsPreferences(user_id);
     return right();
