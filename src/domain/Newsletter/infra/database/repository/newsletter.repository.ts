@@ -1,15 +1,13 @@
-import { NEWSLETTER_PUBLIC_URL, USER_IRRIGANT_PUBLIC_URL } from "../../../../../server/http/config/url";
+import { NEWSLETTER_PUBLIC_URL } from "../../../../../server/http/config/url";
 import {
   governmentDb,
-  logsDb,
-  newsletterDb,
+  logsDb
 } from "../../../../../shared/infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../../shared/infra/database/postgres/paginate";
 import { PaginatedInput } from "../../../../../shared/utils/command";
 import {
   IOutputWithPagination,
-  IPaginationInput,
-  toPaginatedOutput,
+  toPaginatedOutput
 } from "../../../../../shared/utils/pagination";
 
 import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
