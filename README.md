@@ -11,9 +11,6 @@ npm ci
 Será necessário criar um arquivo `.env.development.local` contendo as variáveis ambiente` baseado nas especificações abaixo:
 
 ```sh
-NODE_ENV=development
-PORT=
-
 DB_USER=""
 DB_PASSWORD=""
 DB_HOST=
@@ -26,6 +23,7 @@ DB_JOBS_PASSWORD=
 
 HASH_SALT=""
 API_KEY=""
+IRRIGANT_WEB_PAGE_BASE_URL=""
 ```
 
 Após criar as variáveis, será necessário adicionar no diretório `.docker/postgres` os **schemas** e **seeds** do banco baixados (será necessário obter os arquivos .sql)

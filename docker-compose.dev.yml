@@ -20,8 +20,7 @@ services:
       start_period: 80s
     restart: always
     networks:
-      - custom
-      - private
+      - database
 
   backend:
     build:
@@ -30,7 +29,7 @@ services:
       target: development
     container_name: "seai-server"
     restart: always
-    command: npm run start:debug:container
+    command: npm run start:debug:local
     ports:
       - "80:8080"
       - "9229:9229"
@@ -41,15 +40,15 @@ services:
       database:
         condition: service_healthy
     networks:
-      - custom
-      - private
+      - jobs
+      - database
 
 volumes:
   db-data: {}
   backend_node_modules: {}
 
 networks:
-  private:
-  custom:
+  database:
+  jobs:
     name: jobs
-    driver: bridge
+    external: true
