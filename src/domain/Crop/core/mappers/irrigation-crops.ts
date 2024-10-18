@@ -40,7 +40,7 @@ export function mapIrrigationCropsToDomain(
     Flow: flow ? Number(flow) : null,
     Area: area ? Number(area) : null,
     EffectiveArea: effective_area ? Number(effective_area) : null,
-    PlantsQtd: plants_qtd ? Number(plants_qtd) : null,
+    Quantity: plants_qtd ? Number(plants_qtd) : null,
     System_Precipitation: sprinkler_precipitation
       ? Number(sprinkler_precipitation)
       : null,
