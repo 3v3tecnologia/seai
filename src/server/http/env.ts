@@ -10,5 +10,5 @@ export default {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
   },
-  messageQueue: process.env.MQ_URL,
+  jobs: process.env.ASYNC_JOB_URL,
 };

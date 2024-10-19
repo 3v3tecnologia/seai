@@ -51,7 +51,7 @@ volumes:
 networks:
   database:
   seai-api:
-    external: true
+    driver: bridge
     name: seai_api
   jobs:
     name: jobs
