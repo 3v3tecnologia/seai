@@ -138,18 +138,10 @@ export const db_config: { [index: string]: any } = {
       },
     },
   },
-  [DATABASES.BACKGROUND_JOBS.DATABASE]: {
+  [DATABASES.BACKGROUND_JOBS]: {
     development: {
       client: "pg",
-      connection: {
-        host: env.jobs.host,
-        port: env.jobs.port,
-        user: env.jobs.user,
-        password: env.jobs.password,
-        database: DATABASES.BACKGROUND_JOBS.DATABASE,
-        charset: "utf8",
-        timezone: "Brazil/East",
-      },
+      connection: env.messageQueue,
       pool: {
         min: 2,
         max: 10,
@@ -157,15 +149,7 @@ export const db_config: { [index: string]: any } = {
     },
     production: {
       client: "pg",
-      connection: {
-        host: env.jobs.host,
-        port: env.jobs.port,
-        user: env.jobs.user,
-        password: env.jobs.password,
-        database: DATABASES.BACKGROUND_JOBS.DATABASE,
-        charset: "utf8",
-        timezone: "Brazil/East",
-      },
+      connection: env.messageQueue,
       pool: {
         min: 2,
         max: 10,

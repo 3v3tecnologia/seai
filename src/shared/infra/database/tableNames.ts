@@ -10,12 +10,5 @@ export const DATABASES = {
     SUBSCRIBER: "Subscriber",
     NEWS_JOBS: "NewsJob",
   },
-  BACKGROUND_JOBS: {
-    DATABASE: "postgres",
-    SCHEMA: "pgboss",
-    TABLES: {
-      SCHEDULE: "pgboss.schedule",
-      JOB: "pgboss.job",
-    },
-  },
+  BACKGROUND_JOBS: "postgres",
 };
