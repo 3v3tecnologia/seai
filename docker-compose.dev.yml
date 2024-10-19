@@ -42,6 +42,7 @@ services:
     networks:
       - jobs
       - database
+      - seai-api
 
 volumes:
   db-data: {}
@@ -49,6 +50,9 @@ volumes:
 
 networks:
   database:
+  seai-api:
+    external: true
+    name: seai_api
   jobs:
     name: jobs
     external: true
