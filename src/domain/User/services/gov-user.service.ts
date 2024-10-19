@@ -30,6 +30,7 @@ import {
   UserRepositoryProtocol,
 } from "../infra/repositories/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
+import { GOVERNMENT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
 
 
 export class GovernmentUserService implements IUserService {
@@ -110,9 +111,7 @@ export class GovernmentUserService implements IUserService {
     if (user_id) {
       await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: userEmail,
-        user_code: userCode,
-        user_type: "government",
-        action: "create_account"
+        redirect_url: `${GOVERNMENT_WEB_PAGE_BASE_URL}/initial-register-infos/${userCode}`,
       });
     }
 
@@ -208,11 +207,8 @@ export class GovernmentUserService implements IUserService {
 
     await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      user_code: account.code,
-      user_type: "government",
-      action: "recovery_account"
+      redirect_url: `${GOVERNMENT_WEB_PAGE_BASE_URL}/change-password/${account.code}`,
     });
-
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);
   }

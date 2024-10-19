@@ -20,6 +20,7 @@ import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
+import { IRRIGANT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
@@ -100,9 +101,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
       await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
         email: dto.email,
-        user_code: userCode,
-        user_type: "irrigant",
-        action: "create_account"
+        redirect_url: `${IRRIGANT_WEB_PAGE_BASE_URL}/activate/${userCode}`,
       });
     }
 
@@ -144,9 +143,7 @@ export class IrrigationUserService implements IIrrigationUserService {
 
     await this.queueProvider.sendToQueue(TASK_QUEUES.USER_ACCOUNT_NOTIFICATION, {
       email: account.email,
-      user_code: account.code,
-      user_type: "irrigant",
-      action: "recovery_account"
+      redirect_url: `${IRRIGANT_WEB_PAGE_BASE_URL}/reset-password/${account.code}`,
     });
 
 
