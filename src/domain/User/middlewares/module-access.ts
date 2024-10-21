@@ -2,7 +2,7 @@
 import { Middleware } from "../../../shared/middlewares/middleware";
 import { HttpResponse } from "../../../shared/ports/http-response";
 import { forbidden, ok, serverError, unauthorized } from "../../../shared/utils/http-responses";
-import { UserRepositoryProtocol } from "../infra/repositories/protocol/gov-user-repository";
+import { UserRepositoryProtocol } from "../infra/repository/protocol/gov-user-repository";
 import { AuthMiddleware } from "./admin";
 
 function hasAnyKey(obj: any, matcher: any): boolean {

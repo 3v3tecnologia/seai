@@ -1,8 +1,8 @@
 import { Either } from "../../../shared/Either";
 import { AuditableInput, PaginatedInput } from "../../../shared/utils/command";
 import { IOutputWithPagination, IPaginationInput } from "../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
-import { Content } from "../model/content";
+import { UserCommandOperationProps } from "../../Logs/core/protocols/logger";
+import { Content } from "../core/model/content";
 
 export type CreateNewsInput = {
   Title: string;

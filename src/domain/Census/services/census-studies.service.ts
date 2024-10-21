@@ -1,7 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { Logger } from "../../../shared/utils/logger";
 import { CropStudies } from "../core/model/crop-studies";
-import { ICensusStudiesRepository } from "../repositories/protocol/studies-repository";
+import { ICensusStudiesRepository } from "../infra/repository/protocol/studies-repository";
 import { ICensusStudiesService } from "./protocol/studies.service";
 
 export class CensusStudiesService implements ICensusStudiesService {

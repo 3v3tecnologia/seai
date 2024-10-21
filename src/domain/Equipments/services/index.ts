@@ -1,5 +1,5 @@
-import { EquipmentsMeasurementsRepository } from "../repositories/equipments-measurements.repository";
-import { EquipmentsRepository } from "../repositories/equipments.repository";
+import { EquipmentsMeasurementsRepository } from "../infra/repository/equipments-measurements.repository";
+import { EquipmentsRepository } from "../infra/repository/equipments.repository";
 import { EquipmentsServices } from "./equipments.service";
 import { EquipmentsMeasurementsServices } from "./measurements.service";
 

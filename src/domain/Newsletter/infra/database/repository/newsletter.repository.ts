@@ -10,11 +10,11 @@ import {
   toPaginatedOutput
 } from "../../../../../shared/utils/pagination";
 
-import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
-import { Content } from "../../../model/content";
-import { NewsMapper } from "../../../model/mapper/newsletter";
-import { NewsSubscriberMapper } from "../../../model/mapper/subscriber";
-import { Subscriber } from "../../../model/subscriber";
+import { UserCommandOperationProps } from "../../../../Logs/core/protocols/logger";
+import { Content } from "../../../core/model/content";
+import { NewsMapper } from "../../../core/model/mapper/newsletter";
+import { NewsSubscriberMapper } from "../../../core/model/mapper/subscriber";
+import { Subscriber } from "../../../core/model/subscriber";
 import { NewsletterRepositoryProtocol } from "./protocol/newsletter-repository";
 
 export class NewsLetterRepository implements NewsletterRepositoryProtocol {

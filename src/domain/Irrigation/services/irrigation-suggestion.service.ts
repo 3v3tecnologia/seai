@@ -6,19 +6,19 @@ import { ManagementCropErrors } from "../../Crop/core/crop-errors";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { calcIrrigationRecommendation, IrrigationRecommendationData } from "../core/model/calc-recommendation";
 
-import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
-import { IEquipmentsMeasurementsRepository } from "../../Equipments/repositories/protocols/measurements";
+import { IEquipmentsMeasurementsRepository } from "../../Equipments/infra/repository/protocols/measurements";
 import {
   IrrigationSystemEntity,
   makeIrrigationSystem,
 } from "../core/model/irrigation-system";
 import { UserIrrigationRecommendation } from "../core/model/user-recommendations";
-import { IIrrigationRepository } from "../repositories/protocols/irrigation.repository";
+import { IIrrigationRepository } from "../infra/repository/protocols/irrigation.repository";
 import {
   CalcIrrigationRecommendationDTO,
   ICalcIrrigationRecommendationDTO,
 } from "./dto/irrigation";
 import { IIrrigationSuggestionServices } from "./protocols/irrigation-suggestion";
+import { IManagementCropsRepository } from "../../Crop/infra/repository/protocol/management-crop.repository";
 
 export class IrrigationCropsSuggestion
   implements IIrrigationSuggestionServices {

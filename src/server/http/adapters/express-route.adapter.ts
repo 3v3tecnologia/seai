@@ -36,12 +36,12 @@ export const adaptHTTPHandler = (callback: any) => {
       });
     }
 
-    //Enviar a mensagem do erro, evitar passar muitas informações detalhadas
     return response.status(res.statusCode).json({
       error: res.body.message,
     });
   };
 };
+
 
 export const adaptRoute = (controller: Controller) => {
   return async (request: Request, response: Response) => {

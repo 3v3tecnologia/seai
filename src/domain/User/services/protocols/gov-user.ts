@@ -1,7 +1,7 @@
 import { Either } from "../../../../shared/Either";
 import { Optional } from "../../../../shared/optional";
 import { IPaginationInput } from "../../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
 import { FailToDeleteUserError } from "../../core/errors/fail-to-delete-user-error";
 import { UserModulesNotFound } from "../../core/errors/invalid-modules";
 import { LoginAlreadyExists } from "../../core/errors/login-aready-exists";
@@ -10,7 +10,7 @@ import { UserNotFoundError } from "../../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../../core/errors/wrong-password";
 import { UserType, UserTypes } from "../../core/model/gov-user";
 import { SystemModulesProps } from "../../core/model/user-modules-access";
-import { UserAccountProps } from "../../infra/repositories/protocol/gov-user-repository";
+import { UserAccountProps } from "../../infra/repository/protocol/gov-user-repository";
 
 
 export interface IUserService {

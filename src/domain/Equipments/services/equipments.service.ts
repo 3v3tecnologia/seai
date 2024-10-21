@@ -6,7 +6,7 @@ import {
 import { EquipmentEntity } from "../core/models/Equipment";
 import { EquipmentsTypes } from "../core/models/equipments-types";
 import { MeteorologicalOrganEntity } from "../core/models/MetereologicalOrgan";
-import { IEquipmentsRepository } from "../repositories/protocols/equipment";
+import { IEquipmentsRepository } from "../infra/repository/protocols/equipment";
 import { AuditableInput } from './../../../shared/utils/command';
 import { IEquipmentsServices } from "./protocol/equipments";
 

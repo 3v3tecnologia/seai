@@ -44,7 +44,6 @@ export class AuthMiddleware implements Middleware {
         return forbidden(new Error("Token não providenciado"));
       }
 
-      // checar possibilidade de tratar o error lançado pelo o método verify
       const decodedTokenOrError = await this.tokenManager.verify(accessToken);
 
       if (decodedTokenOrError) {

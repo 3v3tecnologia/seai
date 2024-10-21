@@ -1,4 +1,4 @@
-import { IrrigantPreferencesRepository } from "../../infra/repositories/irrigation-settings.repository";
+import { IrrigantPreferencesRepository } from "../../infra/repository/irrigation-settings.repository";
 import { UserSettingsServices } from "../irrigant-settings.service";
 
 

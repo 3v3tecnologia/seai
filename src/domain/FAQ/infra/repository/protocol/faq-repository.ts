@@ -1,4 +1,4 @@
-import { UserCommandOperationProps } from "../../../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../../../Logs/core/protocols/logger";
 import {
   IOutputWithPagination,
   IPaginationInput,

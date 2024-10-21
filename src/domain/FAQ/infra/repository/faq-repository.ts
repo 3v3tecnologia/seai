@@ -5,7 +5,7 @@ import {
   IPaginationInput,
   toPaginatedOutput,
 } from "../../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
 import {
   governmentDb,
   logsDb,

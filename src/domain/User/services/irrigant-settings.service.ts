@@ -1,8 +1,6 @@
 
 import { Either, left, right } from "../../../shared/Either";
-import { NewsletterServiceProtocol } from "../../Newsletter/services/newsletter.service.protocol";
-import { IUserPreferencesRepository } from "../infra/repositories/protocol/irrigation-settings.repository";
-import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
+import { IUserPreferencesRepository } from "../infra/repository/protocol/irrigation-settings.repository";
 
 import {
   GetUserNotificationsPreferencesOutputDTO,

@@ -10,7 +10,7 @@ import { TASK_QUEUES } from "../../../shared/infra/queueProvider/helpers/queues"
 import { MQProviderProtocol } from "../../../shared/infra/queueProvider/protocol/messageQueue.protocol";
 import { Optional } from "../../../shared/optional";
 import { IPaginationInput } from "../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/core/protocols/logger";
 import { InactivatedAccount } from "../core/errors/account-not-activated";
 import { UserAlreadyRegisteredError } from "../core/errors/already-registered";
 import { EmailAlreadyExists } from "../core/errors/email-already-exists";
@@ -28,7 +28,7 @@ import {
 import {
   UserAccountProps,
   UserRepositoryProtocol,
-} from "../infra/repositories/protocol/gov-user-repository";
+} from "../infra/repository/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
 import { GOVERNMENT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
 

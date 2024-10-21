@@ -5,7 +5,7 @@ import {
   IPaginationInput,
   toPaginatedOutput,
 } from "../../../../shared/utils/pagination";
-import { toDomain, UserOperation } from "../../model/user-operations";
+import { toDomain, UserOperation } from "../../core/model/user-operations";
 import { UserOperationsRepositoryProtocol } from "./protocol/log-repository";
 
 export class UserOperationsRepository

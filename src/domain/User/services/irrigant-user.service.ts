@@ -16,7 +16,7 @@ import {
   UnmatchedPasswordError
 } from "../core/errors/wrong-password";
 import { IrrigationUser } from "../core/model/irrigation-user";
-import { IrrigationUserRepositoryProtocol } from "../infra/repositories/protocol/irrigation-user.repository";
+import { IrrigationUserRepositoryProtocol } from "../infra/repository/protocol/irrigation-user.repository";
 import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";

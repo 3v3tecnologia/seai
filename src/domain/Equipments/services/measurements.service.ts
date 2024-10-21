@@ -1,14 +1,14 @@
 import { CalcEto } from "../core/models/Et0";
 import { Either, left, right } from "../../../shared/Either";
-import { IEquipmentsRepository } from "../repositories/protocols/equipment";
-import { IEquipmentsMeasurementsRepository } from "../repositories/protocols/measurements";
+import { IEquipmentsRepository } from "../infra/repository/protocols/equipment";
+import { IEquipmentsMeasurementsRepository } from "../infra/repository/protocols/measurements";
 import { StationReadEntity } from "../core/models/StationRead";
 import { PluviometerReadEntity } from "../core/models/PluviometerRead";
 import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/core/protocols/logger";
 import { IEquipmentsMeasurementsServices } from "./protocol/measurements";
 import { EquipmentsTypes } from "../core/models/equipments-types";
 import { AuditableInput } from "../../../shared/utils/command";

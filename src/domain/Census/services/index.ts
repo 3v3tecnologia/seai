@@ -1,5 +1,5 @@
-import { CensusStudiesRepository } from "../repositories/census-studies.repository";
-import { IndicatorsWeightsRepository } from "../repositories/indicators-weights.repository";
+import { CensusStudiesRepository } from "../infra/repository/census-studies.repository";
+import { IndicatorsWeightsRepository } from "../infra/repository/indicators-weights.repository";
 import { CensusStudiesService } from "./census-studies.service";
 import { CensusWeightsService } from "./census-weights.service";
 

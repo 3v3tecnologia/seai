@@ -3,7 +3,7 @@ import {
   IPaginationInput,
 } from "../../../../shared/utils/pagination";
 import { Either } from "../../../../shared/Either";
-import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
 import { EquipmentEntity } from "../../core/models/Equipment";
 import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
 import { AuditableInput, PaginatedInput } from "../../../../shared/utils/command";

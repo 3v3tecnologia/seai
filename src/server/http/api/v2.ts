@@ -1,9 +1,9 @@
 import express from "express";
-import { setupCensusV2Routes } from "../../../domain/Census/http/v2.routes";
-import { setupEquipmentsV2Routes } from "../../../domain/Equipments/http/v2.routes";
-import { setupIrrigationRecommendationV2Routes } from "../../../domain/Irrigation/http/irrigation-recommendation";
-import { setupManagementCropV2Routes } from "../../../domain/Crop/http/crop";
+import { setupCensusV2Routes } from "../../../domain/Census/infra/http/v2.routes";
+import { setupIrrigationRecommendationV2Routes } from "../../../domain/Irrigation/infra/http/irrigation-recommendation";
+import { setupManagementCropV2Routes } from "../../../domain/Crop/infra/http/crop";
 import { setupUserIrrigantSettingsV2Routes } from "../../../domain/User/infra/http/irrigation-settings.routes";
+import { setupEquipmentsV2Routes } from "../../../domain/Equipments/infra/http/v2.routes";
 
 const v2Router = express.Router();
 

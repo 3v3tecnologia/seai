@@ -3,9 +3,10 @@ import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../../../../Logs/protocols/logger";
-import { Content } from "../../../../model/content";
-import { Subscriber } from "../../../../model/subscriber";
+import { UserCommandOperationProps } from "../../../../../Logs/core/protocols/logger";
+import { Content } from "../../../../core/model/content";
+import { Subscriber } from "../../../../core/model/subscriber";
+
 
 
 export interface NewsletterRepositoryProtocol {

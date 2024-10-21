@@ -2,7 +2,7 @@ import {
   IOutputWithPagination,
   IPaginationInput,
 } from "../../../../../shared/utils/pagination";
-import { UserOperation } from "../../../model/user-operations";
+import { UserOperation } from "../../../core/model/user-operations";
 
 export interface UserOperationsRepositoryProtocol {
   getAll(

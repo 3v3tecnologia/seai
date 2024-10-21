@@ -1,6 +1,6 @@
 import { Either } from "../../../../shared/Either";
 import { IOutputWithPagination, IPaginationInput } from "../../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
 import { FaqCategoriesData, FaqWithCategoriesData } from "../../infra/repository/protocol/faqData";
 
 export interface IFaqService {

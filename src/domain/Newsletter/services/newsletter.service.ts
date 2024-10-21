@@ -1,8 +1,8 @@
 import { Either, left, right } from "../../../shared/Either";
 import { Encoder } from "../../../shared/ports/encoder";
 import { IOutputWithPagination } from "../../../shared/utils/pagination";
+import { Content, validateContentSize } from "../core/model/content";
 import { NewsletterRepositoryProtocol } from "../infra/database/repository/protocol/newsletter-repository";
-import { Content, validateContentSize } from "../model/content";
 import { AuditableInput, PaginatedInput } from './../../../shared/utils/command';
 import { NewsletterServiceProtocol } from "./newsletter.service.protocol";
 

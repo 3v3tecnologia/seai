@@ -5,7 +5,7 @@ import { UserNotFoundError } from "../core/errors/user-not-found-error";
 import { WrongPasswordError } from "../core/errors/wrong-password";
 import { Email } from "../core/model/email";
 import { UserTypes } from "../core/model/gov-user";
-import { IAuthRepository } from "../infra/repositories/protocol/auth.repository";
+import { IAuthRepository } from "../infra/repository/protocol/auth.repository";
 import { TokenProvider } from "../infra/token-provider";
 import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/auth";
 

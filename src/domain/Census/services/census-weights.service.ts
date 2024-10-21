@@ -1,7 +1,7 @@
 import { Either, left, right } from "../../../shared/Either";
 import { convertBasinsIDsToMask } from "../core/calc-basin-mask";
 import { CensusCultureWeights } from "../core/model/indicators-weights";
-import { IIndicatorsWeightsRepository } from "../repositories/protocol/weights-repository";
+import { IIndicatorsWeightsRepository } from "../infra/repository/protocol/weights-repository";
 import { ICensusWeightsService } from "./protocol/weights.service";
 
 export class CensusWeightsService implements ICensusWeightsService {

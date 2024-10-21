@@ -1,5 +1,5 @@
 import { HttpResponse } from "../../../shared/ports/http-response";
-import { UserRepositoryProtocol } from "../infra/repositories/protocol/gov-user-repository";
+import { UserRepositoryProtocol } from "../infra/repository/protocol/gov-user-repository";
 import { forbidden, ok, serverError, unauthorized } from "../../../shared/utils/http-responses";
 import { Middleware } from "../../../shared/middlewares/middleware";
 

@@ -1,10 +1,10 @@
 import { Either, left, right } from "../../../shared/Either";
 import { IOutputWithPagination, IPaginationInput } from "../../../shared/utils/pagination";
-import { UserCommandOperationProps } from "../../Logs/protocols/logger";
+import { UserCommandOperationProps } from "../../Logs/core/protocols/logger";
 import { FaqRepositoryProtocol } from "../infra/repository/protocol/faq-repository";
 import { FaqCategoriesData, FaqWithCategoriesData } from "../infra/repository/protocol/faqData";
-import { Category } from "../model/category";
-import { Faq } from "../model/faq";
+import { Category } from "../core/model/category";
+import { Faq } from "../core/model/faq";
 import { CreateFaqCategoryErrors } from "./errors/category-already-exists";
 import { FaqNotExistsError } from "./errors/faq-not-exists";
 import { QuestionAlreadyExistsError } from "./errors/question-exists";
