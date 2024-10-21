@@ -17,10 +17,11 @@ export class PgBossAdapter implements MQProviderProtocol {
       ...defaultOptions,
     };
 
-    await backgroundJobsDb
+    return await backgroundJobsDb
+      .withSchema("pgboss")
       .insert(data)
       .returning("*")
-      .into("pgboss.job");
+      .into("job");
 
   }
 }
