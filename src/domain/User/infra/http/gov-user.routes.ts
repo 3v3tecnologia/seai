@@ -7,6 +7,8 @@ import { GovernmentUserController } from "../../controllers/gov-user.controller"
 export const setupGovUserRoutes = (): Router => {
   const router = Router();
 
+  router.use("/sign-in", adaptHTTPHandler(GovernmentUserController.login));
+
   router.get(
     "/system/modules",
     authorization,
