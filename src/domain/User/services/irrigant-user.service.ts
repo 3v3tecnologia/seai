@@ -13,7 +13,8 @@ import { EmailAlreadyExists } from "../core/errors/email-already-exists";
 import { LoginAlreadyExists } from "../core/errors/login-aready-exists";
 import { UserNotFoundError } from "../core/errors/user-not-found-error";
 import {
-  UnmatchedPasswordError
+  UnmatchedPasswordError,
+  WrongPasswordError
 } from "../core/errors/wrong-password";
 import { IrrigationUser } from "../core/model/irrigation-user";
 import { IrrigationUserRepositoryProtocol } from "../infra/repository/protocol/irrigation-user.repository";
@@ -21,12 +22,15 @@ import { CreateIrrigationAccountDTO } from "./dto/user-account";
 import { IIrrigationUserService } from "./protocols/irrigant-user";
 import { IUserPreferencesServices } from "./protocols/user-settings";
 import { IRRIGANT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
+import { TokenProvider } from "../infra/token-provider";
+import { AuthServiceInput, AuthServiceOutput } from "./protocols/auth";
 
 
 export class IrrigationUserService implements IIrrigationUserService {
   constructor(
     private readonly userRepository: IrrigationUserRepositoryProtocol,
     private readonly encoder: Encoder,
+    private readonly tokenProvider: TokenProvider,
     private readonly queueProvider: MQProviderProtocol,
     private readonly userPreferencesServices: IUserPreferencesServices,
   ) { }
@@ -148,6 +152,46 @@ export class IrrigationUserService implements IIrrigationUserService {
 
 
     return right(`Um email para recuperação de senha será enviado em breve.`);
+  }
+
+  async login({
+    login,
+    password,
+  }: AuthServiceInput): Promise<
+    AuthServiceOutput
+  > {
+    const account = Email.validate(login) ? await this.userRepository.getByEmail(login, 'registered') : await this.userRepository.getByLogin(login, 'registered')
+
+    if (!account) {
+      return left(new UserNotFoundError());
+    }
+
+    if (account.status === "pending") {
+      return left(new InactivatedAccount());
+    }
+
+    const isMatch = await this.encoder.compare(
+      password,
+      account.password as string
+    );
+
+    if (isMatch === false) {
+      return left(new WrongPasswordError());
+    }
+
+    const userId = account.id as number;
+
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: userId,
+      },
+      "7d"
+    );
+
+    return right({
+      accessToken: token,
+      userName: account.name,
+    });
   }
 
   async resetPassword(params: {

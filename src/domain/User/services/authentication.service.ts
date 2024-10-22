@@ -1,58 +1,33 @@
-import { left, right } from "../../../shared/Either";
-import { Encoder } from "../../../shared/ports/encoder";
-import { InactivatedAccount } from "../core/errors/account-not-activated";
-import { UserNotFoundError } from "../core/errors/user-not-found-error";
-import { WrongPasswordError } from "../core/errors/wrong-password";
-import { Email } from "../core/model/email";
-import { UserTypes } from "../core/model/gov-user";
-import { IAuthRepository } from "../infra/repository/protocol/auth.repository";
-import { TokenProvider } from "../infra/token-provider";
+import { URL } from "url";
+import { GOVERNMENT_WEB_PAGE_BASE_URL, IRRIGANT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
 import { AuthServiceInput, AuthServiceOutput, IAuthService } from "./protocols/auth";
+import { IUserService } from "./protocols/gov-user";
+import { IIrrigationUserService } from "./protocols/irrigant-user";
 
 export class AuthService implements IAuthService {
   constructor(
-    private readonly authRepository: IAuthRepository,
-    private readonly tokenProvider: TokenProvider,
-    private readonly encoder: Encoder,
+    private readonly govUserService: IUserService,
+    private readonly irrigantUserService: IIrrigationUserService,
   ) { }
 
   async auth({
     login,
     password,
-    type
-  }: AuthServiceInput): Promise<AuthServiceOutput> {
+  }: AuthServiceInput, url: string): Promise<AuthServiceOutput> {
 
-    const account = Email.validate(login) ? await this.authRepository.getByEmail(login, type) : await this.authRepository.getByLogin(login, type)
+    const objectURL = new URL(url)
 
-    if (!account) {
-      return left(new UserNotFoundError());
+    if (objectURL.origin === new URL(IRRIGANT_WEB_PAGE_BASE_URL).origin) {
+      return this.irrigantUserService.login({
+        login,
+        password,
+      })
     }
 
-    if (account.status === "pending") {
-      return left(new InactivatedAccount());
-    }
-
-    const isMatch = await this.encoder.compare(
+    return this.govUserService.login({
+      login,
       password,
-      account.password as string
-    );
+    })
 
-    if (isMatch === false) {
-      return left(new WrongPasswordError());
-    }
-
-    const userId = account.id as number;
-
-    const token = await this.tokenProvider.sign(
-      {
-        accountId: userId,
-      },
-      "7d"
-    );
-
-    return right({
-      accessToken: token,
-      userName: account.name,
-    });
   }
 }

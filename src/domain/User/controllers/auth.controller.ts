@@ -12,21 +12,19 @@ export class AuthenticationController {
   static async signIn(request: {
     login: string;
     password: string;
-    type?: string;
-  }): Promise<HttpResponse> {
+  }, url: string): Promise<HttpResponse> {
     try {
-      const { login, password, type } = request;
+      const { login, password } = request;
 
       const { error } = await loginValidator.validate({
         login,
         password,
-        type
       });
 
       if (error) {
         return badRequest(error);
       }
-      const result = await authService.auth(request);
+      const result = await authService.auth(request, url);
 
       if (result.isLeft()) {
         return forbidden(result.value);

@@ -11,6 +11,7 @@ import { WrongPasswordError } from "../../core/errors/wrong-password";
 import { UserType, UserTypes } from "../../core/model/gov-user";
 import { SystemModulesProps } from "../../core/model/user-modules-access";
 import { UserAccountProps } from "../../infra/repository/protocol/gov-user-repository";
+import { AuthServiceInput, AuthServiceOutput } from "./auth";
 
 
 export interface IUserService {
@@ -22,6 +23,12 @@ export interface IUserService {
     },
     author: number
   ): Promise<Either<UserAlreadyExistsError | Error, string>>;
+  login({
+    login,
+    password,
+  }: AuthServiceInput): Promise<
+    AuthServiceOutput
+  >
   completeRegister(user: {
     code: string;
     name: string;
