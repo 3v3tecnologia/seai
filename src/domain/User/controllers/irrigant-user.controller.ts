@@ -8,6 +8,7 @@ import {
 } from "../../../shared/utils/http-responses";
 import { irrigantUserAccountService } from "../services/factories/irrigation-user";
 import { IrrigantSignUpRequest } from "./requests/irrigant";
+import { loginValidator } from "./schema/auth";
 import { createUserValidator } from "./schema/irrigant";
 
 export class IrrigantUserController {
@@ -72,6 +73,34 @@ export class IrrigantUserController {
       return serverError(error as Error);
     }
   }
+
+  static async login(request: {
+    login: string;
+    password: string;
+  }): Promise<HttpResponse> {
+    try {
+      const { login, password } = request;
+
+      const { error } = await loginValidator.validate({
+        login,
+        password,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+      const result = await irrigantUserAccountService.login(request);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+      return ok(result.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+
 
   static async resetPassword(request: {
     code: string;
