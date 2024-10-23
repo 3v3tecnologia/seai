@@ -8,6 +8,8 @@ export const setupIrrigationUser = (): Router => {
 
   router.post("/", adaptHTTPHandler(IrrigantUserController.create));
 
+  router.use("/sign-in", adaptHTTPHandler(IrrigantUserController.login));
+
   router.get(
     "/",
     authorization,

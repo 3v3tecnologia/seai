@@ -1,5 +1,6 @@
 import { Either } from "../../../../shared/Either";
 import { CreateIrrigationAccountDTO } from "../dto/user-account";
+import { AuthServiceInput, AuthServiceOutput } from "./auth";
 
 
 export interface IIrrigationUserService {
@@ -7,6 +8,12 @@ export interface IIrrigationUserService {
     dto: CreateIrrigationAccountDTO.Input
   ): Promise<CreateIrrigationAccountDTO.Output>;
   completeRegister(code: string): Promise<Either<Error, void>>;
+  login({
+    login,
+    password,
+  }: AuthServiceInput): Promise<
+    AuthServiceOutput
+  >
   resetPassword(params: {
     code: string;
     password: string;

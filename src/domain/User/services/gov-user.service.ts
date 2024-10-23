@@ -31,12 +31,15 @@ import {
 } from "../infra/repository/protocol/gov-user-repository";
 import { IUserService } from "./protocols/gov-user";
 import { GOVERNMENT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
+import { AuthServiceInput, AuthServiceOutput } from "./protocols/auth";
+import { TokenProvider } from "../infra/token-provider";
 
 
 export class GovernmentUserService implements IUserService {
   constructor(
     private readonly userRepository: UserRepositoryProtocol,
     private readonly encoder: Encoder,
+    private readonly tokenProvider: TokenProvider,
     private readonly queueProvider: MQProviderProtocol,
   ) { }
 
@@ -211,6 +214,47 @@ export class GovernmentUserService implements IUserService {
     });
 
     return right(`Um email para rescuperação de senha será enviado em breve.`);
+  }
+
+  async login({
+    login,
+    password,
+  }: AuthServiceInput): Promise<
+    AuthServiceOutput
+  > {
+    const account = Email.validate(login) ? await this.userRepository.getByEmail(login, 'registered') : await this.userRepository.getByLogin(login, 'registered')
+
+
+    if (!account) {
+      return left(new UserNotFoundError());
+    }
+
+    if (account.status === "pending") {
+      return left(new InactivatedAccount());
+    }
+
+    const isMatch = await this.encoder.compare(
+      password,
+      account.password as string
+    );
+
+    if (isMatch === false) {
+      return left(new WrongPasswordError());
+    }
+
+    const userId = account.id as number;
+
+    const token = await this.tokenProvider.sign(
+      {
+        accountId: userId,
+      },
+      "7d"
+    );
+
+    return right({
+      accessToken: token,
+      userName: account.name,
+    });
   }
 
   async resetPassword(params: {

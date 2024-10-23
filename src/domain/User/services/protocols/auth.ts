@@ -24,5 +24,5 @@ export type AuthServiceOutput = Either<
 >
 
 export interface IAuthService {
-  auth(user: AuthServiceInput): Promise<AuthServiceOutput>
+  auth(user: AuthServiceInput, url: string): Promise<AuthServiceOutput>
 }

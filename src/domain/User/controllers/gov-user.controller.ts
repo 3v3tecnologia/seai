@@ -21,6 +21,7 @@ import {
   SystemModulesPermissions,
 } from "../core/model/user-modules-access";
 import { govUserService } from "../services/factories/gov-user";
+import { loginValidator } from "./schema/auth";
 import { createGovUserValidator, deleteGovUserValidator, updateGovUserValidator } from "./schema/gov-user";
 
 
@@ -106,6 +107,33 @@ export class GovernmentUserController {
       }
 
       return created(updateOrError.value);
+    } catch (error) {
+      console.error(error);
+      return serverError(error as Error);
+    }
+  }
+
+  static async login(request: {
+    login: string;
+    password: string;
+  }): Promise<HttpResponse> {
+    try {
+      const { login, password } = request;
+
+      const { error } = await loginValidator.validate({
+        login,
+        password,
+      });
+
+      if (error) {
+        return badRequest(error);
+      }
+      const result = await govUserService.login(request);
+
+      if (result.isLeft()) {
+        return forbidden(result.value);
+      }
+      return ok(result.value);
     } catch (error) {
       console.error(error);
       return serverError(error as Error);
