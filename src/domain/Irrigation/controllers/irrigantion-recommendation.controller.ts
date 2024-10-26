@@ -46,8 +46,6 @@ export class IrrigationRecommendationControllers {
         return badRequest(successOrError.value);
       }
 
-      //   await this.userLogs.log(request.accountId, this.useCase);
-
       return ok(successOrError.value);
     } catch (error) {
       return serverError(error as Error);
@@ -83,19 +81,4 @@ export class IrrigationRecommendationControllers {
       return serverError(error as Error);
     }
   }
-
-  // static async calcUsersRecommendations(): Promise<HttpResponse> {
-  //   try {
-  //     const dataSource = UserRecommendationsServices.calcUsersRecommendations();
-
-  //     if (successOrError.isLeft()) {
-  //       return badRequest(successOrError.value);
-  //     }
-
-  //     return ok(successOrError.value);
-  //   } catch (error) {
-  //     console.log(error);
-  //     return badRequest(error as Error);
-  //   }
-  // }
 }

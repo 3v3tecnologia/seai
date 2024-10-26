@@ -2,7 +2,7 @@ import {
   IrrigationSystemMeasurementsTypes,
   IrrigationSystemTypes,
 } from "../../core/model/irrigation-system";
-import { ICalcIrrigationRecommendationDTO } from "../../services/dto/irrigation";
+import { ICalcIrrigationRecommendationDTO } from "../../services/dto/irrigation-recommendation";
 
 type UserId = { accountId: number };
 type Id = { id: number };

@@ -1,76 +1,16 @@
-import { governmentDb } from "../../../../shared/infra/database/postgres/connection/knexfile";
-import { formatDateToYYYYMMDD } from "../../../../shared/utils/date";
-import { IrrigationSystemTypes } from "../../core/model/irrigation-system";
-import { IIrrigationRepository, IrrigationCropsData, IUserRecordedRecommendationData } from "./protocols/irrigation.repository";
+import { governmentDb } from "../../../shared/infra/database/postgres/connection/knexfile";
+import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
+import { mapUserIrrigationPreferencesToDomain } from "../core/mapper/user-irrigation-preferences";
+import { UserIrrigationPreferences } from "../services/dto/irrigation-recommendation";
+import { IUserIrrigationPreferencesRepository, DbUserIrrigationPreferences } from "./protocols/irrigation.repository";
 
-
-function mapIrrigationCropsToDomain(row: any): IUserRecordedRecommendationData {
-  const {
-    id,
-    name,
-    planting_date,
-    flow,
-    system_type,
-    area,
-    effective_area,
-    quantity,
-    sprinkler_precipitation,
-    length,
-    spacing,
-    created_at,
-    updated_at,
-    crop_id,
-    crop_name,
-    crop_deleted_at,
-    station_id,
-    ETo,
-    pluviometer_id,
-    pluviometry,
-    time
-  } = row;
-
-  const irrigation_recommendation = {
-    Id: Number(id),
-    Name: name,
-    CropId: null,
-    Crop: null,
-    SystemType: system_type as IrrigationSystemTypes,
-    PlantingDate: planting_date,
-    StationId: Number(station_id),
-    ETo: ETo ? Number(ETo) : null,
-    PluviometerId: Number(pluviometer_id),
-    Pluviometry: pluviometry ? Number(pluviometry) : null,
-    Flow: flow ? Number(flow) : null,
-    Area: area ? Number(area) : null,
-    Time: time ? Number(time) : null,
-    EffectiveArea: effective_area ? Number(effective_area) : null,
-    Quantity: quantity ? Number(quantity) : null,
-    System_Precipitation: sprinkler_precipitation
-      ? Number(sprinkler_precipitation)
-      : null,
-    Length: length ? Number(length) : null,
-    Spacing: spacing ? Number(spacing) : null,
-    CreatedAt: created_at,
-    UpdatedAt: updated_at,
-  }
-
-  if (crop_deleted_at === null) {
-    Object.assign(irrigation_recommendation, {
-      CropId: Number(crop_id),
-      Crop: crop_name,
-    })
-  }
-
-  return irrigation_recommendation
-}
-
-export class IrrigationCropsRepository implements IIrrigationRepository {
-  async save(params: IrrigationCropsData): Promise<number | null> {
+export class UserIrrigationPreferencesRepository implements IUserIrrigationPreferencesRepository {
+  async save(params: DbUserIrrigationPreferences): Promise<number | null> {
     const {
       area,
       name,
       crop_id,
-      effective_area,
+      // effective_area,
       flow,
       length,
       planting_date,
@@ -85,7 +25,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       area,
       name,
       crop_id,
-      effective_area,
+      // effective_area,
       flow,
       length,
       planting_date: formatDateToYYYYMMDD(planting_date),
@@ -153,13 +93,13 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       })
       .from("Irrigation_Crops");
   }
-  async update(params: IrrigationCropsData): Promise<void> {
+  async update(params: DbUserIrrigationPreferences): Promise<void> {
     const {
       id,
       area,
       name,
       crop_id,
-      effective_area,
+      // effective_area,
       flow,
       length,
       planting_date,
@@ -174,7 +114,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       area,
       name,
       crop_id,
-      effective_area,
+      // effective_area,
       flow,
       length,
       planting_date: formatDateToYYYYMMDD(planting_date),
@@ -201,9 +141,10 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       .from("Irrigation_Crops");
 
   }
+  // Get user irrigation preferences
   async getByUserId(
     user_id: number
-  ): Promise<Array<IUserRecordedRecommendationData> | null> {
+  ): Promise<Array<UserIrrigationPreferences> | null> {
     const dbResponse = await governmentDb.raw(
       `
             SELECT
@@ -279,7 +220,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       return null;
     }
 
-    return data.map(mapIrrigationCropsToDomain);
+    return data.map(mapUserIrrigationPreferencesToDomain);
   }
 
   async getUserIrrigationByName(
@@ -381,7 +322,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
   async getById(
     id: number,
     user_id: number
-  ): Promise<IUserRecordedRecommendationData | null> {
+  ): Promise<UserIrrigationPreferences | null> {
     // Join with MeteorologicalEquipments
     // Join with Crops
     const dbResponse = await governmentDb.raw(
@@ -459,7 +400,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
       return null;
     }
 
-    return mapIrrigationCropsToDomain(data[0]);
+    return mapUserIrrigationPreferencesToDomain(data[0]);
   }
 
   async getUsersWithIrrigationReportsEnabled(): Promise<Array<{
@@ -470,7 +411,7 @@ export class IrrigationCropsRepository implements IIrrigationRepository {
     const dbResponse = await governmentDb.raw(`
         SELECT u."Id",u."Name" ,u."Email"  FROM (SELECT un.user_id FROM management."User_Notifications" un
         WHERE un.service_id = (SELECT ns.id  FROM management."Notification_Services" ns
-        WHERE ns.service = 'irrigation') AND enabled = true) AS u_with_irrig_notif
+        WHERE ns.service_id = 'irrigation') AND enabled = true) AS u_with_irrig_notif
         INNER JOIN users."User" u ON u."Id"= u_with_irrig_notif.user_id
         WHERE u."Type" = 'irrigant' AND u."Status" = 'registered'`);
 

@@ -1,11 +1,11 @@
 import { Request, Response, Router } from "express";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
-import { authorization } from "../../../../server/http/http-middlewares";
-import { IrrigationRecommendationControllers } from "../../controllers/irrigantion-recommendation.controller";
-import { UserIrrigationControllers } from "../../controllers/user-irrigation.controller";
-import { irrigationRecommendation } from "../../services/factories/irrigation-suggestion";
+import { adaptHTTPHandler } from "../../../server/http/adapters/express-route.adapter";
+import { authorization } from "../../../server/http/http-middlewares";
+import { IrrigationRecommendationControllers } from "../controllers/irrigantion-recommendation.controller";
+import { UserIrrigationControllers } from "../controllers/user-irrigation.controller";
+import { irrigationRecommendation } from "../services/factories/irrigation-suggestion";
 
 export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
 
@@ -64,6 +64,7 @@ export const setupIrrigationRecommendationV2Routes = (router: Router): void => {
           objectMode: true,
           encoding: "utf8",
           transform(chunk, enc, cb) {
+            console.log("chunk ", chunk);
 
             const data = {
               Name: chunk.Name,

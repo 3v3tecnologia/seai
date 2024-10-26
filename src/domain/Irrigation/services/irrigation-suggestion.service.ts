@@ -6,30 +6,29 @@ import { ManagementCropErrors } from "../../Crop/core/crop-errors";
 import { IrrigantErrors } from "../core/errors/irrigant.error";
 import { calcIrrigationRecommendation, IrrigationRecommendationData } from "../core/model/calc-recommendation";
 
-import { IEquipmentsMeasurementsRepository } from "../../Equipments/infra/repository/protocols/measurements";
+import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
+import { IEquipmentsMeasurementsRepository } from "../../Equipments/repositories/protocols/measurements";
 import {
-  IrrigationSystemEntity,
+  IrrigationSystem,
   makeIrrigationSystem,
 } from "../core/model/irrigation-system";
-import { UserIrrigationRecommendation } from "../core/model/user-recommendations";
-import { IIrrigationRepository } from "../infra/repository/protocols/irrigation.repository";
+import { IrrigationRecommendationReports } from "../core/model/irrigation-reports";
+import { IUserIrrigationPreferencesRepository } from "../repositories/protocols/irrigation.repository";
 import {
-  CalcIrrigationRecommendationDTO,
-  ICalcIrrigationRecommendationDTO,
-} from "./dto/irrigation";
+  UserIrrigationPreferences,
+} from "./dto/irrigation-recommendation";
 import { IIrrigationSuggestionServices } from "./protocols/irrigation-suggestion";
-import { IManagementCropsRepository } from "../../Crop/infra/repository/protocol/management-crop.repository";
 
 export class IrrigationCropsSuggestion
   implements IIrrigationSuggestionServices {
   constructor(
     private equipmentsMeasurementsRepository: IEquipmentsMeasurementsRepository,
     private cropsRepository: IManagementCropsRepository,
-    private irrigationRepository: IIrrigationRepository
+    private irrigationRepository: IUserIrrigationPreferencesRepository
   ) { }
 
 
-  private async getPrecipitation(command: ICalcIrrigationRecommendationDTO): Promise<Either<Error, number>> {
+  private async getPrecipitation(command: UserIrrigationPreferences): Promise<Either<Error, number>> {
     if (Reflect.has(command, "Pluviometer") == false) {
       return left(new Error("É necessário informar medição para equipamento Pluviômetro"));
     }
@@ -59,7 +58,7 @@ export class IrrigationCropsSuggestion
     );
   }
 
-  private async getEt0(command: ICalcIrrigationRecommendationDTO): Promise<Either<Error, number>> {
+  private async getEt0(command: UserIrrigationPreferences): Promise<Either<Error, number>> {
 
     if (Reflect.has(command.Station, "Et0")) {
       if (command.Station.Et0 === null) {
@@ -87,7 +86,7 @@ export class IrrigationCropsSuggestion
   }
 
   async calculate(
-    command: ICalcIrrigationRecommendationDTO
+    command: UserIrrigationPreferences
   ): Promise<Either<Error, any | null>> {
 
     const EtoOrError = await this.getEt0(command)
@@ -122,8 +121,7 @@ export class IrrigationCropsSuggestion
       return left(irrigationSystemOrError.value);
     }
 
-    const irrigationSystem =
-      irrigationSystemOrError.value as IrrigationSystemEntity;
+    const irrigationSystem = irrigationSystemOrError.value as IrrigationSystem
 
 
     const recommendationOrError = calcIrrigationRecommendation({
@@ -157,7 +155,7 @@ export class IrrigationCropsSuggestion
     }
     // Verificar para trazer o KC da cultura na própria query de listar irrigação
     const resultOrError = await this.calculate(
-      new CalcIrrigationRecommendationDTO(userIrrigation)
+      userIrrigation
     );
 
     if (resultOrError.isLeft()) {
@@ -179,7 +177,7 @@ export class IrrigationCropsSuggestion
   }
 
   async *calPerUsers(): AsyncGenerator<
-    UserIrrigationRecommendation,
+    IrrigationRecommendationReports,
     null | undefined,
     unknown
   > {
@@ -196,8 +194,8 @@ export class IrrigationCropsSuggestion
 
       const irrigations = await this.irrigationRepository.getByUserId(user.Id);
 
-      const userIrrigationRecommendation: UserIrrigationRecommendation =
-        new UserIrrigationRecommendation({
+      const userIrrigationRecommendation =
+        new IrrigationRecommendationReports({
           Email: user.Email,
           Name: user.Name,
         });
@@ -226,7 +224,7 @@ export class IrrigationCropsSuggestion
       for (const irrigation of irrigations) {
         // Verificar para trazer o KC da cultura na própria query de listar irrigação
         const resultOrError = await this.calculate(
-          new CalcIrrigationRecommendationDTO(irrigation)
+          irrigation
         );
 
         // O que fazer se der erro no cálculo da recomendação?
@@ -235,7 +233,7 @@ export class IrrigationCropsSuggestion
 
           userIrrigationRecommendation.addIrrigation(
             {
-              Id: irrigation.Id,
+              Id: irrigation.Id as number,
               Name: irrigation.Name,
               Crop: {
                 Id: irrigation.CropId,
@@ -256,8 +254,8 @@ export class IrrigationCropsSuggestion
                 Et0: null,
                 Precipitation: null,
               },
-              Created_at: irrigation.CreatedAt,
-              Updated_at: irrigation.UpdatedAt,
+              Created_at: irrigation.CreatedAt as string,
+              Updated_at: irrigation.UpdatedAt as string,
             }
           );
 
@@ -268,7 +266,7 @@ export class IrrigationCropsSuggestion
 
         userIrrigationRecommendation.addIrrigation(
           {
-            Id: irrigation.Id,
+            Id: irrigation.Id as number,
             Name: irrigation.Name,
             Crop: {
               Id: irrigation.CropId as number,
@@ -288,8 +286,8 @@ export class IrrigationCropsSuggestion
             System: {
               IrrigationEfficiency: suggestion.IrrigationEfficiency,
             },
-            Created_at: irrigation.CreatedAt,
-            Updated_at: irrigation.UpdatedAt,
+            Created_at: irrigation.CreatedAt as string,
+            Updated_at: irrigation.UpdatedAt as string,
           }
         );
       }

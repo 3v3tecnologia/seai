@@ -3,15 +3,15 @@ import { decimalToHoursAndMinutes } from "../../../../shared/utils/date";
 import { DecimalFormatter } from "../../../../shared/utils/decimal-formatter";
 import { getCropDate, ManagementCrop } from "../../../Crop/core/model/crop";
 import { ManagementCropCycle } from "../../../Crop/core/model/crop-cycles";
-import { IrrigationSystemEntity } from "./irrigation-system";
-import { Pivot } from "./irrigation-system-measurements";
+import { IrrigationSystem } from "./irrigation-system";
+import { Pivot } from "./irrigation-system";
 
 export type CalcIrrigationInput = {
   Et0: number;
   precipitation: number;
   crop: ManagementCrop;
   plantingDate: string;
-  irrigationSystem: IrrigationSystemEntity;
+  irrigationSystem: IrrigationSystem;
 };
 
 function calcEtc(Eto: number, kc: number) {
@@ -23,10 +23,7 @@ function calcIrrigationTime(repositionBlade: number, applicationRate: number) {
 }
 
 function calcKc(cropDay: number, cropCycle: ManagementCropCycle) {
-  return DecimalFormatter.truncate(
-    (cropDay - cropCycle.Start) * cropCycle.Increment + cropCycle.KC,
-    2
-  )
+  return (cropDay - cropCycle.Start) * cropCycle.Increment + cropCycle.KC
 }
 
 function calcRepositionBlade(
@@ -90,7 +87,7 @@ export function calcIrrigationRecommendation({ Et0, crop, irrigationSystem, plan
   const repositionBlade = calcRepositionBlade(
     Etc,
     precipitation,
-    irrigationSystem.efficiency
+    irrigationSystem.Efficiency
   );
 
   Object.assign(result, {
@@ -101,31 +98,37 @@ export function calcIrrigationRecommendation({ Et0, crop, irrigationSystem, plan
     RepositionBlade: repositionBlade,
     Stage: cropCycle?.Title,
     CropDays: cropDate,
-    IrrigationEfficiency: irrigationSystem.efficiency,
+    IrrigationEfficiency: irrigationSystem.Efficiency,
     PlantingDate: plantingDate
   })
 
-  if (irrigationSystem.type === 'Pivô Central') {
-    const pivot = irrigationSystem.measurements as Pivot
 
-    pivot.setVelocity(repositionBlade)
+  if (irrigationSystem instanceof Pivot) {
+    // O pivô só dá uma volta por dia, então, é interessante verificar se o tempo é superior
+    //a 24 horas, e alertar o usuário(caso de uma velocidade de operação muito baixa)
+    if (irrigationSystem.Time > 24) {
+      return left(new Error("O pivô só dá uma volta por dia,é necessário verificar se o tempo é superior a 24 horas"));
+    }
 
-    const operationTime = pivot.calOperatingTime()
+    irrigationSystem.setVelocity(repositionBlade)
+
+    const operationTime = irrigationSystem.calOperatingTime()
+
+    //Se a lâmina necessária for menor do que a lâmina aplicada em uma volta do pivô,
+    //sugerir 100 % de velocidade
+    const vel = repositionBlade < irrigationSystem.Area ? 1 : irrigationSystem.Velocity
 
     Object.assign(result, {
-      Velocity: pivot.Velocity,
+      Velocity: vel,
       IrrigationTime: operationTime,
     })
 
     return right(result as IrrigationRecommendationData)
   }
-  /**
-   *  Pivô Central: Obtenção do número de voltas necessárias para a reposição
-   *  Em outros tipos de sistemas a saída será em horas
-   */
+
   const irrigationTime = calcIrrigationTime(
     repositionBlade,
-    irrigationSystem.applicationRate
+    irrigationSystem.ApplicationRate
   )
 
   Object.assign(result, {
