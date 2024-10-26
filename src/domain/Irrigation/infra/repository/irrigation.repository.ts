@@ -1,7 +1,8 @@
-import { governmentDb } from "../../../shared/infra/database/postgres/connection/knexfile";
-import { formatDateToYYYYMMDD } from "../../../shared/utils/date";
-import { mapUserIrrigationPreferencesToDomain } from "../core/mapper/user-irrigation-preferences";
-import { UserIrrigationPreferences } from "../services/dto/irrigation-recommendation";
+
+import { governmentDb } from "../../../../shared/infra/database/postgres/connection/knexfile";
+import { formatDateToYYYYMMDD } from "../../../../shared/utils/date";
+import { mapUserIrrigationPreferencesToDomain } from "../../core/mapper/user-irrigation-preferences";
+import { UserIrrigationPreferences } from "../../services/dto/irrigation-recommendation";
 import { IUserIrrigationPreferencesRepository, DbUserIrrigationPreferences } from "./protocols/irrigation.repository";
 
 export class UserIrrigationPreferencesRepository implements IUserIrrigationPreferencesRepository {

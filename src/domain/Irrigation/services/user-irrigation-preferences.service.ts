@@ -1,13 +1,13 @@
 import { Either, left, right } from "../../../shared/Either";
 import { ManagementCropErrors } from "../../Crop/core/crop-errors";
-import { IManagementCropsRepository } from "../../Crop/repositories/protocol/management-crop.repository";
+import { IManagementCropsRepository } from "../../Crop/infra/repository/protocol/management-crop.repository";
 import {
   IrrigationSystemProps,
   IrrigationSystemTypes,
   makeIrrigationSystem
 } from "../core/model/irrigation-system";
+import { IUserIrrigationPreferencesRepository } from "../infra/repository/protocols/irrigation.repository";
 
-import { IUserIrrigationPreferencesRepository } from "../repositories/protocols/irrigation.repository";
 
 import { SaveUserIrrigationPreferencesInput, UpdateUserIrrigationPreferencesInput } from "./dto/user-irrigation";
 import { IUserIrrigationPreferencesServices } from "./protocols/user-irrigation-preferences";

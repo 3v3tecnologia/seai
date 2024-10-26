@@ -1,5 +1,6 @@
-import { IrrigationSystemTypes } from "../../core/model/irrigation-system";
-import { UserIrrigationPreferences } from "../../services/dto/irrigation-recommendation";
+import { IrrigationSystemTypes } from "../../../core/model/irrigation-system";
+import { UserIrrigationPreferences } from "../../../services/dto/irrigation-recommendation";
+
 
 export type DbUserIrrigationPreferences = {
   id?: number;
