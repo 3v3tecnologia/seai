@@ -220,7 +220,6 @@ export class UserIrrigationPreferencesRepository implements IUserIrrigationPrefe
     if (!data.length) {
       return null;
     }
-
     return data.map(mapUserIrrigationPreferencesToDomain);
   }
 
