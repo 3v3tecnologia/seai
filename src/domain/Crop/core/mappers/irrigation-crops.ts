@@ -1,10 +1,9 @@
 import { IrrigationSystemTypes } from "../../../Irrigation/core/model/irrigation-system";
-import { IUserRecordedRecommendationData } from "../../../Irrigation/infra/repository/protocols/irrigation.repository";
 
 
 export function mapIrrigationCropsToDomain(
   row: any
-): IUserRecordedRecommendationData {
+): any {
   const {
     id,
     planting_date,

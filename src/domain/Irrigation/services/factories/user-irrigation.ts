@@ -1,5 +1,5 @@
 import { ManagementCropRepository } from "../../../Crop/infra/repository/crop.repository";
-import { IrrigationCropsRepository } from "../../infra/repository/irrigation.repository";
-import { UserIrrigationCropsServices } from "../user-irrigation.service";
+import { UserIrrigationPreferencesRepository } from "../../infra/repository/irrigation.repository";
+import { UserIrrigationPreferencesServices } from "../user-irrigation-preferences.service";
 
-export const userIrrigationService = new UserIrrigationCropsServices(new IrrigationCropsRepository(), new ManagementCropRepository())
+export const userIrrigationService = new UserIrrigationPreferencesServices(new UserIrrigationPreferencesRepository(), new ManagementCropRepository())

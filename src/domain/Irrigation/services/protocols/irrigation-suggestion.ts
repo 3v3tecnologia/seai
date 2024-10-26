@@ -1,14 +1,14 @@
 import { Either } from "../../../../shared/Either";
-import { UserIrrigationRecommendation } from "../../core/model/user-recommendations";
-import { ICalcIrrigationRecommendationDTO } from "../dto/irrigation";
+import { IrrigationRecommendationReports } from "../../core/model/irrigation-reports";
+import { UserIrrigationPreferences } from "../dto/irrigation-recommendation";
 
 export interface IIrrigationSuggestionServices {
   calculate(
-    command: ICalcIrrigationRecommendationDTO
+    command: UserIrrigationPreferences
   ): Promise<Either<Error, any | null>>;
   calcByIrrigationId(id: number, user_id: number): Promise<Either<Error, any>>;
   calPerUsers(): AsyncGenerator<
-    UserIrrigationRecommendation,
+    IrrigationRecommendationReports,
     null | undefined,
     unknown
   >;

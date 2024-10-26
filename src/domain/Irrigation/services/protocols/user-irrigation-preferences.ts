@@ -1,15 +1,13 @@
 import { Either } from "../../../../shared/Either";
-import {
-  ISaveIrrigationRecommendationDTO,
-  IUpdateIrrigationRecommendationDTO,
-} from "../dto/irrigation";
+import { SaveUserIrrigationPreferencesInput, UpdateUserIrrigationPreferencesInput } from "../dto/user-irrigation";
 
-export interface IUserIrrigationCropsServices {
+
+export interface IUserIrrigationPreferencesServices {
   saveIrrigationCrops(
-    dto: ISaveIrrigationRecommendationDTO
+    dto: SaveUserIrrigationPreferencesInput
   ): Promise<Either<Error, number>>;
   updateIrrigationCropsById(
-    dto: IUpdateIrrigationRecommendationDTO
+    dto: UpdateUserIrrigationPreferencesInput
   ): Promise<Either<Error, string>>;
   deleteIrrigationCropsById(
     id: number,

@@ -1,8 +1,5 @@
-import {
-  IrrigationSystemMeasurementsTypes,
-  IrrigationSystemTypes,
-} from "../../core/model/irrigation-system";
-import { ICalcIrrigationRecommendationDTO } from "../../services/dto/irrigation";
+import { IrrigationSystemTypes } from "../../core/model/irrigation-system";
+import { IrrigationSystem } from './../../core/model/irrigation-system';
 
 type UserId = { accountId: number };
 type Id = { id: number };
@@ -22,7 +19,7 @@ export type SaveIrrigationCropsRequest = {
   IrrigationEfficiency: number;
   System: {
     Type: IrrigationSystemTypes;
-    Measurements: IrrigationSystemMeasurementsTypes;
+    Measurements: IrrigationSystem;
   };
 } & UserId;
 export type UpdateIrrigationCropsRequest = {
@@ -32,9 +29,9 @@ export type UpdateIrrigationCropsRequest = {
   IrrigationEfficiency: number;
   System: {
     Type: IrrigationSystemTypes;
-    Measurements: IrrigationSystemMeasurementsTypes;
+    Measurements: IrrigationSystem;
   };
 } & UserId &
   Id;
 export type calcIrrigationRecommendationRequest =
-  ICalcIrrigationRecommendationDTO;
+  any;

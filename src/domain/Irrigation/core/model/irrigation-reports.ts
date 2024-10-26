@@ -1,5 +1,5 @@
 
-export type IrrigationCrop = {
+type CropMeasurements = {
   Id: number | null;
   Name: string | null;
   CropDays: number | null;
@@ -21,27 +21,27 @@ type IrrigationSystem = {
   IrrigationEfficiency: number | null;
 };
 
-export type IrrigationRecommendationProps = {
+export type RecommendationReportsProps = {
   Id: number;
   Name: string;
-  Crop: IrrigationCrop;
+  Crop: CropMeasurements;
   System: IrrigationSystem;
   Equipments: Equipments;
   Created_at: string;
   Updated_at?: string | null;
 };
 
-export class IrrigationRecommendation implements IrrigationRecommendationProps {
+export class IrrigationRecommendation implements RecommendationReportsProps {
   readonly Id: number;
   readonly Name: string;
-  readonly Crop: IrrigationCrop;
+  readonly Crop: CropMeasurements;
   readonly System: IrrigationSystem;
   readonly Equipments: Equipments;
   readonly Created_at: string;
   readonly Updated_at?: string | null;
   // readonly Equipments: Equipments;
 
-  constructor(props: IrrigationRecommendationProps) {
+  constructor(props: RecommendationReportsProps) {
     this.Id = props.Id;
     this.Name = props.Name;
     this.Crop = props.Crop;
@@ -58,7 +58,7 @@ export type UserIrrigationRecommendationProps = {
   Irrigation?: Array<IrrigationRecommendation>;
 };
 
-export class UserIrrigationRecommendation {
+export class IrrigationRecommendationReports {
   readonly Name: string;
   readonly Email: string;
   private _Notification?: string;

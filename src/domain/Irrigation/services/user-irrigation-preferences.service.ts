@@ -2,25 +2,22 @@ import { Either, left, right } from "../../../shared/Either";
 import { ManagementCropErrors } from "../../Crop/core/crop-errors";
 import { IManagementCropsRepository } from "../../Crop/infra/repository/protocol/management-crop.repository";
 import {
+  IrrigationSystemProps,
   IrrigationSystemTypes,
-  makeSystemIrrigationMeasurements,
+  makeIrrigationSystem
 } from "../core/model/irrigation-system";
+import { IUserIrrigationPreferencesRepository } from "../infra/repository/protocols/irrigation.repository";
 
-import { IIrrigationSystemMeasurementsEntity } from "../core/model/irrigation-system-measurements";
-import { IIrrigationRepository } from "../infra/repository/protocols/irrigation.repository";
-import {
-  CalcIrrigationRecommendationDTO,
-  ISaveIrrigationRecommendationDTO,
-  IUpdateIrrigationRecommendationDTO,
-} from "./dto/irrigation";
-import { IUserIrrigationCropsServices } from "./protocols/user-irrigation";
 
-export class UserIrrigationCropsServices
-  implements IUserIrrigationCropsServices {
-  constructor(private irrigationCropsRepository: IIrrigationRepository, private cropsRepository: IManagementCropsRepository) { }
+import { SaveUserIrrigationPreferencesInput, UpdateUserIrrigationPreferencesInput } from "./dto/user-irrigation";
+import { IUserIrrigationPreferencesServices } from "./protocols/user-irrigation-preferences";
+
+export class UserIrrigationPreferencesServices
+  implements IUserIrrigationPreferencesServices {
+  constructor(private irrigationCropsRepository: IUserIrrigationPreferencesRepository, private cropsRepository: IManagementCropsRepository) { }
 
   async saveIrrigationCrops(
-    dto: ISaveIrrigationRecommendationDTO
+    dto: SaveUserIrrigationPreferencesInput
   ): Promise<Either<Error, number>> {
     const cropAlreadyExists = await this.cropsRepository.idExists(dto.CropId)
 
@@ -41,7 +38,7 @@ export class UserIrrigationCropsServices
     }
 
     // Save Irrigation Crops
-    const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
+    const systemMeasurementsOrError = makeIrrigationSystem(
       dto.System
     );
 
@@ -49,9 +46,8 @@ export class UserIrrigationCropsServices
       return left(systemMeasurementsOrError.value);
     }
 
-    const systemMeasurements = (
-      systemMeasurementsOrError.value as IIrrigationSystemMeasurementsEntity
-    ).getAllMeasurement();
+    const systemMeasurements = (systemMeasurementsOrError.value as any) as IrrigationSystemProps
+
 
     const id = await this.irrigationCropsRepository.save({
       user_id: dto.UserId,
@@ -60,7 +56,7 @@ export class UserIrrigationCropsServices
       planting_date: dto.PlantingDate,
       system_type: dto.System.Type as IrrigationSystemTypes,
       area: systemMeasurements?.Area,
-      effective_area: systemMeasurements?.EfectiveArea,
+      // effective_area: systemMeasurements?.EfectiveArea || null,
       time: systemMeasurements?.Time,
       flow: systemMeasurements?.Flow,
       length: systemMeasurements?.Length,
@@ -77,7 +73,7 @@ export class UserIrrigationCropsServices
   }
 
   async updateIrrigationCropsById(
-    dto: IUpdateIrrigationRecommendationDTO
+    dto: UpdateUserIrrigationPreferencesInput
   ): Promise<Either<Error, string>> {
     const cropAlreadyExists = await this.cropsRepository.idExists(dto.CropId)
 
@@ -97,7 +93,7 @@ export class UserIrrigationCropsServices
 
 
     // Save Irrigation Crops
-    const systemMeasurementsOrError = makeSystemIrrigationMeasurements(
+    const systemMeasurementsOrError = makeIrrigationSystem(
       dto.System
     );
 
@@ -105,33 +101,33 @@ export class UserIrrigationCropsServices
       return left(systemMeasurementsOrError.value);
     }
 
-    const systemMeasurements = (
-      systemMeasurementsOrError.value as IIrrigationSystemMeasurementsEntity
-    ).getAllMeasurement();
+    const systemMeasurements = (systemMeasurementsOrError.value as any) as IrrigationSystemProps
 
     const currentDate = toISOstringShortDate(new Date());
     const createdAt = toISOstringShortDate(
       new Date(userIrrigationAlreadyExists?.created_at)
     );
 
+    const toPersist = {
+      id: dto.Id,
+      user_id: dto.UserId,
+      name: dto.Name,
+      crop_id: dto.CropId,
+      planting_date: dto.PlantingDate,
+      system_type: dto.System.Type as IrrigationSystemTypes,
+      area: systemMeasurements?.Area,
+      // effective_area: systemMeasurements?.EfectiveArea,
+      flow: systemMeasurements?.Flow,
+      time: systemMeasurements?.Time,
+      length: systemMeasurements?.Length,
+      quantity: systemMeasurements?.Quantity,
+      spacing: systemMeasurements?.Spacing,
+      sprinkler_precipitation: systemMeasurements?.Precipitation,
+    }
+
     // Se editar um setor  no mesmo dia que foi criado (created_At) então é para deixar editar os valores  da linha da tabela irrigation_crops
     if (createdAt == currentDate) {
-      await this.irrigationCropsRepository.update({
-        id: dto.Id,
-        user_id: dto.UserId,
-        name: dto.Name,
-        crop_id: dto.CropId,
-        planting_date: dto.PlantingDate,
-        system_type: dto.System.Type as IrrigationSystemTypes,
-        area: systemMeasurements?.Area,
-        effective_area: systemMeasurements?.EfectiveArea,
-        flow: systemMeasurements?.Flow,
-        time: systemMeasurements?.Time,
-        length: systemMeasurements?.Length,
-        quantity: systemMeasurements?.Quantity,
-        spacing: systemMeasurements?.Spacing,
-        sprinkler_precipitation: systemMeasurements?.Precipitation,
-      });
+      await this.irrigationCropsRepository.update(toPersist);
     } else {
       // Se editar um setor depois de 1 dia criado então só colocar  updated_at no relação e criar uma nova linha na irrigation_crops
       // e na relação também;
@@ -140,21 +136,7 @@ export class UserIrrigationCropsServices
         dto.UserId
       );
 
-      await this.irrigationCropsRepository.save({
-        user_id: dto.UserId,
-        name: dto.Name,
-        crop_id: dto.CropId,
-        planting_date: dto.PlantingDate,
-        system_type: dto.System.Type as IrrigationSystemTypes,
-        area: systemMeasurements?.Area,
-        effective_area: systemMeasurements?.EfectiveArea,
-        flow: systemMeasurements?.Flow,
-        time: systemMeasurements?.Time,
-        length: systemMeasurements?.Length,
-        quantity: systemMeasurements?.Quantity,
-        spacing: systemMeasurements?.Spacing,
-        sprinkler_precipitation: systemMeasurements?.Precipitation,
-      });
+      await this.irrigationCropsRepository.save(toPersist);
     }
 
     return right("Atualizado com sucesso");
@@ -211,7 +193,7 @@ export class UserIrrigationCropsServices
         Station,
         Name,
         Id,
-      } = new CalcIrrigationRecommendationDTO(irrigationCrops);
+      } = irrigationCrops;
 
       return right({
         Id,
@@ -243,7 +225,7 @@ export class UserIrrigationCropsServices
             Station,
             Name,
             Id,
-          } = new CalcIrrigationRecommendationDTO(data);
+          } = data;
 
           return {
             Id,
