@@ -1,0 +1,34 @@
+services:
+  database:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: "seai-database"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - ./.docker/postgres/schemas:/docker-entrypoint-initdb.d
+      - ./.docker/postgres/seeds:/usr/src/seeds
+      - ./.docker/postgres/seed.sh:/usr/src/seed.sh
+      - ./.docker/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    restart: always
+    network_mode: host
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: "seai-server"
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+    network_mode: host
+
