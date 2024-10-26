@@ -61,6 +61,7 @@ export function mapUserIrrigationPreferencesToDomain(data: any): UserIrrigationP
     time
   } = data;
 
+
   const sanitalizedPreferences = {
     Id: Number(id),
     Name: name,
@@ -93,6 +94,7 @@ export function mapUserIrrigationPreferencesToDomain(data: any): UserIrrigationP
     })
   }
 
+
   const props = {
     Name: sanitalizedPreferences.Name,
     CropId: sanitalizedPreferences.CropId,
@@ -106,7 +108,7 @@ export function mapUserIrrigationPreferencesToDomain(data: any): UserIrrigationP
     },
     System: {
       Type: sanitalizedPreferences.SystemType as IrrigationSystemTypes,
-      Measurements: mapToIrrigationSystem(data),
+      Measurements: mapToIrrigationSystem(sanitalizedPreferences),
     },
     CreatedAt: sanitalizedPreferences.CreatedAt,
     UpdatedAt: sanitalizedPreferences.UpdatedAt
