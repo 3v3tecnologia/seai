@@ -169,16 +169,15 @@ export class Pivot implements PivotProps {
 
   // Tempo estimado de funcionamento em horas e minutos
   public calOperatingTime(): string {
-    const timesForLapInMinutes = this._props.Time * 60
+    const timesForLapInMinutes = this._props.Time
 
     return decimalToHoursAndMinutes(Math.ceil(timesForLapInMinutes / this.Velocity))
   }
 
   // Ajuste na velocidade do pivô (em porcentagem)
   public setVelocity(reposition: number) {
-    const repositorionBlade = reposition <= 0 ? 0 : reposition
     //  Lâmina irrigada / Lâmina de reposição
-    this._props.Velocity = this._props.Area / repositorionBlade
+    this._props.Velocity = reposition <= 0 ? 0 : this._props.Area / reposition
   }
 
 
