@@ -114,7 +114,7 @@ export function mapUserIrrigationPreferencesToDomain(data: any): UserIrrigationP
     UpdatedAt: sanitalizedPreferences.UpdatedAt
   };
 
-  if (data.Id) {
+  if (data.id) {
     Object.assign(props, {
       Id: sanitalizedPreferences.Id,
     });
