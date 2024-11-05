@@ -370,9 +370,8 @@ export class EquipmentsMeasurementsRepository
       SELECT
           me."IdEquipment",
           me."Altitude" ,
-          ST_AsGeoJSON(
-                                    me."Location"::geometry
-          )::json AS "GeoLocation" ,
+          me."Latitude" ,
+          me."Longitude" ,
           rs.*
       FROM
           StationMeasurements AS rs
@@ -385,17 +384,14 @@ export class EquipmentsMeasurementsRepository
 
     if (response.rows.length) {
       return response.rows.map((row: any) => {
-        const coordinates = row.GeoLocation
-          ? row.GeoLocation["coordinates"]
-          : null;
 
         return {
           IdRead: row.IdRead,
           Time: row.Time,
           Hour: row.Hour,
           Altitude: row.Altitude,
-          Longitude: coordinates[1],
-          Latitude: coordinates[0],
+          Longitude: row.Longitude,
+          Latitude: row.Latitude,
           AverageAtmosphericTemperature: row.AverageAtmosphericTemperature,
           MinAtmosphericTemperature: row.MinAtmosphericTemperature,
           MaxAtmosphericTemperature: row.MaxAtmosphericTemperature,
@@ -573,9 +569,6 @@ export class EquipmentsMeasurementsRepository
       SELECT
           me."IdEquipment",
           me."Altitude" ,
-          ST_AsGeoJSON(
-                                    me."Location"::geometry
-          )::json AS "GeoLocation" ,
           rs.*
       FROM
           StationMeasurements AS rs
@@ -1035,9 +1028,9 @@ async function updateStationsMeasurements(
     });
 
     // Insert new data into the temporary table
-    await trx(tempTableName).insert(toPersistency);
+    await trx(`equipments.${tempTableName}`).insert(toPersistency);
 
-    updatedIds = await trx.select("IdRead").from(tempTableName);
+    updatedIds = await trx.select("IdRead").from(`equipments.${tempTableName}`);
 
     // Perform the batch update
     await trx.raw(`
@@ -1100,7 +1093,7 @@ async function updatePluviometerMeasurements(
     });
 
     // Insert new data into the temporary table
-    await trx(tempTableName).insert(toPersistency);
+    await trx(`equipments.${tempTableName}`).insert(toPersistency);
 
     // Perform the batch update
     await trx.raw(`

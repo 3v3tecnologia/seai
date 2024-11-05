@@ -29,7 +29,7 @@ export const setupIrrigationUser = (): Router => {
   );
 
 
-  router.patch(
+  router.post(
     "/reset-password/:code",
     adaptHTTPHandler(IrrigantUserController.resetPassword)
   );

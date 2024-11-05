@@ -1,24 +1,23 @@
 import { geoLocationExtension } from "./utils/geolocation";
 
-import { IEquipmentsRepository } from "./protocols/equipment";
-import {
-  IOutputWithPagination,
-  IPaginationInput,
-  toPaginatedOutput,
-} from "../../../../shared/utils/pagination";
-import {
-  EquipmentEntity,
-  PluviometerWithLastMeasurement,
-  StationWithLastMeasurement,
-} from "../../core/models/Equipment";
-import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
-import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
 import {
   governmentDb,
   logsDb,
 } from "../../../../shared/infra/database/postgres/connection/knexfile";
 import { countTotalRows } from "../../../../shared/infra/database/postgres/paginate";
 import { PaginatedInput } from "../../../../shared/utils/command";
+import {
+  IOutputWithPagination,
+  toPaginatedOutput
+} from "../../../../shared/utils/pagination";
+import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
+import {
+  EquipmentEntity,
+  PluviometerWithLastMeasurement,
+  StationWithLastMeasurement,
+} from "../../core/models/Equipment";
+import { MeteorologicalOrganEntity } from "../../core/models/MetereologicalOrgan";
+import { IEquipmentsRepository } from "./protocols/equipment";
 
 export class EquipmentsRepository implements IEquipmentsRepository {
   async enableEquipment(
@@ -104,16 +103,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
           equipment."IdEquipmentExternal" AS "EqpCode",
           equipment."Name",
           equipment."Altitude" ,
+          equipment."Latitude" ,
+          equipment."Longitude" ,
           equipment."CreatedAt",
           equipment."UpdatedAt" ,
           equipment."Enable",
           organ."IdOrgan" AS "IdOrgan",
           organ."Name" AS "OrganName",
           eqpType."IdType" AS "IdType",
-          eqpType."Name" AS "EqpType",
-          ST_AsGeoJSON(
-              equipment."Location"::geometry
-          )::json AS "GeoLocation"
+          eqpType."Name" AS "EqpType"
       FROM
           equipments."MetereologicalEquipment" AS equipment
       INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -145,7 +143,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       },
       Altitude: Number(data.Altitude) || null,
       Location: {
-        Coordinates: data.GeoLocation ? data.GeoLocation["coordinates"] : null,
+        Coordinates: data.Latitude && data.Longitude ? [data.Longitude, data.Latitude] : null,
       },
       CreatedAt: data.CreatedAt,
       UpdatedAt: data.UpdatedAt,
@@ -166,16 +164,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                           equipment."IdEquipmentExternal" AS "EqpCode",
                           equipment."Name",
                           equipment."Altitude" ,
+                          equipment."Latitude" ,
+                          equipment."Longitude" ,
                           equipment."CreatedAt",
                           equipment."UpdatedAt",
                           lastSync."completedon" as "LastSync",
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
-                          eqpType."Name" AS "EqpType",
-                          ST_AsGeoJSON(
-                              equipment."Location"::geometry
-          )::json AS "GeoLocation"
+                          eqpType."Name" AS "EqpType"
       FROM
                           equipments."MetereologicalEquipment" AS equipment
       INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -184,10 +181,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2  ${[params?.latitude, params?.longitude].every((e) => e)
-        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-        : ""
-      })
+      WHERE equipment."FK_Type" = 2 )
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (
               SELECT
@@ -230,12 +224,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-    // TODO: Need to refactor to bind params
-    const coordinateFilter = [params?.latitude, params?.longitude].every(
-      (e) => e
-    )
-      ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-      : "";
 
     const query = `
         WITH Stations AS (SELECT
@@ -244,16 +232,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                           equipment."IdEquipmentExternal" AS "EqpCode",
                           equipment."Name",
                           equipment."Altitude" ,
+                          equipment."Latitude" ,
+                          equipment."Longitude" ,
                           equipment."CreatedAt",
                           lastSync."completedon" as "LastSync",
                           equipment."UpdatedAt" ,
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
-                          eqpType."Name" AS "EqpType",
-                          ST_AsGeoJSON(
-                              equipment."Location"::geometry
-          )::json AS "GeoLocation"
+                          eqpType."Name" AS "EqpType"
       FROM
                           equipments."MetereologicalEquipment" AS equipment
       INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -262,7 +249,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${coordinateFilter})
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE})
       SELECT Stations.*, Measurements.* FROM Stations,
           LATERAL (
               SELECT
@@ -304,12 +291,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-    // TODO: Need to refactor to bind params
-    const coordinateFilter = [params?.latitude, params?.longitude].every(
-      (e) => e
-    )
-      ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-      : "";
+
 
     const query = `
         WITH Stations AS (SELECT
@@ -318,16 +300,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                           equipment."IdEquipmentExternal" AS "EqpCode",
                           equipment."Name",
                           equipment."Altitude" ,
+                          equipment."Latitude" ,
+                          equipment."Longitude" ,
                           equipment."CreatedAt",
                           lastSync."completedon" as "LastSync",
                           equipment."UpdatedAt" ,
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
-                          eqpType."Name" AS "EqpType",
-                          ST_AsGeoJSON(
-                              equipment."Location"::geometry
-          )::json AS "GeoLocation"
+                          eqpType."Name" AS "EqpType"
       FROM
                           equipments."MetereologicalEquipment" AS equipment
       INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -336,7 +317,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} ${coordinateFilter} AND  equipment."Enable" = true
+      WHERE equipment."FK_Type" = ${STATION_ID_TYPE} AND  equipment."Enable" = true
       AND equipment."Enable" = true
       )
       SELECT Stations.*, Measurements.* FROM Stations,
@@ -387,16 +368,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                           equipment."IdEquipmentExternal" AS "EqpCode",
                           equipment."Name",
                           equipment."Altitude" ,
+                          equipment."Latitude" ,
+                          equipment."Longitude" ,
                           equipment."CreatedAt",
                           equipment."UpdatedAt",
                           lastSync."completedon" as "LastSync",
                           organ."IdOrgan" AS "IdOrgan",
                           organ."Name" AS "OrganName",
                           eqpType."IdType" AS "IdType",
-                          eqpType."Name" AS "EqpType",
-                          ST_AsGeoJSON(
-                              equipment."Location"::geometry
-          )::json AS "GeoLocation"
+                          eqpType."Name" AS "EqpType"
       FROM
                           equipments."MetereologicalEquipment" AS equipment
       INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -405,10 +385,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       ON lastSync."fk_organ" = equipment."FK_Organ"
       INNER JOIN equipments."EquipmentType" eqpType ON
                           eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2  ${[params?.latitude, params?.longitude].every((e) => e)
-        ? `AND ST_Intersects(ST_Buffer(equipment."Location"::geometry,${params?.distance}),'POINT(${params?.latitude} ${params?.longitude})')`
-        : ""
-      } AND  equipment."Enable" = true)
+      WHERE equipment."FK_Type" = 2  AND  equipment."Enable" = true)
       SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
           LATERAL (
               SELECT
@@ -604,9 +581,8 @@ export class EquipmentsRepository implements IEquipmentsRepository {
           equipment."IdEquipmentExternal" AS "Code",
           equipment."Name" AS "Location",
           equipment."Altitude",
-          ST_AsGeoJSON(
-              equipment."Location"::geometry
-          )::json AS "GeoLocation",
+          equipment."Latitude",
+          equipment."Longitude",
           eqp_type."Name" AS "Type",
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
@@ -621,19 +597,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     );
 
     const data = response.rows.map((eqp: any) => {
-      const coordinates = eqp.GeoLocation
-        ? eqp.GeoLocation["coordinates"]
-        : null;
-
       return {
         Id: eqp.Id,
         Code: eqp.Code,
         Altitude: eqp.Altitude,
         Location:
-          coordinates !== null
+          eqp.Latitude && eqp.Longitude
             ? {
-              Latitude: coordinates[0],
-              Longitude: coordinates[1],
+              Latitude: eqp.Latitude,
+              Longitude: eqp.Longitude,
             }
             : null,
         Type: eqp.Type,
@@ -649,20 +621,18 @@ export class EquipmentsRepository implements IEquipmentsRepository {
   ): Promise<Array<{ Code: string; Id: number }>> {
     const insertedEquipments: Array<{ Code: string; Id: number }> = [];
 
-    const st = geoLocationExtension(governmentDb);
 
     await governmentDb.transaction(async (trx) => {
       // TO-DO: how insert coordinates?
       // TO-DO: how measurements?
+      // Location (Latitude, Longitude)
       const toPersistency = equipments.map((equipment: any) => {
         return {
           IdEquipmentExternal: equipment.IdEquipmentExternal,
           Name: equipment.Name,
           Altitude: equipment.Altitude,
-          // Location: st.geomFromText("Point(-71.064544 44.28787)"),
-          Location: st.geomFromText(
-            `Point(${equipment.Location.Latitude} ${equipment.Location.Longitude})`
-          ),
+          Latitude: Number(equipment.Location.Latitude),
+          Longitude: Number(equipment.Location.Longitude),
           FK_Organ: equipment.FK_Organ,
           FK_Type: equipment.FK_Type,
           Enable: equipment.Enabled,
@@ -758,9 +728,8 @@ export class EquipmentsRepository implements IEquipmentsRepository {
           equipment."IdEquipmentExternal" AS "Code",
           equipment."Name" AS "Location",
           equipment."Altitude",
-          ST_AsGeoJSON(
-              equipment."Location"::geometry
-          )::json AS "GeoLocation",
+          equipment."Latitude",
+          equipment."Longitude",
           eqp_type."Name" AS "Type",
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
@@ -781,9 +750,8 @@ export class EquipmentsRepository implements IEquipmentsRepository {
           equipment."IdEquipmentExternal" AS "Code",
           equipment."Name" AS "Location",
           equipment."Altitude",
-          ST_AsGeoJSON(
-              equipment."Location"::geometry
-          )::json AS "GeoLocation",
+          equipment."Latitude",
+          equipment."Longitude",
           eqp_type."Name" AS "Type",
           organ."Name" AS "Organ",
           organ."IdOrgan" AS "Organ_Id"
@@ -799,18 +767,15 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     }
 
     return equipments.rows.map((eqp: any) => {
-      const coordinates = eqp.GeoLocation
-        ? eqp.GeoLocation["coordinates"]
-        : null;
       return {
         Id: eqp.Id,
         Code: eqp.Code,
         Altitude: eqp.Altitude,
         Location:
-          coordinates !== null
+          eqp.Latitude && eqp.Longitude
             ? {
-              Latitude: coordinates[0],
-              Longitude: coordinates[1],
+              Latitude: eqp.Latitude,
+              Longitude: eqp.Longitude,
             }
             : null,
         Type: eqp.Type,
@@ -962,14 +927,13 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                     equipment."CreatedAt",
                     equipment."UpdatedAt" ,
                     equipment."Enable",
+                    equipment."Latitude",
+                    equipment."Longitude",
                     lastSync."completedon" as "LastSync",
                     organ."IdOrgan" AS "IdOrgan",
                     organ."Name" AS "OrganName",
                     eqpType."IdType" AS "IdType",
-                    eqpType."Name" AS "EqpType",
-                    ST_AsGeoJSON(
-                        equipment."Location"::geometry
-                    )::json AS "GeoLocation"
+                    eqpType."Name" AS "EqpType"
                 FROM
                     equipments."MetereologicalEquipment" AS equipment
                 INNER JOIN equipments."MetereologicalOrgan" AS organ ON
@@ -1008,10 +972,10 @@ export class EquipmentsRepository implements IEquipmentsRepository {
 function mapEquipmentToDomain(row: any) {
   let Coordinates = null;
   // Convert (longitude,latitude) to (latitude,longitude)
-  if (row.GeoLocation) {
-    const [longitude, latitude] = row.GeoLocation["coordinates"];
+  if (row.Latitude && row.Longitude) {
+    const { Latitude, Longitude } = row;
 
-    Coordinates = [latitude, longitude];
+    Coordinates = [Longitude, Latitude];
   }
   return {
     Id: Number(row.Id),
