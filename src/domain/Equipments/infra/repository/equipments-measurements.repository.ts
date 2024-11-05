@@ -1028,9 +1028,9 @@ async function updateStationsMeasurements(
     });
 
     // Insert new data into the temporary table
-    await trx(tempTableName).insert(toPersistency);
+    await trx(`equipments.${tempTableName}`).insert(toPersistency);
 
-    updatedIds = await trx.select("IdRead").from(tempTableName);
+    updatedIds = await trx.select("IdRead").from(`equipments.${tempTableName}`);
 
     // Perform the batch update
     await trx.raw(`
@@ -1093,7 +1093,7 @@ async function updatePluviometerMeasurements(
     });
 
     // Insert new data into the temporary table
-    await trx(tempTableName).insert(toPersistency);
+    await trx(`equipments.${tempTableName}`).insert(toPersistency);
 
     // Perform the batch update
     await trx.raw(`
