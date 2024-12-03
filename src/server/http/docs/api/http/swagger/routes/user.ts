@@ -128,6 +128,17 @@ export const USER = {
             type: "string",
           },
         },
+        {
+          name: "status",
+          in: "query",
+          description:
+            "Textual filter by user status",
+          required: false,
+          schema: {
+            type: "string",
+            enum: ["registered", "pending"],
+          },
+        },
       ],
       responses: {
         200: {
