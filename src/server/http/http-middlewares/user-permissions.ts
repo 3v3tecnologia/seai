@@ -92,3 +92,16 @@ export const studiesPermissions = {
     })
   ),
 };
+
+export const businessAnalysisPermissions = {
+  read: adaptMiddleware(
+    makeUserPermissionMiddleware(Modules.BUSINESS_ANALYSIS, {
+      read: true,
+    })
+  ),
+  write: adaptMiddleware(
+    makeUserPermissionMiddleware(Modules.BUSINESS_ANALYSIS, {
+      write: true,
+    })
+  ),
+};

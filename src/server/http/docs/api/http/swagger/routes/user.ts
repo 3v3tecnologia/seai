@@ -72,6 +72,10 @@ export const USER = {
                       id: 7,
                       name: "newsletter",
                     },
+                    {
+                      id: 8,
+                      name: "business_analysis",
+                    },
                   ],
                 },
               },
@@ -327,6 +331,20 @@ export const USER = {
                         },
                       },
                     },
+                    business_analysis: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -366,6 +384,11 @@ export const USER = {
                   },
                   newsletter: {
                     id: 7,
+                    read: true,
+                    write: true,
+                  },
+                  business_analysis: {
+                    id: 8,
                     read: true,
                     write: true,
                   },
@@ -582,6 +605,20 @@ export const USER = {
                         },
                       },
                     },
+                    business_analysis: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "number",
+                        },
+                        read: {
+                          type: "boolean",
+                        },
+                        write: {
+                          type: "boolean",
+                        },
+                      },
+                    },
                   },
                 },
                 type: {
@@ -630,6 +667,11 @@ export const USER = {
                   },
                   newsletter: {
                     id: 7,
+                    read: true,
+                    write: true,
+                  },
+                  business_analysis: {
+                    id: 8,
                     read: true,
                     write: true,
                   },
@@ -809,6 +851,11 @@ export const USER = {
                             read: false,
                             write: true,
                           },
+                          business_analysis: {
+                            id: 8,
+                            read: false,
+                            write: true,
+                          },
                         },
                       },
                     },
@@ -858,6 +905,11 @@ export const USER = {
                       },
                       newsletter: {
                         id: 7,
+                        read: false,
+                        write: true,
+                      },
+                      business_analysis: {
+                        id: 8,
                         read: false,
                         write: true,
                       },
@@ -1262,6 +1314,11 @@ export const USER = {
                             read: false,
                             write: true,
                           },
+                          business_analysis: {
+                            id: 8,
+                            read: false,
+                            write: true,
+                          },
                         },
                       },
                     },
@@ -1311,6 +1368,11 @@ export const USER = {
                       },
                       newsletter: {
                         id: 7,
+                        read: false,
+                        write: true,
+                      },
+                      business_analysis: {
+                        id: 8,
                         read: false,
                         write: true,
                       },

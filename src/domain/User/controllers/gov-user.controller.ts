@@ -40,6 +40,7 @@ export class GovernmentUserController {
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
         [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
+        [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };
     } & LoginUserAccount
   ): Promise<HttpResponse> {
@@ -394,6 +395,7 @@ export class GovernmentUserController {
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
         [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
+        [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {
