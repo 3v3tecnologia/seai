@@ -16,7 +16,7 @@ export const db_config: { [index: string]: any } = {
       pool: {
         min: 2,
         max: 10,
-      },
+      }
     },
     production: {
       client: "pg",
@@ -33,7 +33,7 @@ export const db_config: { [index: string]: any } = {
         min: 2,
         max: 10,
       },
-    },
+    }
   },
   government: {
     development: {
@@ -51,6 +51,11 @@ export const db_config: { [index: string]: any } = {
         min: 2,
         max: 10,
       },
+      migrations: {
+        directory: "./migrations",
+        extension: "ts",
+        database: "government"
+      },
     },
     production: {
       client: "pg",
@@ -66,6 +71,11 @@ export const db_config: { [index: string]: any } = {
       pool: {
         min: 2,
         max: 10,
+      },
+      migrations: {
+        directory: "./migrations",
+        extension: "ts",
+        database: "government"
       },
     },
   },

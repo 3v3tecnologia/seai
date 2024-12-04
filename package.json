@@ -22,7 +22,10 @@
     "compose:up:dev": "docker compose -f docker-compose.dev.yml up -d ",
     "compose:down:dev": "docker compose -f docker-compose.dev.yml down",
     "container:logs": "docker container logs --tail 200 --timestamps seai-server",
-    "container:logs:watch": "docker container logs -f --tail 100  seai-server"
+    "container:logs:watch": "docker container logs -f --tail 100  seai-server",
+    "knex:government": "dotenv -e ./.env -- knex --knexfile src/shared/infra/database/postgres/configs/government.ts",
+    "knex:logs": "DOTENV_CONFIG_PATH=.env knex --knexfile src/shared/infra/database/postgres/configs/logs.ts",
+    "knex:census": "DOTENV_CONFIG_PATH=.env knex --knexfile src/shared/infra/database/postgres/configs/census.ts"
   },
   "keywords": [],
   "license": "ISC",
