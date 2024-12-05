@@ -38,7 +38,6 @@ export class GovernmentUserController {
         [Modules.CROP]: Required<SystemModulesPermissions>;
         [Modules.FAQ]: Required<SystemModulesPermissions>;
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
-        [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
         [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };
@@ -393,7 +392,6 @@ export class GovernmentUserController {
         [Modules.CROP]: Required<SystemModulesPermissions>;
         [Modules.FAQ]: Required<SystemModulesPermissions>;
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
-        [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
         [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };

@@ -80,18 +80,6 @@ export const weightsPermissions = {
   ),
 };
 
-export const studiesPermissions = {
-  read: adaptMiddleware(
-    makeUserPermissionMiddleware(Modules.STUDIES, {
-      read: true,
-    })
-  ),
-  write: adaptMiddleware(
-    makeUserPermissionMiddleware(Modules.STUDIES, {
-      write: true,
-    })
-  ),
-};
 
 export const businessAnalysisPermissions = {
   read: adaptMiddleware(

@@ -66,14 +66,10 @@ export const USER = {
                     },
                     {
                       id: 6,
-                      name: "studies",
-                    },
-                    {
-                      id: 7,
                       name: "newsletter",
                     },
                     {
-                      id: 8,
+                      id: 7,
                       name: "business_analysis",
                     },
                   ],
@@ -303,20 +299,6 @@ export const USER = {
                         },
                       },
                     },
-                    studies: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
                     newsletter: {
                       type: "object",
                       properties: {
@@ -377,18 +359,13 @@ export const USER = {
                     read: true,
                     write: true,
                   },
-                  studies: {
+                  newsletter: {
                     id: 6,
                     read: true,
                     write: true,
                   },
-                  newsletter: {
-                    id: 7,
-                    read: true,
-                    write: true,
-                  },
                   business_analysis: {
-                    id: 8,
+                    id: 7,
                     read: true,
                     write: true,
                   },
@@ -577,20 +554,6 @@ export const USER = {
                         },
                       },
                     },
-                    studies: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "number",
-                        },
-                        read: {
-                          type: "boolean",
-                        },
-                        write: {
-                          type: "boolean",
-                        },
-                      },
-                    },
                     newsletter: {
                       type: "object",
                       properties: {
@@ -660,18 +623,13 @@ export const USER = {
                     read: true,
                     write: true,
                   },
-                  studies: {
+                  newsletter: {
                     id: 6,
                     read: true,
                     write: true,
                   },
-                  newsletter: {
-                    id: 7,
-                    read: true,
-                    write: true,
-                  },
                   business_analysis: {
-                    id: 8,
+                    id: 7,
                     read: true,
                     write: true,
                   },
@@ -841,18 +799,13 @@ export const USER = {
                             read: true,
                             write: true,
                           },
-                          studies: {
-                            id: 6,
-                            read: true,
-                            write: true,
-                          },
                           newsletter: {
-                            id: 7,
+                            id: 6,
                             read: false,
                             write: true,
                           },
                           business_analysis: {
-                            id: 8,
+                            id: 7,
                             read: false,
                             write: true,
                           },
@@ -898,18 +851,13 @@ export const USER = {
                         read: true,
                         write: true,
                       },
-                      studies: {
-                        id: 6,
-                        read: true,
-                        write: true,
-                      },
                       newsletter: {
-                        id: 7,
+                        id: 6,
                         read: false,
                         write: true,
                       },
                       business_analysis: {
-                        id: 8,
+                        id: 7,
                         read: false,
                         write: true,
                       },
@@ -1304,18 +1252,13 @@ export const USER = {
                             read: true,
                             write: true,
                           },
-                          studies: {
-                            id: 6,
-                            read: true,
-                            write: true,
-                          },
                           newsletter: {
-                            id: 7,
+                            id: 6,
                             read: false,
                             write: true,
                           },
                           business_analysis: {
-                            id: 8,
+                            id: 7,
                             read: false,
                             write: true,
                           },
@@ -1361,18 +1304,13 @@ export const USER = {
                         read: true,
                         write: true,
                       },
-                      studies: {
-                        id: 6,
-                        read: true,
-                        write: true,
-                      },
                       newsletter: {
-                        id: 7,
+                        id: 6,
                         read: false,
                         write: true,
                       },
                       business_analysis: {
-                        id: 8,
+                        id: 7,
                         read: false,
                         write: true,
                       },

@@ -21,7 +21,6 @@ export enum Modules {
   NEWSLETTER = "newsletter",
   USER = "user",
   FAQ = "faq",
-  STUDIES = "studies",
   WEIGHTS = "weights",
   CROP = "crop",
   EQUIPMENTS = "equipments",
@@ -36,7 +35,6 @@ export type SystemModulesProps = {
   [Modules.NEWSLETTER]: SystemModulesPermissions;
   [Modules.USER]: SystemModulesPermissions;
   [Modules.FAQ]: SystemModulesPermissions;
-  [Modules.STUDIES]: SystemModulesPermissions;
   [Modules.WEIGHTS]: SystemModulesPermissions;
   [Modules.EQUIPMENTS]: SystemModulesPermissions;
   [Modules.LOGS]?: SystemModulesPermissions;
@@ -68,10 +66,6 @@ export class SystemModules {
       {
         argument: modules[Modules.NEWSLETTER],
         argumentName: Modules.NEWSLETTER,
-      },
-      {
-        argument: modules[Modules.STUDIES],
-        argumentName: Modules.STUDIES,
       },
       {
         argument: modules[Modules.WEIGHTS],
@@ -108,7 +102,6 @@ export class SystemModules {
       const hasAdminPermissions = [
         SystemModules.hasFullPermissions(modules[Modules.CROP]),
         SystemModules.hasFullPermissions(modules[Modules.EQUIPMENTS]),
-        SystemModules.hasFullPermissions(modules[Modules.STUDIES]),
         SystemModules.hasFullPermissions(modules[Modules.WEIGHTS]),
         SystemModules.hasFullPermissions(modules[Modules.FAQ]),
         SystemModules.hasFullPermissions(modules[Modules.USER]),
