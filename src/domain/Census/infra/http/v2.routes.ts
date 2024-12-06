@@ -2,11 +2,27 @@ import { Router } from "express";
 import { adaptHTTPHandler } from "../../../../server/http/adapters/express-route.adapter";
 import {
   authorization,
+  studiesPermissions,
   weightsPermissions,
 } from "../../../../server/http/http-middlewares";
+import { CropStudiesController } from "../../controllers/crop-studies.controller";
 import { IndicatorsWeightsController } from "../../controllers/indicators-weights.controller";
 
 export const setupCensusV2Routes = (router: Router): void => {
+
+  router.post(
+    "/census/studies/basin/:id",
+    authorization,
+    studiesPermissions.write,
+    adaptHTTPHandler(CropStudiesController.create)
+  );
+
+  router.get(
+    "/census/studies/basin/:id",
+    authorization,
+    studiesPermissions.read,
+    adaptHTTPHandler(CropStudiesController.getByBasin)
+  );
 
   router.post(
     "/census/weights/basin/calculate",

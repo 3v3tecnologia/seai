@@ -38,7 +38,6 @@ export interface UserRepositoryProtocol {
   list(
     params: {
       name?: string;
-      status?: UserStatus;
       type?: Record<UserTypes, string>;
     } & IPaginationInput
   ): Promise<
