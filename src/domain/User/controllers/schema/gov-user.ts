@@ -18,7 +18,6 @@ const userModulesAccess = Joi.object({
   [Modules.NEWSLETTER]: systemModulesPermissionsSchema,
   [Modules.STUDIES]: systemModulesPermissionsSchema,
   [Modules.WEIGHTS]: systemModulesPermissionsSchema,
-  [Modules.BUSINESS_ANALYSIS]: systemModulesPermissionsSchema,
   [Modules.LOGS]: Joi.object({
     id: Joi.number(),
     read: Joi.boolean().required(),

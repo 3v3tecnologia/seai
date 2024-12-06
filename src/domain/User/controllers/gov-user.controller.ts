@@ -16,7 +16,6 @@ import {
   parsePaginationInput,
 } from "../../../shared/utils/pagination";
 import { UserType, UserTypes } from "../core/model/gov-user";
-import { UserStatus } from "../core/model/status";
 import {
   Modules,
   SystemModulesPermissions,
@@ -40,7 +39,6 @@ export class GovernmentUserController {
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
         [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
-        [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };
     } & LoginUserAccount
   ): Promise<HttpResponse> {
@@ -266,11 +264,10 @@ export class GovernmentUserController {
     request: {
       name?: string;
       type?: Record<UserTypes, string>;
-      status?: UserStatus;
     } & Partial<IPaginationInput>
   ): Promise<HttpResponse> {
     try {
-      const { limit, name, offset, pageNumber, type, status } = request;
+      const { limit, name, offset, pageNumber, type } = request;
 
       // const { error } = await this.validator.validate({
       //   limit,
@@ -287,7 +284,6 @@ export class GovernmentUserController {
       const result = await govUserService.getUsers({
         name: name,
         type: type,
-        status,
         ...parsePaginationInput({
           page: pageNumber,
           limit: limit,
@@ -395,7 +391,6 @@ export class GovernmentUserController {
         [Modules.NEWSLETTER]: Required<SystemModulesPermissions>;
         [Modules.STUDIES]: Required<SystemModulesPermissions>;
         [Modules.WEIGHTS]: Required<SystemModulesPermissions>;
-        [Modules.BUSINESS_ANALYSIS]: Required<SystemModulesPermissions>;
       };
     } & UserOperationControllerDTO
   ): Promise<HttpResponse> {

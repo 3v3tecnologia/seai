@@ -26,7 +26,6 @@ export enum Modules {
   CROP = "crop",
   EQUIPMENTS = "equipments",
   LOGS = "logs",
-  BUSINESS_ANALYSIS = "business_analysis",
 }
 
 // export type SystemModulesProps = Record<Modules, SystemModulesPermissions>;
@@ -40,7 +39,6 @@ export type SystemModulesProps = {
   [Modules.WEIGHTS]: SystemModulesPermissions;
   [Modules.EQUIPMENTS]: SystemModulesPermissions;
   [Modules.LOGS]?: SystemModulesPermissions;
-  [Modules.BUSINESS_ANALYSIS]: SystemModulesPermissions;
 };
 
 export class SystemModules {
@@ -81,10 +79,6 @@ export class SystemModules {
         argument: modules[Modules.USER],
         argumentName: Modules.USER,
       },
-      {
-        argument: modules[Modules.BUSINESS_ANALYSIS],
-        argumentName: Modules.BUSINESS_ANALYSIS,
-      },
       // {
       //   argument: modules[Modules.LOGS],
       //   argumentName: Modules.LOGS,
@@ -112,7 +106,6 @@ export class SystemModules {
         SystemModules.hasFullPermissions(modules[Modules.WEIGHTS]),
         SystemModules.hasFullPermissions(modules[Modules.FAQ]),
         SystemModules.hasFullPermissions(modules[Modules.USER]),
-        SystemModules.hasFullPermissions(modules[Modules.BUSINESS_ANALYSIS]),
         SystemModules.hasFullPermissions(modules[Modules.NEWSLETTER]),
         // SystemModules.hasFullPermissions(modules[Modules.LOGS]),
       ].every((permission) => permission === true);

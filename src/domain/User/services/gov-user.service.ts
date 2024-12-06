@@ -33,7 +33,6 @@ import { IUserService } from "./protocols/gov-user";
 import { GOVERNMENT_WEB_PAGE_BASE_URL } from "../../../server/http/config/url";
 import { AuthServiceInput, AuthServiceOutput } from "./protocols/auth";
 import { TokenProvider } from "../infra/token-provider";
-import { UserStatus } from "../core/model/status";
 
 
 export class GovernmentUserService implements IUserService {
@@ -454,7 +453,6 @@ export class GovernmentUserService implements IUserService {
       id?: number;
       name?: string;
       type?: Record<UserTypes, string>;
-      status?: UserStatus;
     } & Partial<IPaginationInput>
   ): Promise<
     Either<
@@ -469,12 +467,10 @@ export class GovernmentUserService implements IUserService {
       );
     }
 
-
     return right(
       await this.userRepository.list(
         request as {
           name?: string | undefined;
-          status?: UserStatus | undefined;
           type?: Record<UserTypes, string> | undefined;
         } & IPaginationInput
       )

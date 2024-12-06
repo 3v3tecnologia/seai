@@ -294,11 +294,10 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
   async list(
     params: {
       name?: string;
-      status?: UserStatus;
       type?: Record<UserTypes, string>;
     } & IPaginationInput
   ): Promise<IOutputWithPagination<UserAccountProps>> {
-    const { pageNumber, limit, name, type, status } = params;
+    const { pageNumber, limit, name, type } = params;
 
     const pageLimit = limit;
 
@@ -318,10 +317,6 @@ export class GovernmentUserRepository implements UserRepositoryProtocol {
 
     if (name) {
       query.whereRaw(`to_tsvector('simple', coalesce(u."Name", '')) @@ to_tsquery('simple', '${name}:*')`)
-    }
-
-    if (status) {
-      query.where("u.Status", status)
     }
 
     query.whereRaw(`u."Type" IN ('admin'::users.user_types,'standard'::users.user_types )`)
