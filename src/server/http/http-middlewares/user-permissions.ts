@@ -80,14 +80,15 @@ export const weightsPermissions = {
   ),
 };
 
-export const studiesPermissions = {
+
+export const businessAnalysisPermissions = {
   read: adaptMiddleware(
-    makeUserPermissionMiddleware(Modules.STUDIES, {
+    makeUserPermissionMiddleware(Modules.BUSINESS_ANALYSIS, {
       read: true,
     })
   ),
   write: adaptMiddleware(
-    makeUserPermissionMiddleware(Modules.STUDIES, {
+    makeUserPermissionMiddleware(Modules.BUSINESS_ANALYSIS, {
       write: true,
     })
   ),
