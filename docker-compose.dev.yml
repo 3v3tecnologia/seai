@@ -1,14 +1,12 @@
 services:
   database:
-    image: postgis/postgis:15-3.3-alpine
+    image: postgres:15.3-alpine
     container_name: "seai-database-dev"
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./.docker/postgres/schemas:/docker-entrypoint-initdb.d
-      - ./.docker/postgres/seeds:/usr/src/seeds
-      - ./.docker/postgres/seed.sh:/usr/src/seed.sh
       - ./.docker/postgres/data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
