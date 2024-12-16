@@ -198,6 +198,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                   rs."Time" DESC
               LIMIT 1
           ) AS Measurements
+      order by Pluviometers."Name"
     `;
 
     const data = await governmentDb.raw(query);
@@ -265,6 +266,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
           ) AS Measurements
+      order by Stations."Name"
     `;
 
     const data = await governmentDb.raw(query);
@@ -335,6 +337,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                   rs."Time" DESC
               LIMIT ${MEASURES_ROWS}
           ) AS Measurements
+      order by Stations."Name"
     `;
 
     const data = await governmentDb.raw(query);
@@ -402,6 +405,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                   rs."Time" DESC
               LIMIT 1
           ) AS Measurements
+      order by Pluviometers."Name"
     `;
 
     const data = await governmentDb.raw(query);
