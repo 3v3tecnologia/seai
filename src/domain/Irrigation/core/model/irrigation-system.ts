@@ -1,5 +1,5 @@
 import { Either, left, right } from "../../../../shared/Either";
-import { decimalToHoursAndMinutes } from "../../../../shared/utils/date";
+import { decimalInMinutesToHoursAndMinutes } from "../../../../shared/utils/date";
 import { IrrigantErrors } from "../errors/irrigant.error";
 
 export type IrrigationSystemProps = MicroSprinklingProps & DrippingProps & SprinklingProps & PivotProps & SulcosProps
@@ -173,7 +173,7 @@ export class Pivot implements PivotProps {
 
     const operationTime = Math.ceil(timesForLapInMinutes / this.Velocity)
 
-    return decimalToHoursAndMinutes(operationTime)
+    return decimalInMinutesToHoursAndMinutes(operationTime)
   }
 
   // Ajuste na velocidade do pivô (em porcentagem)
