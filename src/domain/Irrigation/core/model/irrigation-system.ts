@@ -136,7 +136,7 @@ export class Sulcos implements SulcosProps {
 
 export type CreatePivotProps = {
   Time: number; // Tempo para uma volta
-  Area: number; // Lâmina irrigada
+  Area: number; // Lâmina irrigada em uma volta a 100% de velocidade
 } & Partial<SistemEfficiency>;
 
 export class Pivot implements PivotProps {
@@ -171,13 +171,25 @@ export class Pivot implements PivotProps {
   public calOperatingTime(): string {
     const timesForLapInMinutes = this._props.Time
 
-    return decimalToHoursAndMinutes(Math.ceil(timesForLapInMinutes / this.Velocity))
+    const operationTime = Math.ceil(timesForLapInMinutes / this.Velocity)
+
+    return decimalToHoursAndMinutes(operationTime)
   }
 
   // Ajuste na velocidade do pivô (em porcentagem)
   public setVelocity(reposition: number) {
-    //  Lâmina irrigada / Lâmina de reposição
-    this._props.Velocity = reposition <= 0 ? 0 : this._props.Area / reposition
+    if (reposition <= 0) {
+      this._props.Velocity = 0
+      return
+    }
+
+    const irrigatedBladeInOneTurnInPercentage = this._props.Area
+
+    //  Lâmina irrigada em uma volta a 100% da velocidade / Lâmina de reposição
+    const velocity = irrigatedBladeInOneTurnInPercentage / reposition
+
+    // a velocidade é uma porcentagem, e não pode ser maior que 100%, para manter o tempo mínimo
+    this._props.Velocity = velocity > 1 ? 1 : velocity
   }
 
 

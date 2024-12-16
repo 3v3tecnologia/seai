@@ -60,15 +60,18 @@ export function formatDateToYYYYMMDD(date: string) {
 
 
 
-export function decimalToHoursAndMinutes(decimalTime: number) {
-  const date = new Date(0, 0);
-  date.setSeconds(decimalTime * 60 * 60);
+export function decimalToHoursAndMinutes(decimalMinutes: number) {
+  // Converte os minutos decimais para horas e minutos
+  const totalMinutes = Math.floor(decimalMinutes); // Parte inteira dos minutos
+  const fractionalMinutes = decimalMinutes - totalMinutes; // Parte fracionária
 
-  // Extract hours and minutes
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  // Converte fração de minutos em segundos e adiciona aos minutos inteiros
+  const seconds = Math.round(fractionalMinutes * 60);
+  const totalMinutesWithSeconds = totalMinutes + Math.floor(seconds / 60);
+  const minutes = totalMinutesWithSeconds % 60; // Minutos finais
+  const hours = Math.floor(totalMinutesWithSeconds / 60); // Horas finais
 
-  // Format the result
+  // Formata as horas e minutos com dois dígitos
   const formattedHours = hours.toString().padStart(2, "0");
   const formattedMinutes = minutes.toString().padStart(2, "0");
 

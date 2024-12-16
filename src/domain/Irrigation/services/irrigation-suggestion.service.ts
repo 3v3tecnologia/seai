@@ -216,7 +216,7 @@ export class IrrigationCropsSuggestion
 
       if (hasStationWithYesterdayMeasurements == false) {
         userIrrigationRecommendation.setNotification(
-          "Não há estação com leituras."
+          "Não foi possível realizar a coleta de dados na estação meteorológica selecionada para o dia de hoje. Para visualizar as recomendações de lâmina de irrigação atualizadas, selecione outra estação meteorológica na aba de configurações e, em seguida, consulte as recomendações disponíveis na seção 'Áreas de Plantio'."
         );
       }
 

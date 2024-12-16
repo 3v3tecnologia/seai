@@ -106,8 +106,8 @@ export function calcIrrigationRecommendation({ Et0, crop, irrigationSystem, plan
   if (irrigationSystem instanceof Pivot) {
     // O pivô só dá uma volta por dia, então, é interessante verificar se o tempo é superior
     //a 24 horas, e alertar o usuário(caso de uma velocidade de operação muito baixa)
-    if (irrigationSystem.Time > 24) {
-      return left(new Error("O pivô só dá uma volta por dia,é necessário verificar se o tempo é superior a 24 horas"));
+    if (irrigationSystem.Time > 1440) {
+      return left(new Error("O pivô só dá uma volta por dia,é necessário verificar se o tempo em minutos é superior a 1440 minutos (24 horas)"));
     }
 
     irrigationSystem.setVelocity(repositionBlade)
