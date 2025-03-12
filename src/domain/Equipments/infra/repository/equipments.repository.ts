@@ -855,7 +855,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
         SELECT
             rs."FK_Equipment"
         FROM
-            "ReadStations" rs
+            equipments."ReadStations" rs
         WHERE
             rs."Et0" >= 0
             AND rs."Time" = CURRENT_DATE - INTERVAL '1 DAY'
@@ -866,7 +866,7 @@ export class EquipmentsRepository implements IEquipmentsRepository {
             SELECT
                 rp."FK_Equipment"
             FROM
-                "ReadPluviometers" rp
+                equipments."ReadPluviometers" rp
             WHERE
                 rp."Value" >= 0
                 AND rp."Time" = CURRENT_DATE - INTERVAL '1 DAY'
