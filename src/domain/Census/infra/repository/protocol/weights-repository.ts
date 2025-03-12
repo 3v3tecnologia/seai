@@ -9,8 +9,6 @@ export interface IIndicatorsWeightsRepository {
   checkIfAlreadyExists(mask: number, year: number): Promise<boolean>;
   calculate(params: {
     basin_ids: Array<number>;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
   }): Promise<Array<CensusCultureWeights> | null>;
   calculateByBasinMask(
     basin_mask: number

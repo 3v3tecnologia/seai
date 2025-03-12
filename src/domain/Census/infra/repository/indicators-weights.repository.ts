@@ -153,9 +153,6 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
 
   async calculate(params: {
     basin_ids: Array<number>;
-    area?: number;
-    users_registered_count?: number;
-    crops_names?: Array<string>;
   }): Promise<Array<CensusCultureWeights> | null> {
     /*Remover determinados resultados do cálculo de peso, exemplo, número mínimo de recenseados, ou determinadas culturas*/
     const filtersSQL = new Map();
@@ -165,30 +162,6 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
       "ids",
       `where bacia_id in (${params.basin_ids.map((_) => "?").join(",")})`
     );
-
-    if (params.users_registered_count) {
-      filtersSQL.set("users_registered_count", `having sum(recenseados) > ?`);
-      bindings.push(params.users_registered_count);
-    }
-
-    if (params.crops_names) {
-      filtersSQL.set(
-        "crops",
-        `${filtersSQL.has("users_registered_count") ? "and" : "having"
-        }  cultura not in (${params.crops_names.map((_) => "?").join(",")})`
-      );
-      bindings = bindings.concat(params.crops_names);
-    }
-
-    if (params.area) {
-      // having sum(areairrigada_total) > 30
-      filtersSQL.set(
-        "area",
-        `${filtersSQL.has("crops") ? "and" : "having"
-        } sum(areairrigada_total) > ?`
-      );
-      bindings.push(params.area);
-    }
 
     const query = censusDb.raw(
       `
@@ -334,13 +307,6 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
             where "year" = 2023) estudos_calc
           on indicadores.cultura = estudos_calc.cultura and indicadores.bacia_id = estudos_calc.bacia_id) indicadores_comp
           group by cultura, "year"
-          /*Remover determinados resultados do cálculo de peso, exemplo, número mínimo de recenseados, ou determinadas culturas*/
-          -- having sum(recenseados) > 30
-          -- having sum(areairrigada_total) > 30
-          -- having cultura not in ('SIRIGUELA')
-          ${filtersSQL.get("users_registered_count") || ""}
-          ${filtersSQL.get("crops") || ""}
-          ${filtersSQL.get("areas") || ""}
           )
         select cultura,
             bacia_mascara,
