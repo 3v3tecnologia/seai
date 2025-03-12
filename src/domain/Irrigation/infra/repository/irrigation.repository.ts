@@ -411,7 +411,7 @@ export class UserIrrigationPreferencesRepository implements IUserIrrigationPrefe
     const dbResponse = await governmentDb.raw(`
         SELECT u."Id",u."Name" ,u."Email"  FROM (SELECT un.user_id FROM management."User_Notifications" un
         WHERE un.service_id = (SELECT ns.id  FROM management."Notification_Services" ns
-        WHERE ns.service_id = 'irrigation') AND enabled = true) AS u_with_irrig_notif
+        WHERE ns.service = 'irrigation') AND enabled = true) AS u_with_irrig_notif
         INNER JOIN users."User" u ON u."Id"= u_with_irrig_notif.user_id
         WHERE u."Type" = 'irrigant' AND u."Status" = 'registered'`);
 
