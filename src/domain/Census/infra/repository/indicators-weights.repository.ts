@@ -54,7 +54,19 @@ export class IndicatorsWeightsRepository implements IIndicatorsWeightsRepository
 
   async getByMask(mask: number, year: number): Promise<CensusCultureWeights[]> {
     const response = await censusDb
-      .select("*")
+      .select(
+        "bacia_mascara",
+        "cultura",
+        "peso_produtividade_ha",
+        "peso_produtividade_m3",
+        "peso_rentabilidade_ha",
+        "peso_rentabilidade_m3",
+        "peso_empregos_ha",
+        "peso_empregos_1000m3",
+        "peso_consumo_hidrico",
+        "peso_ciclo_cultura",
+        "year as ano"
+      )
       .from("pesos")
       .where("bacia_mascara", mask)
       .andWhere("year", year);
