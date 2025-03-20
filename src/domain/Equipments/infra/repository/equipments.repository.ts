@@ -8,7 +8,7 @@ import { countTotalRows } from "../../../../shared/infra/database/postgres/pagin
 import { PaginatedInput } from "../../../../shared/utils/command";
 import {
   IOutputWithPagination,
-  toPaginatedOutput
+  toPaginatedOutput,
 } from "../../../../shared/utils/pagination";
 import { UserCommandOperationProps } from "../../../Logs/core/protocols/logger";
 import {
@@ -143,7 +143,10 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       },
       Altitude: Number(data.Altitude) || null,
       Location: {
-        Coordinates: data.Latitude && data.Longitude ? [data.Longitude, data.Latitude] : null,
+        Coordinates:
+          data.Latitude && data.Longitude
+            ? [data.Longitude, data.Latitude]
+            : null,
       },
       CreatedAt: data.CreatedAt,
       UpdatedAt: data.UpdatedAt,
@@ -225,7 +228,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-
     const query = `
         WITH Stations AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -293,8 +295,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     const STATION_ID_TYPE = 1;
     const MEASURES_ROWS = 1;
 
-
-
     const query = `
         WITH Stations AS (SELECT
                           equipment."IdEquipment" AS "Id",
@@ -328,7 +328,12 @@ export class EquipmentsRepository implements IEquipmentsRepository {
                   rs."FK_Equipment" ,
                   rs."Time",
                   rs."Hour",
-                  TRUNC(rs."Et0"::numeric,2) AS "Et0"
+                  case
+                    when rs."Time" != (NOW() - interval '1 day')::date then null
+                    when rs."Et0" >= 0 then TRUNC(rs."Et0"::numeric,
+                    2)
+                    else null
+                  end as "Et0"
               FROM
                   equipments."ReadStations" rs
               WHERE
@@ -365,47 +370,60 @@ export class EquipmentsRepository implements IEquipmentsRepository {
 
     // TODO: Need to refactor to bind params
     const query = `
-          WITH Pluviometers AS (SELECT
-                          equipment."IdEquipment" AS "Id",
-                          equipment."Enable",
-                          equipment."IdEquipmentExternal" AS "EqpCode",
-                          equipment."Name",
-                          equipment."Altitude" ,
-                          equipment."Latitude" ,
-                          equipment."Longitude" ,
-                          equipment."CreatedAt",
-                          equipment."UpdatedAt",
-                          lastSync."completedon" as "LastSync",
-                          organ."IdOrgan" AS "IdOrgan",
-                          organ."Name" AS "OrganName",
-                          eqpType."IdType" AS "IdType",
-                          eqpType."Name" AS "EqpType"
-      FROM
-                          equipments."MetereologicalEquipment" AS equipment
-      INNER JOIN equipments."MetereologicalOrgan" AS organ ON
-                          organ."IdOrgan" = equipment."FK_Organ"
-      INNER JOIN equipments."LastUpdatedAt" AS lastSync
-      ON lastSync."fk_organ" = equipment."FK_Organ"
-      INNER JOIN equipments."EquipmentType" eqpType ON
-                          eqpType."IdType" = equipment."FK_Type"
-      WHERE equipment."FK_Type" = 2  AND  equipment."Enable" = true)
-      SELECT Pluviometers.*, Measurements.* FROM Pluviometers,
-          LATERAL (
-              SELECT
+          with Pluviometers as (
+              select
+                equipment."IdEquipment" as "Id",
+                equipment."Enable",
+                equipment."IdEquipmentExternal" as "EqpCode",
+                equipment."Name",
+                equipment."Altitude" ,
+                equipment."Latitude" ,
+                equipment."Longitude" ,
+                equipment."CreatedAt",
+                equipment."UpdatedAt",
+                lastSync."completedon" as "LastSync",
+                organ."IdOrgan" as "IdOrgan",
+                organ."Name" as "OrganName",
+                eqpType."IdType" as "IdType",
+                eqpType."Name" as "EqpType"
+              from
+                equipments."MetereologicalEquipment" as equipment
+              inner join equipments."MetereologicalOrgan" as organ on
+                organ."IdOrgan" = equipment."FK_Organ"
+              inner join equipments."LastUpdatedAt" as lastSync
+                    on
+                lastSync."fk_organ" = equipment."FK_Organ"
+              inner join equipments."EquipmentType" eqpType on
+                eqpType."IdType" = equipment."FK_Type"
+              where
+                equipment."FK_Type" = 2
+                and equipment."Enable" = true)
+                    select
+                Pluviometers.*,
+                Measurements.*
+              from
+                Pluviometers,
+                lateral (
+                select
                   rs."FK_Equipment" ,
                   rs."Time",
                   rs."Hour",
-                  CASE WHEN rs."Value" >=0 THEN TRUNC(rs."Value"::numeric,2)
-                  ELSE NULL  END AS "Value"
-              FROM
+                  case
+                    when rs."Time" != (NOW() - interval '1 day')::date then null
+                    when rs."Value" >= 0 then TRUNC(rs."Value"::numeric,
+                    2)
+                    else null
+                  end as "Value"
+                from
                   equipments."ReadPluviometers" rs
-              WHERE
+                where
                   rs."FK_Equipment" = Pluviometers."Id"
-              ORDER BY
-                  rs."Time" DESC
-              LIMIT 1
-          ) AS Measurements
-      order by Pluviometers."Name"
+                order by
+                  rs."Time" desc
+                limit 1
+                        ) as Measurements
+              order by
+                Pluviometers."Name"
     `;
 
     const data = await governmentDb.raw(query);
@@ -608,9 +626,9 @@ export class EquipmentsRepository implements IEquipmentsRepository {
         Location:
           eqp.Latitude && eqp.Longitude
             ? {
-              Latitude: eqp.Latitude,
-              Longitude: eqp.Longitude,
-            }
+                Latitude: eqp.Latitude,
+                Longitude: eqp.Longitude,
+              }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,
@@ -624,7 +642,6 @@ export class EquipmentsRepository implements IEquipmentsRepository {
     equipments: Array<any>
   ): Promise<Array<{ Code: string; Id: number }>> {
     const insertedEquipments: Array<{ Code: string; Id: number }> = [];
-
 
     await governmentDb.transaction(async (trx) => {
       // TO-DO: how insert coordinates?
@@ -778,9 +795,9 @@ export class EquipmentsRepository implements IEquipmentsRepository {
         Location:
           eqp.Latitude && eqp.Longitude
             ? {
-              Latitude: eqp.Latitude,
-              Longitude: eqp.Longitude,
-            }
+                Latitude: eqp.Latitude,
+                Longitude: eqp.Longitude,
+              }
             : null,
         Type: eqp.Type,
         Organ: eqp.Organ,
@@ -803,20 +820,10 @@ export class EquipmentsRepository implements IEquipmentsRepository {
       only_with_measurements?: boolean;
     }>
   ): Promise<IOutputWithPagination<EquipmentEntity>> {
-    const {
-      idOrgan,
-      idType,
-      name,
-      only_with_measurements,
-      enabled,
-    } = params.data;
+    const { idOrgan, idType, name, only_with_measurements, enabled } =
+      params.data;
 
-    const {
-      pageNumber,
-      limit,
-      offset,
-
-    } = params.paginate;
+    const { pageNumber, limit, offset } = params.paginate;
     const pageLimit = limit;
 
     const binding = [];
