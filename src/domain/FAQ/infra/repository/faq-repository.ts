@@ -398,15 +398,10 @@ export class DbFaqRepository implements FaqRepositoryProtocol {
   ): Promise<boolean> {
     const response = await governmentDb("FAQ as f")
       .withSchema("faq")
-      .select(
-        governmentDb.raw(
-          'CASE WHEN f."Fk_Category" = ? THEN true ELSE false END AS result',
-          [category_id]
-        )
-      )
+      .where({ Fk_Category: category_id })
       .first();
 
-    return response ? response.result : false;
+    return response ? true : false;
   }
   async getCategoryById(
     id_category: number

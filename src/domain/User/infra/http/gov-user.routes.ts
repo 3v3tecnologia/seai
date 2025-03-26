@@ -13,7 +13,7 @@ export const setupGovUserRoutes = (): Router => {
     "/system/modules",
     authorization,
     userPermissions.read,
-    adaptHTTPHandler(GovernmentUserController.getProfile)
+    adaptHTTPHandler(GovernmentUserController.getSystemModules)
   );
 
   router.get(

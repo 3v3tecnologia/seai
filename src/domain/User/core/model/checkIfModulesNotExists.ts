@@ -17,7 +17,7 @@ export function checkIfModulesNotExists(
     new_modules.value[Modules.USER],
     new_modules.value[Modules.EQUIPMENTS],
     new_modules.value[Modules.NEWSLETTER],
-    new_modules.value[Modules.STUDIES],
+    new_modules.value[Modules.BUSINESS_ANALYSIS],
     new_modules.value[Modules.WEIGHTS],
   ];
   // evitar ter que salvar usuário com módulos que não existem

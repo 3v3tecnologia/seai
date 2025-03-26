@@ -14,7 +14,7 @@ export class CultureWeightsMapper {
       jobs_1000m3: Number(row.peso_empregos_1000m3),
       water_consumption: Number(row.peso_consumo_hidrico),
       crop_cycle: Number(row.peso_ciclo_cultura),
-      year: Number(row.year),
+      year: Number(row.ano),
     };
   }
 
